@@ -92,7 +92,7 @@
     <canvas id="particle-canvas" class="absolute inset-0 w-full h-full pointer-events-none z-0 opacity-45"></canvas>
 
     <!-- Supabase Connection Alert Banner (Highly styled glassmorphic bar) -->
-    <div id="connection-setup-banner" class="z-50 bg-gradient-to-r from-red-950/30 via-zinc-950/95 to-red-950/30 border-b border-red-500/10 py-2.5 px-4 text-center text-xs text-red-400 flex items-center justify-center gap-2 relative">
+    <div id="connection-setup-banner" style="display: none !important;" class="z-50 bg-gradient-to-r from-red-950/30 via-zinc-950/95 to-red-950/30 border-b border-red-500/10 py-2.5 px-4 text-center text-xs text-red-400 flex items-center justify-center gap-2 relative">
       <span class="inline-flex rounded-full bg-red-400/10 p-1 mr-1 animate-pulse"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span></span>
       <span class="font-mono tracking-tight">DATA GATEWAY STATUS STANDBY: Operating on secured client cache database fallback.</span>
       <button onclick="toggleSetupModal(true)" class="underline font-bold text-red-400 hover:text-red-300 ml-1.5 cursor-pointer uppercase text-[10px] tracking-wider transition-colors bg-transparent border-none">
@@ -887,8 +887,8 @@ ALTER TABLE contact DISABLE ROW LEVEL SECURITY;
         const key = document.getElementById("adm-key-input").value.trim();
 
         if (url && key) {
-          localStorage.setItem("WOLF_SUPABASE_URL", url);
-          localStorage.setItem("WOLF_SUPABASE_ANON_KEY", key);
+          localStorage.setItem("https://tdfkebgapncswtvbtaqy.supabase.co", url);
+          localStorage.setItem("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ", key);
           alert("Supabase integration synchronized successfully! Reloading administrative interface.");
           location.reload();
         } else {
@@ -897,8 +897,8 @@ ALTER TABLE contact DISABLE ROW LEVEL SECURITY;
       }
 
       function clearAdminSupabase() {
-        localStorage.removeItem("WOLF_SUPABASE_URL");
-        localStorage.removeItem("WOLF_SUPABASE_ANON_KEY");
+        localStorage.removeItem("https://tdfkebgapncswtvbtaqy.supabase.co");
+        localStorage.removeItem("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ");
         alert("Credentials wiped cleanly. Operating on serverless sandbox cache arrays.");
         location.reload();
       }
