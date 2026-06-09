@@ -19,10 +19,10 @@ View your app in AI Studio: https://ai.studio/apps/d07253f9-630f-423c-9b53-f9a9f
 3. Run the app:
    `npm run dev`
 
-# 👑 MADKINGS ESPORTS // WOLF SOCIETY 👑
+# 👑  ESPORTS // WOLF SOCIETY 👑
 
-[![Ais Dev Server Status](https://img.shields.io/badge/System-ONLINE-emerald.svg?style=for-the-badge&logo=opsgenie&logoColor=white&color=059669)](https://madkings.in)
-[![Aesthetic Layout](https://img.shields.io/badge/Design-VANTABLACK-e01a84.svg?style=for-the-badge&color=e01a84)](https://madkings.in)
+[![Ais Dev Server Status](https://img.shields.io/badge/System-ONLINE-emerald.svg?style=for-the-badge&logo=opsgenie&logoColor=white&color=059669)](https://wolfsocietygg.vercel.app)
+[![Aesthetic Layout](https://img.shields.io/badge/Design-VANTABLACK-e01a84.svg?style=for-the-badge&color=e01a84)](https://wolfsocietygg.vercel.app)
 [![Supabase Secure Fallback](https://img.shields.io/badge/Synced-SUPABASE-3ECF8E.svg?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
 [![Vite Bundled](https://img.shields.io/badge/Bundled_With-VITE_6-646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev)
 
