@@ -4658,13 +4658,13 @@
         if (!input || !msg) return;
 
         const val = input.value.trim().toUpperCase();
-        if (val === "MADKINGS" || val === "KINGDOM") {
+        if (val === "WOLFSOCIETY" || val === "KINGDOM") {
           localStorage.setItem("WOLF_CART_PROMO", val);
           msg.innerText = "PROMO KEY ACCEPTED: 25% EXECUTIVE CO-ALIGNMENT DISCOUNT GRANTED.";
           msg.className = "text-[9px] font-mono text-emerald-400 block uppercase";
           playCustomSynthNote(750, "sine", 0.05, 0.2);
           updateCartUI();
-        } else if (val === "MADKINGS20" || val === "WOLF20") {
+        } else if (val === "WOLFSOCIETY20" || val === "WOLF20") {
           localStorage.setItem("WOLF_CART_PROMO", val);
           msg.innerText = "PROMO KEY ACCEPTED: 20% SYSTEM DISCOUNT GRANTED.";
           msg.className = "text-[9px] font-mono text-emerald-400 block uppercase";
@@ -4810,7 +4810,7 @@
         let discount = 0;
         if (promo) {
           let rate = 0.20;
-          if (promo === "MADKINGS" || promo === "KINGDOM") {
+          if (promo === "WOLFSOCIETY" || promo === "KINGDOM") {
             rate = 0.25;
           } else if (promo === "CHAMPION") {
             rate = 0.15;
