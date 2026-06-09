@@ -5662,7 +5662,7 @@
         const emailInput = document.getElementById("login-email-input");
         const passwordInput = document.getElementById("login-passwd-input");
         if (emailInput && passwordInput) {
-          emailInput.value = "admin@madkings.in";
+          emailInput.value = "admin@wolfsociety.in";
           passwordInput.value = "tactical2026";
           playCustomSynthNote(660, "sawtooth", 0.05, 0.1);
           showToast("DEMO ENCRYPTION CREDENTIALS LOADED", "terminal");
@@ -5711,10 +5711,10 @@
         if (errorBox) errorBox.classList.add("hidden");
 
         // CHECK IF DEMO LOGIN MATCHES FIRST (EASY OFFLINE ACCESSIBILITY PATHWAY BY DEFAULT!)
-        if (email.toLowerCase() === "admin@madkings.in" && password === "tactical2026") {
+        if (email.toLowerCase() === "admin@wolfsociety.in" && password === "tactical2026") {
           const demoUser = {
-            name: "COMMANDER LEELA",
-            email: "admin@madkings.in"
+            name: "COMMANDER KaiKiSHi",
+            email: "admin@wolfsociety.in"
           };
           localStorage.setItem("ACTIVE_SESSION", JSON.stringify(demoUser));
           renderActiveSessionState(demoUser);
