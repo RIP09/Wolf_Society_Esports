@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>A Heaven of Competitive Excellence | WOLF SOCIETY Esports</title>
+    <title>A Kingdom of Competitive Excellence | WOLF SOCIETY Esports</title>
     
     <!-- Nuxt JS engine signature elements for Wappalyzer detection -->
     <meta name="generator" content="Nuxt.js" />
@@ -2885,6 +2885,10 @@
                 <span>Verification State</span>
                 <span class="text-emerald-400 font-bold">AUTHORIZED</span>
               </div>
+              <div class="flex justify-between border-b border-white/[0.04] pb-2 text-zinc-500">
+                <span>Logistics Dispatch</span>
+                <span id="success-shipping-tracking" class="text-cyan-400 font-bold">TRANSMITTING...</span>
+              </div>
               <div class="flex justify-between text-zinc-500">
                 <span>Dispatcher Support</span>
                 <span class="text-white">Within 24-48 Cycles</span>
@@ -4835,7 +4839,7 @@
         lucide.createIcons();
       }
 
-      function submitCartPreOrder() {
+      async function submitCartPreOrder() {
         playClickSynth();
         const name = document.getElementById("cart-form-name").value.trim();
         const email = document.getElementById("cart-form-email").value.trim();
@@ -4847,10 +4851,60 @@
           return;
         }
 
-        // Generate high end futuristic pre-order transaction hash
+        // GATHER CORE CART ITEMS AND COMPUTE COSTS SECURELY
+        const cart = getCart();
+        if (cart.length === 0) {
+          alert("Armory cart must contain tactical gear before pre-order transmission.");
+          return;
+        }
+
+        let subtotal = 0;
+        cart.forEach(item => {
+          const p = PRODUCTS.find(prod => prod.id === item.id);
+          if (p) {
+            subtotal += p.base_price * item.quantity;
+          }
+        });
+
+        const promo = getAppliedPromo();
+        const shippingFee = subtotal > 5000 || subtotal === 0 ? 0 : 150;
+        let discount = 0;
+        if (promo) {
+          let rate = 0.20;
+          if (promo === "WOLFSOCIETY" || promo === "KINGDOM") {
+            rate = 0.25;
+          } else if (promo === "CHAMPION") {
+            rate = 0.15;
+          }
+          discount = Math.round(subtotal * rate);
+        }
+        const grandTotal = subtotal + shippingFee - discount;
+
+        // Generate high end futuristic pre-order transaction hash and tracking ID
         const rHex = Math.floor(Math.random() * 16777215).toString(16).toUpperCase().padStart(6, '0');
-        const hash = `MK-PRO-${rHex}`;
+        const hash = `WOLF-PRO-${rHex}`;
+        const trackingId = `WOLF-DHL-${rHex}`;
+
         document.getElementById("success-tx-hash").innerText = hash;
+        document.getElementById("success-shipping-tracking").innerText = trackingId;
+
+        // PREPARE DISPATCH DETAILS FOR INGESTION
+        const orderData = {
+          name: name,
+          email: email,
+          phone: phone,
+          address: address,
+          items: JSON.stringify(cart),
+          subtotal: subtotal,
+          discount: discount,
+          grand_total: grandTotal,
+          tx_hash: hash,
+          tracking_id: trackingId
+        };
+
+        // SUBMIT SECURE ORDER TO THE SUPABASE DATABASE BACKEND & LOGISTICS PIPELINE
+        const result = await window.wolfDb.submitOrder(orderData);
+        const sourceLabel = result.source === 'supabase' ? 'CLOUD ENCRYPTED' : 'LOCAL ENGINE SYNCED';
 
         // Clear cart values
         localStorage.removeItem("WOLF_CART");
@@ -4871,6 +4925,8 @@
         playCustomSynthNote(440, "sine", 0.08, 0.15);
         setTimeout(() => playCustomSynthNote(554.37, "sine", 0.08, 0.15), 120);
         setTimeout(() => playCustomSynthNote(659.25, "sine", 0.12, 0.35), 240);
+
+        showToast(`ORDER SHIPPED AND SECURED :: [${sourceLabel}]`, "shield-check");
 
         // Update header icon badging indices
         updateCartUI();
@@ -5557,35 +5613,28 @@
         playCustomSynthNote(180, "sawtooth", 0.08, 0.15); // Fail low synth
       }
 
-      function registerUserAccount(userData) {
-        // Save to Local Registry fallback list
-        let users = [];
-        try {
-          users = JSON.parse(localStorage.getItem("WOLF_USERS") || "[]");
-        } catch {
-          users = [];
-        }
-
-        userData.id = "user-" + Date.now();
+      async function registerUserAccount(userData) {
         userData.insignia = "crown";
         userData.created_at = new Date().toISOString();
 
-        users.push(userData);
-        localStorage.setItem("WOLF_USERS", JSON.stringify(users));
+        // Save using our new Supabase-infused database method!
+        const result = await window.wolfDb.submitUser(userData);
+        const savedUser = result.data || userData;
 
         // Trigger Success transitions
         playCustomSynthNote(520, "sine", 0.06, 0.12);
         setTimeout(() => playCustomSynthNote(780, "sine", 0.06, 0.18), 70);
         setTimeout(() => playCustomSynthNote(1040, "sine", 0.08, 0.25), 140);
 
-        showToast("IDENTITY LINK SECURED SUCCESSFULLY", "shield-check");
+        const sourceLabel = result.source === 'supabase' ? 'CLOUD RECORD LOCKED' : 'LOCAL INTEGRITY CHECKED';
+        showToast(`IDENTITY LINK SECURED [${sourceLabel}]`, "shield-check");
 
         // Swap Card layout Panels
         document.getElementById("signup-form-card").classList.add("hidden");
         
         // Populate welcome states
-        document.getElementById("welcome-callsign").innerText = "CROWN COMMANDER: " + userData.name.toUpperCase();
-        document.getElementById("welcome-email").innerText = userData.email;
+        document.getElementById("welcome-callsign").innerText = "CROWN COMMANDER: " + savedUser.name.toUpperCase();
+        document.getElementById("welcome-email").innerText = savedUser.email;
         document.getElementById("welcome-grid").innerText = "WOLF-" + Math.floor(10 + Math.random()*89) + "-" + generatedOTP;
 
         document.getElementById("signup-success-panel").classList.remove("hidden");
@@ -5699,7 +5748,7 @@
         }, 1100);
       }
 
-      function processUserLogin() {
+      async function processUserLogin() {
         const email = document.getElementById("login-email-input").value.trim();
         const password = document.getElementById("login-passwd-input").value;
         const errorBox = document.getElementById("login-error-box");
@@ -5724,13 +5773,9 @@
           return;
         }
 
-        // Check against WOLF_USERS
-        let users = [];
-        try {
-          users = JSON.parse(localStorage.getItem("WOLF_USERS") || "[]");
-        } catch {
-          users = [];
-        }
+        // Check against WOLF_USERS inside Supabase / cache fallback
+        const result = await window.wolfDb.getUsers();
+        const users = result.data || [];
 
         const matchedUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
 
@@ -5747,7 +5792,8 @@
         // Matches correctly!
         localStorage.setItem("ACTIVE_SESSION", JSON.stringify(matchedUser));
         renderActiveSessionState(matchedUser);
-        showToast(`ALIGNMENT RESOLVED: WOLF-${matchedUser.name.toUpperCase()}`, "check");
+        const sourceLabel = result.source === 'supabase' ? 'CLOUD VERIFIED' : 'LOCAL CACHE MATCHED';
+        showToast(`ALIGNMENT RESOLVED (${sourceLabel}): WOLF-${matchedUser.name.toUpperCase()}`, "check");
       }
 
       function showLoginError(msg) {
