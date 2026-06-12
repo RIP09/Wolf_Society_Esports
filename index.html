@@ -123,7 +123,7 @@
         z-index: 55; /* Float on top of header for realistic full immersion */
         perspective: 800px;
         transform-style: preserve-3d;
-        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12));
+        will-change: transform, opacity;
       }
       @keyframes petalFall {
         0% {
@@ -162,6 +162,7 @@
         box-shadow: inset 1px -1px 3px rgba(255, 255, 255, 0.5), 0 2px 5px rgba(0, 0, 0, 0.15);
         animation: petalSpin linear infinite;
         transform-style: preserve-3d;
+        will-change: transform;
       }
       @keyframes petalSpin {
         0% { transform: rotateY(0deg) rotateX(0deg) rotateZ(0deg); }
@@ -1355,7 +1356,7 @@
                 
                 <div class="mt-8 flex items-center gap-3">
                   <div class="w-8 h-[1px] bg-madpink/60"></div>
-                  <span class="text-[9px] font-mono uppercase tracking-[0.3em] text-madpink font-bold">Mad Kings Esports Crest</span>
+                  <span class="text-[9px] font-mono uppercase tracking-[0.3em] text-madpink font-bold">Wolf Society Esports Crest</span>
                 </div>
               </div>
             </div>
@@ -2472,7 +2473,7 @@
                   </div>
                   <div class="space-y-1">
                     <span class="text-[9px] font-mono text-zinc-500 uppercase tracking-widest font-black block">EMAIL COMMUNICATION</span>
-                    <a href="mailto:deepanshumurmu0@gmail.com" class="text-xs font-mono text-white hover:text-madpink transition-colors font-bold block">hello@wolfsociety.in</a>
+                    <a href="mailto:hello@wolfsociety.in" class="text-xs font-mono text-white hover:text-madpink transition-colors font-bold block">hello@wolfsociety.in</a>
                   </div>
                 </div>
 
@@ -3808,7 +3809,7 @@
         if (!container) return;
         
         container.innerHTML = '';
-        const limitCount = 48; // Upgraded density for immersive organic presence
+        const limitCount = 30; // Highly optimized density for ultra smooth frame rates without visual loss
 
         // Authentic multi-color palettes bridging sakura pink, white-pink dew, and tactical reds
         const blossomLusters = [
@@ -3845,12 +3846,12 @@
           if (sizePx > 16) {
             // Foreground element, fast, blurry (Depth of Field)
             durationSec = Math.random() * 5 + 6; // 6s to 11s fast fall
-            blurFilter = "blur(1.2px)";
+            blurFilter = "blur(1px)";
             opacityPct = 0.95;
           } else if (sizePx < 11) {
             // Background element, slow, micro scale, blurry
             durationSec = Math.random() * 8 + 14; // 14s to 22s slow glide
-            blurFilter = "blur(1.5px)";
+            blurFilter = "blur(1.2px)";
             opacityPct = 0.55;
           } else {
             // Midground sharp element
@@ -3868,9 +3869,10 @@
           petalDiv.style.animationDelay = `-${delaySec}s`; // Use negative delay so petals are already active on page load!
           petalDiv.style.animationDuration = `${durationSec}s`;
           
-          // Combine filters for premium presentation
-          const dropShadow = "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12))";
-          petalDiv.style.filter = blurFilter ? `${blurFilter} ${dropShadow}` : dropShadow;
+          // Removed expensive multi-layer drop-shadow to preserve clean, high-performance GPU layouts
+          if (blurFilter) {
+            petalDiv.style.filter = blurFilter;
+          }
           
           petalDiv.style.setProperty("--drift", `${driftPx}px`);
           petalDiv.style.setProperty("--rotation", `${rotationRate}deg`);
@@ -4886,7 +4888,7 @@
         clutchgod: {
           name: "KaiKishi",
           realName: "MASKED",
-          role: "Lead Assaulter / Founder",
+          role: "Lead Front-Line Assaulter",
           skills: {
             "AIM RESOLUTION": "98%",
             "REFLEX LATENCY": "99%",
