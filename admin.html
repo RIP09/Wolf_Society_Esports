@@ -179,10 +179,15 @@
             </button>
           </form>
 
-          <div class="pt-4 border-t border-zinc-900 text-center">
+          <div class="pt-4 border-t border-zinc-900 text-center space-y-2">
             <span class="text-[9px] font-mono text-zinc-500 block leading-relaxed uppercase">
               Standard Staging Token Credentials: <br>
               <code class="text-zinc-300 select-all font-bold">admin</code> / <code class="text-zinc-300 select-all font-bold">wolf-society-secure-pass</code>
+            </span>
+            <div class="h-px bg-zinc-900 w-1/2 mx-auto"></div>
+            <span class="text-[9px] font-mono text-emerald-500 block uppercase leading-snug">
+              ⚡ LIVE SUPABASE AUTHENTICATION ACTIVE:<br>
+              Input your email and password to safely log in directly from your project database!
             </span>
           </div>
         </div>
@@ -199,9 +204,10 @@
               <i data-lucide="shield-check" class="w-6 h-6"></i>
             </div>
             <div>
-              <h2 class="text-xl font-black text-white flex items-center gap-2.5 uppercase tracking-tight">
+              <h2 class="text-xl font-black text-white flex flex-wrap items-center gap-2.5 uppercase tracking-tight">
                 Squad Control Center
                 <span class="px-2 py-0.5 rounded text-[8px] bg-red-500/10 text-red-400 border border-red-500/20 uppercase font-mono tracking-widest font-bold">ENCRYPTED REGISTRY</span>
+                <span id="admin-officer-badge" class="px-2 py-0.5 rounded text-[8px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 uppercase font-mono tracking-widest font-bold hidden">OFFICER: UNKNOWN</span>
               </h2>
               <div class="flex items-center gap-1.5 mt-0.5 font-mono">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" id="stats-pulse"></span>
@@ -601,7 +607,7 @@ ALTER TABLE store_order DISABLE ROW LEVEL SECURITY;
       }
 
       // Login function handlers
-      function handleAuthLogin(e) {
+      async function handleAuthLogin(e) {
         e.preventDefault();
         
         const userIn = document.getElementById("auth-username").value.trim();
@@ -610,13 +616,44 @@ ALTER TABLE store_order DISABLE ROW LEVEL SECURITY;
 
         errBlock.classList.add("hidden");
 
+        // 1. Offline fallback credentials
         if (userIn === "admin" && passIn === "wolf-society-secure-pass") {
           sessionStorage.setItem("WOLF_ADMIN_SECTOR_AUTHENTICATED", "TRUE");
+          sessionStorage.setItem("WOLF_ADMIN_EMAIL", "Local Offline Commander");
           displayDashboard();
-        } else {
-          errBlock.classList.remove("hidden");
-          errBlock.innerText = "Error: Invalid administrative credential username or passcode string.";
+          return;
         }
+
+        // 2. Proactive Supabase Auth integration check
+        if (window.supabaseClient) {
+          try {
+            const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+              email: userIn,
+              password: passIn
+            });
+
+            if (error) {
+              errBlock.classList.remove("hidden");
+              errBlock.innerText = "SUPABASE SECURITY DECIPHER REJECTED: " + error.message.toUpperCase();
+              return;
+            }
+
+            if (data && data.user) {
+              sessionStorage.setItem("WOLF_ADMIN_SECTOR_AUTHENTICATED", "TRUE");
+              sessionStorage.setItem("WOLF_ADMIN_EMAIL", data.user.email);
+              displayDashboard();
+              return;
+            }
+          } catch (err) {
+            console.warn("Supabase auth backend exception:", err);
+            errBlock.classList.remove("hidden");
+            errBlock.innerText = "DATABASE HANDSHAKE ERROR: " + err.message.toUpperCase();
+            return;
+          }
+        }
+
+        errBlock.classList.remove("hidden");
+        errBlock.innerText = "Error: Invalid administrative credential username or passcode string.";
       }
 
       function terminateAdminSession() {
@@ -632,6 +669,15 @@ ALTER TABLE store_order DISABLE ROW LEVEL SECURITY;
       function displayDashboard() {
         document.getElementById("admin-auth-panel").classList.add("hidden");
         document.getElementById("secured-admin-dashboard").classList.remove("hidden");
+        
+        // Retrieve and bind secure officer session credentials
+        const officerEmail = sessionStorage.getItem("WOLF_ADMIN_EMAIL") || "Local Offline Commander";
+        const emailBadge = document.getElementById("admin-officer-badge");
+        if (emailBadge) {
+          emailBadge.innerText = `OFFICER: ${officerEmail.toUpperCase()}`;
+          emailBadge.classList.remove("hidden");
+        }
+        
         refreshDashboardData();
       }
 
