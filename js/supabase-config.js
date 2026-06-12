@@ -242,5 +242,148 @@ window.wolfDb = {
     list = list.filter(c => String(c.id) !== String(id));
     setLocalData("WOLF_CONTACTS", list);
     return { success: true, source: 'local' };
+  },
+
+  // User Accounts
+  getUsers: async () => {
+    if (window.supabaseClient) {
+      try {
+        const { data, error } = await window.supabaseClient
+          .from('wolf_users')
+          .select('*');
+        if (!error && data) return { data, source: 'supabase' };
+      } catch (e) {
+        console.warn("Supabase getUsers exception:", e);
+      }
+    }
+    const list = getLocalData("WOLF_USERS", []);
+    return { data: list, source: 'local' };
+  },
+
+  submitUser: async (userData) => {
+    const record = {
+      ...userData,
+      created_at: new Date().toISOString()
+    };
+
+    if (window.supabaseClient) {
+      try {
+        const { data, error } = await window.supabaseClient
+          .from('wolf_users')
+          .insert([record])
+          .select();
+        if (!error) return { success: true, source: 'supabase', data: data[0] };
+        console.error("Supabase submitUser fail:", error);
+      } catch (e) {
+        console.error("Supabase submitUser exception:", e);
+      }
+    }
+
+    const list = getLocalData("WOLF_USERS", []);
+    record.id = "local-" + Date.now();
+    list.push(record);
+    setLocalData("WOLF_USERS", list);
+    return { success: true, source: 'local', data: record };
+  },
+
+  // Store pre-orders
+  getOrders: async () => {
+    if (window.supabaseClient) {
+      try {
+        const { data, error } = await window.supabaseClient
+          .from('store_order')
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (!error && data) return { data, source: 'supabase' };
+      } catch (e) {
+        console.warn("Supabase getOrders exception:", e);
+      }
+    }
+    const list = getLocalData("WOLF_ORDERS", [
+      {
+        id: "mock-o1",
+        name: "KaiKishi",
+        email: "admin@wolfsociety.in",
+        phone: "+91 99002 21100",
+        address: "Wolf Mansion, Bengaluru, IND",
+        items: JSON.stringify([{ id: "pro-kit", size: "L", quantity: 1 }]),
+        subtotal: 2500,
+        discount: 500,
+        grand_total: 2000,
+        status: "shipped",
+        tx_hash: "MK-PRO-A1B2C3",
+        created_at: new Date(Date.now() - 3600000 * 5).toISOString()
+      }
+    ]);
+    return { data: list, source: 'local' };
+  },
+
+  submitOrder: async (orderData) => {
+    const record = {
+      ...orderData,
+      status: "pending",
+      created_at: new Date().toISOString()
+    };
+
+    if (window.supabaseClient) {
+      try {
+        const { data, error } = await window.supabaseClient
+          .from('store_order')
+          .insert([record])
+          .select();
+        if (!error) return { success: true, source: 'supabase', data: data[0] };
+        console.error("Supabase submitOrder fail:", error);
+      } catch (e) {
+        console.error("Supabase submitOrder exception:", e);
+      }
+    }
+
+    const list = getLocalData("WOLF_ORDERS", []);
+    record.id = "local-" + Date.now();
+    list.unshift(record);
+    setLocalData("WOLF_ORDERS", list);
+    return { success: true, source: 'local', data: record };
+  },
+
+  updateOrderStatus: async (id, status) => {
+    if (window.supabaseClient) {
+      try {
+        const { error } = await window.supabaseClient
+          .from('store_order')
+          .update({ status: status })
+          .eq('id', id);
+        if (!error) return { success: true, source: 'supabase' };
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    const list = getLocalData("WOLF_ORDERS", []);
+    const item = list.find(o => String(o.id) === String(id));
+    if (item) {
+      item.status = status;
+      setLocalData("WOLF_ORDERS", list);
+      return { success: true, source: 'local' };
+    }
+    return { success: false };
+  },
+
+  deleteOrder: async (id) => {
+    if (window.supabaseClient) {
+      try {
+        const { error } = await window.supabaseClient
+          .from('store_order')
+          .delete()
+          .eq('id', id);
+        if (!error) return { success: true, source: 'supabase' };
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    let list = getLocalData("WOLF_ORDERS", []);
+    list = list.filter(o => String(o.id) !== String(id));
+    setLocalData("WOLF_ORDERS", list);
+    return { success: true, source: 'local' };
   }
 };
