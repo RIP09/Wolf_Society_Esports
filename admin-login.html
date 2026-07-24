@@ -331,7 +331,6 @@
     (function checkSession() {
       const session = localStorage.getItem('wolf_admin_session');
       if (session && window.location.pathname.includes('admin-login')) {
-        // If we are on login page but already logged in, go to admin
         window.location.href = '/admin.html';
       }
     })();
