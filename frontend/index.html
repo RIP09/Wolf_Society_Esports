@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wolf Society Esports</title>
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/utilities.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <!-- Phosphor Icons (free, open‑source) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/phosphor-icons@1.4.2/src/css/phosphor.css" />
+</head>
+<body>
+  <!-- Navigation (rendered by JS) -->
+  <nav id="main-nav" class="navbar"></nav>
+
+  <!-- Main App Container -->
+  <div id="app" class="app-container">
+    <!-- Pages are dynamically rendered here -->
+  </div>
+
+  <!-- Footer -->
+  <footer id="main-footer" class="footer"></footer>
+
+  <!-- JavaScript Modules -->
+  <script type="module">
+    // Import all modules and bootstrap the app
+    import { Router } from './js/router.js';
+    import { Auth } from './js/auth.js';
+    import { Sync } from './js/sync.js';
+    import { Notification } from './js/notifications.js';
+    import { renderNav, renderFooter } from './js/navigation.js';
+
+    // Initialize
+    window.App = {
+      router: new Router(),
+      auth: new Auth(),
+      sync: new Sync(),
+      notify: new Notification(),
+    };
+
+    // Render static elements
+    renderNav();
+    renderFooter();
+
+    // Start router
+    App.router.init();
+  </script>
+</body>
+</html>
