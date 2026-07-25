@@ -1,0 +1,24 @@
+{
+  "name": "wolf-society",
+  "services": [
+    {
+      "name": "pocketbase",
+      "dockerfile": "docker-compose.yml",
+      "port": 8090
+    },
+    {
+      "name": "n8n",
+      "dockerfile": "docker-compose.yml",
+      "port": 5678
+    }
+  ],
+  "domains": {
+    "api": "api.wolfsociety.gg",
+    "n8n": "automation.wolfsociety.gg",
+    "public": "wolfsociety.gg"
+  },
+  "env": {
+    "PB_ENCRYPTION_KEY": "{{secrets.PB_ENCRYPTION_KEY}}",
+    "N8N_ENCRYPTION_KEY": "{{secrets.N8N_ENCRYPTION_KEY}}"
+  }
+}
