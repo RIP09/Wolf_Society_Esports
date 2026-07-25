@@ -1,0 +1,29 @@
+{
+  "nodes": [
+    {
+      "name": "PocketBase Trigger",
+      "type": "n8n-nodes-base.pocketBaseTrigger",
+      "parameters": {
+        "collection": "users",
+        "event": "create"
+      }
+    },
+    {
+      "name": "Discord",
+      "type": "n8n-nodes-base.discord",
+      "parameters": {
+        "webhookUrl": "https://discord.com/api/webhooks/...",
+        "message": "New user registered: {{$json.record.email}}"
+      }
+    },
+    {
+      "name": "Email",
+      "type": "n8n-nodes-base.emailSend",
+      "parameters": {
+        "to": "{{$json.record.email}}",
+        "subject": "Welcome to Wolf Society",
+        "body": "Hello, welcome to the pack!"
+      }
+    }
+  ]
+}
