@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wolf Society Esports – Divine Wolf</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/phosphor-icons@1.4.2/src/css/phosphor.css" />
+
+  <style>
+    /* ===== CSS VARIABLES ===== */
+    :root {
+      --primary: #1a237e;
+      --primary-dark: #0d1445;
+      --secondary: #c0c0c0;
+      --accent: #ffd700;
+      --alert: #d32f2f;
+      --success: #4caf50;
+      --bg-dark: #0d1117;
+      --bg-light: #161b22;
+      --text-light: #f0f6fc;
+      --text-muted: #8b949e;
+      --border: #30363d;
+      --radius: 8px;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      --transition: 0.2s ease-in-out;
+    }
+
+    /* ===== RESET ===== */
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    ul,
+    ol {
+      list-style: none;
+    }
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    /* ===== UTILITIES ===== */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+    .text-center {
+      text-align: center;
+    }
+    .flex {
+      display: flex;
+    }
+    .flex-col {
+      flex-direction: column;
+    }
+    .items-center {
+      align-items: center;
+    }
+    .justify-between {
+      justify-content: space-between;
+    }
+    .gap-1 {
+      gap: 0.5rem;
+    }
+    .gap-2 {
+      gap: 1rem;
+    }
+    .gap-3 {
+      gap: 1.5rem;
+    }
+    .grid {
+      display: grid;
+    }
+    .grid-cols-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .grid-cols-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .grid-cols-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .w-full {
+      width: 100%;
+    }
+    .p-1 {
+      padding: 0.5rem;
+    }
+    .p-2 {
+      padding: 1rem;
+    }
+    .p-3 {
+      padding: 1.5rem;
+    }
+    .m-1 {
+      margin: 0.5rem;
+    }
+    .m-2 {
+      margin: 1rem;
+    }
+    .rounded {
+      border-radius: var(--radius);
+    }
+    .rounded-full {
+      border-radius: 9999px;
+    }
+    .shadow {
+      box-shadow: var(--shadow);
+    }
+    .bg-dark {
+      background: var(--bg-dark);
+    }
+    .bg-light {
+      background: var(--bg-light);
+    }
+    .text-light {
+      color: var(--text-light);
+    }
+    .text-muted {
+      color: var(--text-muted);
+    }
+    .text-accent {
+      color: var(--accent);
+    }
+    .text-primary {
+      color: var(--primary);
+    }
+    .text-success {
+      color: var(--success);
+    }
+    .text-alert {
+      color: var(--alert);
+    }
+    .hidden {
+      display: none !important;
+    }
+    .block {
+      display: block;
+    }
+    .relative {
+      position: relative;
+    }
+    .absolute {
+      position: absolute;
+    }
+    .fixed {
+      position: fixed;
+    }
+    .overflow-hidden {
+      overflow: hidden;
+    }
+    .overflow-auto {
+      overflow: auto;
+    }
+    .cursor-pointer {
+      cursor: pointer;
+    }
+    .select-none {
+      user-select: none;
+    }
+    .transition {
+      transition: var(--transition);
+    }
+
+    /* ===== COMPONENTS ===== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: var(--radius);
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: var(--transition);
+      cursor: pointer;
+      background: var(--bg-light);
+      color: var(--text-light);
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+    .btn-accent {
+      background: var(--accent);
+      color: #000;
+    }
+    .btn-accent:hover {
+      background: #e6c200;
+    }
+    .btn-success {
+      background: var(--success);
+      color: #fff;
+    }
+    .btn-danger {
+      background: var(--alert);
+      color: #fff;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-light);
+    }
+    .btn-outline:hover {
+      background: var(--bg-light);
+    }
+    .btn-sm {
+      padding: 0.3rem 0.8rem;
+      font-size: 0.75rem;
+    }
+
+    .card {
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg-dark);
+      color: var(--text-light);
+      transition: var(--transition);
+    }
+    .form-control:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.2);
+    }
+    .form-control::placeholder {
+      color: var(--text-muted);
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th,
+    td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+    th {
+      background: var(--bg-dark);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+    .modal {
+      background: var(--bg-light);
+      border-radius: var(--radius);
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .modal-header h2 {
+      font-size: 1.25rem;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .modal-close:hover {
+      color: var(--text-light);
+    }
+
+    .toast-container {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .toast {
+      padding: 0.75rem 1.25rem;
+      border-radius: var(--radius);
+      background: var(--bg-light);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      animation: slideIn 0.3s ease;
+      min-width: 200px;
+    }
+    .toast-success {
+      border-left-color: var(--success);
+    }
+    .toast-error {
+      border-left-color: var(--alert);
+    }
+    .toast-info {
+      border-left-color: var(--accent);
+    }
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* ===== LAYOUT ===== */
+    .app-container {
+      min-height: calc(100vh - 70px);
+      padding: 1rem;
+    }
+
+    .navbar {
+      background: var(--bg-dark);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .navbar .brand {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .navbar .brand span {
+      color: var(--text-light);
+    }
+    .navbar .nav-links {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .navbar .nav-links a {
+      color: var(--text-muted);
+      transition: var(--transition);
+      font-size: 0.9rem;
+    }
+    .navbar .nav-links a:hover {
+      color: var(--text-light);
+    }
+    .navbar .nav-links a.active {
+      color: var(--accent);
+    }
+    .navbar .nav-links .btn {
+      font-size: 0.8rem;
+    }
+
+    .footer {
+      background: var(--bg-dark);
+      border-top: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .stat-card {
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      text-align: center;
+    }
+    .stat-card .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .stat-card .stat-label {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .tab-btn {
+      padding: 0.5rem 1rem;
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .tab-btn:hover {
+      color: var(--text-light);
+    }
+    .tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    /* Dashboard */
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .dashboard-header h1 {
+      font-size: 2rem;
+      color: var(--accent);
+    }
+
+    .crud-form {
+      display: grid;
+      gap: 1rem;
+    }
+    .crud-form .form-group {
+      margin-bottom: 0;
+    }
+
+    /* Sakura petals for home */
+    .sakura-container {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .sakura-petal {
+      position: absolute;
+      top: -40px;
+      animation: petalFall linear infinite;
+      pointer-events: none;
+      z-index: 1;
+      perspective: 800px;
+      transform-style: preserve-3d;
+      will-change: transform, opacity;
+    }
+    @keyframes petalFall {
+      0% {
+        opacity: 0;
+        transform: translateY(0) translateX(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+      }
+      8% {
+        opacity: var(--petal-opacity, 0.9);
+      }
+      25% {
+        transform: translateY(28vh) translateX(calc(var(--drift) * 0.4 - 25px)) rotateX(45deg) rotateY(50deg) rotateZ(35deg);
+      }
+      50% {
+        transform: translateY(55vh) translateX(calc(var(--drift) * 0.7 + 35px)) rotateX(110deg) rotateY(-80deg) rotateZ(120deg);
+      }
+      75% {
+        transform: translateY(82vh) translateX(calc(var(--drift) * 0.9 - 15px)) rotateX(180deg) rotateY(120deg) rotateZ(210deg);
+      }
+      92% {
+        opacity: var(--petal-opacity, 0.9);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(105vh) translateX(var(--drift)) rotateX(270deg) rotateY(210deg) rotateZ(var(--rotation));
+      }
+    }
+    .petal-shape {
+      background: var(--petal-color, linear-gradient(135deg, #ffd1dc 0%, #ff85a2 100%));
+      width: 100%;
+      height: 100%;
+      clip-path: polygon(50% 12%, 64% 0%, 92% 16%, 100% 48%, 78% 85%, 50% 100%, 22% 85%, 0% 48%, 8% 16%, 36% 0%);
+      box-shadow: inset 1px -1px 3px rgba(255, 255, 255, 0.5), 0 2px 5px rgba(0, 0, 0, 0.15);
+      animation: petalSpin linear infinite;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+    @keyframes petalSpin {
+      0% {
+        transform: rotateY(0deg) rotateX(0deg) rotateZ(0deg);
+      }
+      50% {
+        transform: rotateY(180deg) rotateX(45deg) rotateZ(180deg);
+      }
+      100% {
+        transform: rotateY(360deg) rotateX(0deg) rotateZ(360deg);
+      }
+    }
+
+    /* Gradient titles */
+    .luxury-title-gradient {
+      background: linear-gradient(90deg, #fff 0%, #ffccd3 30%, #ffd700 65%, #ffccd8);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 8s ease-in-out infinite alternate;
+      background-clip: text;
+    }
+    @keyframes shimmer {
+      0% {
+        background-position: 0% 50%;
+      }
+      100% {
+        background-position: 100% 50%;
+      }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0.5rem 1rem;
+      }
+      .navbar .nav-links {
+        justify-content: center;
+        gap: 0.5rem;
+      }
+      .navbar .nav-links a {
+        font-size: 0.8rem;
+      }
+      .grid-cols-2,
+      .grid-cols-3,
+      .grid-cols-4 {
+        grid-template-columns: 1fr;
+      }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .dashboard-header h1 {
+        font-size: 1.5rem;
+      }
+      .modal {
+        margin: 1rem;
+        max-height: 80vh;
+      }
+    }
+    @media (max-width: 480px) {
+      .navbar .nav-links {
+        flex-wrap: wrap;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" id="main-nav">
+    <a href="#" class="brand" data-route="/">🐺 <span>Society</span></a>
+    <div class="nav-links" id="nav-links">
+      <!-- Dynamically rendered -->
+    </div>
+  </nav>
+
+  <!-- ===== APP CONTAINER ===== -->
+  <div id="app" class="app-container"></div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer" id="main-footer">
+    © 2026 Wolf Society Esports. All rights reserved. Divine Wolf.
+  </footer>
+
+  <!-- ===== TOAST CONTAINER ===== -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script>
+    // ============================================================
+    // 1. UTILITY HELPERS
+    // ============================================================
+    const $ = (sel, ctx = document) => ctx.querySelector(sel);
+    const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
+    const create = (tag, attrs = {}, children = []) => {
+      const el = document.createElement(tag);
+      Object.entries(attrs).forEach(([k, v]) => {
+        if (k === 'text') el.textContent = v;
+        else if (k === 'html') el.innerHTML = v;
+        else if (k === 'className') el.className = v;
+        else el.setAttribute(k, v);
+      });
+      children.forEach(c => {
+        if (typeof c === 'string') el.appendChild(document.createTextNode(c));
+        else if (c instanceof HTMLElement) el.appendChild(c);
+      });
+      return el;
+    };
+    const append = (parent, ...children) => {
+      children.forEach(c => {
+        if (Array.isArray(c)) c.forEach(ch => parent.appendChild(ch));
+        else if (c instanceof HTMLElement) parent.appendChild(c);
+        else parent.appendChild(document.createTextNode(String(c)));
+      });
+      return parent;
+    };
+    const empty = (el) => { while (el.firstChild) el.removeChild(el.firstChild); return el; };
+    const remove = (el) => el.remove();
+    const on = (el, event, handler) => el.addEventListener(event, handler);
+    const off = (el, event, handler) => el.removeEventListener(event, handler);
+    const emit = (el, event, detail) => el.dispatchEvent(new CustomEvent(event, { detail }));
+
+    // ============================================================
+    // 2. NOTIFICATION (Toast)
+    // ============================================================
+    const Toast = {
+      container: null,
+      init() {
+        this.container = document.getElementById('toast-container') || create('div', { id: 'toast-container', className: 'toast-container' });
+        if (!document.getElementById('toast-container')) document.body.appendChild(this.container);
+      },
+      show(message, type = 'info') {
+        this.init();
+        const toast = create('div', { className: `toast toast-${type}` });
+        const icon = create('span', { text: type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ' });
+        const text = create('span', { text: message });
+        append(toast, icon, text);
+        append(this.container, toast);
+        setTimeout(() => remove(toast), 4000);
+      },
+      success(msg) { this.show(msg, 'success'); },
+      error(msg) { this.show(msg, 'error'); },
+      info(msg) { this.show(msg, 'info'); }
+    };
+
+    // ============================================================
+    // 3. MODAL SYSTEM
+    // ============================================================
+    const Modal = {
+      open({ title, content }) {
+        const overlay = create('div', { className: 'modal-overlay' });
+        const modal = create('div', { className: 'modal' });
+        const header = create('div', { className: 'modal-header' });
+        const titleEl = create('h2', { text: title || 'Modal' });
+        const closeBtn = create('button', { className: 'modal-close', text: '✕' });
+        on(closeBtn, 'click', () => this.close(overlay));
+        on(overlay, 'click', (e) => { if (e.target === overlay) this.close(overlay); });
+        append(header, titleEl, closeBtn);
+        append(modal, header, content);
+        append(overlay, modal);
+        document.body.appendChild(overlay);
+        return overlay;
+      },
+      close(overlay) { if (overlay) remove(overlay); },
+      confirm(message, onConfirm) {
+        const content = create('div');
+        append(content, create('p', { text: message }));
+        const btnGroup = create('div', { className: 'flex gap-1' });
+        const confirmBtn = create('button', { className: 'btn btn-danger', text: 'Confirm' });
+        const cancelBtn = create('button', { className: 'btn btn-outline', text: 'Cancel' });
+        on(confirmBtn, 'click', () => { this.close(overlay);
+          onConfirm(); });
+        on(cancelBtn, 'click', () => this.close(overlay));
+        append(btnGroup, confirmBtn, cancelBtn);
+        append(content, btnGroup);
+        const overlay = this.open({ title: 'Confirm', content });
+        return overlay;
+      }
+    };
+
+    // ============================================================
+    // 4. DATA LAYER (localStorage / API ready)
+    // ============================================================
+    const API_BASE = localStorage.getItem('API_BASE') || 'http://localhost:8090/api';
+    const STORE = {
+      // Seeds
+      _seed() {
+        if (!localStorage.getItem('wolf_players')) {
+          localStorage.setItem('wolf_players', JSON.stringify([
+            { id: 'p1', display_name: 'KaiKishi', game: 'Valorant', role: 'IGL', status: 'active', team: 't1' },
+            { id: 'p2', display_name: 'Shadow', game: 'CS2', role: 'Entry', status: 'active', team: 't1' }
+          ]));
+        }
+        if (!localStorage.getItem('wolf_matches')) {
+          localStorage.setItem('wolf_matches', JSON.stringify([
+            { id: 'm1', team: 't1', opponent: 'Phoenix', game: 'Valorant', date: '2025-07-20', result: 'win', score: '13-8' }
+          ]));
+        }
+        if (!localStorage.getItem('wolf_teams')) {
+          localStorage.setItem('wolf_teams', JSON.stringify([
+            { id: 't1', name: 'Divine Wolf', tag: 'DW', game: 'Valorant', wins: 5, losses: 2 }
+          ]));
+        }
+        if (!localStorage.getItem('wolf_announcements')) {
+          localStorage.setItem('wolf_announcements', JSON.stringify([
+            { id: 'a1', title: 'Welcome to the pack!', content: 'New season starts soon.', published: true, pinned: true }
+          ]));
+        }
+        if (!localStorage.getItem('wolf_users')) {
+          localStorage.setItem('wolf_users', JSON.stringify([
+            { id: 'u1', email: 'admin@wolfsociety.gg', password: 'admin123', name: 'Admin', role: 'management' },
+            { id: 'u2', email: 'player@wolfsociety.gg', password: 'player123', name: 'Player One', role: 'player' }
+          ]));
+        }
+      },
+      get(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch { return []; } },
+      set(key, data) { localStorage.setItem(key, JSON.stringify(data)); },
+      // Generic CRUD
+      create(collection, data) {
+        const items = this.get(collection);
+        data.id = data.id || 'id_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+        items.push(data);
+        this.set(collection, items);
+        return data;
+      },
+      read(collection, filter = null) {
+        let items = this.get(collection);
+        if (filter) {
+          const [key, op, val] = filter.split(' ');
+          items = items.filter(item => {
+            if (op === '=') return item[key] == val;
+            if (op === '!=') return item[key] != val;
+            return true;
+          });
+        }
+        return items;
+      },
+      update(collection, id, updates) {
+        const items = this.get(collection);
+        const idx = items.findIndex(i => i.id === id);
+        if (idx === -1) return null;
+        items[idx] = { ...items[idx], ...updates };
+        this.set(collection, items);
+        return items[idx];
+      },
+      delete(collection, id) {
+        let items = this.get(collection);
+        items = items.filter(i => i.id !== id);
+        this.set(collection, items);
+        return true;
+      },
+      // Auth
+      auth: {
+        login(email, password) {
+          const users = STORE.get('wolf_users');
+          const user = users.find(u => u.email === email && u.password === password);
+          if (!user) throw new Error('Invalid credentials');
+          localStorage.setItem('wolf_session', JSON.stringify({ user, token: 'fake-jwt-' + Date.now() }));
+          return user;
+        },
+        logout() { localStorage.removeItem('wolf_session'); },
+        getUser() {
+          try { return JSON.parse(localStorage.getItem('wolf_session'))?.user || null; } catch { return null; }
+        },
+        getToken() {
+          try { return JSON.parse(localStorage.getItem('wolf_session'))?.token || null; } catch { return null; }
+        },
+        isLoggedIn() { return !!this.getUser(); }
+      }
+    };
+    STORE._seed();
+
+    // ============================================================
+    // 5. ROUTER & PAGE RENDERERS
+    // ============================================================
+    const Router = {
+      routes: [],
+      current: null,
+      init() {
+        this.routes = [
+          { path: '/', render: renderHome, guard: 'public' },
+          { path: '/about', render: renderAbout, guard: 'public' },
+          { path: '/teams', render: renderTeams, guard: 'public' },
+          { path: '/contact', render: renderContact, guard: 'public' },
+          { path: '/login', render: renderLogin, guard: 'public' },
+          { path: '/register', render: renderRegister, guard: 'public' },
+          { path: '/player/dashboard', render: renderPlayerDashboard, guard: 'player' },
+          { path: '/player/profile', render: renderPlayerProfile, guard: 'player' },
+          { path: '/player/matches', render: renderPlayerMatches, guard: 'player' },
+          { path: '/management/dashboard', render: renderManagementDashboard, guard: 'management' },
+          { path: '/management/players', render: renderManagementPlayers, guard: 'management' },
+          { path: '/management/matches', render: renderManagementMatches, guard: 'management' },
+          { path: '/management/teams', render: renderManagementTeams, guard: 'management' },
+          { path: '/management/announcements', render: renderManagementAnnouncements, guard: 'management' },
+        ];
+        window.addEventListener('popstate', () => this.handle());
+        // Intercept link clicks with data-route
+        on(document, 'click', '[data-route]', (e) => {
+          e.preventDefault();
+          const path = e.target.getAttribute('data-route') || e.target.closest('[data-route]')?.getAttribute('data-route');
+          if (path) this.navigate(path);
+        });
+        this.handle();
+        this.renderNav();
+        // Auth change listener
+        const origLogin = STORE.auth.login;
+        STORE.auth.login = function(...args) {
+          const res = origLogin.call(this, ...args);
+          Router.renderNav();
+          Router.handle();
+          return res;
+        };
+        const origLogout = STORE.auth.logout;
+        STORE.auth.logout = function(...args) {
+          origLogout.call(this, ...args);
+          Router.renderNav();
+          Router.handle();
+        };
+      },
+      navigate(path) {
+        history.pushState(null, '', path);
+        this.handle();
+      },
+      handle() {
+        const path = window.location.pathname;
+        const route = this.routes.find(r => r.path === path) || this.routes.find(r => r.path === '/');
+        const user = STORE.auth.getUser();
+        const role = user?.role || 'public';
+
+        // Guard check
+        if (route) {
+          if (route.guard === 'player' && role !== 'player' && role !== 'management') {
+            this.navigate('/login');
+            return;
+          }
+          if (route.guard === 'management' && role !== 'management') {
+            this.navigate('/login');
+            return;
+          }
+        }
+
+        this.current = route;
+        const app = document.getElementById('app');
+        empty(app);
+        if (route) {
+          const content = route.render({ user, role, api: STORE });
+          app.appendChild(content);
+        } else {
+          app.appendChild(create('p', { text: '404 – Page not found' }));
+        }
+        this.renderNav();
+        // Re-init Sakura if on home
+        if (path === '/') initSakura();
+      },
+      renderNav() {
+        const container = document.getElementById('nav-links');
+        empty(container);
+        const user = STORE.auth.getUser();
+        const role = user?.role || 'public';
+
+        const links = [
+          { href: '/', label: 'Home' },
+          { href: '/about', label: 'About' },
+          { href: '/teams', label: 'Teams' },
+          { href: '/contact', label: 'Contact' },
+        ];
+        links.forEach(l => {
+          const a = create('a', { href: l.href, text: l.label, 'data-route': true });
+          if (window.location.pathname === l.href) a.classList.add('active');
+          container.appendChild(a);
+        });
+
+        if (role === 'player') {
+          const dash = create('a', { href: '/player/dashboard', text: 'Dashboard', 'data-route': true });
+          if (window.location.pathname.startsWith('/player')) dash.classList.add('active');
+          container.appendChild(dash);
+        } else if (role === 'management') {
+          const dash = create('a', { href: '/management/dashboard', text: 'Manage', 'data-route': true });
+          if (window.location.pathname.startsWith('/management')) dash.classList.add('active');
+          container.appendChild(dash);
+        }
+
+        if (STORE.auth.isLoggedIn()) {
+          const logoutBtn = create('button', { className: 'btn btn-outline btn-sm', text: 'Logout' });
+          on(logoutBtn, 'click', () => { STORE.auth.logout();
+            Toast.success('Logged out');
+            Router.navigate('/'); });
+          container.appendChild(logoutBtn);
+        } else {
+          const login = create('a', { href: '/login', text: 'Login', 'data-route': true });
+          container.appendChild(login);
+        }
+      }
+    };
+
+    // ============================================================
+    // 6. SAKURA PETALS
+    // ============================================================
+    function initSakura() {
+      const container = document.querySelector('.sakura-container');
+      if (!container) return;
+      empty(container);
+      const colors = ['#ffccd5', '#ffb3c1', '#ff4d6d', '#ffe5ec', '#fff0f3'];
+      for (let i = 0; i < 20; i++) {
+        const petal = create('div', { className: 'sakura-petal' });
+        petal.style.left = (Math.random() * 110 - 5) + '%';
+        const size = Math.random() * 14 + 7;
+        petal.style.width = size + 'px';
+        petal.style.height = size + 'px';
+        petal.style.animationDuration = (Math.random() * 8 + 6) + 's';
+        petal.style.animationDelay = `-${Math.random() * 20}s`;
+        petal.style.setProperty('--drift', (Math.random() * 160 - 80) + 'px');
+        petal.style.setProperty('--rotation', (Math.random() * 720 - 360) + 'deg');
+        const shape = create('div', { className: 'petal-shape' });
+        shape.style.setProperty('--petal-color', colors[Math.floor(Math.random() * colors.length)]);
+        petal.appendChild(shape);
+        container.appendChild(petal);
+      }
+    }
+
+    // ============================================================
+    // 7. PAGE RENDERERS
+    // ============================================================
+
+    // --- PUBLIC PAGES ---
+    function renderHome() {
+      const section = create('div', { className: 'relative overflow-hidden min-h-[80vh] flex items-center justify-center' });
+      const sakura = create('div', { className: 'sakura-container' });
+      section.appendChild(sakura);
+      const content = create('div', { className: 'container relative z-10 text-center py-16' });
+      append(content,
+        create('h1', { className: 'text-4xl md:text-6xl font-black', html: '🐺 <span class="luxury-title-gradient">Wolf Society</span>' }),
+        create('p', { className: 'text-xl text-muted mt-4', text: 'A Kingdom of Competitive Excellence' }),
+        create('p', { className: 'text-muted mt-2 max-w-2xl mx-auto', text: 'Divine Wolf – Elite esports, tactical streetwear, and absolute dominance.' }),
+        create('div', { className: 'flex gap-2 mt-6 justify-center' },
+          create('a', { className: 'btn btn-accent', href: '/teams', 'data-route': true, text: 'View Teams' }),
+          create('a', { className: 'btn btn-outline', href: '/contact', 'data-route': true, text: 'Contact Us' })
+        )
+      );
+      section.appendChild(content);
+      setTimeout(initSakura, 100);
+      return section;
+    }
+
+    function renderAbout() {
+      return create('div', { className: 'container py-12' }, [
+        create('h1', { className: 'text-3xl font-black', text: 'About Wolf Society' }),
+        create('p', { className: 'text-muted mt-4', text: 'Wolf Society is a premier esports organization founded in 2024. We compete in Valorant, CS2, and more.' }),
+        create('p', { className: 'text-muted mt-2', text: 'Our flagship team, Divine Wolf, has won 5 regional championships.' })
+      ]);
+    }
+
+    function renderTeams() {
+      const teams = STORE.read('wolf_teams');
+      const container = create('div', { className: 'container py-12' });
+      append(container, create('h1', { className: 'text-3xl font-black', text: 'Our Teams' }));
+      const grid = create('div', { className: 'grid grid-cols-2 md:grid-cols-3 gap-4 mt-6' });
+      teams.forEach(t => {
+        const card = create('div', { className: 'card' });
+        append(card,
+          create('h3', { className: 'text-xl font-bold', text: t.name }),
+          create('p', { className: 'text-muted', text: `Game: ${t.game} | ${t.wins}W - ${t.losses}L` })
+        );
+        grid.appendChild(card);
+      });
+      container.appendChild(grid);
+      return container;
+    }
+
+    function renderContact() {
+      const container = create('div', { className: 'container py-12 max-w-2xl mx-auto' });
+      append(container,
+        create('h1', { className: 'text-3xl font-black', text: 'Contact Us' }),
+        create('form', { className: 'mt-6', id: 'contact-form' },
+          create('div', { className: 'form-group' }, [
+            create('label', { text: 'Name' }),
+            create('input', { className: 'form-control', type: 'text', name: 'name', placeholder: 'Your name' })
+          ]),
+          create('div', { className: 'form-group' }, [
+            create('label', { text: 'Email' }),
+            create('input', { className: 'form-control', type: 'email', name: 'email', placeholder: 'your@email.com' })
+          ]),
+          create('div', { className: 'form-group' }, [
+            create('label', { text: 'Message' }),
+            create('textarea', { className: 'form-control', name: 'message', rows: 4, placeholder: 'Your message...' })
+          ]),
+          create('button', { className: 'btn btn-primary', type: 'submit', text: 'Send Message' })
+        )
+      );
+      const form = container.querySelector('#contact-form');
+      on(form, 'submit', (e) => {
+        e.preventDefault();
+        Toast.success('Message sent! (demo)');
+        form.reset();
+      });
+      return container;
+    }
+
+    // --- AUTH PAGES ---
+    function renderLogin() {
+      const container = create('div', { className: 'container py-12 max-w-md mx-auto' });
+      append(container,
+        create('h1', { className: 'text-2xl font-black text-center', text: 'Login' }),
+        create('form', { id: 'login-form', className: 'mt-6' },
+          create('div', { className: 'form-group' }, [
+            create('label', { text: 'Email' }),
+            create('input', { className: 'form-control', type: 'email', id: 'login-email', placeholder: 'admin@wolfsociety.gg' })
+          ]),
+          create('div', { className: 'form-group' }, [
+            create('label', { text: 'Password' }),
+            create('input', { className: 'form-control', type: 'password', id: 'login-password', placeholder: '••••••••' })
+          ]),
+          create('button', { className: 'btn btn-primary w-full', type: 'submit', text: 'Login' }),
+          create('p', { className: 'text-center text-muted mt-4', html: 'Demo: admin@wolfsociety.gg / admin123' })
+        )
+      );
+      const form = container.querySelector('#login-form');
+      on(form, 'submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        try {
+          const user = STORE.auth.login(email, password);
+          Toast.success(`Welcome, ${user.name || user.email}`);
+          Router.navigate(user.role === 'management' ? '/management/dashboard' : '/player/dashboard');
+        } catch (err) {
+          Toast.error('Invalid credentials');
+        }
+      });
+      return container;
+    }
+
+    function renderRegister() {
+      const container = create('div', { className: 'container py-12 max-w-md mx-auto' });
+      append(container,
+        create('h1', { className: 'text-2xl font-black text-center', text: 'Register' }),
+        create('form', { id: 'register-form', className: 'mt-6' },
+          create('div', { className: 'form-group' }, [
+            create('label', { text: 'Name' }),
+            create('input', { className: 'form-control', type: 'text', id: 'reg-name', placeholder: 'Your name' })
+          ]),
+          create('div', { className: 'form-group' }, [
+            create('label', { text: 'Email' }),
+            create('input', { className: 'form-control', type: 'email', id: 'reg-email', placeholder: 'your@email.com' })
+          ]),
+          create('div', { className: 'form-group' }, [
+            create('label', { text: 'Password' }),
+            create('input', { className: 'form-control', type: 'password', id: 'reg-password', placeholder: '••••••••' })
+          ]),
+          create('button', { className: 'btn btn-primary w-full', type: 'submit', text: 'Register' })
+        )
+      );
+      const form = container.querySelector('#register-form');
+      on(form, 'submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('reg-name').value;
+        const email = document.getElementById('reg-email').value;
+        const password = document.getElementById('reg-password').value;
+        if (!name || !email || !password) { Toast.error('All fields required'); return; }
+        const users = STORE.get('wolf_users');
+        if (users.find(u => u.email === email)) { Toast.error('Email already exists'); return; }
+        STORE.create('wolf_users', { email, password, name, role: 'player' });
+        Toast.success('Account created! Please login.');
+        Router.navigate('/login');
+      });
+      return container;
+    }
+
+    // --- PLAYER DASHBOARD ---
+    function renderPlayerDashboard() {
+      const user = STORE.auth.getUser();
+      const players = STORE.read('wolf_players');
+      const player = players.find(p => p.display_name === user?.name) || players[0];
+      const matches = STORE.read('wolf_matches');
+      const container = create('div', { className: 'container py-8' });
+      append(container,
+        create('div', { className: 'dashboard-header' },
+          create('h1', { text: `🐺 Welcome, ${player?.display_name || user?.name || 'Player'}` })
+        ),
+        create('div', { className: 'stats-grid' },
+          create('div', { className: 'stat-card' }, [create('div', { className: 'stat-value', text: matches.length }), create('div', { className: 'stat-label', text: 'Matches Played' })]),
+          create('div', { className: 'stat-card' }, [create('div', { className: 'stat-value', text: '2.5' }), create('div', { className: 'stat-label', text: 'K/D Ratio' })]),
+          create('div', { className: 'stat-card' }, [create('div', { className: 'stat-value', text: '65%' }), create('div', { className: 'stat-label', text: 'Win Rate' })])
+        ),
+        create('h2', { className: 'text-xl font-bold mt-6', text: 'Recent Matches' }),
+        create('ul', { className: 'mt-4 space-y-2' },
+          matches.slice(0, 5).map(m =>
+            create('li', { className: 'card p-3 flex justify-between' }, [
+              create('span', { text: `${m.opponent} – ${m.result}` }),
+              create('span', { className: 'text-muted', text: m.date })
+            ])
+          )
+        )
+      );
+      return container;
+    }
+
+    function renderPlayerProfile() {
+      const user = STORE.auth.getUser();
+      const players = STORE.read('wolf_players');
+      const player = players.find(p => p.display_name === user?.name) || players[0] || { display_name: 'Player', game: 'Valorant', role: 'IGL', status: 'active' };
+      const container = create('div', { className: 'container py-8 max-w-2xl mx-auto' });
+      append(container,
+        create('h1', { className: 'text-2xl font-black', text: 'My Profile' }),
+        create('div', { className: 'card mt-6' },
+          create('div', { className: 'form-group' }, [create('label', { text: 'Display Name' }), create('input', { className: 'form-control', value: player.display_name || '', id: 'prof-name' })]),
+          create('div', { className: 'form-group' }, [create('label', { text: 'Game' }), create('input', { className: 'form-control', value: player.game || '', id: 'prof-game' })]),
+          create('div', { className: 'form-group' }, [create('label', { text: 'Role' }), create('input', { className: 'form-control', value: player.role || '', id: 'prof-role' })]),
+          create('button', { className: 'btn btn-primary', text: 'Update Profile', id: 'update-profile-btn' })
+        )
+      );
+      const btn = container.querySelector('#update-profile-btn');
+      on(btn, 'click', () => {
+        const name = document.getElementById('prof-name').value;
+        const game = document.getElementById('prof-game').value;
+        const role = document.getElementById('prof-role').value;
+        if (player.id) {
+          STORE.update('wolf_players', player.id, { display_name: name, game, role });
+          Toast.success('Profile updated!');
+        } else {
+          STORE.create('wolf_players', { display_name: name, game, role, status: 'active' });
+          Toast.success('Profile created!');
+        }
+      });
+      return container;
+    }
+
+    function renderPlayerMatches() {
+      const matches = STORE.read('wolf_matches');
+      const container = create('div', { className: 'container py-8' });
+      append(container,
+        create('h1', { className: 'text-2xl font-black', text: 'My Matches' }),
+        create('div', { className: 'table-container mt-6' },
+          create('table', {},
+            create('thead', {},
+              create('tr', {},
+                ['Opponent', 'Game', 'Date', 'Result', 'Score'].map(h => create('th', { text: h }))
+              )
+            ),
+            create('tbody', {},
+              matches.map(m =>
+                create('tr', {},
+                  [m.opponent, m.game, m.date, m.result, m.score || '-'].map(c => create('td', { text: c }))
+                )
+              )
+            )
+          )
+        )
+      );
+      return container;
+    }
+
+    // --- MANAGEMENT DASHBOARD ---
+    function renderManagementDashboard() {
+      const players = STORE.read('wolf_players');
+      const matches = STORE.read('wolf_matches');
+      const teams = STORE.read('wolf_teams');
+      const announcements = STORE.read('wolf_announcements');
+      const container = create('div', { className: 'container py-8' });
+      append(container,
+        create('div', { className: 'dashboard-header' }, create('h1', { text: '⚙️ Management Dashboard' })),
+        create('div', { className: 'stats-grid' },
+          create('div', { className: 'stat-card' }, [create('div', { className: 'stat-value', text: players.length }), create('div', { className: 'stat-label', text: 'Players' })]),
+          create('div', { className: 'stat-card' }, [create('div', { className: 'stat-value', text: matches.length }), create('div', { className: 'stat-label', text: 'Matches' })]),
+          create('div', { className: 'stat-card' }, [create('div', { className: 'stat-value', text: teams.length }), create('div', { className: 'stat-label', text: 'Teams' })]),
+          create('div', { className: 'stat-card' }, [create('div', { className: 'stat-value', text: announcements.length }), create('div', { className: 'stat-label', text: 'Announcements' })])
+        ),
+        create('div', { className: 'tabs' },
+          ['Players', 'Matches', 'Teams', 'Announcements'].map(label => {
+            const btn = create('button', { className: 'tab-btn', text: label });
+            on(btn, 'click', () => {
+              $$('.tab-btn').forEach(b => b.classList.remove('active'));
+              btn.classList.add('active');
+              const map = { 'Players': renderManagementPlayers, 'Matches': renderManagementMatches, 'Teams': renderManagementTeams,
+                'Announcements': renderManagementAnnouncements };
+              const content = container.querySelector('.tab-content');
+              empty(content);
+              content.appendChild(map[label]({ api: STORE }));
+            });
+            return btn;
+          })
+        ),
+        create('div', { className: 'tab-content mt-4' })
+      );
+      // Default tab
+      const firstTab = container.querySelector('.tab-btn');
+      if (firstTab) firstTab.classList.add('active');
+      const content = container.querySelector('.tab-content');
+      content.appendChild(renderManagementPlayers({ api: STORE }));
+      return container;
+    }
+
+    function renderManagementPlayers({ api }) {
+      const players = api.read('wolf_players');
+      const container = create('div');
+      append(container,
+        create('button', { className: 'btn btn-primary mb-4', text: '+ Add Player', id: 'add-player-btn' })
+      );
+      const table = create('div', { className: 'table-container' },
+        create('table', {},
+          create('thead', {},
+            create('tr', {},
+              ['Name', 'Game', 'Role', 'Status', 'Actions'].map(h => create('th', { text: h }))
+            )
+          ),
+          create('tbody', { id: 'player-table-body' },
+            players.map(p =>
+              create('tr', { 'data-id': p.id },
+                create('td', { text: p.display_name }),
+                create('td', { text: p.game || '-' }),
+                create('td', { text: p.role || '-' }),
+                create('td', { text: p.status || 'active' }),
+                create('td', {},
+                  create('button', { className: 'btn btn-outline btn-sm', text: 'Edit', 'data-id': p.id, 'data-action': 'edit-player' }),
+                  create('button', { className: 'btn btn-danger btn-sm ml-1', text: 'Delete', 'data-id': p.id, 'data-action': 'delete-player' })
+                )
+              )
+            )
+          )
+        )
+      );
+      container.appendChild(table);
+
+      // Add Player
+      const addBtn = container.querySelector('#add-player-btn');
+      on(addBtn, 'click', () => {
+        const form = create('div');
+        append(form,
+          create('div', { className: 'form-group' }, [create('label', { text: 'Display Name' }), create('input', { className: 'form-control', id: 'p-name', placeholder: 'Name' })]),
+          create('div', { className: 'form-group' }, [create('label', { text: 'Game' }), create('input', { className: 'form-control', id: 'p-game', placeholder: 'Game' })]),
+          create('div', { className: 'form-group' }, [create('label', { text: 'Role' }), create('input', { className: 'form-control', id: 'p-role', placeholder: 'Role' })]),
+          create('button', { className: 'btn btn-success', text: 'Save', id: 'save-player-btn' })
+        );
+        Modal.open({ title: 'Add Player', content: form });
+        const saveBtn = form.querySelector('#save-player-btn');
+        on(saveBtn, 'click', () => {
+          const name = form.querySelector('#p-name').value;
+          const game = form.querySelector('#p-game').value;
+          const role = form.querySelector('#p-role').value;
+          if (!name) { Toast.error('Name required'); return; }
+          api.create('wolf_players', { display_name: name, game, role, status: 'active' });
+          Toast.success('Player added');
+          Modal.close(form.closest('.modal-overlay'));
+          Router.navigate('/management/dashboard');
+        });
+      });
+
+      // Delete / Edit events (delegation)
+      on(table, 'click', (e) => {
+        const target = e.target.closest('button');
+        if (!target) return;
+        const id = target.dataset.id;
+        const action = target.dataset.action;
+        if (action === 'delete-player') {
+          Modal.confirm('Delete this player?', () => {
+            api.delete('wolf_players', id);
+            Toast.success('Deleted');
+            Router.navigate('/management/dashboard');
+          });
+        }
+        if (action === 'edit-player') {
+          const p = players.find(p => p.id === id);
+          if (!p) return;
+          const form = create('div');
+          append(form,
+            create('div', { className: 'form-group' }, [create('label', { text: 'Display Name' }), create('input', { className: 'form-control', id: 'e-name', value: p.display_name })]),
+            create('div', { className: 'form-group' }, [create('label', { text: 'Game' }), create('input', { className: 'form-control', id: 'e-game', value: p.game || '' })]),
+            create('div', { className: 'form-group' }, [create('label', { text: 'Role' }), create('input', { className: 'form-control', id: 'e-role', value: p.role || '' })]),
+            create('button', { className: 'btn btn-success', text: 'Update', id: 'edit-save-btn' })
+          );
+          Modal.open({ title: 'Edit Player', content: form });
+          const saveBtn = form.querySelector('#edit-save-btn');
+          on(saveBtn, 'click', () => {
+            const name = form.querySelector('#e-name').value;
+            const game = form.querySelector('#e-game').value;
+            const role = form.querySelector('#e-role').value;
+            api.update('wolf_players', id, { display_name: name, game, role });
+            Toast.success('Updated');
+            Modal.close(form.closest('.modal-overlay'));
+            Router.navigate('/management/dashboard');
+          });
+        }
+      });
+      return container;
+    }
+
+    function renderManagementMatches({ api }) {
+      const matches = api.read('wolf_matches');
+      const container = create('div');
+      append(container,
+        create('button', { className: 'btn btn-primary mb-4', text: '+ Add Match', id: 'add-match-btn' })
+      );
+      const table = create('div', { className: 'table-container' },
+        create('table', {},
+          create('thead', {},
+            create('tr', {},
+              ['Opponent', 'Game', 'Date', 'Result', 'Score', 'Actions'].map(h => create('th', { text: h }))
+            )
+          ),
+          create('tbody', { id: 'match-table-body' },
+            matches.map(m =>
+              create('tr', { 'data-id': m.id },
+                create('td', { text: m.opponent }),
+                create('td', { text: m.game }),
+                create('td', { text: m.date }),
+                create('td', { text: m.result || 'upcoming' }),
+                create('td', { text: m.score || '-' }),
+                create('td', {},
+                  create('button', { className: 'btn btn-danger btn-sm', text: 'Delete', 'data-id': m.id, 'data-action': 'delete-match' })
+                )
+              )
+            )
+          )
+        )
+      );
+      container.appendChild(table);
+
+      const addBtn = container.querySelector('#add-match-btn');
+      on(addBtn, 'click', () => {
+        const form = create('div');
+        append(form,
+          create('div', { className: 'form-group' }, [create('label', { text: 'Opponent' }), create('input', { className: 'form-control', id: 'm-opponent', placeholder: 'Opponent' })]),
+          create('div', { className: 'form-group' }, [create('label', { text: 'Game' }), create('input', { className: 'form-control', id: 'm-game', placeholder: 'Game' })]),
+          create('div', { className: 'form-group' }, [create('label', { text: 'Date' }), create('input', { className: 'form-control', id: 'm-date', type: 'date' })]),
+          create('div', { className: 'form-group' }, [create('label', { text: 'Result' }), create('select', { className: 'form-control', id: 'm-result' },
+              ['upcoming', 'win', 'loss', 'draw'].map(o => create('option', { value: o, text: o }))
+            )]),
+          create('div', { className: 'form-group' }, [create('label', { text: 'Score' }), create('input', { className: 'form-control', id: 'm-score', placeholder: '13-8' })]),
+          create('button', { className: 'btn btn-success', text: 'Save', id: 'save-match-btn' })
+        );
+        Modal.open({ title: 'Add Match', content: form });
+        const saveBtn = form.querySelector('#save-match-btn');
+        on(saveBtn, 'click', () => {
+          const opponent = form.querySelector('#m-opponent').value;
+          const game = form.querySelector('#m-game').value;
+          const date = form.querySelector('#m-date').value;
+          const result = form.querySelector('#m-result').value;
+          const score = form.querySelector('#m-score').value;
+          if (!opponent || !game || !date) { Toast.error('Required fields missing'); return; }
+          api.create('wolf_matches', { opponent, game, date, result, score, team: 't1' });
+          Toast.success('Match added');
+          Modal.close(form.closest('.modal-overlay'));
+          Router.navigate('/management/dashboard');
+        });
+      });
+
+      on(table, 'click', (e) => {
+        const target = e.target.closest('button');
+        if (!target) return;
+        const id = target.dataset.id;
+        if (target.dataset.action === 'delete-match') {
+          Modal.confirm('Delete this match?', () => {
+            api.delete('wolf_matches', id);
+            Toast.success('Deleted');
+            Router.navigate('/management/dashboard');
+          });
+        }
+      });
+      return container;
+    }
+
+    function renderManagementTeams({ api }) {
+      const teams = api.read('wolf_teams');
+      const container = create('div');
+      append(container,
+        create('button', { className: 'btn btn-primary mb-4', text: '+ Add Team', id: 'add-team-btn' })
+      );
+      const table = create('div', { className: 'table-container' },
+        create('table', {},
+          create('thead', {},
+            create('tr', {},
+              ['Name', 'Tag', 'Game', 'Wins', 'Losses', 'Actions'].map(h => create('th', { text: h }))
+            )
+          ),
+          create('tbody', { id: 'team-table-body' },
+            teams.map(t =>
+              create('tr', { 'data-id': t.id },
+                create('td', { text: t.name }),
+                create('td', { text: t.tag }),
+                create('td', { text: t.game }),
+                create('td', { text: t.wins || 0 }),
+                create('td', { text: t.losses || 0 }),
+                create('td', {},
+                  create('button', { className: 'btn btn-danger btn-sm', text: 'Delete', 'data-id': t.id, 'data-action': 'delete-team' })
+                )
+              )
+            )
+          )
+        )
+      );
+      container.appendChild(table);
+
+      const addBtn = container.querySelector('#add-team-btn');
+      on(addBtn, 'click', () => {
+        const form = create('div');
+        append(form,
+          create('div', { className: 'form-group' }, [create('label', { text: 'Name' }), create('input', { className: 'form-control', id: 't-name', placeholder: 'Team name' })]),
+          create('div', { className: 'form-group' }, [create('label', { text: 'Tag' }), create('input', { className: 'form-control', id: 't-tag', placeholder: 'TAG' })]),
+          create('div', { className: 'form-group' }, [create('label', { text: 'Game' }), create('input', { className: 'form-control', id: 't-game', placeholder: 'Game' })]),
+          create('button', { className: 'btn btn-success', text: 'Save', id: 'save-team-btn' })
+        );
+        Modal.open({ title: 'Add Team', content: form });
+        const saveBtn = form.querySelector('#save-team-btn');
+        on(saveBtn, 'click', () => {
+          const name = form.querySelector('#t-name').value;
+          const tag = form.querySelector('#t-tag').value;
+          const game = form.querySelector('#t-game').value;
+          if (!name || !tag || !game) { Toast.error('All fields required'); return; }
+          api.create('wolf_teams', { name, tag, game, wins: 0, losses: 0 });
+          Toast.success('Team added');
+          Modal.close(form.closest('.modal-overlay'));
+          Router.navigate('/management/dashboard');
+        });
+      });
+
+      on(table, 'click', (e) => {
+        const target = e.target.closest('button');
+        if (!target) return;
+        if (target.dataset.action === 'delete-team') {
+          Modal.confirm('Delete this team?', () => {
+            STORE.delete('wolf_teams', target.dataset.id);
+            Toast.success('Deleted');
+            Router.navigate('/management/dashboard');
+          });
+        }
+      });
+      return container;
+    }
+
+    function renderManagementAnnouncements({ api }) {
+      const announcements = api.read('wolf_announcements');
+      const container = create('div');
+      append(container,
+        create('button', { className: 'btn btn-primary mb-4', text: '+ Add Announcement', id: 'add-announcement-btn' })
+      );
+      const table = create('div', { className: 'table-container' },
+        create('table', {},
+          create('thead', {},
+            create('tr', {},
+              ['Title', 'Published', 'Pinned', 'Actions'].map(h => create('th', { text: h }))
+            )
+          ),
+          create('tbody', { id: 'announcement-table-body' },
+            announcements.map(a =>
+              create('tr', { 'data-id': a.id },
+                create('td', { text: a.title }),
+                create('td', { text: a.published ? '✅' : '❌' }),
+                create('td', { text: a.pinned ? '📌' : '' }),
+                create('td', {},
+                  create('button', { className: 'btn btn-danger btn-sm', text: 'Delete', 'data-id': a.id, 'data-action': 'delete-announcement' })
+                )
+              )
+            )
+          )
+        )
+      );
+      container.appendChild(table);
+
+      const addBtn = container.querySelector('#add-announcement-btn');
+      on(addBtn, 'click', () => {
+        const form = create('div');
+        append(form,
+          create('div', { className: 'form-group' }, [create('label', { text: 'Title' }), create('input', { className: 'form-control', id: 'a-title', placeholder: 'Title' })]),
+          create('div', { className: 'form-group' }, [create('label', { text: 'Content' }), create('textarea', { className: 'form-control', id: 'a-content', rows: 3, placeholder: 'Content' })]),
+          create('div', { className: 'form-group' }, [
+            create('label', { text: 'Pinned' }),
+            create('input', { className: 'form-control', type: 'checkbox', id: 'a-pinned' })
+          ]),
+          create('button', { className: 'btn btn-success', text: 'Save', id: 'save-announcement-btn' })
+        );
+        Modal.open({ title: 'Add Announcement', content: form });
+        const saveBtn = form.querySelector('#save-announcement-btn');
+        on(saveBtn, 'click', () => {
+          const title = form.querySelector('#a-title').value;
+          const content = form.querySelector('#a-content').value;
+          const pinned = form.querySelector('#a-pinned').checked;
+          if (!title || !content) { Toast.error('Title and content required'); return; }
+          api.create('wolf_announcements', { title, content, pinned, published: true });
+          Toast.success('Announcement added');
+          Modal.close(form.closest('.modal-overlay'));
+          Router.navigate('/management/dashboard');
+        });
+      });
+
+      on(table, 'click', (e) => {
+        const target = e.target.closest('button');
+        if (!target) return;
+        if (target.dataset.action === 'delete-announcement') {
+          Modal.confirm('Delete this announcement?', () => {
+            STORE.delete('wolf_announcements', target.dataset.id);
+            Toast.success('Deleted');
+            Router.navigate('/management/dashboard');
+          });
+        }
+      });
+      return container;
+    }
+
+    // ============================================================
+    // 8. BOOTSTRAP
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', () => {
+      Router.init();
+      // Expose STORE for console debugging
+      window.__STORE = STORE;
+      window.__Router = Router;
+      window.__Toast = Toast;
+    });
+  </script>
+</body>
+</html>
