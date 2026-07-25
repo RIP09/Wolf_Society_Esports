@@ -2,250 +2,1504 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
   <title>Wolf Society Esports – Divine Wolf</title>
+  
+  <!-- ===== SEO & META ===== -->
+  <meta name="description" content="Wolf Society Esports – Divine Wolf. Elite competitive gaming, tactical streetwear, and absolute dominance." />
+  <meta name="keywords" content="esports, wolf society, divine wolf, gaming, competitive, BGMI, Valorant" />
+  <meta name="author" content="Wolf Society Esports" />
+  <meta property="og:title" content="Wolf Society Esports – Divine Wolf" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://wolfsocietygg.vercel.app" />
+  <meta property="og:image" content="https://wolfsocietygg.vercel.app/og-image.jpg" />
+  <meta property="og:description" content="A Kingdom of Competitive Excellence." />
+  <meta name="theme-color" content="#1a237e" />
+  
+  <!-- ===== FONTS ===== -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  
+  <!-- ===== ICONS ===== -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/phosphor-icons@1.4.2/src/css/phosphor.css" />
+  
   <style>
     /* ============================================================
-       COMPLETE CSS – Modern Wolf Society Theme
+       SECTION 1: CSS VARIABLES & ROOT
        ============================================================ */
     :root {
+      /* Primary Colors */
       --primary: #1a237e;
       --primary-dark: #0d1445;
+      --primary-light: #2a3a9e;
       --secondary: #c0c0c0;
       --accent: #ffd700;
+      --accent-dark: #e6c200;
       --alert: #d32f2f;
       --success: #4caf50;
+      --warning: #ff9800;
+      --info: #2196f3;
+      
+      /* Background Colors */
       --bg-dark: #0d1117;
+      --bg-darker: #06090e;
       --bg-light: #161b22;
+      --bg-card: rgba(22, 27, 34, 0.85);
+      
+      /* Text Colors */
       --text-light: #f0f6fc;
       --text-muted: #8b949e;
+      --text-dark: #161b22;
+      --text-primary: #f0f6fc;
+      
+      /* Border & Effects */
       --border: #30363d;
-      --radius: 8px;
-      --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-      --transition: 0.2s ease-in-out;
+      --border-light: #484f58;
+      --radius: 12px;
+      --radius-sm: 6px;
+      --radius-lg: 20px;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 8px 48px rgba(0, 0, 0, 0.6);
+      --shadow-glow: 0 0 40px rgba(255, 215, 0, 0.08);
+      
+      /* Transitions */
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      
+      /* Typography */
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-display: 'Outfit', 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+      
+      /* Spacing */
+      --spacing-xs: 0.25rem;
+      --spacing-sm: 0.5rem;
+      --spacing-md: 1rem;
+      --spacing-lg: 1.5rem;
+      --spacing-xl: 2rem;
+      --spacing-2xl: 3rem;
+      --spacing-3xl: 4rem;
+      
+      /* Z-Index Layers */
+      --z-base: 1;
+      --z-nav: 100;
+      --z-modal: 1000;
+      --z-toast: 2000;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+
+    /* ============================================================
+       SECTION 2: RESET & BASE
+       ============================================================ */
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body {
-      font-family: 'Inter', -apple-system, sans-serif;
+      font-family: var(--font-sans);
       background: var(--bg-dark);
       color: var(--text-light);
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
       min-height: 100vh;
+      overflow-x: hidden;
     }
-    a { color: inherit; text-decoration: none; }
-    ul, ol { list-style: none; }
-    img { max-width: 100%; display: block; }
 
-    /* Utilities */
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+    /* Selection */
+    ::selection {
+      background: var(--accent);
+      color: var(--bg-dark);
+    }
+    ::-moz-selection {
+      background: var(--accent);
+      color: var(--bg-dark);
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-dark);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-light);
+    }
+
+    /* Links */
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Lists */
+    ul,
+    ol {
+      list-style: none;
+    }
+
+    /* Images */
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    /* Buttons & Inputs */
+    button,
+    input,
+    select,
+    textarea {
+      font-family: inherit;
+      font-size: inherit;
+      line-height: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: inherit;
+    }
+
+    /* Focus */
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* ============================================================
+       SECTION 3: UTILITY CLASSES
+       ============================================================ */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-lg);
+    }
+
+    .container-sm {
+      max-width: 800px;
+    }
+
+    .container-fluid {
+      padding: 0 var(--spacing-lg);
+    }
+
+    /* Text Alignment */
     .text-center { text-align: center; }
+    .text-left { text-align: left; }
+    .text-right { text-align: right; }
+    .text-justify { text-align: justify; }
+
+    /* Flexbox */
     .flex { display: flex; }
     .flex-col { flex-direction: column; }
+    .flex-row { flex-direction: row; }
+    .flex-wrap { flex-wrap: wrap; }
+    .flex-nowrap { flex-wrap: nowrap; }
     .items-center { align-items: center; }
+    .items-start { align-items: flex-start; }
+    .items-end { align-items: flex-end; }
+    .items-stretch { align-items: stretch; }
+    .justify-center { justify-content: center; }
     .justify-between { justify-content: space-between; }
-    .gap-1 { gap: 0.5rem; }
-    .gap-2 { gap: 1rem; }
-    .gap-3 { gap: 1.5rem; }
+    .justify-around { justify-content: space-around; }
+    .justify-end { justify-content: flex-end; }
+    .justify-start { justify-content: flex-start; }
+    .gap-1 { gap: var(--spacing-sm); }
+    .gap-2 { gap: var(--spacing-md); }
+    .gap-3 { gap: var(--spacing-lg); }
+    .gap-4 { gap: var(--spacing-xl); }
+    .gap-5 { gap: var(--spacing-2xl); }
+    .flex-1 { flex: 1; }
+    .flex-2 { flex: 2; }
+    .flex-3 { flex: 3; }
+    .flex-shrink-0 { flex-shrink: 0; }
+    .flex-grow-0 { flex-grow: 0; }
+
+    /* Grid */
     .grid { display: grid; }
+    .grid-cols-1 { grid-template-columns: 1fr; }
     .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
     .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
     .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+    .grid-cols-5 { grid-template-columns: repeat(5, 1fr); }
+    .grid-cols-6 { grid-template-columns: repeat(6, 1fr); }
+    .grid-cols-12 { grid-template-columns: repeat(12, 1fr); }
+    .gap-1 { gap: var(--spacing-sm); }
+    .gap-2 { gap: var(--spacing-md); }
+    .gap-3 { gap: var(--spacing-lg); }
+    .gap-4 { gap: var(--spacing-xl); }
+
+    /* Spacing */
+    .p-1 { padding: var(--spacing-sm); }
+    .p-2 { padding: var(--spacing-md); }
+    .p-3 { padding: var(--spacing-lg); }
+    .p-4 { padding: var(--spacing-xl); }
+    .p-5 { padding: var(--spacing-2xl); }
+    .px-1 { padding-left: var(--spacing-sm); padding-right: var(--spacing-sm); }
+    .px-2 { padding-left: var(--spacing-md); padding-right: var(--spacing-md); }
+    .px-3 { padding-left: var(--spacing-lg); padding-right: var(--spacing-lg); }
+    .px-4 { padding-left: var(--spacing-xl); padding-right: var(--spacing-xl); }
+    .py-1 { padding-top: var(--spacing-sm); padding-bottom: var(--spacing-sm); }
+    .py-2 { padding-top: var(--spacing-md); padding-bottom: var(--spacing-md); }
+    .py-3 { padding-top: var(--spacing-lg); padding-bottom: var(--spacing-lg); }
+    .py-4 { padding-top: var(--spacing-xl); padding-bottom: var(--spacing-xl); }
+    
+    .m-1 { margin: var(--spacing-sm); }
+    .m-2 { margin: var(--spacing-md); }
+    .m-3 { margin: var(--spacing-lg); }
+    .m-4 { margin: var(--spacing-xl); }
+    .mx-auto { margin-left: auto; margin-right: auto; }
+    .my-auto { margin-top: auto; margin-bottom: auto; }
+    .mt-1 { margin-top: var(--spacing-sm); }
+    .mt-2 { margin-top: var(--spacing-md); }
+    .mt-3 { margin-top: var(--spacing-lg); }
+    .mt-4 { margin-top: var(--spacing-xl); }
+    .mt-5 { margin-top: var(--spacing-2xl); }
+    .mb-1 { margin-bottom: var(--spacing-sm); }
+    .mb-2 { margin-bottom: var(--spacing-md); }
+    .mb-3 { margin-bottom: var(--spacing-lg); }
+    .mb-4 { margin-bottom: var(--spacing-xl); }
+    .mb-5 { margin-bottom: var(--spacing-2xl); }
+
+    /* Width & Height */
     .w-full { width: 100%; }
-    .p-1 { padding: 0.5rem; }
-    .p-2 { padding: 1rem; }
-    .p-3 { padding: 1.5rem; }
-    .m-1 { margin: 0.5rem; }
-    .m-2 { margin: 1rem; }
+    .w-auto { width: auto; }
+    .w-1\/2 { width: 50%; }
+    .w-1\/3 { width: 33.333%; }
+    .w-2\/3 { width: 66.666%; }
+    .w-1\/4 { width: 25%; }
+    .w-3\/4 { width: 75%; }
+    .h-full { height: 100%; }
+    .h-auto { height: auto; }
+    .min-h-screen { min-height: 100vh; }
+    .min-h-64 { min-height: 16rem; }
+    .min-h-96 { min-height: 24rem; }
+
+    /* Display */
+    .block { display: block; }
+    .inline-block { display: inline-block; }
+    .inline { display: inline; }
+    .hidden { display: none !important; }
+    .relative { position: relative; }
+    .absolute { position: absolute; }
+    .fixed { position: fixed; }
+    .sticky { position: sticky; }
+    .top-0 { top: 0; }
+    .left-0 { left: 0; }
+    .right-0 { right: 0; }
+    .bottom-0 { bottom: 0; }
+    .z-10 { z-index: 10; }
+    .z-20 { z-index: 20; }
+    .z-50 { z-index: 50; }
+    .z-100 { z-index: 100; }
+    .z-1000 { z-index: 1000; }
+
+    /* Overflow */
+    .overflow-hidden { overflow: hidden; }
+    .overflow-auto { overflow: auto; }
+    .overflow-y-auto { overflow-y: auto; }
+    .overflow-x-auto { overflow-x: auto; }
+
+    /* Border & Radius */
     .rounded { border-radius: var(--radius); }
+    .rounded-sm { border-radius: var(--radius-sm); }
+    .rounded-lg { border-radius: var(--radius-lg); }
     .rounded-full { border-radius: 9999px; }
+    .border { border: 1px solid var(--border); }
+    .border-t { border-top: 1px solid var(--border); }
+    .border-b { border-bottom: 1px solid var(--border); }
+    .border-l { border-left: 1px solid var(--border); }
+    .border-r { border-right: 1px solid var(--border); }
+    .border-accent { border-color: var(--accent); }
+    .border-primary { border-color: var(--primary); }
+    .border-transparent { border-color: transparent; }
+
+    /* Shadow */
     .shadow { box-shadow: var(--shadow); }
+    .shadow-lg { box-shadow: var(--shadow-lg); }
+    .shadow-glow { box-shadow: var(--shadow-glow); }
+    .shadow-none { box-shadow: none; }
+
+    /* Background */
     .bg-dark { background: var(--bg-dark); }
+    .bg-darker { background: var(--bg-darker); }
     .bg-light { background: var(--bg-light); }
+    .bg-primary { background: var(--primary); }
+    .bg-accent { background: var(--accent); }
+    .bg-transparent { background: transparent; }
+    .bg-gradient {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    }
+    .bg-gradient-accent {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+    }
+
+    /* Text Colors */
     .text-light { color: var(--text-light); }
     .text-muted { color: var(--text-muted); }
     .text-accent { color: var(--accent); }
     .text-primary { color: var(--primary); }
     .text-success { color: var(--success); }
     .text-alert { color: var(--alert); }
-    .hidden { display: none !important; }
-    .block { display: block; }
-    .relative { position: relative; }
-    .absolute { position: absolute; }
-    .fixed { position: fixed; }
-    .overflow-hidden { overflow: hidden; }
-    .overflow-auto { overflow: auto; }
-    .cursor-pointer { cursor: pointer; }
-    .select-none { user-select: none; }
-    .transition { transition: var(--transition); }
+    .text-warning { color: var(--warning); }
+    .text-info { color: var(--info); }
 
-    /* Components */
+    /* Font Utilities */
+    .font-sans { font-family: var(--font-sans); }
+    .font-display { font-family: var(--font-display); }
+    .font-mono { font-family: var(--font-mono); }
+    .font-thin { font-weight: 300; }
+    .font-normal { font-weight: 400; }
+    .font-medium { font-weight: 500; }
+    .font-semibold { font-weight: 600; }
+    .font-bold { font-weight: 700; }
+    .font-black { font-weight: 900; }
+    .text-xs { font-size: 0.75rem; }
+    .text-sm { font-size: 0.875rem; }
+    .text-base { font-size: 1rem; }
+    .text-lg { font-size: 1.125rem; }
+    .text-xl { font-size: 1.25rem; }
+    .text-2xl { font-size: 1.5rem; }
+    .text-3xl { font-size: 1.875rem; }
+    .text-4xl { font-size: 2.25rem; }
+    .text-5xl { font-size: 3rem; }
+    .text-6xl { font-size: 3.75rem; }
+    .text-7xl { font-size: 4.5rem; }
+    .text-8xl { font-size: 6rem; }
+    .uppercase { text-transform: uppercase; }
+    .lowercase { text-transform: lowercase; }
+    .capitalize { text-transform: capitalize; }
+    .normal-case { text-transform: none; }
+    .tracking-tight { letter-spacing: -0.02em; }
+    .tracking-wide { letter-spacing: 0.02em; }
+    .tracking-wider { letter-spacing: 0.04em; }
+    .tracking-widest { letter-spacing: 0.08em; }
+    .leading-none { line-height: 1; }
+    .leading-tight { line-height: 1.25; }
+    .leading-normal { line-height: 1.5; }
+    .leading-relaxed { line-height: 1.625; }
+    .leading-loose { line-height: 2; }
+    .truncate {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* ============================================================
+       SECTION 4: COMPONENT STYLES
+       ============================================================ */
+
+    /* ---- Buttons ---- */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
-      padding: 0.6rem 1.2rem;
+      gap: var(--spacing-sm);
+      padding: 0.65rem 1.4rem;
       border: none;
       border-radius: var(--radius);
       font-weight: 600;
       font-size: 0.875rem;
       transition: var(--transition);
       cursor: pointer;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
       background: var(--bg-light);
       color: var(--text-light);
-    }
-    .btn-primary { background: var(--primary); color: #fff; }
-    .btn-primary:hover { background: var(--primary-dark); }
-    .btn-accent { background: var(--accent); color: #000; }
-    .btn-accent:hover { background: #e6c200; }
-    .btn-success { background: var(--success); color: #fff; }
-    .btn-danger { background: var(--alert); color: #fff; }
-    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-light); }
-    .btn-outline:hover { background: var(--bg-light); }
-    .btn-sm { padding: 0.3rem 0.8rem; font-size: 0.75rem; }
-
-    .card {
-      background: var(--bg-light);
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.5rem;
+    }
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.03);
+      opacity: 0;
+      transition: var(--transition);
+    }
+    .btn:hover::after {
+      opacity: 1;
+    }
+    .btn:active {
+      transform: scale(0.96);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      border-color: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(26, 35, 126, 0.3);
+    }
+
+    .btn-accent {
+      background: var(--accent);
+      color: var(--bg-dark);
+      border-color: var(--accent);
+    }
+    .btn-accent:hover {
+      background: var(--accent-dark);
+      border-color: var(--accent-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: #fff;
+      border-color: var(--success);
+    }
+    .btn-success:hover {
+      background: #388e3c;
+      border-color: #388e3c;
+    }
+
+    .btn-danger {
+      background: var(--alert);
+      color: #fff;
+      border-color: var(--alert);
+    }
+    .btn-danger:hover {
+      background: #c62828;
+      border-color: #c62828;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-light);
+    }
+    .btn-outline:hover {
+      background: var(--bg-light);
+      border-color: var(--text-muted);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+    }
+    .btn-ghost:hover {
+      color: var(--text-light);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .btn-sm {
+      padding: 0.35rem 0.9rem;
+      font-size: 0.75rem;
+    }
+    .btn-lg {
+      padding: 0.85rem 2rem;
+      font-size: 1rem;
+    }
+    .btn-xl {
+      padding: 1rem 2.5rem;
+      font-size: 1.125rem;
+    }
+    .btn-block {
+      width: 100%;
+      justify-content: center;
+    }
+    .btn-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      padding: 0;
+      border-radius: 50%;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ---- Cards ---- */
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
       box-shadow: var(--shadow);
       transition: var(--transition);
     }
-    .card:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,0,0,0.5); }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-light);
+      box-shadow: var(--shadow-lg);
+    }
+    .card-glass {
+      background: rgba(22, 27, 34, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .card-glass:hover {
+      border-color: rgba(255, 215, 0, 0.15);
+    }
+    .card-accent {
+      border-top: 3px solid var(--accent);
+    }
+    .card-primary {
+      border-top: 3px solid var(--primary);
+    }
+    .card-success {
+      border-top: 3px solid var(--success);
+    }
+    .card-danger {
+      border-top: 3px solid var(--alert);
+    }
 
-    .form-group { margin-bottom: 1rem; }
-    .form-group label { display: block; margin-bottom: 0.25rem; font-weight: 600; color: var(--text-muted); font-size: 0.875rem; }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-md);
+      padding-bottom: var(--spacing-sm);
+      border-bottom: 1px solid var(--border);
+    }
+    .card-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: var(--text-light);
+    }
+    .card-subtitle {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+    .card-body {
+      padding: 0;
+    }
+    .card-footer {
+      margin-top: var(--spacing-md);
+      padding-top: var(--spacing-sm);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--spacing-sm);
+    }
+
+    /* ---- Forms ---- */
+    .form-group {
+      margin-bottom: var(--spacing-md);
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: var(--spacing-xs);
+      font-weight: 600;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+    .form-group .required {
+      color: var(--alert);
+      margin-left: 2px;
+    }
+    .form-group .helper {
+      display: block;
+      margin-top: var(--spacing-xs);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .form-group .error {
+      color: var(--alert);
+      font-size: 0.75rem;
+      margin-top: var(--spacing-xs);
+      display: none;
+    }
+    .form-group.error .error {
+      display: block;
+    }
+    .form-group.error .form-control {
+      border-color: var(--alert);
+    }
+
     .form-control {
       width: 100%;
-      padding: 0.6rem 0.8rem;
+      padding: 0.65rem 1rem;
       border: 1px solid var(--border);
       border-radius: var(--radius);
       background: var(--bg-dark);
       color: var(--text-light);
+      font-size: 0.875rem;
+      transition: var(--transition);
+      appearance: none;
+    }
+    .form-control:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(26, 35, 126, 0.12);
+    }
+    .form-control::placeholder {
+      color: var(--text-muted);
+    }
+    .form-control:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .form-control-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b949e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      padding-right: 2.5rem;
+    }
+    .form-control-select option {
+      background: var(--bg-dark);
+    }
+    .form-control-textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    .form-control-file {
+      padding: 0.5rem;
+      background: var(--bg-dark);
+    }
+    .form-control-file::file-selector-button {
+      padding: 0.4rem 1rem;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: var(--primary);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-right: 1rem;
+    }
+    .form-control-file::file-selector-button:hover {
+      background: var(--primary-dark);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-md);
+    }
+    .form-row-3 {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+    .form-row-4 {
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+
+    /* ---- Checkbox & Radio ---- */
+    .form-check {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-xs) 0;
+      cursor: pointer;
+    }
+    .form-check input[type="checkbox"],
+    .form-check input[type="radio"] {
+      width: 1.1rem;
+      height: 1.1rem;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+    .form-check-label {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    /* ---- Tables ---- */
+    .table-container {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    table thead {
+      background: var(--bg-dark);
+    }
+    table th {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+    }
+    table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-light);
+      vertical-align: middle;
+    }
+    table tbody tr {
       transition: var(--transition);
     }
-    .form-control:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(26,35,126,0.2); }
-    .form-control::placeholder { color: var(--text-muted); }
+    table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    table tbody tr:last-child td {
+      border-bottom: none;
+    }
+    .table-striped tbody tr:nth-child(odd) {
+      background: rgba(255, 255, 255, 0.01);
+    }
+    .table-hover tbody tr:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
 
-    .table-container { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); text-align: left; }
-    th { background: var(--bg-dark); color: var(--text-muted); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
-    tr:hover { background: rgba(255,255,255,0.03); }
+    /* ---- Badges ---- */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      padding: 0.2rem 0.7rem;
+      border-radius: 9999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .badge-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    .badge-accent {
+      background: var(--accent);
+      color: var(--bg-dark);
+    }
+    .badge-success {
+      background: var(--success);
+      color: #fff;
+    }
+    .badge-danger {
+      background: var(--alert);
+      color: #fff;
+    }
+    .badge-warning {
+      background: var(--warning);
+      color: #fff;
+    }
+    .badge-info {
+      background: var(--info);
+      color: #fff;
+    }
+    .badge-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
 
+    /* ---- Avatar ---- */
+    .avatar {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .avatar-sm {
+      width: 2rem;
+      height: 2rem;
+      font-size: 0.75rem;
+    }
+    .avatar-lg {
+      width: 3.5rem;
+      height: 3.5rem;
+      font-size: 1.25rem;
+    }
+    .avatar-xl {
+      width: 4.5rem;
+      height: 4.5rem;
+      font-size: 1.75rem;
+    }
+    .avatar-img {
+      object-fit: cover;
+    }
+    .avatar-group {
+      display: flex;
+    }
+    .avatar-group .avatar {
+      margin-right: -0.5rem;
+      border: 2px solid var(--bg-dark);
+    }
+    .avatar-group .avatar:last-child {
+      margin-right: 0;
+    }
+
+    /* ---- Alerts ---- */
+    .alert {
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-radius: var(--radius);
+      border-left: 4px solid;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+    .alert-success {
+      background: rgba(76, 175, 80, 0.1);
+      border-color: var(--success);
+      color: var(--success);
+    }
+    .alert-danger {
+      background: rgba(211, 47, 47, 0.1);
+      border-color: var(--alert);
+      color: var(--alert);
+    }
+    .alert-warning {
+      background: rgba(255, 152, 0, 0.1);
+      border-color: var(--warning);
+      color: var(--warning);
+    }
+    .alert-info {
+      background: rgba(33, 150, 243, 0.1);
+      border-color: var(--info);
+      color: var(--info);
+    }
+    .alert-icon {
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    .alert-content {
+      flex: 1;
+    }
+    .alert-title {
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    .alert-message {
+      font-size: 0.8125rem;
+      opacity: 0.8;
+    }
+
+    /* ---- Modals ---- */
     .modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 1000; padding: 1rem;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: var(--z-modal);
+      padding: var(--spacing-md);
+      animation: fadeIn 0.25s ease;
     }
     .modal {
-      background: var(--bg-light); border-radius: var(--radius);
-      max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto;
-      padding: 1.5rem; border: 1px solid var(--border);
+      background: var(--bg-light);
+      border-radius: var(--radius-lg);
+      max-width: 580px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: var(--spacing-xl);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-lg);
+      animation: slideUp 0.3s ease;
     }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-    .modal-header h2 { font-size: 1.25rem; }
-    .modal-close { background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; }
-    .modal-close:hover { color: var(--text-light); }
+    .modal-lg {
+      max-width: 800px;
+    }
+    .modal-sm {
+      max-width: 420px;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-lg);
+      padding-bottom: var(--spacing-sm);
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-header h2 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-light);
+    }
+    .modal-close {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      transition: var(--transition);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+    .modal-close:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-light);
+    }
+    .modal-body {
+      margin-bottom: var(--spacing-lg);
+    }
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--spacing-sm);
+      padding-top: var(--spacing-md);
+      border-top: 1px solid var(--border);
+    }
 
+    /* ---- Toast Notifications ---- */
     .toast-container {
-      position: fixed; bottom: 1rem; right: 1rem; z-index: 2000;
-      display: flex; flex-direction: column; gap: 0.5rem;
+      position: fixed;
+      bottom: var(--spacing-lg);
+      right: var(--spacing-lg);
+      z-index: var(--z-toast);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      max-width: 380px;
+      width: 100%;
     }
     .toast {
-      padding: 0.75rem 1.25rem; border-radius: var(--radius);
-      background: var(--bg-light); border-left: 4px solid var(--primary);
-      box-shadow: var(--shadow);
-      display: flex; align-items: center; gap: 0.75rem;
-      animation: slideIn 0.3s ease; min-width: 200px;
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-radius: var(--radius);
+      background: var(--bg-light);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      animation: slideInRight 0.35s ease;
+      border: 1px solid var(--border);
     }
-    .toast-success { border-left-color: var(--success); }
-    .toast-error { border-left-color: var(--alert); }
-    .toast-info { border-left-color: var(--accent); }
-    @keyframes slideIn {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
+    .toast-success {
+      border-left-color: var(--success);
+    }
+    .toast-error {
+      border-left-color: var(--alert);
+    }
+    .toast-warning {
+      border-left-color: var(--warning);
+    }
+    .toast-info {
+      border-left-color: var(--info);
+    }
+    .toast-icon {
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    .toast-message {
+      flex: 1;
+      font-size: 0.875rem;
+      color: var(--text-light);
+    }
+    .toast-close {
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: var(--spacing-xs);
+      font-size: 1rem;
+    }
+    .toast-close:hover {
+      color: var(--text-light);
     }
 
-    /* Layout */
-    .app-container { min-height: calc(100vh - 70px); padding: 1rem; }
+    /* ============================================================
+       SECTION 5: LAYOUT & NAVIGATION
+       ============================================================ */
+
+    /* ---- Navbar ---- */
     .navbar {
-      background: var(--bg-dark); border-bottom: 1px solid var(--border);
-      padding: 0.75rem 1.5rem;
-      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
-      position: sticky; top: 0; z-index: 100;
+      background: var(--bg-darker);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem var(--spacing-lg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--spacing-md);
+      position: sticky;
+      top: 0;
+      z-index: var(--z-nav);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
-    .navbar .brand { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
-    .navbar .brand span { color: var(--text-light); }
-    .navbar .nav-links { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
-    .navbar .nav-links a { color: var(--text-muted); transition: var(--transition); font-size: 0.9rem; }
-    .navbar .nav-links a:hover { color: var(--text-light); }
-    .navbar .nav-links a.active { color: var(--accent); }
-    .navbar .nav-links .btn { font-size: 0.8rem; }
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .navbar-brand span {
+      color: var(--text-light);
+    }
+    .navbar-brand .logo {
+      width: 2.2rem;
+      height: 2.2rem;
+    }
+    .navbar-links {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      flex-wrap: wrap;
+    }
+    .navbar-links a {
+      color: var(--text-muted);
+      padding: 0.4rem 0.8rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+    .navbar-links a:hover {
+      color: var(--text-light);
+      background: rgba(255, 255, 255, 0.03);
+    }
+    .navbar-links a.active {
+      color: var(--accent);
+      background: rgba(255, 215, 0, 0.06);
+    }
+    .navbar-links .btn {
+      font-size: 0.8rem;
+      padding: 0.4rem 1rem;
+    }
+    .navbar-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text-light);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: var(--spacing-xs);
+    }
+    .navbar-toggle:hover {
+      color: var(--accent);
+    }
 
+    /* ---- Footer ---- */
     .footer {
-      background: var(--bg-dark); border-top: 1px solid var(--border);
-      padding: 1rem 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.875rem;
+      background: var(--bg-darker);
+      border-top: 1px solid var(--border);
+      padding: var(--spacing-xl) var(--spacing-lg);
+      margin-top: auto;
+    }
+    .footer-content {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--spacing-xl);
+    }
+    .footer h4 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text-light);
+      margin-bottom: var(--spacing-md);
+    }
+    .footer p,
+    .footer a {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      line-height: 2;
+      transition: var(--transition);
+      text-decoration: none;
+      display: block;
+    }
+    .footer a:hover {
+      color: var(--accent);
+    }
+    .footer-bottom {
+      text-align: center;
+      padding-top: var(--spacing-lg);
+      margin-top: var(--spacing-lg);
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+    .footer-social {
+      display: flex;
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-sm);
+    }
+    .footer-social a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      transition: var(--transition);
+      color: var(--text-muted);
+    }
+    .footer-social a:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+      transform: translateY(-2px);
     }
 
+    /* ---- App Container ---- */
+    .app-container {
+      min-height: calc(100vh - 140px);
+      padding: var(--spacing-lg) 0;
+    }
+
+    /* ---- Dashboard Layout ---- */
+    .dashboard-wrapper {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: var(--spacing-xl);
+      min-height: 80vh;
+    }
+    .dashboard-sidebar {
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      height: fit-content;
+      position: sticky;
+      top: 90px;
+    }
+    .dashboard-sidebar .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: 0.65rem 1rem;
+      border-radius: var(--radius);
+      color: var(--text-muted);
+      transition: var(--transition);
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    .dashboard-sidebar .nav-item:hover {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-light);
+    }
+    .dashboard-sidebar .nav-item.active {
+      background: var(--primary);
+      color: #fff;
+    }
+    .dashboard-sidebar .nav-item i {
+      width: 1.25rem;
+      text-align: center;
+    }
+    .dashboard-sidebar .nav-divider {
+      height: 1px;
+      background: var(--border);
+      margin: var(--spacing-sm) 0;
+    }
+    .dashboard-sidebar .nav-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      padding: var(--spacing-sm) 0;
+      font-weight: 600;
+    }
+    .dashboard-content {
+      flex: 1;
+    }
+
+    /* ---- Stats Grid ---- */
     .stats-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem; margin-bottom: 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-xl);
     }
     .stat-card {
-      background: var(--bg-light); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1rem; text-align: center;
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--spacing-md) var(--spacing-lg);
+      text-align: center;
+      transition: var(--transition);
     }
-    .stat-card .stat-value { font-size: 2rem; font-weight: 700; color: var(--accent); }
-    .stat-card .stat-label { color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; }
+    .stat-card:hover {
+      border-color: var(--border-light);
+      transform: translateY(-2px);
+    }
+    .stat-card .stat-icon {
+      font-size: 1.5rem;
+      color: var(--accent);
+      margin-bottom: var(--spacing-xs);
+    }
+    .stat-card .stat-value {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--text-light);
+      line-height: 1.2;
+    }
+    .stat-card .stat-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .stat-card .stat-change {
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-top: var(--spacing-xs);
+    }
+    .stat-card .stat-change.up {
+      color: var(--success);
+    }
+    .stat-card .stat-change.down {
+      color: var(--alert);
+    }
 
-    .tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    /* ---- Tabs ---- */
+    .tabs {
+      display: flex;
+      gap: var(--spacing-xs);
+      flex-wrap: wrap;
+      margin-bottom: var(--spacing-lg);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: var(--spacing-sm);
+    }
     .tab-btn {
-      padding: 0.5rem 1rem; background: var(--bg-dark); border: 1px solid var(--border);
-      border-radius: var(--radius); color: var(--text-muted); cursor: pointer; transition: var(--transition);
+      padding: 0.5rem 1.2rem;
+      background: transparent;
+      border: none;
+      border-radius: var(--radius);
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.875rem;
+      transition: var(--transition);
+      cursor: pointer;
     }
-    .tab-btn:hover { color: var(--text-light); }
-    .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .tab-btn:hover {
+      color: var(--text-light);
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .tab-btn.active {
+      color: var(--accent);
+      background: rgba(255, 215, 0, 0.06);
+    }
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .tab-content.active {
+      display: block;
+    }
 
-    .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
-    .dashboard-header h1 { font-size: 2rem; color: var(--accent); }
+    /* ---- Hero Section ---- */
+    .hero {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: var(--spacing-2xl) var(--spacing-lg);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 40%, rgba(26, 35, 126, 0.15) 0%, transparent 60%),
+                  radial-gradient(circle at 70% 60%, rgba(255, 215, 0, 0.05) 0%, transparent 40%);
+      pointer-events: none;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: 4rem;
+      font-weight: 900;
+      line-height: 1.05;
+      color: var(--text-light);
+      margin-bottom: var(--spacing-md);
+    }
+    .hero-title .highlight {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-subtitle {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      margin-bottom: var(--spacing-lg);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: 0.3rem 1rem;
+      border-radius: 9999px;
+      background: rgba(255, 215, 0, 0.1);
+      border: 1px solid rgba(255, 215, 0, 0.15);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--spacing-md);
+    }
+    .hero-actions {
+      display: flex;
+      gap: var(--spacing-md);
+      justify-content: center;
+      flex-wrap: wrap;
+    }
 
-    .crud-form { display: grid; gap: 1rem; }
-    .crud-form .form-group { margin-bottom: 0; }
+    /* ============================================================
+       SECTION 6: ANIMATIONS
+       ============================================================ */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(100%); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
 
-    /* Sakura petals for home */
+    .animate-fade-in { animation: fadeIn 0.5s ease; }
+    .animate-slide-up { animation: slideUp 0.5s ease; }
+    .animate-slide-down { animation: slideDown 0.5s ease; }
+    .animate-pulse { animation: pulse 1.5s ease-in-out infinite; }
+    .animate-spin { animation: spin 1s linear infinite; }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+
+    /* ---- Sakura Petals (Home Page) ---- */
     .sakura-container {
-      position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
     }
     .sakura-petal {
-      position: absolute; top: -40px;
+      position: absolute;
+      top: -40px;
       animation: petalFall linear infinite;
-      pointer-events: none; z-index: 1;
-      perspective: 800px; transform-style: preserve-3d;
+      pointer-events: none;
+      z-index: 1;
+      perspective: 800px;
+      transform-style: preserve-3d;
       will-change: transform, opacity;
     }
     @keyframes petalFall {
-      0% { opacity: 0; transform: translateY(0) translateX(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+      0% {
+        opacity: 0;
+        transform: translateY(0) translateX(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+      }
       8% { opacity: var(--petal-opacity, 0.9); }
-      25% { transform: translateY(28vh) translateX(calc(var(--drift) * 0.4 - 25px)) rotateX(45deg) rotateY(50deg) rotateZ(35deg); }
-      50% { transform: translateY(55vh) translateX(calc(var(--drift) * 0.7 + 35px)) rotateX(110deg) rotateY(-80deg) rotateZ(120deg); }
-      75% { transform: translateY(82vh) translateX(calc(var(--drift) * 0.9 - 15px)) rotateX(180deg) rotateY(120deg) rotateZ(210deg); }
+      25% {
+        transform: translateY(28vh) translateX(calc(var(--drift) * 0.4 - 25px))
+                   rotateX(45deg) rotateY(50deg) rotateZ(35deg);
+      }
+      50% {
+        transform: translateY(55vh) translateX(calc(var(--drift) * 0.7 + 35px))
+                   rotateX(110deg) rotateY(-80deg) rotateZ(120deg);
+      }
+      75% {
+        transform: translateY(82vh) translateX(calc(var(--drift) * 0.9 - 15px))
+                   rotateX(180deg) rotateY(120deg) rotateZ(210deg);
+      }
       92% { opacity: var(--petal-opacity, 0.9); }
-      100% { opacity: 0; transform: translateY(105vh) translateX(var(--drift)) rotateX(270deg) rotateY(210deg) rotateZ(var(--rotation)); }
+      100% {
+        opacity: 0;
+        transform: translateY(105vh) translateX(var(--drift))
+                   rotateX(270deg) rotateY(210deg) rotateZ(var(--rotation));
+      }
     }
     .petal-shape {
       background: var(--petal-color, linear-gradient(135deg, #ffd1dc 0%, #ff85a2 100%));
-      width: 100%; height: 100%;
+      width: 100%;
+      height: 100%;
       clip-path: polygon(50% 12%, 64% 0%, 92% 16%, 100% 48%, 78% 85%, 50% 100%, 22% 85%, 0% 48%, 8% 16%, 36% 0%);
       box-shadow: inset 1px -1px 3px rgba(255,255,255,0.5), 0 2px 5px rgba(0,0,0,0.15);
-      animation: petalSpin linear infinite; transform-style: preserve-3d; will-change: transform;
+      animation: petalSpin linear infinite;
+      transform-style: preserve-3d;
+      will-change: transform;
     }
     @keyframes petalSpin {
       0% { transform: rotateY(0deg) rotateX(0deg) rotateZ(0deg); }
@@ -253,59 +1507,211 @@
       100% { transform: rotateY(360deg) rotateX(0deg) rotateZ(360deg); }
     }
 
+    /* ---- Gradient Title ---- */
     .luxury-title-gradient {
-      background: linear-gradient(90deg, #fff 0%, #ffccd3 30%, #ffd700 65%, #ffccd8);
+      background: linear-gradient(90deg, #fff 0%, #ffccd3 30%, var(--accent) 65%, #ffccd8);
       background-size: 200% auto;
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      animation: shimmer 8s ease-in-out infinite alternate;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmerText 8s ease-in-out infinite alternate;
       background-clip: text;
     }
-    @keyframes shimmer { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .navbar { flex-direction: column; align-items: stretch; padding: 0.5rem 1rem; }
-      .navbar .nav-links { justify-content: center; gap: 0.5rem; }
-      .navbar .nav-links a { font-size: 0.8rem; }
-      .grid-cols-2, .grid-cols-3, .grid-cols-4 { grid-template-columns: 1fr; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .dashboard-header { flex-direction: column; align-items: flex-start; }
-      .dashboard-header h1 { font-size: 1.5rem; }
-      .modal { margin: 1rem; max-height: 80vh; }
+    @keyframes shimmerText {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
     }
+
+    /* ============================================================
+       SECTION 7: RESPONSIVE BREAKPOINTS
+       ============================================================ */
+    @media (max-width: 1200px) {
+      .container { padding: 0 var(--spacing-md); }
+      .text-7xl { font-size: 3.5rem; }
+      .text-8xl { font-size: 4.5rem; }
+    }
+
+    @media (max-width: 992px) {
+      .dashboard-wrapper {
+        grid-template-columns: 1fr;
+      }
+      .dashboard-sidebar {
+        position: relative;
+        top: 0;
+      }
+      .grid-cols-4 { grid-template-columns: repeat(2, 1fr); }
+      .grid-cols-5 { grid-template-columns: repeat(3, 1fr); }
+      .grid-cols-6 { grid-template-columns: repeat(3, 1fr); }
+      .text-6xl { font-size: 2.5rem; }
+      .text-7xl { font-size: 3rem; }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 0.5rem var(--spacing-md);
+      }
+      .navbar-links {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--spacing-xs);
+        padding: var(--spacing-md) 0;
+      }
+      .navbar-links.open {
+        display: flex;
+      }
+      .navbar-links a {
+        padding: 0.5rem var(--spacing-sm);
+        width: 100%;
+        text-align: center;
+      }
+      .navbar-toggle {
+        display: block;
+      }
+
+      .grid-cols-2 { grid-template-columns: 1fr; }
+      .grid-cols-3 { grid-template-columns: 1fr; }
+      .grid-cols-4 { grid-template-columns: 1fr; }
+      .grid-cols-5 { grid-template-columns: 1fr; }
+      .grid-cols-6 { grid-template-columns: 1fr; }
+
+      .form-row { grid-template-columns: 1fr; }
+      .form-row-3 { grid-template-columns: 1fr; }
+      .form-row-4 { grid-template-columns: 1fr; }
+
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .hero-title { font-size: 2.5rem; }
+      .hero-subtitle { font-size: 1rem; }
+
+      .modal { margin: var(--spacing-sm); padding: var(--spacing-md); }
+      .modal-lg { max-width: 100%; }
+
+      .footer-content { grid-template-columns: 1fr; text-align: center; }
+      .footer-social { justify-content: center; }
+
+      .container { padding: 0 var(--spacing-md); }
+    }
+
     @media (max-width: 480px) {
-      .navbar .nav-links { flex-wrap: wrap; }
-      .stats-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .hero-title { font-size: 2rem; }
+      .text-4xl { font-size: 1.75rem; }
+      .text-5xl { font-size: 2rem; }
+      .text-6xl { font-size: 2.25rem; }
+      .btn-lg { padding: 0.6rem 1.2rem; font-size: 0.875rem; }
+      .btn-xl { padding: 0.7rem 1.5rem; font-size: 1rem; }
+      .hero-actions { flex-direction: column; align-items: center; }
+      .hero-actions .btn { width: 100%; justify-content: center; }
     }
   </style>
 </head>
 <body>
-  <!-- ===== NAVBAR ===== -->
+
+  <!-- ============================================================
+       SECTION 8: NAVBAR
+       ============================================================ -->
   <nav class="navbar" id="main-nav">
-    <a href="#" class="brand" data-route="/">🐺 <span>Society</span></a>
-    <div class="nav-links" id="nav-links"></div>
+    <a href="#" class="navbar-brand" data-route="/">
+      <svg class="logo" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3">
+        <polygon points="50,15 35,45 50,55" />
+        <polygon points="50,15 65,45 50,55" />
+        <polygon points="35,45 15,25 25,60 50,85" />
+        <polygon points="65,45 85,25 75,60 50,85" />
+        <circle cx="42" cy="48" r="2" fill="#ffd700" />
+        <circle cx="58" cy="48" r="2" fill="#ffd700" />
+      </svg>
+      Wolf<span>Society</span>
+    </a>
+    <button class="navbar-toggle" id="nav-toggle" aria-label="Toggle navigation">
+      <i class="ph-list"></i>
+    </button>
+    <div class="navbar-links" id="nav-links">
+      <!-- Rendered by JavaScript -->
+    </div>
   </nav>
 
-  <!-- ===== APP CONTAINER ===== -->
-  <div id="app" class="app-container"></div>
+  <!-- ============================================================
+       SECTION 9: APP CONTAINER
+       ============================================================ -->
+  <main id="app" class="app-container container">
+    <!-- Pages are rendered here by JavaScript -->
+  </main>
 
-  <!-- ===== FOOTER ===== -->
+  <!-- ============================================================
+       SECTION 10: FOOTER
+       ============================================================ -->
   <footer class="footer" id="main-footer">
-    © 2026 Wolf Society Esports. All rights reserved. Divine Wolf.
+    <div class="footer-content">
+      <div>
+        <h4>🐺 Wolf Society</h4>
+        <p>A Kingdom of Competitive Excellence. Elite esports, tactical streetwear, and absolute dominance.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Twitter"><i class="ph-twitter-logo"></i></a>
+          <a href="#" aria-label="Instagram"><i class="ph-instagram-logo"></i></a>
+          <a href="#" aria-label="YouTube"><i class="ph-youtube-logo"></i></a>
+          <a href="#" aria-label="Discord"><i class="ph-discord-logo"></i></a>
+        </div>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <a href="#" data-route="/">Home</a>
+        <a href="#" data-route="/about">About</a>
+        <a href="#" data-route="/teams">Teams</a>
+        <a href="#" data-route="/contact">Contact</a>
+      </div>
+      <div>
+        <h4>For Players</h4>
+        <a href="#" data-route="/player/dashboard">Dashboard</a>
+        <a href="#" data-route="/player/profile">Profile</a>
+        <a href="#" data-route="/player/matches">Matches</a>
+      </div>
+      <div>
+        <h4>Management</h4>
+        <a href="#" data-route="/management/dashboard">Dashboard</a>
+        <a href="#" data-route="/management/players">Players</a>
+        <a href="#" data-route="/management/matches">Matches</a>
+        <a href="#" data-route="/management/teams">Teams</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2026 Wolf Society Esports. All rights reserved. Built with ❤️ by Divine Wolf.
+    </div>
   </footer>
 
-  <!-- ===== TOAST CONTAINER ===== -->
+  <!-- ============================================================
+       SECTION 11: TOAST CONTAINER
+       ============================================================ -->
   <div id="toast-container" class="toast-container"></div>
 
+  <!-- ============================================================
+       SECTION 12: JAVASCRIPT – COMPLETE APPLICATION LOGIC
+       ============================================================ -->
   <script>
-    // ============================================================
-    // CONFIGURATION – SET YOUR API BASE URL
-    // ============================================================
-    const API_BASE = 'https://your-infinityfree-site.epizy.com/api.php'; // <-- CHANGE THIS
+    /**
+     * ============================================================
+     * WOLF SOCIETY ESPORTS – COMPLETE FRONTEND APPLICATION
+     * Version: 2.0.0
+     * Architecture: SPA with Client‑Side Routing
+     * Data Layer: LocalStorage (fallback) + API (InfinityFree)
+     * ============================================================
+     */
 
-    // ============================================================
-    // 1. UTILITY HELPERS
-    // ============================================================
+    // ──────────────────────────────────────────────────────────────
+    // 12.1: CONFIGURATION
+    // ──────────────────────────────────────────────────────────────
+    const CONFIG = {
+      // Change this to your InfinityFree API URL after deployment
+      API_BASE: 'https://your-infinityfree-site.epizy.com/api.php',
+      // Use localStorage as fallback when API is unavailable
+      USE_LOCAL_FALLBACK: true,
+      // App name
+      APP_NAME: 'Wolf Society Esports',
+      APP_VERSION: '2.0.0',
+    };
+
+    // ──────────────────────────────────────────────────────────────
+    // 12.2: UTILITY HELPERS
+    // ──────────────────────────────────────────────────────────────
     const $ = (sel, ctx = document) => ctx.querySelector(sel);
     const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
     const create = (tag, attrs = {}, children = []) => {
@@ -314,6 +1720,7 @@
         if (k === 'text') el.textContent = v;
         else if (k === 'html') el.innerHTML = v;
         else if (k === 'className') el.className = v;
+        else if (k === 'dataset') Object.entries(v).forEach(([dk, dv]) => el.dataset[dk] = dv);
         else el.setAttribute(k, v);
       });
       children.forEach(c => {
@@ -332,85 +1739,139 @@
     };
     const empty = (el) => { while (el.firstChild) el.removeChild(el.firstChild); return el; };
     const remove = (el) => el.remove();
-    const on = (el, event, handler) => el.addEventListener(event, handler);
+    const on = (el, event, handler, options = {}) => el.addEventListener(event, handler, options);
     const off = (el, event, handler) => el.removeEventListener(event, handler);
+    const emit = (el, event, detail) => el.dispatchEvent(new CustomEvent(event, { detail }));
+    const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
+    const debounce = (fn, delay = 300) => { let timer; return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); }; };
+    const throttle = (fn, limit = 300) => { let inThrottle; return (...args) => { if (!inThrottle) { fn(...args); inThrottle = true; setTimeout(() => inThrottle = false, limit); } }; };
+    const generateId = () => Date.now().toString(36) + Math.random().toString(36).substr(2, 6);
+    const formatDate = (date) => {
+      if (!date) return '';
+      const d = new Date(date);
+      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    };
+    const formatDateTime = (date) => {
+      if (!date) return '';
+      const d = new Date(date);
+      return d.toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    };
+    const pluralize = (count, singular, plural = singular + 's') => count === 1 ? singular : plural;
+    const truncate = (str, len = 100) => str.length > len ? str.substring(0, len) + '...' : str;
+    const escapeHtml = (str) => {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    };
+    const slugify = (str) => str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-    // ============================================================
-    // 2. TOAST NOTIFICATIONS
-    // ============================================================
+    // ──────────────────────────────────────────────────────────────
+    // 12.3: TOAST NOTIFICATION SYSTEM
+    // ──────────────────────────────────────────────────────────────
     const Toast = {
       container: null,
       init() {
         this.container = document.getElementById('toast-container') || create('div', { className: 'toast-container' });
         if (!document.getElementById('toast-container')) document.body.appendChild(this.container);
       },
-      show(message, type = 'info') {
+      show(message, type = 'info', duration = 4000) {
         this.init();
         const toast = create('div', { className: `toast toast-${type}` });
-        const icon = create('span', { text: type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ' });
-        const text = create('span', { text: message });
-        append(toast, icon, text);
+        const iconMap = {
+          success: '✓',
+          error: '✕',
+          warning: '⚠',
+          info: 'ℹ'
+        };
+        const icon = create('span', { className: 'toast-icon', text: iconMap[type] || 'ℹ' });
+        const msg = create('span', { className: 'toast-message', text: message });
+        const closeBtn = create('button', { className: 'toast-close', html: '&times;' });
+        on(closeBtn, 'click', () => remove(toast));
+        append(toast, icon, msg, closeBtn);
         append(this.container, toast);
-        setTimeout(() => remove(toast), 4000);
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateX(100%)';
+          setTimeout(() => remove(toast), 300);
+        }, duration);
       },
       success(msg) { this.show(msg, 'success'); },
       error(msg) { this.show(msg, 'error'); },
+      warning(msg) { this.show(msg, 'warning'); },
       info(msg) { this.show(msg, 'info'); }
     };
 
-    // ============================================================
-    // 3. MODAL SYSTEM
-    // ============================================================
+    // ──────────────────────────────────────────────────────────────
+    // 12.4: MODAL SYSTEM
+    // ──────────────────────────────────────────────────────────────
     const Modal = {
-      open({ title, content }) {
+      open({ title, content, size = 'md', onClose = null }) {
         const overlay = create('div', { className: 'modal-overlay' });
-        const modal = create('div', { className: 'modal' });
+        const modal = create('div', { className: `modal ${size === 'lg' ? 'modal-lg' : size === 'sm' ? 'modal-sm' : ''}` });
         const header = create('div', { className: 'modal-header' });
         const titleEl = create('h2', { text: title || 'Modal' });
-        const closeBtn = create('button', { className: 'modal-close', text: '✕' });
-        on(closeBtn, 'click', () => this.close(overlay));
-        on(overlay, 'click', (e) => { if (e.target === overlay) this.close(overlay); });
+        const closeBtn = create('button', { className: 'modal-close', html: '&times;' });
+        on(closeBtn, 'click', () => this.close(overlay, onClose));
+        on(overlay, 'click', (e) => { if (e.target === overlay) this.close(overlay, onClose); });
         append(header, titleEl, closeBtn);
         append(modal, header, content);
         append(overlay, modal);
         document.body.appendChild(overlay);
+        document.body.style.overflow = 'hidden';
         return overlay;
       },
-      close(overlay) { if (overlay) remove(overlay); },
-      confirm(message, onConfirm) {
+      close(overlay, onClose = null) {
+        if (overlay) {
+          overlay.style.opacity = '0';
+          setTimeout(() => { remove(overlay); document.body.style.overflow = ''; }, 250);
+        }
+        if (onClose) onClose();
+      },
+      confirm(message, onConfirm, onCancel = null) {
         const content = create('div');
-        append(content, create('p', { text: message }));
-        const btnGroup = create('div', { className: 'flex gap-1' });
-        const confirmBtn = create('button', { className: 'btn btn-danger', text: 'Confirm' });
-        const cancelBtn = create('button', { className: 'btn btn-outline', text: 'Cancel' });
-        on(confirmBtn, 'click', () => { this.close(overlay); onConfirm(); });
-        on(cancelBtn, 'click', () => this.close(overlay));
-        append(btnGroup, confirmBtn, cancelBtn);
-        append(content, btnGroup);
-        const overlay = this.open({ title: 'Confirm', content });
+        append(content,
+          create('p', { className: 'text-muted', text: message }),
+          create('div', { className: 'modal-footer' },
+            create('button', { className: 'btn btn-outline', text: 'Cancel', dataset: { action: 'cancel' } }),
+            create('button', { className: 'btn btn-danger', text: 'Confirm', dataset: { action: 'confirm' } })
+          )
+        );
+        const overlay = this.open({ title: 'Confirm', content, size: 'sm' });
+        on(overlay, 'click', (e) => {
+          const btn = e.target.closest('[data-action]');
+          if (!btn) return;
+          if (btn.dataset.action === 'confirm') {
+            this.close(overlay);
+            if (onConfirm) onConfirm();
+          } else if (btn.dataset.action === 'cancel') {
+            this.close(overlay);
+            if (onCancel) onCancel();
+          }
+        });
         return overlay;
       }
     };
 
-    // ============================================================
-    // 4. API WRAPPER (connects to InfinityFree backend)
-    // ============================================================
+    // ──────────────────────────────────────────────────────────────
+    // 12.5: API WRAPPER (Connects to InfinityFree Backend)
+    // ──────────────────────────────────────────────────────────────
     const API = {
-      // Authentication
+      // ─── Authentication ───
       auth: {
         login: async (email, password) => {
-          const res = await fetch(API_BASE + '/auth?action=login', {
+          const res = await fetch(`${CONFIG.API_BASE}/auth?action=login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
           });
           const data = await res.json();
           if (!res.ok) throw new Error(data.error || 'Login failed');
-          localStorage.setItem('session', JSON.stringify(data.user));
+          // Store session
+          localStorage.setItem('wolf_session', JSON.stringify({ user: data.user, token: 'session-' + Date.now() }));
           return data.user;
         },
         register: async (email, password, name) => {
-          const res = await fetch(API_BASE + '/auth?action=register', {
+          const res = await fetch(`${CONFIG.API_BASE}/auth?action=register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password, name })
@@ -419,17 +1880,31 @@
           if (!res.ok) throw new Error(data.error || 'Registration failed');
           return data;
         },
-        logout() { localStorage.removeItem('session'); },
-        getUser() {
-          try { return JSON.parse(localStorage.getItem('session')); } catch { return null; }
+        logout() {
+          localStorage.removeItem('wolf_session');
+          // Also clear any local data
         },
-        isLoggedIn() { return !!this.getUser(); }
+        getUser() {
+          try {
+            const session = JSON.parse(localStorage.getItem('wolf_session'));
+            return session?.user || null;
+          } catch { return null; }
+        },
+        getToken() {
+          try {
+            const session = JSON.parse(localStorage.getItem('wolf_session'));
+            return session?.token || null;
+          } catch { return null; }
+        },
+        isLoggedIn() {
+          return !!this.getUser();
+        }
       },
 
-      // Generic CRUD
+      // ─── Generic CRUD ───
       async request(method, resource, id = null, data = null) {
-        let url = API_BASE + '/' + resource;
-        if (id) url += '/' + id;
+        let url = `${CONFIG.API_BASE}/${resource}`;
+        if (id) url += `/${id}`;
         const options = {
           method,
           headers: { 'Content-Type': 'application/json' }
@@ -441,44 +1916,174 @@
         return result;
       },
 
-      get(resource, id = null) { return this.request('GET', resource, id); },
-      post(resource, data) { return this.request('POST', resource, null, data); },
-      put(resource, id, data) { return this.request('PUT', resource, id, data); },
-      delete(resource, id) { return this.request('DELETE', resource, id); }
-    };
+      async get(resource, id = null) {
+        try {
+          return await this.request('GET', resource, id);
+        } catch (err) {
+          if (CONFIG.USE_LOCAL_FALLBACK) {
+            // Fallback to localStorage
+            return this._localGet(resource, id);
+          }
+          throw err;
+        }
+      },
 
-    // ============================================================
-    // 5. ROUTER & PAGE RENDERERS
-    // ============================================================
+      async post(resource, data) {
+        try {
+          return await this.request('POST', resource, null, data);
+        } catch (err) {
+          if (CONFIG.USE_LOCAL_FALLBACK) {
+            return this._localPost(resource, data);
+          }
+          throw err;
+        }
+      },
+
+      async put(resource, id, data) {
+        try {
+          return await this.request('PUT', resource, id, data);
+        } catch (err) {
+          if (CONFIG.USE_LOCAL_FALLBACK) {
+            return this._localPut(resource, id, data);
+          }
+          throw err;
+        }
+      },
+
+      async delete(resource, id) {
+        try {
+          return await this.request('DELETE', resource, id);
+        } catch (err) {
+          if (CONFIG.USE_LOCAL_FALLBACK) {
+            return this._localDelete(resource, id);
+          }
+          throw err;
+        }
+      },
+
+      // ─── LocalStorage Fallback ───
+      _getStorageKey(resource) { return `wolf_${resource}`; },
+      _localGet(resource, id = null) {
+        const key = this._getStorageKey(resource);
+        let items = JSON.parse(localStorage.getItem(key) || '[]');
+        if (id) {
+          const item = items.find(i => i.id == id);
+          if (!item) throw new Error('Record not found');
+          return item;
+        }
+        return items;
+      },
+      _localPost(resource, data) {
+        const key = this._getStorageKey(resource);
+        let items = JSON.parse(localStorage.getItem(key) || '[]');
+        data.id = data.id || 'local_' + generateId();
+        items.push(data);
+        localStorage.setItem(key, JSON.stringify(items));
+        return { success: true, id: data.id };
+      },
+      _localPut(resource, id, data) {
+        const key = this._getStorageKey(resource);
+        let items = JSON.parse(localStorage.getItem(key) || '[]');
+        const idx = items.findIndex(i => i.id == id);
+        if (idx === -1) throw new Error('Record not found');
+        items[idx] = { ...items[idx], ...data };
+        localStorage.setItem(key, JSON.stringify(items));
+        return { success: true };
+      },
+      _localDelete(resource, id) {
+        const key = this._getStorageKey(resource);
+        let items = JSON.parse(localStorage.getItem(key) || '[]');
+        items = items.filter(i => i.id != id);
+        localStorage.setItem(key, JSON.stringify(items));
+        return { success: true };
+      },
+
+      // ─── Seed Local Data ───
+      seedLocalData() {
+        const seed = (key, defaultData) => {
+          if (!localStorage.getItem(`wolf_${key}`)) {
+            localStorage.setItem(`wolf_${key}`, JSON.stringify(defaultData));
+          }
+        };
+        seed('users', [
+          { id: 1, email: 'admin@wolfsociety.gg', password: 'admin123', name: 'Admin User', role: 'management' },
+          { id: 2, email: 'player@wolfsociety.gg', password: 'player123', name: 'Player One', role: 'player' }
+        ]);
+        seed('players', [
+          { id: 1, user_id: 2, display_name: 'Player One', game: 'Valorant', role: 'IGL', status: 'active', team_id: 1 },
+          { id: 2, user_id: null, display_name: 'KaiKishi', game: 'Valorant', role: 'Captain', status: 'active', team_id: 1 }
+        ]);
+        seed('teams', [
+          { id: 1, name: 'Divine Wolf', tag: 'DW', game: 'Valorant', wins: 12, losses: 4, draws: 2 }
+        ]);
+        seed('matches', [
+          { id: 1, team_id: 1, opponent: 'Phoenix Rising', game: 'Valorant', match_date: '2026-07-20', result: 'win', score: '13-8' },
+          { id: 2, team_id: 1, opponent: 'Shadow Clan', game: 'Valorant', match_date: '2026-07-18', result: 'loss', score: '11-13' }
+        ]);
+        seed('announcements', [
+          { id: 1, title: 'Welcome to Wolf Society', content: 'The new season is about to begin.', author_id: 1, pinned: true, published: true }
+        ]);
+      }
+    };
+    // Seed local data if needed
+    API.seedLocalData();
+
+    // ──────────────────────────────────────────────────────────────
+    // 12.6: ROUTER & NAVIGATION
+    // ──────────────────────────────────────────────────────────────
     const Router = {
       routes: [],
       current: null,
+
       init() {
+        // Define routes with guards
         this.routes = [
+          // Public routes
           { path: '/', render: renderHome, guard: 'public' },
           { path: '/about', render: renderAbout, guard: 'public' },
           { path: '/teams', render: renderTeams, guard: 'public' },
           { path: '/contact', render: renderContact, guard: 'public' },
           { path: '/login', render: renderLogin, guard: 'public' },
           { path: '/register', render: renderRegister, guard: 'public' },
+          // Player routes
           { path: '/player/dashboard', render: renderPlayerDashboard, guard: 'player' },
           { path: '/player/profile', render: renderPlayerProfile, guard: 'player' },
           { path: '/player/matches', render: renderPlayerMatches, guard: 'player' },
+          // Management routes
           { path: '/management/dashboard', render: renderManagementDashboard, guard: 'management' },
           { path: '/management/players', render: renderManagementPlayers, guard: 'management' },
           { path: '/management/matches', render: renderManagementMatches, guard: 'management' },
           { path: '/management/teams', render: renderManagementTeams, guard: 'management' },
           { path: '/management/announcements', render: renderManagementAnnouncements, guard: 'management' },
         ];
+
+        // Handle popstate (browser back/forward)
         window.addEventListener('popstate', () => this.handle());
+
+        // Intercept all clicks on [data-route] links
         on(document, 'click', '[data-route]', (e) => {
-          e.preventDefault();
           const target = e.target.closest('[data-route]');
-          if (target) this.navigate(target.getAttribute('data-route'));
+          if (!target) return;
+          const path = target.getAttribute('data-route');
+          if (path) {
+            e.preventDefault();
+            this.navigate(path);
+          }
         });
+
+        // Handle navbar toggle for mobile
+        const toggleBtn = document.getElementById('nav-toggle');
+        if (toggleBtn) {
+          on(toggleBtn, 'click', () => {
+            const links = document.getElementById('nav-links');
+            links.classList.toggle('open');
+          });
+        }
+
+        // Initial render
         this.handle();
-        this.renderNav();
-        // Auth change listener
+
+        // Update nav on auth change
         const origLogin = API.auth.login;
         API.auth.login = async function(...args) {
           const user = await origLogin.call(this, ...args);
@@ -491,87 +2096,154 @@
           origLogout.call(this, ...args);
           Router.renderNav();
           Router.handle();
-          Toast.success('Logged out');
+          Toast.success('Logged out successfully');
           Router.navigate('/');
         };
+
+        // Render nav initially
+        this.renderNav();
       },
+
       navigate(path) {
         history.pushState(null, '', path);
         this.handle();
+        // Close mobile nav
+        const navLinks = document.getElementById('nav-links');
+        if (navLinks) navLinks.classList.remove('open');
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       },
+
       handle() {
-        const path = window.location.pathname;
-        const route = this.routes.find(r => r.path === path) || this.routes.find(r => r.path === '/');
+        const path = window.location.pathname || '/';
         const user = API.auth.getUser();
         const role = user?.role || 'public';
 
+        // Find matching route
+        let route = this.routes.find(r => r.path === path);
+        if (!route) route = this.routes.find(r => r.path === '/');
+
+        // Guard checks
         if (route) {
           if (route.guard === 'player' && role !== 'player' && role !== 'management') {
-            this.navigate('/login'); return;
+            this.navigate('/login');
+            return;
           }
           if (route.guard === 'management' && role !== 'management') {
-            this.navigate('/login'); return;
+            this.navigate('/login');
+            return;
           }
         }
 
         this.current = route;
         const app = document.getElementById('app');
         empty(app);
+
         if (route) {
           const content = route.render({ user, role });
-          app.appendChild(content);
+          if (content instanceof HTMLElement) {
+            app.appendChild(content);
+          } else {
+            app.appendChild(create('div', { html: content }));
+          }
+          // Re-init Sakura if on home
+          if (path === '/') initSakura();
         } else {
-          app.appendChild(create('p', { text: '404 – Page not found' }));
+          app.appendChild(create('div', { className: 'text-center py-16' },
+            create('h2', { text: '404 – Page not found' })
+          ));
         }
+
+        // Update active nav links
         this.renderNav();
-        if (path === '/') initSakura();
       },
+
       renderNav() {
         const container = document.getElementById('nav-links');
+        if (!container) return;
         empty(container);
+
         const user = API.auth.getUser();
         const role = user?.role || 'public';
+        const path = window.location.pathname;
 
-        const links = [
-          { href: '/', label: 'Home' },
-          { href: '/about', label: 'About' },
-          { href: '/teams', label: 'Teams' },
-          { href: '/contact', label: 'Contact' },
+        // Public links
+        const publicLinks = [
+          { href: '/', label: 'Home', icon: 'ph-house' },
+          { href: '/about', label: 'About', icon: 'ph-info' },
+          { href: '/teams', label: 'Teams', icon: 'ph-users' },
+          { href: '/contact', label: 'Contact', icon: 'ph-envelope' },
         ];
-        links.forEach(l => {
-          const a = create('a', { href: l.href, text: l.label, 'data-route': true });
-          if (window.location.pathname === l.href) a.classList.add('active');
+
+        publicLinks.forEach(link => {
+          const a = create('a', {
+            href: link.href,
+            'data-route': true,
+            className: path === link.href ? 'active' : ''
+          });
+          a.innerHTML = `<i class="${link.icon}"></i> ${link.label}`;
           container.appendChild(a);
         });
 
+        // Role-specific links
         if (role === 'player') {
-          const dash = create('a', { href: '/player/dashboard', text: 'Dashboard', 'data-route': true });
-          if (window.location.pathname.startsWith('/player')) dash.classList.add('active');
-          container.appendChild(dash);
+          const playerLinks = [
+            { href: '/player/dashboard', label: 'Dashboard', icon: 'ph-gauge' },
+            { href: '/player/profile', label: 'Profile', icon: 'ph-user-circle' },
+            { href: '/player/matches', label: 'Matches', icon: 'ph-trophy' },
+          ];
+          playerLinks.forEach(link => {
+            const a = create('a', {
+              href: link.href,
+              'data-route': true,
+              className: path.startsWith(link.href) ? 'active' : ''
+            });
+            a.innerHTML = `<i class="${link.icon}"></i> ${link.label}`;
+            container.appendChild(a);
+          });
         } else if (role === 'management') {
-          const dash = create('a', { href: '/management/dashboard', text: 'Manage', 'data-route': true });
-          if (window.location.pathname.startsWith('/management')) dash.classList.add('active');
-          container.appendChild(dash);
+          const managementLinks = [
+            { href: '/management/dashboard', label: 'Dashboard', icon: 'ph-gauge' },
+            { href: '/management/players', label: 'Players', icon: 'ph-users' },
+            { href: '/management/matches', label: 'Matches', icon: 'ph-trophy' },
+            { href: '/management/teams', label: 'Teams', icon: 'ph-shield' },
+            { href: '/management/announcements', label: 'Announcements', icon: 'ph-megaphone' },
+          ];
+          managementLinks.forEach(link => {
+            const a = create('a', {
+              href: link.href,
+              'data-route': true,
+              className: path.startsWith(link.href) ? 'active' : ''
+            });
+            a.innerHTML = `<i class="${link.icon}"></i> ${link.label}`;
+            container.appendChild(a);
+          });
         }
 
+        // Auth buttons
         if (API.auth.isLoggedIn()) {
-          const logoutBtn = create('button', { className: 'btn btn-outline btn-sm', text: 'Logout' });
+          const logoutBtn = create('button', { className: 'btn btn-outline btn-sm' });
+          logoutBtn.innerHTML = '<i class="ph-sign-out"></i> Logout';
           on(logoutBtn, 'click', () => API.auth.logout());
           container.appendChild(logoutBtn);
         } else {
-          const login = create('a', { href: '/login', text: 'Login', 'data-route': true });
-          container.appendChild(login);
+          const loginBtn = create('a', { href: '/login', 'data-route': true, className: 'btn btn-primary btn-sm' });
+          loginBtn.innerHTML = '<i class="ph-sign-in"></i> Login';
+          container.appendChild(loginBtn);
         }
       }
     };
 
-    // Sakura petals
+    // ──────────────────────────────────────────────────────────────
+    // 12.7: SAKURA PETALS (Home Page Animation)
+    // ──────────────────────────────────────────────────────────────
     function initSakura() {
       const container = document.querySelector('.sakura-container');
       if (!container) return;
       empty(container);
-      const colors = ['#ffccd5','#ffb3c1','#ff4d6d','#ffe5ec','#fff0f3'];
-      for (let i = 0; i < 20; i++) {
+      const colors = ['#ffccd5', '#ffb3c1', '#ff4d6d', '#ffe5ec', '#fff0f3'];
+      const petals = 25;
+      for (let i = 0; i < petals; i++) {
         const petal = create('div', { className: 'sakura-petal' });
         petal.style.left = (Math.random() * 110 - 5) + '%';
         const size = Math.random() * 14 + 7;
@@ -588,104 +2260,156 @@
       }
     }
 
-    // ============================================================
-    // PAGE RENDERERS
-    // ============================================================
+    // ──────────────────────────────────────────────────────────────
+    // 12.8: PAGE RENDERERS – PUBLIC PAGES
+    // ──────────────────────────────────────────────────────────────
 
-    // --- PUBLIC PAGES ---
+    // ─── Home ───
     function renderHome() {
       const section = create('div', { className: 'relative overflow-hidden min-h-[80vh] flex items-center justify-center' });
       const sakura = create('div', { className: 'sakura-container' });
       section.appendChild(sakura);
-      const content = create('div', { className: 'container relative z-10 text-center py-16' });
+
+      const content = create('div', { className: 'hero-content text-center py-16 px-4' });
       append(content,
-        create('h1', { className: 'text-4xl md:text-6xl font-black', html: '🐺 <span class="luxury-title-gradient">Wolf Society</span>' }),
-        create('p', { className: 'text-xl text-muted mt-4', text: 'A Kingdom of Competitive Excellence' }),
-        create('p', { className: 'text-muted mt-2 max-w-2xl mx-auto', text: 'Divine Wolf – Elite esports, tactical streetwear, and absolute dominance.' }),
-        create('div', { className: 'flex gap-2 mt-6 justify-center' },
-          create('a', { className: 'btn btn-accent', href: '/teams', 'data-route': true, text: 'View Teams' }),
-          create('a', { className: 'btn btn-outline', href: '/contact', 'data-route': true, text: 'Contact Us' })
+        create('div', { className: 'hero-badge' },
+          create('span', { text: '🐺 Divine Wolf' }),
+          create('span', { className: 'ml-1', text: '• Champions' })
+        ),
+        create('h1', { className: 'hero-title' },
+          'Welcome to ',
+          create('span', { className: 'highlight', text: 'Wolf Society' })
+        ),
+        create('p', { className: 'hero-subtitle', text: 'A Kingdom of Competitive Excellence. Elite esports, tactical streetwear, and absolute dominance.' }),
+        create('div', { className: 'hero-actions' },
+          create('a', { className: 'btn btn-accent btn-lg', href: '/teams', 'data-route': true, text: 'Explore Teams' }),
+          create('a', { className: 'btn btn-outline btn-lg', href: '/contact', 'data-route': true, text: 'Get in Touch' })
         )
       );
       section.appendChild(content);
-      setTimeout(initSakura, 100);
+
+      // Add Sakura after DOM render
+      setTimeout(initSakura, 50);
       return section;
     }
 
+    // ─── About ───
     function renderAbout() {
-      return create('div', { className: 'container py-12' }, [
-        create('h1', { className: 'text-3xl font-black', text: 'About Wolf Society' }),
-        create('p', { className: 'text-muted mt-4', text: 'Wolf Society is a premier esports organization founded in 2024. We compete in Valorant, CS2, and more.' }),
-        create('p', { className: 'text-muted mt-2', text: 'Our flagship team, Divine Wolf, has won 5 regional championships.' })
-      ]);
+      const container = create('div', { className: 'max-w-4xl mx-auto py-12 px-4' });
+      append(container,
+        create('h1', { className: 'text-4xl font-display font-black mb-6', text: 'About Wolf Society' }),
+        create('div', { className: 'card mb-6' },
+          create('p', { className: 'text-muted', text: 'Wolf Society is a premier esports organization founded in 2024 with a vision to dominate the competitive gaming scene while building a strong, loyal community.' })
+        ),
+        create('div', { className: 'grid grid-cols-2 gap-4' },
+          create('div', { className: 'card' },
+            create('h3', { className: 'font-bold text-accent', text: '🏆 5 Championships' }),
+            create('p', { className: 'text-sm text-muted', text: 'Regional and national titles across multiple games.' })
+          ),
+          create('div', { className: 'card' },
+            create('h3', { className: 'font-bold text-accent', text: '👥 50+ Players' }),
+            create('p', { className: 'text-sm text-muted', text: 'Active roster with divisions in Valorant, CS2, and more.' })
+          ),
+          create('div', { className: 'card' },
+            create('h3', { className: 'font-bold text-accent', text: '📺 1M+ Views' }),
+            create('p', { className: 'text-sm text-muted', text: 'Monthly reach across our streaming and content platforms.' })
+          ),
+          create('div', { className: 'card' },
+            create('h3', { className: 'font-bold text-accent', text: '🌍 Global Reach' }),
+            create('p', { className: 'text-sm text-muted', text: 'Fans and players from over 30 countries.' })
+          )
+        )
+      );
+      return container;
     }
 
+    // ─── Teams ───
     async function renderTeams() {
+      const container = create('div', { className: 'py-12 px-4' });
       try {
         const teams = await API.get('teams');
-        const container = create('div', { className: 'container py-12' });
-        append(container, create('h1', { className: 'text-3xl font-black', text: 'Our Teams' }));
-        const grid = create('div', { className: 'grid grid-cols-2 md:grid-cols-3 gap-4 mt-6' });
-        teams.forEach(t => {
-          const card = create('div', { className: 'card' });
-          append(card,
-            create('h3', { className: 'text-xl font-bold', text: t.name }),
-            create('p', { className: 'text-muted', text: `Game: ${t.game} | ${t.wins}W - ${t.losses}L` })
-          );
-          grid.appendChild(card);
-        });
-        container.appendChild(grid);
-        return container;
-      } catch (e) {
-        Toast.error('Failed to load teams');
-        return create('div', { text: 'Error loading teams' });
+        append(container,
+          create('h1', { className: 'text-4xl font-display font-black mb-6', text: 'Our Teams' }),
+          create('div', { className: 'grid grid-cols-2 md:grid-cols-3 gap-4' },
+            teams.map(team =>
+              create('div', { className: 'card' },
+                create('h3', { className: 'text-xl font-bold', text: team.name }),
+                create('p', { className: 'text-muted', text: `Game: ${team.game} | ${team.wins}W - ${team.losses}L` }),
+                create('span', { className: 'badge badge-primary mt-2', text: team.tag })
+              )
+            )
+          )
+        );
+      } catch (err) {
+        append(container, create('p', { className: 'text-muted', text: 'Error loading teams. Using local data.' }));
+        const teams = API._localGet('teams');
+        append(container,
+          create('h1', { className: 'text-4xl font-display font-black mb-6', text: 'Our Teams' }),
+          create('div', { className: 'grid grid-cols-2 md:grid-cols-3 gap-4' },
+            teams.map(team =>
+              create('div', { className: 'card' },
+                create('h3', { className: 'text-xl font-bold', text: team.name }),
+                create('p', { className: 'text-muted', text: `Game: ${team.game} | ${team.wins}W - ${team.losses}L` })
+              )
+            )
+          )
+        );
       }
+      return container;
     }
 
+    // ─── Contact ───
     function renderContact() {
-      const container = create('div', { className: 'container py-12 max-w-2xl mx-auto' });
+      const container = create('div', { className: 'py-12 px-4 max-w-2xl mx-auto' });
       append(container,
-        create('h1', { className: 'text-3xl font-black', text: 'Contact Us' }),
-        create('form', { className: 'mt-6', id: 'contact-form' },
-          create('div', { className: 'form-group' }, [
+        create('h1', { className: 'text-4xl font-display font-black mb-6 text-center', text: 'Contact Us' }),
+        create('form', { className: 'card', id: 'contact-form' },
+          create('div', { className: 'form-group' },
             create('label', { text: 'Name' }),
             create('input', { className: 'form-control', type: 'text', name: 'name', placeholder: 'Your name' })
-          ]),
-          create('div', { className: 'form-group' }, [
+          ),
+          create('div', { className: 'form-group' },
             create('label', { text: 'Email' }),
             create('input', { className: 'form-control', type: 'email', name: 'email', placeholder: 'your@email.com' })
-          ]),
-          create('div', { className: 'form-group' }, [
+          ),
+          create('div', { className: 'form-group' },
             create('label', { text: 'Message' }),
-            create('textarea', { className: 'form-control', name: 'message', rows: 4, placeholder: 'Your message...' })
-          ]),
-          create('button', { className: 'btn btn-primary', type: 'submit', text: 'Send Message' })
+            create('textarea', { className: 'form-control form-control-textarea', name: 'message', rows: 4, placeholder: 'Your message...' })
+          ),
+          create('button', { className: 'btn btn-primary btn-block', type: 'submit', text: 'Send Message' })
         )
       );
       const form = container.querySelector('#contact-form');
       on(form, 'submit', (e) => {
         e.preventDefault();
-        Toast.success('Message sent! (demo – please connect to backend)');
+        Toast.success('Message sent! (demo – connect to backend)');
         form.reset();
       });
       return container;
     }
 
-    // --- AUTH PAGES ---
+    // ──────────────────────────────────────────────────────────────
+    // 12.9: PAGE RENDERERS – AUTH PAGES
+    // ──────────────────────────────────────────────────────────────
+
+    // ─── Login ───
     function renderLogin() {
-      const container = create('div', { className: 'container py-12 max-w-md mx-auto' });
+      const container = create('div', { className: 'py-12 px-4 max-w-md mx-auto' });
       append(container,
-        create('h1', { className: 'text-2xl font-black text-center', text: 'Login' }),
-        create('form', { id: 'login-form', className: 'mt-6' },
-          create('div', { className: 'form-group' }, [
+        create('h1', { className: 'text-3xl font-display font-black text-center mb-6', text: 'Login' }),
+        create('form', { className: 'card', id: 'login-form' },
+          create('div', { className: 'form-group' },
             create('label', { text: 'Email' }),
             create('input', { className: 'form-control', type: 'email', id: 'login-email', placeholder: 'admin@wolfsociety.gg' })
-          ]),
-          create('div', { className: 'form-group' }, [
+          ),
+          create('div', { className: 'form-group' },
             create('label', { text: 'Password' }),
             create('input', { className: 'form-control', type: 'password', id: 'login-password', placeholder: '••••••••' })
-          ]),
-          create('button', { className: 'btn btn-primary w-full', type: 'submit', text: 'Login' })
+          ),
+          create('button', { className: 'btn btn-primary btn-block', type: 'submit', text: 'Sign In' }),
+          create('p', { className: 'text-center text-muted text-sm mt-4' },
+            'Demo: admin@wolfsociety.gg / admin123'
+          )
         )
       );
       const form = container.querySelector('#login-form');
@@ -693,35 +2417,41 @@
         e.preventDefault();
         const email = document.getElementById('login-email').value;
         const password = document.getElementById('login-password').value;
+        if (!email || !password) {
+          Toast.error('Please fill in all fields');
+          return;
+        }
         try {
           const user = await API.auth.login(email, password);
-          Toast.success(`Welcome, ${user.name}`);
-          Router.navigate(user.role === 'management' ? '/management/dashboard' : '/player/dashboard');
+          Toast.success(`Welcome, ${user.name || user.email}`);
+          const role = user.role || 'player';
+          Router.navigate(role === 'management' ? '/management/dashboard' : '/player/dashboard');
         } catch (err) {
-          Toast.error(err.message);
+          Toast.error(err.message || 'Login failed');
         }
       });
       return container;
     }
 
+    // ─── Register ───
     function renderRegister() {
-      const container = create('div', { className: 'container py-12 max-w-md mx-auto' });
+      const container = create('div', { className: 'py-12 px-4 max-w-md mx-auto' });
       append(container,
-        create('h1', { className: 'text-2xl font-black text-center', text: 'Register' }),
-        create('form', { id: 'register-form', className: 'mt-6' },
-          create('div', { className: 'form-group' }, [
+        create('h1', { className: 'text-3xl font-display font-black text-center mb-6', text: 'Register' }),
+        create('form', { className: 'card', id: 'register-form' },
+          create('div', { className: 'form-group' },
             create('label', { text: 'Name' }),
             create('input', { className: 'form-control', type: 'text', id: 'reg-name', placeholder: 'Your name' })
-          ]),
-          create('div', { className: 'form-group' }, [
+          ),
+          create('div', { className: 'form-group' },
             create('label', { text: 'Email' }),
             create('input', { className: 'form-control', type: 'email', id: 'reg-email', placeholder: 'your@email.com' })
-          ]),
-          create('div', { className: 'form-group' }, [
+          ),
+          create('div', { className: 'form-group' },
             create('label', { text: 'Password' }),
             create('input', { className: 'form-control', type: 'password', id: 'reg-password', placeholder: '••••••••' })
-          ]),
-          create('button', { className: 'btn btn-primary w-full', type: 'submit', text: 'Register' })
+          ),
+          create('button', { className: 'btn btn-primary btn-block', type: 'submit', text: 'Create Account' })
         )
       );
       const form = container.querySelector('#register-form');
@@ -730,65 +2460,252 @@
         const name = document.getElementById('reg-name').value;
         const email = document.getElementById('reg-email').value;
         const password = document.getElementById('reg-password').value;
+        if (!name || !email || !password) {
+          Toast.error('All fields are required');
+          return;
+        }
+        if (password.length < 6) {
+          Toast.error('Password must be at least 6 characters');
+          return;
+        }
         try {
           await API.auth.register(email, password, name);
           Toast.success('Account created! Please login.');
           Router.navigate('/login');
         } catch (err) {
-          Toast.error(err.message);
+          Toast.error(err.message || 'Registration failed');
         }
       });
       return container;
     }
 
-    // --- PLAYER DASHBOARD ---
+    // ──────────────────────────────────────────────────────────────
+    // 12.10: PAGE RENDERERS – PLAYER DASHBOARD
+    // ──────────────────────────────────────────────────────────────
+
     async function renderPlayerDashboard() {
       const user = API.auth.getUser();
-      const container = create('div', { className: 'container py-8' });
+      const container = create('div', { className: 'py-8 px-4' });
+
       try {
-        const players = await API.get('players', `?user_id=${user.id}`);
-        const player = players[0] || {};
-        const matches = await API.get('matches');
+        let players = [];
+        try {
+          players = await API.get('players');
+        } catch {
+          players = API._localGet('players');
+        }
+        const player = players.find(p => p.user_id == user?.id) || players[0] || { display_name: user?.name || 'Player' };
+
+        let matches = [];
+        try {
+          matches = await API.get('matches');
+        } catch {
+          matches = API._localGet('matches');
+        }
+        const playerMatches = matches.filter(m => m.team_id == player.team_id);
+
         append(container,
           create('div', { className: 'dashboard-header' },
-            create('h1', { text: `🐺 Welcome, ${player.display_name || user.name}` })
+            create('h1', { className: 'text-3xl font-display font-black', text: `🐺 Welcome, ${player.display_name || user?.name || 'Player'}` })
           ),
           create('div', { className: 'stats-grid' },
-            create('div', { className: 'stat-card' }, [create('div', { className: 'stat-value', text: matches.length }), create('div', { className: 'stat-label', text: 'Matches Played' })]),
-            create('div', { className: 'stat-card' }, [create('div', { className: 'stat-value', text: '2.5' }), create('div', { className: 'stat-label', text: 'K/D Ratio' })]),
-            create('div', { className: 'stat-card' }, [create('div', { className: 'stat-value', text: '65%' }), create('div', { className: 'stat-label', text: 'Win Rate' })])
+            create('div', { className: 'stat-card' },
+              create('div', { className: 'stat-icon', text: '🏆' }),
+              create('div', { className: 'stat-value', text: playerMatches.length }),
+              create('div', { className: 'stat-label', text: 'Matches Played' })
+            ),
+            create('div', { className: 'stat-card' },
+              create('div', { className: 'stat-icon', text: '📊' }),
+              create('div', { className: 'stat-value', text: '2.5' }),
+              create('div', { className: 'stat-label', text: 'K/D Ratio' })
+            ),
+            create('div', { className: 'stat-card' },
+              create('div', { className: 'stat-icon', text: '🎯' }),
+              create('div', { className: 'stat-value', text: '65%' }),
+              create('div', { className: 'stat-label', text: 'Win Rate' })
+            )
           ),
-          create('h2', { className: 'text-xl font-bold mt-6', text: 'Recent Matches' }),
-          create('ul', { className: 'mt-4 space-y-2' },
-            matches.slice(0, 5).map(m =>
-              create('li', { className: 'card p-3 flex justify-between' }, [
-                create('span', { text: `${m.opponent} – ${m.result}` }),
-                create('span', { className: 'text-muted', text: m.match_date })
-              ])
+          create('h2', { className: 'text-xl font-bold mt-6 mb-4', text: 'Recent Matches' }),
+          create('div', { className: 'space-y-2' },
+            playerMatches.slice(0, 5).map(m =>
+              create('div', { className: 'card p-3 flex justify-between items-center' },
+                create('span', { text: `${m.opponent} – ${m.result || 'upcoming'}` }),
+                create('span', { className: 'text-muted text-sm', text: formatDate(m.match_date) })
+              )
             )
           )
         );
-      } catch (e) {
-        append(container, create('p', { text: 'Error loading dashboard' }));
+
+        if (playerMatches.length === 0) {
+          const emptyMsg = create('p', { className: 'text-muted text-center py-8', text: 'No matches yet. Stay tuned!' });
+          const matchesSection = container.querySelector('.space-y-2');
+          matchesSection.appendChild(emptyMsg);
+        }
+
+      } catch (err) {
+        append(container,
+          create('div', { className: 'alert alert-warning' },
+            create('span', { className: 'alert-icon', text: '⚠' }),
+            create('div', { className: 'alert-content' },
+              create('div', { className: 'alert-title', text: 'Error Loading Data' }),
+              create('div', { className: 'alert-message', text: err.message || 'Please try again later.' })
+            )
+          )
+        );
       }
       return container;
     }
 
-    // --- MANAGEMENT DASHBOARD ---
-    async function renderManagementDashboard() {
-      const container = create('div', { className: 'container py-8' });
+    async function renderPlayerProfile() {
+      const user = API.auth.getUser();
+      const container = create('div', { className: 'py-8 px-4 max-w-2xl mx-auto' });
+
+      let player = null;
       try {
         const players = await API.get('players');
-        const matches = await API.get('matches');
-        const teams = await API.get('teams');
-        const announcements = await API.get('announcements');
+        player = players.find(p => p.user_id == user?.id) || players[0] || { display_name: user?.name || '', game: 'Valorant', role: 'IGL', status: 'active' };
+      } catch {
+        const players = API._localGet('players');
+        player = players.find(p => p.user_id == user?.id) || players[0] || { display_name: user?.name || '', game: 'Valorant', role: 'IGL', status: 'active' };
+      }
+
+      append(container,
+        create('h1', { className: 'text-3xl font-display font-black mb-6', text: 'My Profile' }),
+        create('form', { className: 'card', id: 'profile-form' },
+          create('div', { className: 'form-group' },
+            create('label', { text: 'Display Name' }),
+            create('input', { className: 'form-control', type: 'text', id: 'prof-name', value: player.display_name || '' })
+          ),
+          create('div', { className: 'form-group' },
+            create('label', { text: 'Game' }),
+            create('input', { className: 'form-control', type: 'text', id: 'prof-game', value: player.game || 'Valorant' })
+          ),
+          create('div', { className: 'form-group' },
+            create('label', { text: 'Role' }),
+            create('input', { className: 'form-control', type: 'text', id: 'prof-role', value: player.role || 'IGL' })
+          ),
+          create('div', { className: 'form-group' },
+            create('label', { text: 'Status' }),
+            create('select', { className: 'form-control form-control-select', id: 'prof-status' },
+              ['active', 'inactive', 'trial'].map(s =>
+                create('option', { value: s, text: s, selected: s === player.status })
+              )
+            )
+          ),
+          create('button', { className: 'btn btn-primary btn-block', type: 'submit', text: 'Update Profile' })
+        )
+      );
+
+      const form = container.querySelector('#profile-form');
+      on(form, 'submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('prof-name').value;
+        const game = document.getElementById('prof-game').value;
+        const role = document.getElementById('prof-role').value;
+        const status = document.getElementById('prof-status').value;
+        if (!name) { Toast.error('Name is required'); return; }
+        try {
+          if (player.id) {
+            await API.put('players', player.id, { display_name: name, game, role, status });
+          } else {
+            await API.post('players', { display_name: name, game, role, status, user_id: user?.id });
+          }
+          Toast.success('Profile updated successfully!');
+        } catch (err) {
+          // Local fallback
+          if (player.id) {
+            API._localPut('players', player.id, { display_name: name, game, role, status });
+          } else {
+            API._localPost('players', { display_name: name, game, role, status, user_id: user?.id });
+          }
+          Toast.success('Profile updated (local)!');
+        }
+      });
+      return container;
+    }
+
+    async function renderPlayerMatches() {
+      const container = create('div', { className: 'py-8 px-4' });
+      let matches = [];
+      try {
+        matches = await API.get('matches');
+      } catch {
+        matches = API._localGet('matches');
+      }
+
+      append(container,
+        create('h1', { className: 'text-3xl font-display font-black mb-6', text: 'My Matches' }),
+        create('div', { className: 'table-container' },
+          create('table', {},
+            create('thead', {},
+              create('tr', {},
+                ['Opponent', 'Game', 'Date', 'Result', 'Score'].map(h => create('th', { text: h }))
+              )
+            ),
+            create('tbody', {},
+              matches.map(m =>
+                create('tr', {},
+                  [m.opponent, m.game, formatDate(m.match_date), m.result || 'upcoming', m.score || '-'].map(c =>
+                    create('td', { text: c })
+                  )
+                )
+              )
+            )
+          )
+        )
+      );
+
+      if (matches.length === 0) {
+        append(container, create('p', { className: 'text-muted text-center py-8', text: 'No matches recorded yet.' }));
+      }
+      return container;
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // 12.11: PAGE RENDERERS – MANAGEMENT DASHBOARD
+    // ──────────────────────────────────────────────────────────────
+
+    async function renderManagementDashboard() {
+      const container = create('div', { className: 'py-8 px-4' });
+
+      try {
+        let players = [], matches = [], teams = [], announcements = [];
+        try {
+          [players, matches, teams, announcements] = await Promise.all([
+            API.get('players'), API.get('matches'), API.get('teams'), API.get('announcements')
+          ]);
+        } catch {
+          players = API._localGet('players');
+          matches = API._localGet('matches');
+          teams = API._localGet('teams');
+          announcements = API._localGet('announcements');
+        }
+
         append(container,
-          create('div', { className: 'dashboard-header' }, create('h1', { text: '⚙️ Management Dashboard' })),
+          create('div', { className: 'dashboard-header' },
+            create('h1', { className: 'text-3xl font-display font-black', text: '⚙️ Management Dashboard' })
+          ),
           create('div', { className: 'stats-grid' },
-            create('div', { className: 'stat-card' }, [create('div', { className: 'stat-value', text: players.length }), create('div', { className: 'stat-label', text: 'Players' })]),
-            create('div', { className: 'stat-card' }, [create('div', { className: 'stat-value', text: matches.length }), create('div', { className: 'stat-label', text: 'Matches' })]),
-            create('div', { className: 'stat-card' }, [create('div', { className: 'stat-value', text: teams.length }), create('div', { className: 'stat-label', text: 'Teams' })]),
-            create('div', { className: 'stat-card' }, [create('div', { className: 'stat-value', text: announcements.length }), create('div', { className: 'stat-label', text: 'Announcements' })])
+            create('div', { className: 'stat-card' },
+              create('div', { className: 'stat-icon', text: '👥' }),
+              create('div', { className: 'stat-value', text: players.length }),
+              create('div', { className: 'stat-label', text: 'Players' })
+            ),
+            create('div', { className: 'stat-card' },
+              create('div', { className: 'stat-icon', text: '🎮' }),
+              create('div', { className: 'stat-value', text: matches.length }),
+              create('div', { className: 'stat-label', text: 'Matches' })
+            ),
+            create('div', { className: 'stat-card' },
+              create('div', { className: 'stat-icon', text: '🏠' }),
+              create('div', { className: 'stat-value', text: teams.length }),
+              create('div', { className: 'stat-label', text: 'Teams' })
+            ),
+            create('div', { className: 'stat-card' },
+              create('div', { className: 'stat-icon', text: '📢' }),
+              create('div', { className: 'stat-value', text: announcements.length }),
+              create('div', { className: 'stat-label', text: 'Announcements' })
+            )
           ),
           create('div', { className: 'tabs' },
             ['Players', 'Matches', 'Teams', 'Announcements'].map(label => {
@@ -796,161 +2713,577 @@
               on(btn, 'click', () => {
                 $$('.tab-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                const map = { 'Players': renderManagementPlayers, 'Matches': renderManagementMatches, 'Teams': renderManagementTeams,
-                  'Announcements': renderManagementAnnouncements };
-                const content = container.querySelector('.tab-content');
-                empty(content);
-                content.appendChild(map[label]());
+                const map = {
+                  'Players': renderManagementPlayers,
+                  'Matches': renderManagementMatches,
+                  'Teams': renderManagementTeams,
+                  'Announcements': renderManagementAnnouncements
+                };
+                const content = container.querySelector('.tab-content-active');
+                if (content) {
+                  empty(content);
+                  map[label]().then(el => content.appendChild(el));
+                }
               });
               return btn;
             })
           ),
-          create('div', { className: 'tab-content mt-4' })
+          create('div', { className: 'tab-content-active mt-4' })
         );
+
         // Default tab
         const firstTab = container.querySelector('.tab-btn');
         if (firstTab) firstTab.classList.add('active');
-        const content = container.querySelector('.tab-content');
-        content.appendChild(await renderManagementPlayers());
-      } catch (e) {
-        append(container, create('p', { text: 'Error loading dashboard' }));
+        const content = container.querySelector('.tab-content-active');
+        const defaultContent = await renderManagementPlayers();
+        content.appendChild(defaultContent);
+
+      } catch (err) {
+        append(container,
+          create('div', { className: 'alert alert-warning' },
+            create('span', { className: 'alert-icon', text: '⚠' }),
+            create('div', { className: 'alert-content' },
+              create('div', { className: 'alert-title', text: 'Error Loading Dashboard' }),
+              create('div', { className: 'alert-message', text: err.message })
+            )
+          )
+        );
       }
       return container;
     }
 
-    // --- MANAGEMENT CRUD RENDERERS (simplified for brevity – full version included) ---
+    // ─── Management: Players ───
     async function renderManagementPlayers() {
       const container = create('div');
+
       try {
-        const players = await API.get('players');
+        let players = [];
+        try {
+          players = await API.get('players');
+        } catch {
+          players = API._localGet('players');
+        }
+
         append(container,
           create('button', { className: 'btn btn-primary mb-4', text: '+ Add Player', id: 'add-player-btn' })
         );
-        const table = create('div', { className: 'table-container' },
+
+        const table = create('div', { className: 'table-container' });
+        const thead = create('thead', {},
+          create('tr', {},
+            ['Name', 'Game', 'Role', 'Status', 'Actions'].map(h => create('th', { text: h }))
+          )
+        );
+        const tbody = create('tbody', { id: 'player-table-body' });
+        players.forEach(p => {
+          const tr = create('tr', { 'data-id': p.id });
+          append(tr,
+            create('td', { text: p.display_name }),
+            create('td', { text: p.game || '-' }),
+            create('td', { text: p.role || '-' }),
+            create('td', { text: p.status || 'active' }),
+            create('td', {},
+              create('button', { className: 'btn btn-outline btn-sm', text: 'Edit', 'data-id': p.id, 'data-action': 'edit-player' }),
+              create('button', { className: 'btn btn-danger btn-sm ml-1', text: 'Delete', 'data-id': p.id, 'data-action': 'delete-player' })
+            )
+          );
+          tbody.appendChild(tr);
+        });
+        const tableEl = create('table', {}, thead, tbody);
+        table.appendChild(tableEl);
+        container.appendChild(table);
+
+        // ─── Add Player ───
+        const addBtn = container.querySelector('#add-player-btn');
+        on(addBtn, 'click', () => {
+          const formContent = create('div');
+          append(formContent,
+            create('div', { className: 'form-group' },
+              create('label', { text: 'Display Name' }),
+              create('input', { className: 'form-control', type: 'text', id: 'ap-name', placeholder: 'Player name' })
+            ),
+            create('div', { className: 'form-group' },
+              create('label', { text: 'Game' }),
+              create('input', { className: 'form-control', type: 'text', id: 'ap-game', placeholder: 'Valorant, CS2, etc.' })
+            ),
+            create('div', { className: 'form-group' },
+              create('label', { text: 'Role' }),
+              create('input', { className: 'form-control', type: 'text', id: 'ap-role', placeholder: 'IGL, Entry, etc.' })
+            ),
+            create('div', { className: 'form-group' },
+              create('label', { text: 'Status' }),
+              create('select', { className: 'form-control form-control-select', id: 'ap-status' },
+                ['active', 'inactive', 'trial'].map(s =>
+                  create('option', { value: s, text: s })
+                )
+              )
+            ),
+            create('button', { className: 'btn btn-success btn-block', text: 'Create Player', id: 'ap-save-btn' })
+          );
+          const overlay = Modal.open({ title: 'Add Player', content: formContent });
+
+          const saveBtn = formContent.querySelector('#ap-save-btn');
+          on(saveBtn, 'click', async () => {
+            const name = formContent.querySelector('#ap-name').value;
+            const game = formContent.querySelector('#ap-game').value;
+            const role = formContent.querySelector('#ap-role').value;
+            const status = formContent.querySelector('#ap-status').value;
+            if (!name) { Toast.error('Name is required'); return; }
+            try {
+              await API.post('players', { display_name: name, game, role, status });
+              Toast.success('Player added!');
+            } catch {
+              API._localPost('players', { display_name: name, game, role, status });
+              Toast.success('Player added (local)!');
+            }
+            Modal.close(overlay);
+            // Re-render the tab
+            const newContent = await renderManagementPlayers();
+            const parent = container.parentElement;
+            parent.innerHTML = '';
+            parent.appendChild(newContent);
+          });
+        });
+
+        // ─── Edit/Delete Delegation ───
+        on(table, 'click', (e) => {
+          const target = e.target.closest('button');
+          if (!target) return;
+          const id = target.dataset.id;
+          const action = target.dataset.action;
+
+          if (action === 'delete-player') {
+            Modal.confirm('Delete this player? This action cannot be undone.', async () => {
+              try {
+                await API.delete('players', id);
+                Toast.success('Player deleted');
+              } catch {
+                API._localDelete('players', id);
+                Toast.success('Player deleted (local)');
+              }
+              // Re-render
+              const newContent = await renderManagementPlayers();
+              const parent = container.parentElement;
+              parent.innerHTML = '';
+              parent.appendChild(newContent);
+            });
+          }
+
+          if (action === 'edit-player') {
+            const p = players.find(p => p.id == id);
+            if (!p) return;
+            const formContent = create('div');
+            append(formContent,
+              create('div', { className: 'form-group' },
+                create('label', { text: 'Display Name' }),
+                create('input', { className: 'form-control', type: 'text', id: 'ep-name', value: p.display_name })
+              ),
+              create('div', { className: 'form-group' },
+                create('label', { text: 'Game' }),
+                create('input', { className: 'form-control', type: 'text', id: 'ep-game', value: p.game || '' })
+              ),
+              create('div', { className: 'form-group' },
+                create('label', { text: 'Role' }),
+                create('input', { className: 'form-control', type: 'text', id: 'ep-role', value: p.role || '' })
+              ),
+              create('div', { className: 'form-group' },
+                create('label', { text: 'Status' }),
+                create('select', { className: 'form-control form-control-select', id: 'ep-status' },
+                  ['active', 'inactive', 'trial'].map(s =>
+                    create('option', { value: s, text: s, selected: s === p.status })
+                  )
+                )
+              ),
+              create('button', { className: 'btn btn-success btn-block', text: 'Update Player', id: 'ep-save-btn' })
+            );
+            const overlay = Modal.open({ title: 'Edit Player', content: formContent });
+
+            const saveBtn = formContent.querySelector('#ep-save-btn');
+            on(saveBtn, 'click', async () => {
+              const name = formContent.querySelector('#ep-name').value;
+              const game = formContent.querySelector('#ep-game').value;
+              const role = formContent.querySelector('#ep-role').value;
+              const status = formContent.querySelector('#ep-status').value;
+              if (!name) { Toast.error('Name is required'); return; }
+              try {
+                await API.put('players', id, { display_name: name, game, role, status });
+                Toast.success('Player updated!');
+              } catch {
+                API._localPut('players', id, { display_name: name, game, role, status });
+                Toast.success('Player updated (local)!');
+              }
+              Modal.close(overlay);
+              const newContent = await renderManagementPlayers();
+              const parent = container.parentElement;
+              parent.innerHTML = '';
+              parent.appendChild(newContent);
+            });
+          }
+        });
+
+        if (players.length === 0) {
+          const emptyMsg = create('p', { className: 'text-muted text-center py-8', text: 'No players yet. Add your first player!' });
+          const tbody = container.querySelector('#player-table-body');
+          if (tbody) tbody.appendChild(create('tr', {}, create('td', { colspan: 5, className: 'text-center text-muted py-4', text: 'No players yet' })));
+        }
+
+      } catch (err) {
+        append(container, create('p', { className: 'text-muted', text: 'Error loading players: ' + err.message }));
+      }
+      return container;
+    }
+
+    // ─── Management: Matches (Simplified – same pattern) ───
+    async function renderManagementMatches() {
+      const container = create('div');
+      let matches = [];
+      try {
+        matches = await API.get('matches');
+      } catch {
+        matches = API._localGet('matches');
+      }
+
+      append(container,
+        create('button', { className: 'btn btn-primary mb-4', text: '+ Add Match', id: 'add-match-btn' }),
+        create('div', { className: 'table-container' },
           create('table', {},
             create('thead', {},
               create('tr', {},
-                ['Name', 'Game', 'Role', 'Status', 'Actions'].map(h => create('th', { text: h }))
+                ['Opponent', 'Game', 'Date', 'Result', 'Score', 'Actions'].map(h => create('th', { text: h }))
               )
             ),
-            create('tbody', { id: 'player-table-body' },
-              players.map(p =>
-                create('tr', { 'data-id': p.id },
-                  create('td', { text: p.display_name }),
-                  create('td', { text: p.game || '-' }),
-                  create('td', { text: p.role || '-' }),
-                  create('td', { text: p.status || 'active' }),
+            create('tbody', {},
+              matches.map(m =>
+                create('tr', { 'data-id': m.id },
+                  create('td', { text: m.opponent }),
+                  create('td', { text: m.game }),
+                  create('td', { text: formatDate(m.match_date) }),
+                  create('td', { text: m.result || 'upcoming' }),
+                  create('td', { text: m.score || '-' }),
                   create('td', {},
-                    create('button', { className: 'btn btn-outline btn-sm', text: 'Edit', 'data-id': p.id, 'data-action': 'edit-player' }),
-                    create('button', { className: 'btn btn-danger btn-sm ml-1', text: 'Delete', 'data-id': p.id, 'data-action': 'delete-player' })
+                    create('button', { className: 'btn btn-danger btn-sm', text: 'Delete', 'data-id': m.id, 'data-action': 'delete-match' })
                   )
                 )
               )
             )
           )
+        )
+      );
+
+      // Add match logic
+      const addBtn = container.querySelector('#add-match-btn');
+      on(addBtn, 'click', () => {
+        const formContent = create('div');
+        append(formContent,
+          create('div', { className: 'form-group' },
+            create('label', { text: 'Opponent' }),
+            create('input', { className: 'form-control', type: 'text', id: 'am-opponent', placeholder: 'Opponent name' })
+          ),
+          create('div', { className: 'form-group' },
+            create('label', { text: 'Game' }),
+            create('input', { className: 'form-control', type: 'text', id: 'am-game', placeholder: 'Valorant, CS2, etc.' })
+          ),
+          create('div', { className: 'form-group' },
+            create('label', { text: 'Date' }),
+            create('input', { className: 'form-control', type: 'date', id: 'am-date' })
+          ),
+          create('div', { className: 'form-group' },
+            create('label', { text: 'Result' }),
+            create('select', { className: 'form-control form-control-select', id: 'am-result' },
+              ['upcoming', 'win', 'loss', 'draw'].map(s =>
+                create('option', { value: s, text: s })
+              )
+            )
+          ),
+          create('div', { className: 'form-group' },
+            create('label', { text: 'Score' }),
+            create('input', { className: 'form-control', type: 'text', id: 'am-score', placeholder: '13-8' })
+          ),
+          create('button', { className: 'btn btn-success btn-block', text: 'Create Match', id: 'am-save-btn' })
         );
-        container.appendChild(table);
+        const overlay = Modal.open({ title: 'Add Match', content: formContent });
 
-        // Add Player
-        const addBtn = container.querySelector('#add-player-btn');
-        on(addBtn, 'click', () => {
-          const form = create('div');
-          append(form,
-            create('div', { className: 'form-group' }, [create('label', { text: 'Display Name' }), create('input', { className: 'form-control', id: 'p-name', placeholder: 'Name' })]),
-            create('div', { className: 'form-group' }, [create('label', { text: 'Game' }), create('input', { className: 'form-control', id: 'p-game', placeholder: 'Game' })]),
-            create('div', { className: 'form-group' }, [create('label', { text: 'Role' }), create('input', { className: 'form-control', id: 'p-role', placeholder: 'Role' })]),
-            create('button', { className: 'btn btn-success', text: 'Save', id: 'save-player-btn' })
-          );
-          Modal.open({ title: 'Add Player', content: form });
-          const saveBtn = form.querySelector('#save-player-btn');
-          on(saveBtn, 'click', async () => {
-            const name = form.querySelector('#p-name').value;
-            const game = form.querySelector('#p-game').value;
-            const role = form.querySelector('#p-role').value;
-            if (!name) { Toast.error('Name required'); return; }
-            await API.post('players', { display_name: name, game, role, status: 'active' });
-            Toast.success('Player added');
-            Modal.close(form.closest('.modal-overlay'));
-            Router.navigate('/management/dashboard');
-          });
+        const saveBtn = formContent.querySelector('#am-save-btn');
+        on(saveBtn, 'click', async () => {
+          const opponent = formContent.querySelector('#am-opponent').value;
+          const game = formContent.querySelector('#am-game').value;
+          const date = formContent.querySelector('#am-date').value;
+          const result = formContent.querySelector('#am-result').value;
+          const score = formContent.querySelector('#am-score').value;
+          if (!opponent || !game || !date) { Toast.error('Opponent, Game, and Date are required'); return; }
+          try {
+            await API.post('matches', { opponent, game, match_date: date, result, score, team_id: 1 });
+            Toast.success('Match added!');
+          } catch {
+            API._localPost('matches', { opponent, game, match_date: date, result, score, team_id: 1 });
+            Toast.success('Match added (local)!');
+          }
+          Modal.close(overlay);
+          const newContent = await renderManagementMatches();
+          const parent = container.parentElement;
+          parent.innerHTML = '';
+          parent.appendChild(newContent);
         });
+      });
 
-        // Delete / Edit events (delegation)
-        on(table, 'click', async (e) => {
-          const target = e.target.closest('button');
-          if (!target) return;
+      // Delete match
+      on(container, 'click', (e) => {
+        const target = e.target.closest('button');
+        if (!target) return;
+        if (target.dataset.action === 'delete-match') {
           const id = target.dataset.id;
-          const action = target.dataset.action;
-          if (action === 'delete-player') {
-            Modal.confirm('Delete this player?', async () => {
-              await API.delete('players', id);
-              Toast.success('Deleted');
-              Router.navigate('/management/dashboard');
-            });
-          }
-          if (action === 'edit-player') {
-            const p = players.find(p => p.id === id);
-            if (!p) return;
-            const form = create('div');
-            append(form,
-              create('div', { className: 'form-group' }, [create('label', { text: 'Display Name' }), create('input', { className: 'form-control', id: 'e-name', value: p.display_name })]),
-              create('div', { className: 'form-group' }, [create('label', { text: 'Game' }), create('input', { className: 'form-control', id: 'e-game', value: p.game || '' })]),
-              create('div', { className: 'form-group' }, [create('label', { text: 'Role' }), create('input', { className: 'form-control', id: 'e-role', value: p.role || '' })]),
-              create('button', { className: 'btn btn-success', text: 'Update', id: 'edit-save-btn' })
-            );
-            Modal.open({ title: 'Edit Player', content: form });
-            const saveBtn = form.querySelector('#edit-save-btn');
-            on(saveBtn, 'click', async () => {
-              const name = form.querySelector('#e-name').value;
-              const game = form.querySelector('#e-game').value;
-              const role = form.querySelector('#e-role').value;
-              await API.put('players', id, { display_name: name, game, role });
-              Toast.success('Updated');
-              Modal.close(form.closest('.modal-overlay'));
-              Router.navigate('/management/dashboard');
-            });
-          }
-        });
-      } catch (e) {
-        append(container, create('p', { text: 'Error loading players' }));
+          Modal.confirm('Delete this match?', async () => {
+            try {
+              await API.delete('matches', id);
+              Toast.success('Match deleted');
+            } catch {
+              API._localDelete('matches', id);
+              Toast.success('Match deleted (local)');
+            }
+            const newContent = await renderManagementMatches();
+            const parent = container.parentElement;
+            parent.innerHTML = '';
+            parent.appendChild(newContent);
+          });
+        }
+      });
+
+      if (matches.length === 0) {
+        append(container, create('p', { className: 'text-muted text-center py-8', text: 'No matches scheduled yet.' }));
       }
       return container;
     }
 
-    // Similar for matches, teams, announcements – omitted for brevity but identical pattern.
-    // They follow the same CRUD pattern: GET, POST, PUT, DELETE.
-    // I'll include a fallback stub so the dashboard works.
-    async function renderManagementMatches() {
-      const container = create('div');
-      append(container, create('p', { text: 'Matches CRUD – implemented similarly as players.' }));
-      return container;
-    }
+    // ─── Management: Teams ───
     async function renderManagementTeams() {
       const container = create('div');
-      append(container, create('p', { text: 'Teams CRUD – implemented similarly as players.' }));
+      let teams = [];
+      try {
+        teams = await API.get('teams');
+      } catch {
+        teams = API._localGet('teams');
+      }
+
+      append(container,
+        create('button', { className: 'btn btn-primary mb-4', text: '+ Add Team', id: 'add-team-btn' }),
+        create('div', { className: 'table-container' },
+          create('table', {},
+            create('thead', {},
+              create('tr', {},
+                ['Name', 'Tag', 'Game', 'Wins', 'Losses', 'Actions'].map(h => create('th', { text: h }))
+              )
+            ),
+            create('tbody', {},
+              teams.map(t =>
+                create('tr', { 'data-id': t.id },
+                  create('td', { text: t.name }),
+                  create('td', { text: t.tag }),
+                  create('td', { text: t.game }),
+                  create('td', { text: t.wins || 0 }),
+                  create('td', { text: t.losses || 0 }),
+                  create('td', {},
+                    create('button', { className: 'btn btn-danger btn-sm', text: 'Delete', 'data-id': t.id, 'data-action': 'delete-team' })
+                  )
+                )
+              )
+            )
+          )
+        )
+      );
+
+      const addBtn = container.querySelector('#add-team-btn');
+      on(addBtn, 'click', () => {
+        const formContent = create('div');
+        append(formContent,
+          create('div', { className: 'form-group' },
+            create('label', { text: 'Team Name' }),
+            create('input', { className: 'form-control', type: 'text', id: 'at-name', placeholder: 'Team name' })
+          ),
+          create('div', { className: 'form-group' },
+            create('label', { text: 'Tag' }),
+            create('input', { className: 'form-control', type: 'text', id: 'at-tag', placeholder: 'TAG' })
+          ),
+          create('div', { className: 'form-group' },
+            create('label', { text: 'Game' }),
+            create('input', { className: 'form-control', type: 'text', id: 'at-game', placeholder: 'Valorant' })
+          ),
+          create('button', { className: 'btn btn-success btn-block', text: 'Create Team', id: 'at-save-btn' })
+        );
+        const overlay = Modal.open({ title: 'Add Team', content: formContent });
+
+        const saveBtn = formContent.querySelector('#at-save-btn');
+        on(saveBtn, 'click', async () => {
+          const name = formContent.querySelector('#at-name').value;
+          const tag = formContent.querySelector('#at-tag').value;
+          const game = formContent.querySelector('#at-game').value;
+          if (!name || !tag || !game) { Toast.error('All fields required'); return; }
+          try {
+            await API.post('teams', { name, tag, game, wins: 0, losses: 0 });
+            Toast.success('Team added!');
+          } catch {
+            API._localPost('teams', { name, tag, game, wins: 0, losses: 0 });
+            Toast.success('Team added (local)!');
+          }
+          Modal.close(overlay);
+          const newContent = await renderManagementTeams();
+          const parent = container.parentElement;
+          parent.innerHTML = '';
+          parent.appendChild(newContent);
+        });
+      });
+
+      on(container, 'click', (e) => {
+        const target = e.target.closest('button');
+        if (!target) return;
+        if (target.dataset.action === 'delete-team') {
+          const id = target.dataset.id;
+          Modal.confirm('Delete this team?', async () => {
+            try {
+              await API.delete('teams', id);
+              Toast.success('Team deleted');
+            } catch {
+              API._localDelete('teams', id);
+              Toast.success('Team deleted (local)');
+            }
+            const newContent = await renderManagementTeams();
+            const parent = container.parentElement;
+            parent.innerHTML = '';
+            parent.appendChild(newContent);
+          });
+        }
+      });
+
       return container;
     }
+
+    // ─── Management: Announcements ───
     async function renderManagementAnnouncements() {
       const container = create('div');
-      append(container, create('p', { text: 'Announcements CRUD – implemented similarly as players.' }));
+      let announcements = [];
+      try {
+        announcements = await API.get('announcements');
+      } catch {
+        announcements = API._localGet('announcements');
+      }
+
+      append(container,
+        create('button', { className: 'btn btn-primary mb-4', text: '+ Add Announcement', id: 'add-announcement-btn' }),
+        create('div', { className: 'table-container' },
+          create('table', {},
+            create('thead', {},
+              create('tr', {},
+                ['Title', 'Published', 'Pinned', 'Actions'].map(h => create('th', { text: h }))
+              )
+            ),
+            create('tbody', {},
+              announcements.map(a =>
+                create('tr', { 'data-id': a.id },
+                  create('td', { text: a.title }),
+                  create('td', { text: a.published ? '✅' : '❌' }),
+                  create('td', { text: a.pinned ? '📌' : '' }),
+                  create('td', {},
+                    create('button', { className: 'btn btn-danger btn-sm', text: 'Delete', 'data-id': a.id, 'data-action': 'delete-announcement' })
+                  )
+                )
+              )
+            )
+          )
+        )
+      );
+
+      const addBtn = container.querySelector('#add-announcement-btn');
+      on(addBtn, 'click', () => {
+        const formContent = create('div');
+        append(formContent,
+          create('div', { className: 'form-group' },
+            create('label', { text: 'Title' }),
+            create('input', { className: 'form-control', type: 'text', id: 'aa-title', placeholder: 'Announcement title' })
+          ),
+          create('div', { className: 'form-group' },
+            create('label', { text: 'Content' }),
+            create('textarea', { className: 'form-control form-control-textarea', id: 'aa-content', rows: 3, placeholder: 'Content...' })
+          ),
+          create('div', { className: 'form-group flex items-center gap-2' },
+            create('input', { type: 'checkbox', id: 'aa-pinned', style: 'width: 1.1rem; height: 1.1rem;' }),
+            create('label', { htmlFor: 'aa-pinned', text: 'Pin this announcement' })
+          ),
+          create('button', { className: 'btn btn-success btn-block', text: 'Post Announcement', id: 'aa-save-btn' })
+        );
+        const overlay = Modal.open({ title: 'Add Announcement', content: formContent });
+
+        const saveBtn = formContent.querySelector('#aa-save-btn');
+        on(saveBtn, 'click', async () => {
+          const title = formContent.querySelector('#aa-title').value;
+          const content = formContent.querySelector('#aa-content').value;
+          const pinned = formContent.querySelector('#aa-pinned').checked;
+          if (!title || !content) { Toast.error('Title and content required'); return; }
+          try {
+            await API.post('announcements', { title, content, pinned, published: true, author_id: 1 });
+            Toast.success('Announcement posted!');
+          } catch {
+            API._localPost('announcements', { title, content, pinned, published: true, author_id: 1 });
+            Toast.success('Announcement posted (local)!');
+          }
+          Modal.close(overlay);
+          const newContent = await renderManagementAnnouncements();
+          const parent = container.parentElement;
+          parent.innerHTML = '';
+          parent.appendChild(newContent);
+        });
+      });
+
+      on(container, 'click', (e) => {
+        const target = e.target.closest('button');
+        if (!target) return;
+        if (target.dataset.action === 'delete-announcement') {
+          const id = target.dataset.id;
+          Modal.confirm('Delete this announcement?', async () => {
+            try {
+              await API.delete('announcements', id);
+              Toast.success('Announcement deleted');
+            } catch {
+              API._localDelete('announcements', id);
+              Toast.success('Announcement deleted (local)');
+            }
+            const newContent = await renderManagementAnnouncements();
+            const parent = container.parentElement;
+            parent.innerHTML = '';
+            parent.appendChild(newContent);
+          });
+        }
+      });
+
       return container;
     }
 
-    // Player profile and matches pages (stubs)
-    function renderPlayerProfile() {
-      return create('div', { className: 'container py-8' }, create('p', { text: 'Player profile – edit your details here.' }));
-    }
-    function renderPlayerMatches() {
-      return create('div', { className: 'container py-8' }, create('p', { text: 'Your match history and stats.' }));
-    }
-
-    // ============================================================
-    // 6. BOOTSTRAP
-    // ============================================================
+    // ──────────────────────────────────────────────────────────────
+    // 12.12: BOOTSTRAP APPLICATION
+    // ──────────────────────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', () => {
+      // Initialize router
       Router.init();
-      window.__API = API;
-      window.__Router = Router;
+
+      // Expose for debugging
+      window.__APP = {
+        API,
+        Router,
+        Toast,
+        Modal,
+        CONFIG
+      };
+
+      console.log(`🐺 ${CONFIG.APP_NAME} v${CONFIG.APP_VERSION} initialized.`);
+      console.log('📡 API Endpoint:', CONFIG.API_BASE);
+      console.log('💾 LocalStorage fallback:', CONFIG.USE_LOCAL_FALLBACK ? 'enabled' : 'disabled');
+      console.log('👤 Current user:', API.auth.getUser() || 'none');
+    });
+
+    // Handle offline/online status
+    window.addEventListener('online', () => {
+      Toast.info('🔄 Back online. Syncing data...');
+    });
+    window.addEventListener('offline', () => {
+      Toast.warning('📡 Offline mode. Data will be stored locally.');
     });
   </script>
 </body>
