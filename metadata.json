@@ -1,6 +1,0 @@
-{
-  "name": "Wolf Society",
-  "description": "Premium recruitment portal and secure administrative dashboard with direct Supabase storage integrations",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
