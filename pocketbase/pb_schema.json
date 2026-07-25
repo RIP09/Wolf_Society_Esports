@@ -1,0 +1,116 @@
+{
+  "collections": [
+    {
+      "name": "users",
+      "type": "auth",
+      "fields": [
+        { "name": "email", "type": "email", "required": true },
+        { "name": "password", "type": "password", "required": true },
+        { "name": "name", "type": "text" },
+        { "name": "role", "type": "select", "options": { "values": ["public", "player", "management"] } },
+        { "name": "verified", "type": "bool" }
+      ],
+      "listRule": "id = @request.auth.id || @request.auth.role = 'management'",
+      "viewRule": "id = @request.auth.id || @request.auth.role = 'management'",
+      "createRule": "",
+      "updateRule": "id = @request.auth.id || @request.auth.role = 'management'",
+      "deleteRule": "@request.auth.role = 'management'"
+    },
+    {
+      "name": "players",
+      "fields": [
+        { "name": "user_id", "type": "relation", "collection": "users", "required": true },
+        { "name": "display_name", "type": "text", "required": true },
+        { "name": "avatar", "type": "file" },
+        { "name": "bio", "type": "text" },
+        { "name": "game", "type": "select", "options": { "values": ["Valorant", "CS2", "LoL", "Apex", "Fortnite", "Other"] } },
+        { "name": "role", "type": "select", "options": { "values": ["IGL", "Entry", "Support", "AWPer", "Flex"] } },
+        { "name": "team", "type": "relation", "collection": "teams" },
+        { "name": "stats_json", "type": "json" },
+        { "name": "social_links", "type": "json" },
+        { "name": "status", "type": "select", "options": { "values": ["active", "inactive", "trial"] } }
+      ],
+      "listRule": "",
+      "viewRule": "",
+      "createRule": "@request.auth.role = 'management'",
+      "updateRule": "@request.auth.role = 'management' || @request.auth.id = user_id",
+      "deleteRule": "@request.auth.role = 'management'"
+    },
+    {
+      "name": "matches",
+      "fields": [
+        { "name": "team", "type": "relation", "collection": "teams", "required": true },
+        { "name": "opponent", "type": "text", "required": true },
+        { "name": "game", "type": "select", "required": true },
+        { "name": "date", "type": "date", "required": true },
+        { "name": "time", "type": "text" },
+        { "name": "result", "type": "select", "options": { "values": ["upcoming", "win", "loss", "draw"] } },
+        { "name": "score", "type": "text" },
+        { "name": "maps", "type": "json" },
+        { "name": "vod_url", "type": "url" },
+        { "name": "notes", "type": "editor" }
+      ],
+      "listRule": "",
+      "viewRule": "",
+      "createRule": "@request.auth.role = 'management'",
+      "updateRule": "@request.auth.role = 'management'",
+      "deleteRule": "@request.auth.role = 'management'"
+    },
+    {
+      "name": "teams",
+      "fields": [
+        { "name": "name", "type": "text", "required": true },
+        { "name": "tag", "type": "text", "required": true },
+        { "name": "logo", "type": "file" },
+        { "name": "game", "type": "select", "required": true },
+        { "name": "members", "type": "relation", "collection": "players", "multiple": true },
+        { "name": "wins", "type": "number" },
+        { "name": "losses", "type": "number" },
+        { "name": "draws", "type": "number" },
+        { "name": "captain", "type": "relation", "collection": "players" },
+        { "name": "status", "type": "select", "options": { "values": ["active", "inactive"] } }
+      ],
+      "listRule": "",
+      "viewRule": "",
+      "createRule": "@request.auth.role = 'management'",
+      "updateRule": "@request.auth.role = 'management'",
+      "deleteRule": "@request.auth.role = 'management'"
+    },
+    {
+      "name": "announcements",
+      "fields": [
+        { "name": "title", "type": "text", "required": true },
+        { "name": "content", "type": "editor", "required": true },
+        { "name": "author", "type": "relation", "collection": "users" },
+        { "name": "category", "type": "select", "options": { "values": ["news", "update", "event", "match"] } },
+        { "name": "image", "type": "file" },
+        { "name": "pinned", "type": "bool" },
+        { "name": "published", "type": "bool" },
+        { "name": "published_at", "type": "date" }
+      ],
+      "listRule": "published = true",
+      "viewRule": "published = true || @request.auth.role != ''",
+      "createRule": "@request.auth.role = 'management'",
+      "updateRule": "@request.auth.role = 'management'",
+      "deleteRule": "@request.auth.role = 'management'"
+    },
+    {
+      "name": "tools",
+      "fields": [
+        { "name": "name", "type": "text", "required": true },
+        { "name": "description", "type": "text" },
+        { "name": "category", "type": "select", "options": { "values": ["utility", "stats", "schedule", "media", "communication"] } },
+        { "name": "url", "type": "url", "required": true },
+        { "name": "icon", "type": "text" },
+        { "name": "for_role", "type": "select", "options": { "values": ["all", "player", "management"] } },
+        { "name": "active", "type": "bool" },
+        { "name": "order", "type": "number" }
+      ],
+      "listRule": "active = true",
+      "viewRule": "active = true || @request.auth.role = 'management'",
+      "createRule": "@request.auth.role = 'management'",
+      "updateRule": "@request.auth.role = 'management'",
+      "deleteRule": "@request.auth.role = 'management'"
+    }
+  ]
+}
