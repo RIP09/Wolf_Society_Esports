@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import anime from 'animejs';
 import { api } from '../../services/api';
 import { staggerReveal } from '../../utils/animations';
 import Button from '../common/Button';
@@ -8,21 +7,25 @@ const PlayersTable = () => {
   const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchPlayers();
-  }, []);
-
   const fetchPlayers = async () => {
     try {
-      const data = await api.get('/players');
-      setPlayers(data);
+      const res = await api.get('/players');
+      setPlayers(res.data);
       setLoading(false);
-      // Animate table rows after render
-      setTimeout(() => staggerReveal('.player-row'), 100);
     } catch (err) {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    fetchPlayers();
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      setTimeout(() => staggerReveal('.player-row'), 100);
+    }
+  }, [loading]);
 
   const handleDelete = async (id) => {
     if (window.confirm('Delete this player?')) {
@@ -31,12 +34,17 @@ const PlayersTable = () => {
     }
   };
 
+  if (loading) return <div>Loading...</div>;
+
   return (
-    <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6">
-      <h2 className="text-2xl font-bold mb-4 text-cyan-400">Roster Management</h2>
+    <div className="glass rounded-xl p-6">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold text-primary">Roster Management</h2>
+        <Button variant="secondary" size="sm">Add Player</Button>
+      </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-zinc-800/60">
+          <thead className="bg-white/5">
             <tr>
               <th className="p-3 text-left">Name</th>
               <th className="p-3 text-left">Game</th>
@@ -46,11 +54,11 @@ const PlayersTable = () => {
             </tr>
           </thead>
           <tbody>
-            {players.map((p, idx) => (
-              <tr key={p.id} className="player-row border-b border-zinc-700/50 hover:bg-zinc-800/30 transition-colors">
+            {players.map((p) => (
+              <tr key={p.id} className="player-row border-b border-white/5 hover:bg-white/5 transition">
                 <td className="p-3 font-medium">{p.display_name}</td>
-                <td className="p-3">{p.game}</td>
-                <td className="p-3">{p.role}</td>
+                <td className="p-3">{p.game || '—'}</td>
+                <td className="p-3">{p.role || '—'}</td>
                 <td className="p-3">
                   <span className={`px-2 py-1 rounded-full text-xs ${p.status === 'active' ? 'bg-green-500/20 text-green-300' : 'bg-gray-500/20 text-gray-300'}`}>
                     {p.status}
