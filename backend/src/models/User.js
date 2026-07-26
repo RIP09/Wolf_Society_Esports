@@ -1,44 +1,53 @@
-const { DataTypes } = require('sequelize');
+const supabase = require('../config/supabase');
 const bcrypt = require('bcryptjs');
-const sequelize = require('../config/db');
 
-const User = sequelize.define('User', {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-  email: {
-    type: DataTypes.STRING(255),
-    allowNull: false,
-    unique: true,
-    validate: { isEmail: true },
-  },
-  password_hash: {
-    type: DataTypes.STRING(255),
-    allowNull: false,
-  },
-  full_name: {
-    type: DataTypes.STRING(100),
-    allowNull: false,
-  },
-  role: {
-    type: DataTypes.ENUM('player', 'content_creator', 'manager', 'admin'),
-    defaultValue: 'player',
-  },
-}, {
-  tableName: 'users',
-  hooks: {
-    beforeCreate: async (user) => {
-      if (user.password_hash) {
-        user.password_hash = await bcrypt.hash(user.password_hash, 10);
-      }
-    },
-  },
-});
+class User {
+  static async findByEmail(email) {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('email', email)
+      .single();
+    if (error && error.code !== 'PGRST116') throw error;
+    return data;
+  }
 
-User.prototype.comparePassword = async function (candidate) {
-  return bcrypt.compare(candidate, this.password_hash);
-};
+  static async findById(id) {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', id)
+      .single();
+    if (error && error.code !== 'PGRST116') throw error;
+    return data;
+  }
+
+  static async create({ email, password, full_name, role }) {
+    const hashed = await bcrypt.hash(password, 10);
+    const { data, error } = await supabase
+      .from('users')
+      .insert([{ email, password_hash: hashed, full_name, role }])
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  }
+
+  static async update(id, fields) {
+    const { data, error } = await supabase
+      .from('users')
+      .update(fields)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  }
+
+  static async delete(id) {
+    const { error } = await supabase.from('users').delete().eq('id', id);
+    if (error) throw error;
+  }
+}
 
 module.exports = User;
