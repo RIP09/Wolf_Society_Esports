@@ -1,7 +1,6 @@
 import anime from 'animejs';
 
-// Staggered list reveal
-export const staggerReveal = (selector) => {
+export const staggerReveal = (selector, options = {}) => {
   anime({
     targets: selector,
     opacity: [0, 1],
@@ -9,32 +8,24 @@ export const staggerReveal = (selector) => {
     delay: anime.stagger(80),
     duration: 600,
     easing: 'easeOutQuad',
+    ...options,
   });
 };
 
-// Hover scale + glow
 export const hoverGlow = (element) => {
-  element.addEventListener('mouseenter', () => {
+  const glow = (value) => {
     anime({
       targets: element,
-      scale: 1.03,
-      boxShadow: '0 0 30px rgba(0, 240, 255, 0.3)',
+      scale: value ? 1.03 : 1,
+      boxShadow: value ? '0 0 30px rgba(0, 240, 255, 0.3)' : 'none',
       duration: 300,
       easing: 'easeOutQuad',
     });
-  });
-  element.addEventListener('mouseleave', () => {
-    anime({
-      targets: element,
-      scale: 1,
-      boxShadow: 'none',
-      duration: 300,
-      easing: 'easeOutQuad',
-    });
-  });
+  };
+  element.addEventListener('mouseenter', () => glow(true));
+  element.addEventListener('mouseleave', () => glow(false));
 };
 
-// Pulse live indicator
 export const pulseLive = (selector) => {
   anime({
     targets: selector,
