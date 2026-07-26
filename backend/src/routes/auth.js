@@ -1,8 +1,10 @@
-const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
-const { validateLogin, validateRegister } = require('../utils/validation');
+const router = require('express').Router();
+const { validateRegister, validateLogin } = require('../utils/validation');
+const authController = require('../controllers/authController');
+const auth = require('../middleware/auth');
 
 router.post('/register', validateRegister, async (req, res, next) => {
   try {
@@ -24,5 +26,9 @@ router.post('/login', validateLogin, async (req, res, next) => {
     res.json({ token, user: { id: user.id, email, full_name: user.full_name, role: user.role } });
   } catch (err) { next(err); }
 });
+
+router.post('/register', validateRegister, authController.register);
+router.post('/login', validateLogin, authController.login);
+router.get('/me', auth, authController.getMe);
 
 module.exports = router;
