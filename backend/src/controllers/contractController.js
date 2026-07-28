@@ -1,16 +1,14 @@
-const { Contract, User } = require('../models');
+const Contract = require('../models/Contract');
 const { validationResult } = require('express-validator');
 
 exports.getContracts = async (req, res, next) => {
   try {
-    const where = {};
+    // Players see only their own; managers/admins see all
+    let query = {};
     if (!req.user || !['admin', 'manager'].includes(req.user.role)) {
-      where.user_id = req.user ? req.user.id : null;
+      query.user_id = req.user.id;
     }
-    const contracts = await Contract.findAll({
-      where,
-      include: [{ model: User, attributes: ['id', 'full_name', 'email'] }],
-    });
+    const contracts = await Contract.findAll(query);
     res.json(contracts);
   } catch (err) {
     next(err);
@@ -19,9 +17,7 @@ exports.getContracts = async (req, res, next) => {
 
 exports.getContract = async (req, res, next) => {
   try {
-    const contract = await Contract.findByPk(req.params.id, {
-      include: [{ model: User, attributes: ['id', 'full_name'] }],
-    });
+    const contract = await Contract.findById(req.params.id);
     if (!contract) {
       return res.status(404).json({ error: 'Contract not found' });
     }
@@ -55,12 +51,12 @@ exports.updateContract = async (req, res, next) => {
     if (!['admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Forbidden' });
     }
-    const contract = await Contract.findByPk(req.params.id);
+    const contract = await Contract.findById(req.params.id);
     if (!contract) {
       return res.status(404).json({ error: 'Contract not found' });
     }
-    await contract.update(req.body);
-    res.json(contract);
+    const updated = await Contract.update(req.params.id, req.body);
+    res.json(updated);
   } catch (err) {
     next(err);
   }
@@ -71,11 +67,11 @@ exports.deleteContract = async (req, res, next) => {
     if (!['admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Forbidden' });
     }
-    const contract = await Contract.findByPk(req.params.id);
+    const contract = await Contract.findById(req.params.id);
     if (!contract) {
       return res.status(404).json({ error: 'Contract not found' });
     }
-    await contract.destroy();
+    await Contract.delete(req.params.id);
     res.json({ message: 'Contract deleted' });
   } catch (err) {
     next(err);
