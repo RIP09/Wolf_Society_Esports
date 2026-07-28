@@ -1,14 +1,9 @@
-const { Player, Team, User } = require('../models');
+const Player = require('../models/Player');
 const { validationResult } = require('express-validator');
 
 exports.getPlayers = async (req, res, next) => {
   try {
-    const players = await Player.findAll({
-      include: [
-        { model: User, attributes: ['id', 'email', 'full_name'] },
-        { model: Team, attributes: ['id', 'name'] },
-      ],
-    });
+    const players = await Player.findAll();
     res.json(players);
   } catch (err) {
     next(err);
@@ -17,12 +12,7 @@ exports.getPlayers = async (req, res, next) => {
 
 exports.getPlayer = async (req, res, next) => {
   try {
-    const player = await Player.findByPk(req.params.id, {
-      include: [
-        { model: User, attributes: ['id', 'email', 'full_name'] },
-        { model: Team, attributes: ['id', 'name'] },
-      ],
-    });
+    const player = await Player.findById(req.params.id);
     if (!player) {
       return res.status(404).json({ error: 'Player not found' });
     }
@@ -50,7 +40,7 @@ exports.createPlayer = async (req, res, next) => {
 
 exports.updatePlayer = async (req, res, next) => {
   try {
-    const player = await Player.findByPk(req.params.id);
+    const player = await Player.findById(req.params.id);
     if (!player) {
       return res.status(404).json({ error: 'Player not found' });
     }
@@ -58,8 +48,8 @@ exports.updatePlayer = async (req, res, next) => {
     if (!['admin', 'manager'].includes(user.role) && user.id !== player.user_id) {
       return res.status(403).json({ error: 'Forbidden' });
     }
-    await player.update(req.body);
-    res.json(player);
+    const updated = await Player.update(req.params.id, req.body);
+    res.json(updated);
   } catch (err) {
     next(err);
   }
@@ -70,11 +60,11 @@ exports.deletePlayer = async (req, res, next) => {
     if (!['admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Forbidden' });
     }
-    const player = await Player.findByPk(req.params.id);
+    const player = await Player.findById(req.params.id);
     if (!player) {
       return res.status(404).json({ error: 'Player not found' });
     }
-    await player.destroy();
+    await Player.delete(req.params.id);
     res.json({ message: 'Player deleted' });
   } catch (err) {
     next(err);
