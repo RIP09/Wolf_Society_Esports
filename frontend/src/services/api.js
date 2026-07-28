@@ -1,32 +1,24 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || '/api',
   headers: { 'Content-Type': 'application/json' },
 });
 
-let authToken = null;
-
-export const setAuthToken = (token) => {
-  authToken = token;
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
   if (token) {
-    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  } else {
-    delete api.defaults.headers.common['Authorization'];
+    config.headers.Authorization = `Bearer ${token}`;
   }
-};
-
-export const removeAuthToken = () => {
-  authToken = null;
-  delete api.defaults.headers.common['Authorization'];
-};
+  return config;
+});
 
 api.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
       localStorage.removeItem('token');
-      removeAuthToken();
+      window.location.href = '/auth/login';
     }
     return Promise.reject(err);
   }
