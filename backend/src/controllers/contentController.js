@@ -1,17 +1,14 @@
-const { Content, User } = require('../models');
+const Content = require('../models/Content');
 const { validationResult } = require('express-validator');
 
 exports.getContent = async (req, res, next) => {
   try {
-    const where = {};
+    // Public sees only published; admins see all
+    let query = {};
     if (!req.user || !['admin', 'manager'].includes(req.user.role)) {
-      where.status = 'published';
+      query.status = 'published';
     }
-    const content = await Content.findAll({
-      where,
-      include: [{ model: User, attributes: ['id', 'full_name'] }],
-      order: [['upload_date', 'DESC']],
-    });
+    const content = await Content.findAll(query);
     res.json(content);
   } catch (err) {
     next(err);
@@ -20,9 +17,7 @@ exports.getContent = async (req, res, next) => {
 
 exports.getContentItem = async (req, res, next) => {
   try {
-    const content = await Content.findByPk(req.params.id, {
-      include: [{ model: User, attributes: ['id', 'full_name'] }],
-    });
+    const content = await Content.findById(req.params.id);
     if (!content) {
       return res.status(404).json({ error: 'Content not found' });
     }
@@ -41,6 +36,7 @@ exports.createContent = async (req, res, next) => {
     return res.status(400).json({ errors: errors.array() });
   }
   try {
+    // Content creators, managers, admins can create
     if (!req.user || !['admin', 'manager', 'content_creator'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Forbidden' });
     }
@@ -56,16 +52,16 @@ exports.createContent = async (req, res, next) => {
 
 exports.updateContent = async (req, res, next) => {
   try {
-    const content = await Content.findByPk(req.params.id);
+    const content = await Content.findById(req.params.id);
     if (!content) {
       return res.status(404).json({ error: 'Content not found' });
     }
-    // Only allow update by owner or admin/manager
+    // Only owner, manager, admin can update
     if (!['admin', 'manager'].includes(req.user.role) && req.user.id !== content.uploader_id) {
       return res.status(403).json({ error: 'Forbidden' });
     }
-    await content.update(req.body);
-    res.json(content);
+    const updated = await Content.update(req.params.id, req.body);
+    res.json(updated);
   } catch (err) {
     next(err);
   }
@@ -76,11 +72,11 @@ exports.deleteContent = async (req, res, next) => {
     if (!['admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Forbidden' });
     }
-    const content = await Content.findByPk(req.params.id);
+    const content = await Content.findById(req.params.id);
     if (!content) {
       return res.status(404).json({ error: 'Content not found' });
     }
-    await content.destroy();
+    await Content.delete(req.params.id);
     res.json({ message: 'Content deleted' });
   } catch (err) {
     next(err);
