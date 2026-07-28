@@ -1,41 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { api } from '../../services/api';
-import Card from '../common/Card';
-import LoadingSpinner from '../common/LoadingSpinner';
-import { staggerReveal } from '../../utils/animations';
+'use client';
 
-const ContentFeed = () => {
-  const [content, setContent] = useState([]);
-  const [loading, setLoading] = useState(true);
+import { useQuery } from '@tanstack/react-query';
+import { api } from '@/services/api';
+import Card from '@/components/common/Card';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
+import { motion } from 'motion/react';
 
-  useEffect(() => {
-    api.get('/content')
-      .then(res => {
-        setContent(res.data);
-        setLoading(false);
-        setTimeout(() => staggerReveal('.content-card'), 100);
-      })
-      .catch(err => console.error(err));
-  }, []);
+export default function ContentFeed() {
+  const { data: content, isLoading } = useQuery({
+    queryKey: ['content'],
+    queryFn: () => api.get('/content').then((res) => res.data),
+  });
 
-  if (loading) return <LoadingSpinner />;
+  if (isLoading) return <LoadingSpinner />;
 
   return (
-    <div className="space-y-8">
-      <h1 className="text-3xl font-bold text-primary">Content Hub</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {content.map(item => (
-          <Card key={item.id} className="content-card" title={item.title}>
+    <div className="space-y-4">
+      <h3 className="text-lg font-bold">Latest Content</h3>
+      {content?.slice(0, 3).map((item, i) => (
+        <motion.div
+          key={item.id}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: i * 0.1 }}
+        >
+          <Card title={item.title}>
             <p className="text-muted text-sm">{item.description}</p>
-            <p className="text-muted text-xs">Type: {item.type} • {new Date(item.upload_date).toLocaleDateString()}</p>
-            <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline text-sm">
-              Watch
-            </a>
+            <p className="text-muted text-xs">{item.type} • {new Date(item.upload_date).toLocaleDateString()}</p>
+            <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline text-sm">Watch</a>
           </Card>
-        ))}
-      </div>
+        </motion.div>
+      ))}
     </div>
   );
-};
-
-export default ContentFeed;
+}
