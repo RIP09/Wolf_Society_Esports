@@ -1,17 +1,14 @@
-const { Announcement, User } = require('../models');
+const Announcement = require('../models/Announcement');
 const { validationResult } = require('express-validator');
 
 exports.getAnnouncements = async (req, res, next) => {
   try {
-    const where = {};
+    // Public sees only published; admin sees all
+    let query = {};
     if (!req.user || !['admin', 'manager'].includes(req.user.role)) {
-      where.published = true;
+      query.published = true;
     }
-    const announcements = await Announcement.findAll({
-      where,
-      include: [{ model: User, attributes: ['id', 'full_name'] }],
-      order: [['pinned', 'DESC'], ['published_at', 'DESC']],
-    });
+    const announcements = await Announcement.findAll(query);
     res.json(announcements);
   } catch (err) {
     next(err);
@@ -20,12 +17,11 @@ exports.getAnnouncements = async (req, res, next) => {
 
 exports.getAnnouncement = async (req, res, next) => {
   try {
-    const announcement = await Announcement.findByPk(req.params.id, {
-      include: [{ model: User, attributes: ['id', 'full_name'] }],
-    });
+    const announcement = await Announcement.findById(req.params.id);
     if (!announcement) {
       return res.status(404).json({ error: 'Announcement not found' });
     }
+    // Check if published
     if (!announcement.published && (!req.user || !['admin', 'manager'].includes(req.user.role))) {
       return res.status(403).json({ error: 'Access denied' });
     }
@@ -59,12 +55,12 @@ exports.updateAnnouncement = async (req, res, next) => {
     if (!['admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Forbidden' });
     }
-    const announcement = await Announcement.findByPk(req.params.id);
+    const announcement = await Announcement.findById(req.params.id);
     if (!announcement) {
       return res.status(404).json({ error: 'Announcement not found' });
     }
-    await announcement.update(req.body);
-    res.json(announcement);
+    const updated = await Announcement.update(req.params.id, req.body);
+    res.json(updated);
   } catch (err) {
     next(err);
   }
@@ -75,11 +71,11 @@ exports.deleteAnnouncement = async (req, res, next) => {
     if (!['admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Forbidden' });
     }
-    const announcement = await Announcement.findByPk(req.params.id);
+    const announcement = await Announcement.findById(req.params.id);
     if (!announcement) {
       return res.status(404).json({ error: 'Announcement not found' });
     }
-    await announcement.destroy();
+    await Announcement.delete(req.params.id);
     res.json({ message: 'Announcement deleted' });
   } catch (err) {
     next(err);
