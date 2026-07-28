@@ -1,16 +1,11 @@
-import React from 'react';
-import { useHoverGlow } from '../../hooks/useAnimations';
+import { Paper, Typography } from '@mui/material';
 
-const Card = ({ title, description, children, className = '' }) => {
-  const ref = useHoverGlow();
-
+export default function Card({ title, description, children }) {
   return (
-    <div ref={ref} className={`glass rounded-xl p-6 transition-all ${className}`}>
-      {title && <h3 className="text-xl font-bold mb-2 text-primary">{title}</h3>}
-      {description && <p className="text-muted">{description}</p>}
+    <Paper sx={{ p: 3, height: '100%' }}>
+      {title && <Typography variant="h6" gutterBottom>{title}</Typography>}
+      {description && <Typography variant="body2" color="textSecondary" gutterBottom>{description}</Typography>}
       {children}
-    </div>
+    </Paper>
   );
-};
-
-export default Card;
+}
