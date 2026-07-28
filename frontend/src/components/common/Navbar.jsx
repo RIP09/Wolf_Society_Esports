@@ -1,60 +1,45 @@
-import React, { useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
-import { LogOut, User, Shield } from 'lucide-react';
-import { pulseLive } from '../../utils/animations';
+'use client';
 
-const Navbar = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-  const liveDotRef = useRef(null);
+import { AppBar, Toolbar, Typography, Button, Box, IconButton } from '@mui/material';
+import { Menu as MenuIcon } from '@mui/icons-material';
+import Link from 'next/link';
+import { useAuth } from '@/hooks/useAuth';
+import { useDispatch } from 'react-redux';
+import { logout } from '@/store/authSlice';
 
-  useEffect(() => {
-    if (liveDotRef.current) {
-      pulseLive(liveDotRef.current);
-    }
-  }, []);
+export default function Navbar() {
+  const { user } = useAuth();
+  const dispatch = useDispatch();
 
   return (
-    <nav className="bg-surface/80 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-4">
-        <Link to="/" className="text-2xl font-bold text-primary">
-          Wolf<span className="text-white">Society</span>
-        </Link>
-
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-4 text-sm">
-            <Link to="/" className="hover:text-primary transition">Home</Link>
-            <Link to="/teams" className="hover:text-primary transition">Teams</Link>
-            <Link to="/schedule" className="hover:text-primary transition">Schedule</Link>
-            <Link to="/content" className="hover:text-primary transition">Content</Link>
-          </div>
-
-          <div className="flex items-center gap-4">
-            {user ? (
-              <>
-                <Link to="/dashboard" className="flex items-center gap-1 text-sm hover:text-primary transition">
-                  <Shield size={16} /> Dashboard
-                </Link>
-                <button
-                  onClick={() => { logout(); navigate('/'); }}
-                  className="flex items-center gap-1 text-sm hover:text-secondary transition"
-                >
-                  <LogOut size={16} /> Logout
-                </button>
-              </>
-            ) : (
-              <>
-                <Link to="/login" className="text-sm hover:text-primary transition">Login</Link>
-                <Link to="/register" className="btn-primary text-sm">Register</Link>
-              </>
-            )}
-            <div ref={liveDotRef} className="w-3 h-3 rounded-full bg-secondary inline-block" />
-          </div>
-        </div>
-      </div>
-    </nav>
+    <AppBar position="sticky" sx={{ backgroundColor: 'rgba(17, 24, 39, 0.8)', backdropFilter: 'blur(8px)' }}>
+      <Toolbar>
+        <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700 }}>
+          <Link href="/" style={{ color: '#00F0FF', textDecoration: 'none' }}>
+            Wolf<span style={{ color: '#fff' }}>Society</span>
+          </Link>
+        </Typography>
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
+          <Link href="/" passHref><Button color="inherit">Home</Button></Link>
+          <Link href="/teams" passHref><Button color="inherit">Teams</Button></Link>
+          <Link href="/schedule" passHref><Button color="inherit">Schedule</Button></Link>
+          <Link href="/content" passHref><Button color="inherit">Content</Button></Link>
+          {user ? (
+            <>
+              <Link href="/dashboard" passHref><Button color="primary">Dashboard</Button></Link>
+              <Button color="secondary" onClick={() => dispatch(logout())}>Logout</Button>
+            </>
+          ) : (
+            <>
+              <Link href="/auth/login" passHref><Button color="inherit">Login</Button></Link>
+              <Link href="/auth/register" passHref><Button variant="contained" color="primary">Register</Button></Link>
+            </>
+          )}
+        </Box>
+        <IconButton sx={{ display: { md: 'none' } }} color="inherit">
+          <MenuIcon />
+        </IconButton>
+      </Toolbar>
+    </AppBar>
   );
-};
-
-export default Navbar;
+}
