@@ -1,47 +1,47 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db');
-const User = require('./User');
+const supabase = require('../config/database');
 
-const Announcement = sequelize.define('Announcement', {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-  title: {
-    type: DataTypes.STRING(255),
-    allowNull: false,
-  },
-  content: {
-    type: DataTypes.TEXT,
-    allowNull: false,
-  },
-  author_id: {
-    type: DataTypes.INTEGER,
-    references: { model: User, key: 'id' },
-    onDelete: 'SET NULL',
-  },
-  category: {
-    type: DataTypes.STRING(20),
-    defaultValue: 'news',
-  },
-  image_url: {
-    type: DataTypes.STRING(255),
-  },
-  pinned: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
-  },
-  published: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: true,
-  },
-  published_at: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-  },
-}, {
-  tableName: 'announcements',
-});
+class Announcement {
+  static async findAll() {
+    const { data, error } = await supabase.from('announcements').select('*, users(full_name)');
+    if (error) throw error;
+    return data;
+  }
+
+  static async findById(id) {
+    const { data, error } = await supabase
+      .from('announcements')
+      .select('*, users(full_name)')
+      .eq('id', id)
+      .single();
+    if (error && error.code !== 'PGRST116') throw error;
+    return data;
+  }
+
+  static async create(announcement) {
+    const { data, error } = await supabase
+      .from('announcements')
+      .insert([announcement])
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  }
+
+  static async update(id, fields) {
+    const { data, error } = await supabase
+      .from('announcements')
+      .update(fields)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  }
+
+  static async delete(id) {
+    const { error } = await supabase.from('announcements').delete().eq('id', id);
+    if (error) throw error;
+  }
+}
 
 module.exports = Announcement;
