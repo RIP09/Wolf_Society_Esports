@@ -1,13 +1,11 @@
-import React from 'react';
+import { Box, Typography } from '@mui/material';
 
-const Footer = () => {
+export default function Footer() {
   return (
-    <footer className="bg-surface/80 border-t border-white/10 py-6 mt-auto">
-      <div className="container mx-auto px-4 text-center text-muted text-sm">
-        &copy; {new Date().getFullYear()} Wolf Society Esports. All rights reserved.
-      </div>
-    </footer>
+    <Box component="footer" sx={{ py: 4, textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+      <Typography variant="body2" color="textSecondary">
+        © {new Date().getFullYear()} Wolf Society Esports. All rights reserved.
+      </Typography>
+    </Box>
   );
-};
-
-export default Footer;
+}
