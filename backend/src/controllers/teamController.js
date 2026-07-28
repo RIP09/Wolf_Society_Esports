@@ -1,22 +1,28 @@
-const { Team, Player } = require('../models');
+const Team = require('../models/Team');
 const { validationResult } = require('express-validator');
 
+/**
+ * Get all teams
+ * GET /api/teams
+ * Public
+ */
 exports.getTeams = async (req, res, next) => {
   try {
-    const teams = await Team.findAll({
-      include: [{ model: Player, attributes: ['id', 'display_name'] }],
-    });
+    const teams = await Team.findAll();
     res.json(teams);
   } catch (err) {
     next(err);
   }
 };
 
+/**
+ * Get a single team by ID
+ * GET /api/teams/:id
+ * Public
+ */
 exports.getTeam = async (req, res, next) => {
   try {
-    const team = await Team.findByPk(req.params.id, {
-      include: [{ model: Player, attributes: ['id', 'display_name'] }],
-    });
+    const team = await Team.findById(req.params.id);
     if (!team) {
       return res.status(404).json({ error: 'Team not found' });
     }
@@ -26,6 +32,11 @@ exports.getTeam = async (req, res, next) => {
   }
 };
 
+/**
+ * Create a new team
+ * POST /api/teams
+ * Admin/Manager only
+ */
 exports.createTeam = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -42,32 +53,42 @@ exports.createTeam = async (req, res, next) => {
   }
 };
 
+/**
+ * Update a team
+ * PUT /api/teams/:id
+ * Admin/Manager only
+ */
 exports.updateTeam = async (req, res, next) => {
   try {
     if (!['admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Forbidden' });
     }
-    const team = await Team.findByPk(req.params.id);
+    const team = await Team.findById(req.params.id);
     if (!team) {
       return res.status(404).json({ error: 'Team not found' });
     }
-    await team.update(req.body);
-    res.json(team);
+    const updated = await Team.update(req.params.id, req.body);
+    res.json(updated);
   } catch (err) {
     next(err);
   }
 };
 
+/**
+ * Delete a team
+ * DELETE /api/teams/:id
+ * Admin/Manager only
+ */
 exports.deleteTeam = async (req, res, next) => {
   try {
     if (!['admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Forbidden' });
     }
-    const team = await Team.findByPk(req.params.id);
+    const team = await Team.findById(req.params.id);
     if (!team) {
       return res.status(404).json({ error: 'Team not found' });
     }
-    await team.destroy();
+    await Team.delete(req.params.id);
     res.json({ message: 'Team deleted' });
   } catch (err) {
     next(err);
