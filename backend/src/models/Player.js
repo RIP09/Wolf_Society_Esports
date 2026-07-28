@@ -1,52 +1,49 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db');
-const User = require('./User');
-const Team = require('./Team');
+const supabase = require('../config/database');
 
-const Player = sequelize.define('Player', {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-  user_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: { model: User, key: 'id' },
-    onDelete: 'CASCADE',
-  },
-  display_name: {
-    type: DataTypes.STRING(100),
-    allowNull: false,
-  },
-  avatar_url: {
-    type: DataTypes.STRING(255),
-  },
-  game: {
-    type: DataTypes.STRING(50),
-  },
-  role: {
-    type: DataTypes.STRING(50),
-  },
-  status: {
-    type: DataTypes.ENUM('active', 'inactive', 'trial'),
-    defaultValue: 'active',
-  },
-  team_id: {
-    type: DataTypes.INTEGER,
-    references: { model: Team, key: 'id' },
-    onDelete: 'SET NULL',
-  },
-  stats: {
-    type: DataTypes.JSONB,
-    defaultValue: {},
-  },
-  social_links: {
-    type: DataTypes.JSONB,
-    defaultValue: {},
-  },
-}, {
-  tableName: 'players',
-});
+class Player {
+  static async findAll() {
+    const { data, error } = await supabase
+      .from('players')
+      .select('*, users(full_name, email), teams(name)');
+    if (error) throw error;
+    return data;
+  }
+
+  static async findById(id) {
+    const { data, error } = await supabase
+      .from('players')
+      .select('*, users(full_name, email), teams(name)')
+      .eq('id', id)
+      .single();
+    if (error && error.code !== 'PGRST116') throw error;
+    return data;
+  }
+
+  static async create(player) {
+    const { data, error } = await supabase
+      .from('players')
+      .insert([player])
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  }
+
+  static async update(id, fields) {
+    const { data, error } = await supabase
+      .from('players')
+      .update(fields)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  }
+
+  static async delete(id) {
+    const { error } = await supabase.from('players').delete().eq('id', id);
+    if (error) throw error;
+  }
+}
 
 module.exports = Player;
