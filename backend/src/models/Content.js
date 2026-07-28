@@ -1,49 +1,47 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db');
-const User = require('./User');
+const supabase = require('../config/database');
 
-const Content = sequelize.define('Content', {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-  title: {
-    type: DataTypes.STRING(255),
-    allowNull: false,
-  },
-  description: {
-    type: DataTypes.TEXT,
-  },
-  type: {
-    type: DataTypes.ENUM('video', 'image', 'stream', 'article'),
-    allowNull: false,
-  },
-  url: {
-    type: DataTypes.STRING(255),
-    allowNull: false,
-  },
-  thumbnail_url: {
-    type: DataTypes.STRING(255),
-  },
-  uploader_id: {
-    type: DataTypes.INTEGER,
-    references: { model: User, key: 'id' },
-    onDelete: 'SET NULL',
-  },
-  upload_date: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-  },
-  scheduled_date: {
-    type: DataTypes.DATE,
-  },
-  status: {
-    type: DataTypes.ENUM('draft', 'published', 'archived'),
-    defaultValue: 'draft',
-  },
-}, {
-  tableName: 'content',
-});
+class Content {
+  static async findAll() {
+    const { data, error } = await supabase.from('content').select('*, users(full_name)');
+    if (error) throw error;
+    return data;
+  }
+
+  static async findById(id) {
+    const { data, error } = await supabase
+      .from('content')
+      .select('*, users(full_name)')
+      .eq('id', id)
+      .single();
+    if (error && error.code !== 'PGRST116') throw error;
+    return data;
+  }
+
+  static async create(content) {
+    const { data, error } = await supabase
+      .from('content')
+      .insert([content])
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  }
+
+  static async update(id, fields) {
+    const { data, error } = await supabase
+      .from('content')
+      .update(fields)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  }
+
+  static async delete(id) {
+    const { error } = await supabase.from('content').delete().eq('id', id);
+    if (error) throw error;
+  }
+}
 
 module.exports = Content;
