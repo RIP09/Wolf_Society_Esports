@@ -1,21 +1,41 @@
 const { body } = require('express-validator');
+const yup = require('yup');
 
+// Yup schemas for React Hook Form (shared)
+const userSchema = yup.object({
+  email: yup.string().email().required(),
+  password: yup.string().min(6).required(),
+  full_name: yup.string().required(),
+  role: yup.string().oneOf(['player', 'content_creator', 'manager', 'admin']).default('player'),
+});
+
+const playerSchema = yup.object({
+  user_id: yup.string().required(),
+  display_name: yup.string().required(),
+  game: yup.string(),
+  role: yup.string(),
+  status: yup.string().oneOf(['active', 'inactive', 'trial']),
+  team_id: yup.string().nullable(),
+});
+
+// Express-validator middlewares
 exports.validateRegister = [
-  body('email').isEmail().withMessage('Valid email required'),
-  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
-  body('full_name').notEmpty().withMessage('Full name required'),
+  body('email').isEmail(),
+  body('password').isLength({ min: 6 }),
+  body('full_name').notEmpty(),
   body('role').optional().isIn(['player', 'content_creator', 'manager', 'admin']),
 ];
 
 exports.validateLogin = [
-  body('email').isEmail().withMessage('Valid email required'),
-  body('password').notEmpty().withMessage('Password required'),
+  body('email').isEmail(),
+  body('password').notEmpty(),
 ];
 
 exports.validatePlayer = [
-  body('display_name').notEmpty().withMessage('Display name required'),
-  body('user_id').isInt().withMessage('User ID must be integer'),
+  body('user_id').isUUID(),
+  body('display_name').notEmpty(),
 ];
+// ... add others similarly
 
 exports.validateTeam = [
   body('name').notEmpty().withMessage('Team name required'),
