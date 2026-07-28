@@ -1,12 +1,9 @@
-const { Match, Team } = require('../models');
+const Match = require('../models/Match');
 const { validationResult } = require('express-validator');
 
 exports.getMatches = async (req, res, next) => {
   try {
-    const matches = await Match.findAll({
-      include: [{ model: Team, attributes: ['id', 'name'] }],
-      order: [['match_date', 'ASC']],
-    });
+    const matches = await Match.findAll();
     res.json(matches);
   } catch (err) {
     next(err);
@@ -15,9 +12,7 @@ exports.getMatches = async (req, res, next) => {
 
 exports.getMatch = async (req, res, next) => {
   try {
-    const match = await Match.findByPk(req.params.id, {
-      include: [{ model: Team, attributes: ['id', 'name'] }],
-    });
+    const match = await Match.findById(req.params.id);
     if (!match) {
       return res.status(404).json({ error: 'Match not found' });
     }
@@ -48,12 +43,12 @@ exports.updateMatch = async (req, res, next) => {
     if (!['admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Forbidden' });
     }
-    const match = await Match.findByPk(req.params.id);
+    const match = await Match.findById(req.params.id);
     if (!match) {
       return res.status(404).json({ error: 'Match not found' });
     }
-    await match.update(req.body);
-    res.json(match);
+    const updated = await Match.update(req.params.id, req.body);
+    res.json(updated);
   } catch (err) {
     next(err);
   }
@@ -64,11 +59,11 @@ exports.deleteMatch = async (req, res, next) => {
     if (!['admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Forbidden' });
     }
-    const match = await Match.findByPk(req.params.id);
+    const match = await Match.findById(req.params.id);
     if (!match) {
       return res.status(404).json({ error: 'Match not found' });
     }
-    await match.destroy();
+    await Match.delete(req.params.id);
     res.json({ message: 'Match deleted' });
   } catch (err) {
     next(err);
