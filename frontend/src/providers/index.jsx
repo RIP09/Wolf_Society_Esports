@@ -1,14 +1,12 @@
 'use client';
 
-import { ThemeProvider } from '@mui/material/styles';
+import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
 import { store } from '@/store';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-const queryClient = new QueryClient();
 
 const theme = createTheme({
   palette: {
@@ -22,15 +20,17 @@ const theme = createTheme({
   },
 });
 
+const queryClient = new QueryClient();
+
 export function Providers({ children }) {
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={theme}>
+        <MuiThemeProvider theme={theme}>
           <CssBaseline />
           {children}
           <ToastContainer position="bottom-right" theme="dark" />
-        </ThemeProvider>
+        </MuiThemeProvider>
       </QueryClientProvider>
     </Provider>
   );
