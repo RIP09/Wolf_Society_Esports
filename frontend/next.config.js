@@ -1,9 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: 'standalone', // Optimized for Vercel
+  output: 'standalone',
   images: {
-    domains: ['your-supabase-project.supabase.co'], // Replace with your Supabase domain
+    domains: ['your-supabase-project.supabase.co'],
   },
   experimental: {
     optimizePackageImports: ['@mui/icons-material', '@mui/material', 'lucide-react'],
@@ -12,7 +12,6 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  // Reduce bundle size
   modularizeImports: {
     '@mui/icons-material': {
       transform: '@mui/icons-material/{{member}}',
