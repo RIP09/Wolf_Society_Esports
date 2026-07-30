@@ -1,146 +1,135 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# 🐺 Wolf Society Esports
 
-# Run and deploy your AI Studio app
+Wolf Society Esports is a complete, modern, and dynamic esports organization management platform. It features a public hub, player dashboard, management dashboard, and full CRUD operations for teams, matches, players, content, and contracts.
 
-This contains everything you need to run your app locally.
-
-View your app in AI Studio: https://ai.studio/apps/d07253f9-630f-423c-9b53-f9a9fa1f4c6a
-
-## Run Locally
-
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
-
-# 👑  ESPORTS // WOLF SOCIETY 👑
-
-[![Ais Dev Server Status](https://img.shields.io/badge/System-ONLINE-emerald.svg?style=for-the-badge&logo=opsgenie&logoColor=white&color=059669)](https://wolfsocietygg.vercel.app)
-[![Aesthetic Layout](https://img.shields.io/badge/Design-VANTABLACK-e01a84.svg?style=for-the-badge&color=e01a84)](https://wolfsocietygg.vercel.app)
-[![Supabase Secure Fallback](https://img.shields.io/badge/Synced-SUPABASE-3ECF8E.svg?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
-[![Vite Bundled](https://img.shields.io/badge/Bundled_With-VITE_6-646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev)
-
-> **TACTICAL OPERATIONAL INTEL DIRECTIVE:** Welcome to the elite portal of *MadKings Esports // Wolf Society*. This repository hosts a premium single-page gaming tournament showcase, techwear store, member-recruitment mainframe, and high-frequency administrative telemetry dashboard dressed in high-contrast cosmic slate and **Vantablack** styling coordinates.
+**Live Demo:** [https://wolfsocietygg.vercel.app](https://wolfsocietygg.vercel.app)
 
 ---
 
-## 🌌 SYSTEM PREVIEW & AESTHETIC
+## ✨ Features
 
-| Primary Arena Showcase | Secure Decal customizer | Secure Log-In Interface |
-|:---:|:---:|:---:|
-| Elegant Display Typography <br> JetBrains Mono indicators | Under crown shielding arrays <br> Custom responsive decals | Full entropy passwords <br> Instant transceiver coordinate checks |
+### Public Pages
+- Home with animated hero, feature cards, logo carousel, and interactive components.
+- Teams listing with detailed stats.
+- Match schedule with live results.
+- Content hub with videos and articles.
+- Eye‑tracking subscription form, flashlight reveal, and scroll‑driven dock.
 
----
+### Authentication
+- Register / Login (JWT‑based).
+- Role‑based access (Player, Content Creator, Manager, Admin).
 
-## 🛠️ KEY HIGHLIGHTS & ARCHITECTURE
+### Player Dashboard
+- View personal stats, match history, and team details.
+- Edit own profile (limited fields).
 
-The application operates as a ultra-performant static frontend powered by **Vite 6** and **Tailwind CSS**. To guarantee a responsive user experience devoid of unneeded latency bottlenecks, the application features dual state synchronization:
+### Management Dashboard
+- Full CRUD for Teams, Players, Matches, Announcements, Content, Contracts.
+- Admin/Manager only – with proper RLS policies.
 
-1. **🔒 Decoupled Supabase Sync Handler**: Automatic injection banners and real-time settings configurations enable seamless linkage to remote data storage.
-2. **💾 Durable Client Cache Fallback**: When decoupled from cloud services, the entire application gracefully degrades into an isolated local state container powered entirely by `localStorage` structures, keeping rosters, shop items, wishlists, shopping carts, and agent accounts functional offline.
-3. **🎵 High-Frequency Sound Synthesizer**: Implements custom client-side audio oscillators that generate responsive futuristic synthesizer tones on actions (clicks, success chimes, invalidation alarms), eradicating reliance on external heavy audio assets.
-
----
-
-## 📈 COMPREHENSIVE TAB LAYOUT SPECS
-
-*   **⚡ Tab: Showcase**: The flagship showcase containing interactive merchandise rosters, live news matrices, team achievements, and embedded performance feeds.
-*   **👁️ Tab: About**: Chronological archive documenting the origin and operational vectors of the Vanguard.
-*   **🐺 Tab: Roster**: Highly interactive player grids detailing signature strategies, historical achievements, and hardware parameters.
-*   **🛒 Tab: Shop & Cart**: Micro-commerce matrix integrated with reactive item filtering, real-time totalizers, quantity multipliers, active discount checking, and checkout processors.
-*   **📨 Tab: Recruit**: Smart application portal featuring field validations, dynamic status logs, and instant confirmation responses.
-*   **🔑 Tabs: Sign In / Sign Up**: Double-layer credential validation suites with adaptive password strength meters, interactive show/hide buttons, social authentication mocks, and automatic OTP receiver verification coords.
-*   **🛡️ Dedicated Area: Admin (`admin.html`)**: Real-time admin control panel separated from the main layout containing dynamic widgets for user approvals, store inventory management, application telemetry logs, metrics tables, and manual credentials override.
-
----
-
-## 💾 ENVIRONMENT SETUP
-
-Link your cloud resources instantly! Create a `.env` file from the provided `.env.example` to establish variables:
-
-```env
-# .env config coordinates
-SUPABASE_URL="https://yourproject.supabase.co"
-SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-ADMIN_USERNAME="admin"
-ADMIN_PASSWORD="wolf-society-secure-pass"
-```
-
-*Note: Since the client operates directly in the browser, you can configure these keys dynamically on the UI through the "Gateway Settings" modal! The parameters will serialize and persist into your client-side variables automatically.*
+### Design
+- **Modern light theme** with grainy texture background.
+- **Glass‑morphism** cards and smooth animations.
+- **Responsive** – works on Android, iOS, and PC.
+- **Animated components** (hamburger menu, 3D toggle, glowing buttons, etc.).
 
 ---
 
-## 🚀 GETTING STARTED
+## 🛠️ Tech Stack
 
-Execute these operations in sequence to load the application inside your local development terminal.
-
-### 1️⃣ Install Core Dependencies
-The project leverages contemporary Web API arrays. Secure the workspace packages using:
-```bash
-npm install
-```
-
-### 2️⃣ Start Local Development Gateway
-Launch the local Vite server at binding port `3000` with host `0.0.0.0` for maximum accessibility:
-```bash
-npm run dev
-```
-
-### 3️⃣ Compile Production Assets
-Bundle the application, optimization passes, and tree-shake static layout assets into an optimized `dist/` workspace:
-```bash
-npm run build
-```
+| Layer | Technology |
+|-------|------------|
+| Frontend | HTML + CSS + JavaScript (Vanilla) |
+| Backend | Node.js + Express |
+| Database | PostgreSQL (Supabase) |
+| Authentication | JWT (bcrypt) |
+| Animations | GSAP + ScrollTrigger + CSS keyframes |
+| Icons | Lucide (via CDN) |
+| Deployment | Vercel (frontend) + Render (backend) |
 
 ---
 
-## 📡 SUPABASE SYNCHRONIZATION BLUEPRINT
+## 🚀 Deployment Instructions
 
-Should you desire to link persistent cloud databases, hook up a Supabase table featuring the following structures manually or through the console configurations:
+### 1. Supabase (Database)
 
-```json
-{
-  "tableName": "recruits",
-  "fields": {
-    "id": "uuid",
-    "fullname": "text",
-    "email": "text",
-    "department": "text",
-    "discord_tag": "text",
-    "status": "text",
-    "created_at": "timestamp"
-  }
-}
-```
+1. Create a free account at [supabase.com](https://supabase.com).
+2. Create a new project and copy your **Project URL** and **Service Role Key**.
+3. Go to **SQL Editor** and run the `schema.sql` file (provided in the repository).
+4. Enable RLS on all tables and run the RLS policies (also provided).
 
----
+### 2. Backend (Render)
 
-## 🔊 CUSTOM SYNTHESIZER BEACON PROTOCOL
+1. Push the `backend/` folder to your GitHub repository.
+2. Sign up at [render.com](https://render.com) (free tier).
+3. Create a new **Web Service**, connect your repo, set **Root Directory** to `backend/`.
+4. Add environment variables:
+   - `SUPABASE_URL`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - `JWT_SECRET` (long random string)
+   - `FRONTEND_URL` (your Vercel frontend URL)
+5. Deploy – you’ll get a backend URL (e.g., `https://wolf-backend.onrender.com`).
 
-Instead of loading bulky `.wav` or `.mp3` assets, the application utilizes the native browser **AudioContext API** via modular sound waves:
+### 3. Frontend (Vercel)
 
-*   **Success Sync Bell**: Harmonic sine sweeps starting at `520Hz` scaling immediately to `1040Hz` with slow envelope decays.
-*   **Action Confirm Click**: A rapid, high-tensile triangle wave running at `720Hz` for `0.05` seconds.
-*   **Error/Bypass Alert Alarm**: A thick, low-frequency sawtooth wave generating `160Hz` and `180Hz` dual-vibratos, establishing clear tactile boundaries in real-time.
-
----
-
-## 👑 BRAND DESIGN COHESION
-
-*   **Vantablack Base**: `#020202` & `#030303` solid canvas layers.
-*   **Cyber Neon Flare**: `#e01a84` (`rgb(224,26,132)`) high-frequency pink glow matrices.
-*   **Slate Muted Sub-headers**: Premium translucent off-whites (`rgba(255,255,255,0.4)`) and dark gray indicators.
-*   **Premium Typographical Pairings**:
-    *   **Display Headings**: [Outfit font family](https://fonts.google.com/specimen/Outfit) for dominant structure.
-    *   **Telemetry Data / Statuses**: [JetBrains Mono](https://fonts.google.com/specimen/JetBrains+Mono) to resemble clean tactical terminal readouts.
-    *   **Body Content**: [Inter](https://fonts.google.com/specimen/Inter) for extreme micro-legibility.
+1. Upload the `index.html` file to a GitHub repository.
+2. Sign up at [vercel.com](https://vercel.com) (free).
+3. Import the repository, set the root to the folder containing `index.html`.
+4. Add environment variable:
+   - `NEXT_PUBLIC_API_URL` (or update `CONFIG.API_BASE` directly in the HTML to your backend URL)
+5. Deploy – your frontend is live.
 
 ---
 
-<p align="center" style="opacity: 0.4; font-size: 10px; font-family: monospace;">OPERATIONAL CLASSIFIED :: AUTHORIZED AGENTS ONLY :: SQUAD LEVEL-1 DIRECTIVE</p>
+## 🔧 Environment Variables
+
+### Vercel Frontend
+
+| Variable | Value |
+|----------|-------|
+| `NEXT_PUBLIC_API_URL` | `https://wolf-backend.onrender.com/api` |
+
+### Render Backend
+
+| Variable | Value |
+|----------|-------|
+| `SUPABASE_URL` | `https://your-project.supabase.co` |
+| `SUPABASE_SERVICE_ROLE_KEY` | `your-service-role-key` |
+| `JWT_SECRET` | `your-super-secret-key` |
+| `FRONTEND_URL` | `https://wolf-society.vercel.app` |
+
+---
+
+## 🔐 Security
+
+- Row Level Security (RLS) policies restrict data access.
+- JWT authentication with bcrypt password hashing.
+- CORS configured to only allow your frontend domain.
+- Rate limiting on API endpoints.
+
+---
+
+## 🧪 Testing
+
+- Use the test credentials to log in:
+  - **Admin**: `admin@wolfsociety.gg` / `admin123`
+  - **Player**: `player@wolfsociety.gg` / `player123`
+
+---
+
+## 🤝 Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+---
+
+## 📄 License
+
+[MIT](https://choosealicense.com/licenses/mit/)
+
+---
+
+## 🐺 Contact
+
+- Website: [https://wolfsocietygg.vercel.app](https://wolfsocietygg.vercel.app)
+- Email: [hello@wolfsociety.in](mailto:hello@wolfsociety.in)
