@@ -1917,6 +1917,26 @@
     // ──────────────────────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', () => {
       Router.init();
+      // Theme toggle – ensure it works even if DOM changes
+document.addEventListener('DOMContentLoaded', function() {
+  const toggle = document.getElementById('themeToggle');
+  const body = document.body;
+
+  if (!toggle) return;
+
+  // Check localStorage for saved theme
+  const savedTheme = localStorage.getItem('wolf_theme');
+  if (savedTheme === 'dark') {
+    body.classList.add('dark');
+    toggle.classList.add('active');
+  }
+
+  toggle.addEventListener('click', function() {
+    body.classList.toggle('dark');
+    this.classList.toggle('active');
+    localStorage.setItem('wolf_theme', body.classList.contains('dark') ? 'dark' : 'light');
+  });
+});
       window.__API = API;
       window.__Router = Router;
 
