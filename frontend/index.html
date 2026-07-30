@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+  <title>Wolf Society Esports</title>
+
+  <!-- ===== MODERN FONTS ===== -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Outfit:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+  <!-- ===== LUCIDE ICONS ===== -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- ===== GSAP + SCROLL‑TRIGGER ===== -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* ============================================================
+       ROOT VARIABLES – LIGHT & AESTHETIC THEME
+       ============================================================ */
+    :root {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-card: rgba(255, 255, 255, 0.75);
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --accent-teal: #0ea5e9;
+      --accent-rose: #f43f5e;
+      --accent-gold: #f59e0b;
+      --border-color: rgba(203, 213, 225, 0.4);
+      --radius: 12px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-display: 'Outfit', 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    /* ============================================================
+       RESET & BASE – GRAINY TEXTURE BACKGROUND
+       ============================================================ */
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Grainy texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.05;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    ::selection {
+      background: var(--accent-teal);
+      color: #fff;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--accent-teal);
+      border-radius: 10px;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    ul,
+    ol {
+      list-style: none;
+    }
+    img {
+      max-width: 100%;
+      display: block;
+    }
+    button,
+    input,
+    select,
+    textarea {
+      font-family: inherit;
+      font-size: inherit;
+      line-height: inherit;
+    }
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: inherit;
+    }
+
+    /* ============================================================
+       UTILITY CLASSES
+       ============================================================ */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .flex {
+      display: flex;
+    }
+    .flex-col {
+      flex-direction: column;
+    }
+    .items-center {
+      align-items: center;
+    }
+    .justify-between {
+      justify-content: space-between;
+    }
+    .gap-1 {
+      gap: 0.5rem;
+    }
+    .gap-2 {
+      gap: 1rem;
+    }
+    .gap-3 {
+      gap: 1.5rem;
+    }
+
+    .grid {
+      display: grid;
+    }
+    .grid-cols-1 {
+      grid-template-columns: 1fr;
+    }
+    .grid-cols-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .grid-cols-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .grid-cols-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .text-center {
+      text-align: center;
+    }
+    .text-left {
+      text-align: left;
+    }
+    .text-right {
+      text-align: right;
+    }
+
+    .w-full {
+      width: 100%;
+    }
+    .h-full {
+      height: 100%;
+    }
+
+    .p-1 {
+      padding: 0.5rem;
+    }
+    .p-2 {
+      padding: 1rem;
+    }
+    .p-3 {
+      padding: 1.5rem;
+    }
+    .p-4 {
+      padding: 2rem;
+    }
+
+    .m-1 {
+      margin: 0.5rem;
+    }
+    .m-2 {
+      margin: 1rem;
+    }
+    .mt-2 {
+      margin-top: 1rem;
+    }
+    .mt-3 {
+      margin-top: 1.5rem;
+    }
+    .mt-4 {
+      margin-top: 2rem;
+    }
+    .mb-2 {
+      margin-bottom: 1rem;
+    }
+    .mb-3 {
+      margin-bottom: 1.5rem;
+    }
+    .mb-4 {
+      margin-bottom: 2rem;
+    }
+
+    .rounded {
+      border-radius: var(--radius);
+    }
+    .rounded-full {
+      border-radius: 9999px;
+    }
+
+    .shadow {
+      box-shadow: var(--shadow);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+    .block {
+      display: block;
+    }
+    .relative {
+      position: relative;
+    }
+    .absolute {
+      position: absolute;
+    }
+    .fixed {
+      position: fixed;
+    }
+
+    .z-10 {
+      z-index: 10;
+    }
+    .z-20 {
+      z-index: 20;
+    }
+    .z-50 {
+      z-index: 50;
+    }
+    .z-100 {
+      z-index: 100;
+    }
+
+    /* ============================================================
+       COMPONENT STYLES – GLASS‑MORPHISM + LIGHT THEME
+       ============================================================ */
+
+    /* ---- Buttons ---- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.4rem;
+      border: none;
+      border-radius: var(--radius);
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: var(--transition);
+      cursor: pointer;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary {
+      background: var(--accent-teal);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(14, 165, 233, 0.25);
+    }
+
+    .btn-secondary {
+      background: var(--accent-rose);
+      color: #fff;
+    }
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(244, 63, 94, 0.25);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+    .btn-outline:hover {
+      background: rgba(0, 0, 0, 0.02);
+      border-color: var(--accent-teal);
+    }
+
+    .btn-glow {
+      position: relative;
+      background: transparent;
+      color: var(--accent-teal);
+      padding: 0.8rem 2rem;
+      border-radius: var(--radius);
+      font-weight: 700;
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+    .btn-glow svg {
+      position: absolute;
+      inset: -2px;
+      width: calc(100% + 4px);
+      height: calc(100% + 4px);
+      pointer-events: none;
+    }
+    .btn-glow svg rect {
+      fill: none;
+      stroke: var(--accent-teal);
+      stroke-width: 2;
+      stroke-dasharray: 400;
+      stroke-dashoffset: 400;
+      transition: stroke-dashoffset 0.6s ease;
+    }
+    .btn-glow:hover svg rect {
+      stroke-dashoffset: 0;
+    }
+    .btn-glow:hover {
+      box-shadow: 0 0 40px rgba(14, 165, 233, 0.12);
+      transform: scale(1.02);
+    }
+
+    /* ---- Cards ---- */
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(14, 165, 233, 0.2);
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.06);
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+    .card-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    /* ---- Forms ---- */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.65rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.5);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      transition: var(--transition);
+      appearance: none;
+    }
+    .form-control:focus {
+      border-color: var(--accent-teal);
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+    }
+    .form-control::placeholder {
+      color: var(--text-muted);
+    }
+
+    /* ---- Tables ---- */
+    .table-container {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      backdrop-filter: blur(4px);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    table thead {
+      background: rgba(0, 0, 0, 0.02);
+    }
+    table th {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border-color);
+    }
+    table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-primary);
+      vertical-align: middle;
+    }
+    table tbody tr:hover {
+      background: rgba(0, 0, 0, 0.01);
+    }
+
+    /* ============================================================
+       ANIMATIONS – FROM REFERENCE LINKS
+       ============================================================ */
+
+    /* ---- 1. Animated CSS Hamburger Menu ---- */
+    .hamburger {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .hamburger span {
+      display: block;
+      width: 28px;
+      height: 2px;
+      background: var(--text-primary);
+      border-radius: 2px;
+      transition: var(--transition);
+      transform-origin: center;
+    }
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    .hamburger.active span:nth-child(2) {
+      transform: translateX(-20px);
+      opacity: 0;
+    }
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
+
+    /* ---- 2. Rollback Ball 3D Toggle ---- */
+    .toggle-3d {
+      position: relative;
+      width: 60px;
+      height: 30px;
+      background: var(--bg-secondary);
+      border-radius: 30px;
+      border: 2px solid var(--border-color);
+      cursor: pointer;
+      transition: var(--transition);
+      perspective: 100px;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+    }
+    .toggle-3d .ball {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 22px;
+      height: 22px;
+      background: radial-gradient(circle at 30% 30%, #fff, #d1d5db);
+      border-radius: 50%;
+      transition: var(--transition);
+      transform: translateX(0) rotateY(0deg);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    .toggle-3d.active {
+      background: var(--accent-teal);
+    }
+    .toggle-3d.active .ball {
+      transform: translateX(30px) rotateY(180deg);
+    }
+
+    /* ---- 3. macOS/iOS Dock ---- */
+    .dock {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(12px);
+      border-radius: 24px;
+      border: 1px solid var(--border-color);
+      margin-top: 2rem;
+      transition: var(--transition);
+      overflow-x: auto;
+      scroll-behavior: smooth;
+    }
+    .dock .dock-item {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.02);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+    .dock .dock-item:hover {
+      transform: scale(1.2) translateY(-8px);
+      background: rgba(14, 165, 233, 0.08);
+      box-shadow: 0 0 30px rgba(14, 165, 233, 0.1);
+    }
+
+    /* ---- 4. Glowing Border Trace Button ---- */
+    .btn-border-glow {
+      position: relative;
+      padding: 0.8rem 2rem;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--accent-teal);
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-border-glow svg {
+      position: absolute;
+      inset: -2px;
+      width: calc(100% + 4px);
+      height: calc(100% + 4px);
+      pointer-events: none;
+    }
+    .btn-border-glow svg rect {
+      fill: none;
+      stroke: var(--accent-teal);
+      stroke-width: 2;
+      stroke-dasharray: 400;
+      stroke-dashoffset: 400;
+      transition: stroke-dashoffset 0.6s ease;
+    }
+    .btn-border-glow:hover svg rect {
+      stroke-dashoffset: 0;
+    }
+    .btn-border-glow:hover {
+      box-shadow: 0 0 40px rgba(14, 165, 233, 0.12);
+      transform: scale(1.02);
+    }
+
+    /* ---- 5. SVG Flashlight Reveal ---- */
+    .flashlight-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius);
+      background: var(--bg-primary);
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-color);
+    }
+    .flashlight-container .flashlight-text {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--text-primary);
+      z-index: 2;
+      position: relative;
+      padding: 2rem;
+      text-align: center;
+    }
+    .flashlight-container .flashlight-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 1;
+      mask-image: radial-gradient(circle 60px at var(--x, 50%) var(--y, 50%), transparent 50%, black 70%);
+      -webkit-mask-image: radial-gradient(circle 60px at var(--x, 50%) var(--y, 50%), transparent 50%, black 70%);
+      transition: mask-image 0.05s, -webkit-mask-image 0.05s;
+    }
+
+    /* ---- 6. Infinite Logo Carousel ---- */
+    .logo-carousel {
+      overflow: hidden;
+      position: relative;
+      padding: 1rem 0;
+      mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    }
+    .logo-carousel .track {
+      display: flex;
+      gap: 3rem;
+      animation: scrollLogos 20s linear infinite;
+      width: max-content;
+    }
+    .logo-carousel .track .logo-item {
+      flex-shrink: 0;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      opacity: 0.6;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .logo-carousel .track .logo-item:hover {
+      opacity: 1;
+      color: var(--accent-teal);
+    }
+    @keyframes scrollLogos {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* ---- 7. Animated Clipboard Copy ---- */
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .copy-btn:hover {
+      border-color: var(--accent-teal);
+    }
+    .copy-btn.copied {
+      border-color: #22c55e;
+      color: #22c55e;
+    }
+    .copy-btn .icon {
+      transition: var(--transition);
+    }
+    .copy-btn.copied .icon {
+      transform: scale(1.2);
+    }
+
+    /* ---- 8. Eye‑Tracking Form ---- */
+    .eye-form {
+      background: var(--bg-card);
+      backdrop-filter: blur(8px);
+      border-radius: var(--radius);
+      padding: 2rem;
+      border: 1px solid var(--border-color);
+      max-width: 420px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .eye-form .character {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      font-size: 3rem;
+    }
+    .eye-form .eye {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      background: #fff;
+      border-radius: 50%;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+    .eye-form .eye .pupil {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background: #1a1a2e;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transition: transform 0.05s;
+    }
+    .eye-form .eye .pupil::after {
+      content: '';
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #fff;
+      border-radius: 50%;
+      top: 25%;
+      right: 20%;
+    }
+    .eye-form input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.5);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      transition: var(--transition);
+    }
+    .eye-form input:focus {
+      border-color: var(--accent-teal);
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+    }
+    .eye-form .subscribe-btn {
+      margin-top: 1rem;
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--accent-teal);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .eye-form .subscribe-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(14, 165, 233, 0.2);
+    }
+
+    /* ============================================================
+       NAVBAR
+       ============================================================ */
+    .navbar {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.75rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .navbar .brand {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--accent-teal);
+    }
+    .navbar .brand span {
+      color: var(--text-primary);
+    }
+    .navbar .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .navbar .nav-links a {
+      color: var(--text-secondary);
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+    .navbar .nav-links a:hover {
+      color: var(--text-primary);
+      background: rgba(0, 0, 0, 0.02);
+    }
+    .navbar .nav-links a.active {
+      color: var(--accent-teal);
+      background: rgba(14, 165, 233, 0.06);
+    }
+    .navbar .hamburger {
+      display: none;
+    }
+
+    /* ============================================================
+       FOOTER
+       ============================================================ */
+    .footer {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+      padding: 2rem 1.5rem;
+      margin-top: auto;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 768px) {
+      .navbar .nav-links {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 1rem 0;
+      }
+      .navbar .nav-links.open {
+        display: flex;
+      }
+      .navbar .hamburger {
+        display: flex;
+      }
+      .grid-cols-2,
+      .grid-cols-3,
+      .grid-cols-4 {
+        grid-template-columns: 1fr;
+      }
+      .dock {
+        gap: 0.25rem;
+        padding: 0.25rem 0.5rem;
+      }
+      .dock .dock-item {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+      }
+      .flashlight-container .flashlight-text {
+        font-size: 1.5rem;
+        padding: 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 0 1rem;
+      }
+      .navbar .brand {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       NAVBAR
+       ============================================================ -->
+  <nav class="navbar" id="navbar">
+    <a href="#" class="brand" data-route="/">Wolf<span>Society</span></a>
+    <div class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="nav-links" id="navLinks">
+      <a href="#" data-route="/" class="active">Home</a>
+      <a href="#" data-route="/teams">Teams</a>
+      <a href="#" data-route="/schedule">Schedule</a>
+      <a href="#" data-route="/content">Content</a>
+      <a href="#" data-route="/dashboard" id="dashboardLink" style="display:none;">Dashboard</a>
+      <a href="#" data-route="/login" id="loginLink">Login</a>
+      <a href="#" data-route="/register" id="registerLink">Register</a>
+      <a href="#" id="logoutLink" style="display:none;">Logout</a>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       APP CONTAINER
+       ============================================================ -->
+  <main id="app" class="container" style="min-height: 70vh; padding-top: 2rem; padding-bottom: 2rem;"></main>
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+  <footer class="footer">
+    <p>&copy; 2026 Wolf Society Esports. All rights reserved.</p>
+    <div class="mt-2" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+      <span style="color: var(--text-muted); font-size: 0.75rem;">🐺</span>
+      <span style="color: var(--text-muted); font-size: 0.75rem;">⚡</span>
+      <span style="color: var(--text-muted); font-size: 0.75rem;">🔥</span>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       TOAST CONTAINER
+       ============================================================ -->
+  <div id="toastContainer" style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;display:flex;flex-direction:column;gap:0.5rem;max-width:360px;width:100%;"></div>
+
+  <!-- ============================================================
+       JAVASCRIPT – COMPLETE APPLICATION
+       ============================================================ -->
+  <script>
+    /**
+     * ============================================================
+     * WOLF SOCIETY ESPORTS – COMPLETE FRONTEND
+     * No Firebase, No Firestore – Vanilla JS + Node/Express + Supabase
+     * ============================================================
+     */
+
+    // ──────────────────────────────────────────────────────────────
+    // 1. CONFIGURATION
+    // ──────────────────────────────────────────────────────────────
+    const CONFIG = {
+      // CHANGE THIS TO YOUR BACKEND URL (Render, Vercel, etc.)
+      API_BASE: 'https://your-backend.onrender.com/api',
+      APP_NAME: 'Wolf Society Esports',
+    };
+
+    // ──────────────────────────────────────────────────────────────
+    // 2. UTILITY HELPERS
+    // ──────────────────────────────────────────────────────────────
+    const $ = (sel, ctx = document) => ctx.querySelector(sel);
+    const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
+    const create = (tag, attrs = {}, children = []) => {
+      const el = document.createElement(tag);
+      Object.entries(attrs).forEach(([k, v]) => {
+        if (k === 'text') el.textContent = v;
+        else if (k === 'html') el.innerHTML = v;
+        else if (k === 'className') el.className = v;
+        else el.setAttribute(k, v);
+      });
+      children.forEach(c => {
+        if (typeof c === 'string') el.appendChild(document.createTextNode(c));
+        else if (c instanceof HTMLElement) el.appendChild(c);
+      });
+      return el;
+    };
+    const append = (parent, ...children) => {
+      children.forEach(c => {
+        if (Array.isArray(c)) c.forEach(ch => parent.appendChild(ch));
+        else if (c instanceof HTMLElement) parent.appendChild(c);
+        else parent.appendChild(document.createTextNode(String(c)));
+      });
+      return parent;
+    };
+    const empty = (el) => { while (el.firstChild) el.removeChild(el.firstChild); return el; };
+    const remove = (el) => el.remove();
+    const on = (el, event, handler) => el.addEventListener(event, handler);
+
+    // ──────────────────────────────────────────────────────────────
+    // 3. TOAST NOTIFICATION
+    // ──────────────────────────────────────────────────────────────
+    const Toast = {
+      show(message, type = 'info', duration = 4000) {
+        const container = document.getElementById('toastContainer');
+        const toast = create('div', {
+          className: `toast toast-${type}`,
+          style: `
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            border-left: 4px solid ${type === 'success' ? '#22c55e' : type === 'error' ? '#f43f5e' : '#0ea5e9'};
+            box-shadow: var(--shadow);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            animation: slideInRight 0.3s ease;
+            border: 1px solid var(--border-color);
+          `
+        });
+        const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+        toast.innerHTML = `<span style="margin-right:0.5rem;">${icon}</span> ${message}`;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateX(100%)';
+          setTimeout(() => remove(toast), 300);
+        }, duration);
+      },
+      success(msg) { this.show(msg, 'success'); },
+      error(msg) { this.show(msg, 'error'); },
+      info(msg) { this.show(msg, 'info'); }
+    };
+
+    // ──────────────────────────────────────────────────────────────
+    // 4. API WRAPPER (Node.js + Express + Supabase)
+    // ──────────────────────────────────────────────────────────────
+    const API = {
+      auth: {
+        getToken() { return localStorage.getItem('wolf_token'); },
+        setToken(token) { localStorage.setItem('wolf_token', token); },
+        removeToken() { localStorage.removeItem('wolf_token'); },
+        getUser() {
+          try { return JSON.parse(localStorage.getItem('wolf_user')); } catch { return null; }
+        },
+        setUser(user) { localStorage.setItem('wolf_user', JSON.stringify(user)); },
+        removeUser() { localStorage.removeItem('wolf_user'); },
+        isLoggedIn() { return !!this.getToken(); }
+      },
+
+      async request(method, endpoint, data = null) {
+        const url = `${CONFIG.API_BASE}${endpoint}`;
+        const options = {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        };
+        const token = this.auth.getToken();
+        if (token) {
+          options.headers['Authorization'] = `Bearer ${token}`;
+        }
+        if (data) {
+          options.body = JSON.stringify(data);
+        }
+        const res = await fetch(url, options);
+        const result = await res.json();
+        if (!res.ok) {
+          throw new Error(result.error || 'API request failed');
+        }
+        return result;
+      },
+
+      get(endpoint) { return this.request('GET', endpoint); },
+      post(endpoint, data) { return this.request('POST', endpoint, data); },
+      put(endpoint, data) { return this.request('PUT', endpoint, data); },
+      delete(endpoint) { return this.request('DELETE', endpoint); },
+
+      login(email, password) {
+        return this.post('/auth/login', { email, password });
+      },
+      register(email, password, full_name, role = 'player') {
+        return this.post('/auth/register', { email, password, full_name, role });
+      },
+      getMe() {
+        return this.get('/auth/me');
+      }
+    };
+
+    // ──────────────────────────────────────────────────────────────
+    // 5. ROUTER & NAVIGATION
+    // ──────────────────────────────────────────────────────────────
+    const Router = {
+      routes: [],
+      current: null,
+
+      init() {
+        this.routes = [
+          { path: '/', render: renderHome, guard: 'public' },
+          { path: '/teams', render: renderTeams, guard: 'public' },
+          { path: '/schedule', render: renderSchedule, guard: 'public' },
+          { path: '/content', render: renderContent, guard: 'public' },
+          { path: '/login', render: renderLogin, guard: 'public' },
+          { path: '/register', render: renderRegister, guard: 'public' },
+          { path: '/dashboard', render: renderDashboard, guard: 'auth' },
+        ];
+
+        window.addEventListener('popstate', () => this.handle());
+
+        on(document, 'click', '[data-route]', (e) => {
+          const target = e.target.closest('[data-route]');
+          if (!target) return;
+          const path = target.getAttribute('data-route');
+          if (path) {
+            e.preventDefault();
+            this.navigate(path);
+          }
+        });
+
+        const hamburger = document.getElementById('hamburgerBtn');
+        const navLinks = document.getElementById('navLinks');
+        on(hamburger, 'click', () => {
+          hamburger.classList.toggle('active');
+          navLinks.classList.toggle('open');
+        });
+
+        const logoutLink = document.getElementById('logoutLink');
+        on(logoutLink, 'click', (e) => {
+          e.preventDefault();
+          API.auth.removeToken();
+          API.auth.removeUser();
+          this.navigate('/');
+          Toast.success('Logged out');
+          this.updateNav();
+        });
+
+        this.handle();
+        this.updateNav();
+
+        // Auth state change listener
+        const origSetToken = API.auth.setToken;
+        API.auth.setToken = function(token) {
+          origSetToken.call(this, token);
+          Router.updateNav();
+        };
+        const origRemoveToken = API.auth.removeToken;
+        API.auth.removeToken = function() {
+          origRemoveToken.call(this);
+          Router.updateNav();
+        };
+      },
+
+      navigate(path) {
+        history.pushState(null, '', path);
+        this.handle();
+        document.getElementById('hamburgerBtn').classList.remove('active');
+        document.getElementById('navLinks').classList.remove('open');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+
+      handle() {
+        const path = window.location.pathname || '/';
+        const user = API.auth.getUser();
+        const role = user?.role || 'public';
+
+        let route = this.routes.find(r => r.path === path);
+        if (!route) route = this.routes.find(r => r.path === '/');
+
+        if (route) {
+          if (route.guard === 'auth' && !API.auth.isLoggedIn()) {
+            this.navigate('/login');
+            return;
+          }
+        }
+
+        this.current = route;
+        const app = document.getElementById('app');
+        empty(app);
+
+        if (route) {
+          const content = route.render({ user, role });
+          if (content instanceof HTMLElement) {
+            app.appendChild(content);
+          } else {
+            app.appendChild(create('div', { html: content }));
+          }
+        } else {
+          app.appendChild(create('div', { className: 'text-center py-16' },
+            create('h2', { text: '404 – Page not found' })
+          ));
+        }
+        this.updateNav();
+        this.initAnimations();
+      },
+
+      updateNav() {
+        const user = API.auth.getUser();
+        const isLoggedIn = API.auth.isLoggedIn();
+        const role = user?.role || 'public';
+
+        const loginLink = document.getElementById('loginLink');
+        const registerLink = document.getElementById('registerLink');
+        const logoutLink = document.getElementById('logoutLink');
+        const dashboardLink = document.getElementById('dashboardLink');
+
+        if (isLoggedIn) {
+          loginLink.style.display = 'none';
+          registerLink.style.display = 'none';
+          logoutLink.style.display = 'inline-block';
+          if (['admin', 'manager', 'player'].includes(role)) {
+            dashboardLink.style.display = 'inline-block';
+          } else {
+            dashboardLink.style.display = 'none';
+          }
+        } else {
+          loginLink.style.display = 'inline-block';
+          registerLink.style.display = 'inline-block';
+          logoutLink.style.display = 'none';
+          dashboardLink.style.display = 'none';
+        }
+
+        const path = window.location.pathname || '/';
+        $$('.nav-links a').forEach(a => {
+          a.classList.toggle('active', a.getAttribute('data-route') === path);
+        });
+      },
+
+      initAnimations() {
+        // Eye tracking
+        initEyeTracking();
+        // Flashlight
+        initFlashlight();
+        // Toggles
+        initToggles();
+        // Copy buttons
+        initCopyButtons();
+        // GSAP scroll reveals
+        if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+          gsap.registerPlugin(ScrollTrigger);
+          gsap.from('.feature-card', {
+            opacity: 0,
+            y: 40,
+            stagger: 0.15,
+            duration: 0.8,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: '.feature-card',
+              start: 'top 80%',
+              toggleActions: 'play none none none',
+            },
+          });
+        }
+      }
+    };
+
+    // ──────────────────────────────────────────────────────────────
+    // 6. ANIMATION INITIALIZERS
+    // ──────────────────────────────────────────────────────────────
+
+    function initEyeTracking() {
+      const pupils = document.querySelectorAll('.pupil');
+      if (!pupils.length) return;
+      document.addEventListener('mousemove', (e) => {
+        const x = e.clientX / window.innerWidth;
+        const y = e.clientY / window.innerHeight;
+        pupils.forEach(p => {
+          const px = (x - 0.5) * 20;
+          const py = (y - 0.5) * 20;
+          p.style.transform = `translate(calc(-50% + ${px}px), calc(-50% + ${py}px))`;
+        });
+      });
+    }
+
+    function initFlashlight() {
+      const container = document.querySelector('.flashlight-container');
+      if (!container) return;
+      const overlay = container.querySelector('.flashlight-overlay');
+      if (!overlay) return;
+      container.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        overlay.style.setProperty('--x', x + '%');
+        overlay.style.setProperty('--y', y + '%');
+      });
+    }
+
+    function initToggles() {
+      document.querySelectorAll('.toggle-3d').forEach(toggle => {
+        toggle.addEventListener('click', () => {
+          toggle.classList.toggle('active');
+        });
+      });
+    }
+
+    function initCopyButtons() {
+      document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const text = btn.getAttribute('data-copy') || 'Wolf Society Esports';
+          navigator.clipboard.writeText(text).then(() => {
+            btn.classList.add('copied');
+            btn.querySelector('.label').textContent = 'Copied!';
+            setTimeout(() => {
+              btn.classList.remove('copied');
+              btn.querySelector('.label').textContent = 'Copy';
+            }, 2000);
+          }).catch(() => Toast.error('Failed to copy'));
+        });
+      });
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // 7. PAGE RENDERERS
+    // ──────────────────────────────────────────────────────────────
+
+    // ─── Home ───
+    function renderHome() {
+      const container = create('div', { className: 'py-8' });
+
+      // Hero
+      const hero = create('div', { className: 'text-center py-12' });
+      append(hero,
+        create('h1', {
+          className: 'text-4xl md:text-6xl font-display font-black',
+          html: 'Wolf Society <span style="color: var(--accent-teal);">Esports</span>'
+        }),
+        create('p', {
+          className: 'text-muted text-lg mt-4 max-w-2xl mx-auto',
+          text: 'Where champions rise. Join the pack and dominate the leaderboards.'
+        }),
+        create('div', { className: 'flex gap-4 justify-center mt-6 flex-wrap' },
+          create('button', {
+            className: 'btn btn-primary',
+            text: 'Watch Live',
+            onclick: () => Toast.info('Live stream coming soon!')
+          }),
+          create('button', {
+            className: 'btn-glow',
+            html: 'Our Teams <svg><rect x="0" y="0" width="100%" height="100%" /></svg>',
+            onclick: () => Router.navigate('/teams')
+          })
+        )
+      );
+      container.appendChild(hero);
+
+      // Feature Cards
+      const cards = create('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-6 mt-8' });
+      const features = [
+        { icon: '🏆', title: 'Live Matches', desc: 'Watch our teams battle in real-time.' },
+        { icon: '🎮', title: 'Roster', desc: 'Meet our talented players and their stats.' },
+        { icon: '📺', title: 'Content Hub', desc: 'Exclusive highlights and behind-the-scenes.' },
+      ];
+      features.forEach((f, i) => {
+        const card = create('div', { className: 'card feature-card' });
+        append(card,
+          create('div', { className: 'text-3xl mb-2', text: f.icon }),
+          create('h3', { className: 'card-title', text: f.title }),
+          create('p', { className: 'card-subtitle', text: f.desc })
+        );
+        cards.appendChild(card);
+      });
+      container.appendChild(cards);
+
+      // Logo Carousel
+      const carousel = create('div', { className: 'mt-12' });
+      append(carousel,
+        create('h3', { className: 'text-center text-muted mb-4', text: 'Our Partners' }),
+        create('div', { className: 'logo-carousel' },
+          create('div', { className: 'track' },
+            ['Wolf Society', 'Divine Wolf', 'GamerFuel', 'TechGear', 'Phoenix Rising', 'Shadow Clan']
+            .map(name => create('span', { className: 'logo-item', text: `⚡ ${name}` }))
+            .concat(
+              ['Wolf Society', 'Divine Wolf', 'GamerFuel', 'TechGear', 'Phoenix Rising', 'Shadow Clan']
+              .map(name => create('span', { className: 'logo-item', text: `⚡ ${name}` }))
+            )
+          )
+        )
+      );
+      container.appendChild(carousel);
+
+      // Dock
+      const dock = create('div', { className: 'dock' });
+      ['🏠', '🎮', '🏆', '📺', '📅', '⚙️'].forEach(icon => {
+        const item = create('div', { className: 'dock-item', text: icon });
+        dock.appendChild(item);
+      });
+      container.appendChild(dock);
+
+      // Flashlight
+      const flashlight = create('div', { className: 'flashlight-container mt-8' });
+      append(flashlight,
+        create('div', { className: 'flashlight-text', html: '🐺 <br>Discover the Wolf' }),
+        create('div', { className: 'flashlight-overlay' })
+      );
+      container.appendChild(flashlight);
+
+      // Eye‑tracking subscription form
+      const form = create('div', { className: 'eye-form mt-8' });
+      append(form,
+        create('div', { className: 'character' },
+          create('div', { className: 'eye' }, create('div', { className: 'pupil' })),
+          create('div', { className: 'eye' }, create('div', { className: 'pupil' })),
+          create('span', { style: 'font-size:2.5rem;', text: '👤' })
+        ),
+        create('h3', { className: 'text-center text-white font-bold mb-2', text: 'Join the Pack' }),
+        create('input', { type: 'email', placeholder: 'Enter your email', id: 'subscribeEmail' }),
+        create('button', {
+          className: 'subscribe-btn',
+          text: 'Subscribe',
+          onclick: () => {
+            const email = document.getElementById('subscribeEmail').value;
+            if (email) {
+              Toast.success('Subscribed! Check your email.');
+            } else {
+              Toast.error('Please enter an email.');
+            }
+          }
+        })
+      );
+      container.appendChild(form);
+
+      // 3D Toggle
+      const toggleSection = create('div', { className: 'flex items-center justify-center gap-4 mt-8' });
+      append(toggleSection,
+        create('span', { className: 'text-muted', text: 'Light Mode' }),
+        create('div', { className: 'toggle-3d', id: 'themeToggle' },
+          create('div', { className: 'ball' })
+        ),
+        create('span', { className: 'text-muted', text: 'Dark Mode' })
+      );
+      container.appendChild(toggleSection);
+
+      return container;
+    }
+
+    // ─── Teams ───
+    async function renderTeams() {
+      const container = create('div', { className: 'py-8' });
+      append(container, create('h1', { className: 'text-3xl font-display font-bold mb-6', text: 'Our Teams' }));
+
+      try {
+        const teams = await API.get('/teams');
+        const grid = create('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-6' });
+        teams.forEach(team => {
+          const card = create('div', { className: 'card' });
+          append(card,
+            create('h3', { className: 'card-title', text: team.name }),
+            create('p', { className: 'card-subtitle', text: `Game: ${team.game}` }),
+            create('p', { className: 'text-sm text-muted', text: `Tag: ${team.tag}` }),
+            create('p', { className: 'text-sm text-muted', text: `Wins: ${team.wins} | Losses: ${team.losses}` })
+          );
+          grid.appendChild(card);
+        });
+        container.appendChild(grid);
+      } catch (err) {
+        container.appendChild(create('p', { className: 'text-muted', text: 'Error loading teams: ' + err.message }));
+      }
+
+      return container;
+    }
+
+    // ─── Schedule ───
+    async function renderSchedule() {
+      const container = create('div', { className: 'py-8' });
+      append(container, create('h1', { className: 'text-3xl font-display font-bold mb-6', text: 'Match Schedule' }));
+
+      try {
+        const matches = await API.get('/matches');
+        const table = create('div', { className: 'table-container' });
+        const thead = create('thead', {},
+          create('tr', {},
+            ['Team', 'Opponent', 'Game', 'Date', 'Result'].map(h => create('th', { text: h }))
+          )
+        );
+        const tbody = create('tbody');
+        matches.forEach(m => {
+          const tr = create('tr');
+          append(tr,
+            create('td', { text: m.team_name || 'TBD' }),
+            create('td', { text: m.opponent }),
+            create('td', { text: m.game }),
+            create('td', { text: m.match_date }),
+            create('td', {
+              className: `text-sm ${m.result === 'win' ? 'text-success' : m.result === 'loss' ? 'text-alert' : 'text-muted'}`,
+              text: m.result || 'upcoming'
+            })
+          );
+          tbody.appendChild(tr);
+        });
+        table.appendChild(create('table', {}, thead, tbody));
+        container.appendChild(table);
+      } catch (err) {
+        container.appendChild(create('p', { className: 'text-muted', text: 'Error loading matches: ' + err.message }));
+      }
+
+      return container;
+    }
+
+    // ─── Content ───
+    async function renderContent() {
+      const container = create('div', { className: 'py-8' });
+      append(container, create('h1', { className: 'text-3xl font-display font-bold mb-6', text: 'Content Hub' }));
+
+      try {
+        const content = await API.get('/content');
+        const grid = create('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-6' });
+        content.forEach(item => {
+          const card = create('div', { className: 'card' });
+          append(card,
+            create('h3', { className: 'card-title', text: item.title }),
+            create('p', { className: 'card-subtitle', text: item.description || '' }),
+            create('p', { className: 'text-xs text-muted mt-2', text: `${item.type} • ${new Date(item.upload_date).toLocaleDateString()}` }),
+            create('a', {
+              className: 'text-teal-600 hover:underline text-sm mt-2 inline-block',
+              href: item.url,
+              target: '_blank',
+              text: 'View Content'
+            })
+          );
+          grid.appendChild(card);
+        });
+        container.appendChild(grid);
+      } catch (err) {
+        container.appendChild(create('p', { className: 'text-muted', text: 'Error loading content: ' + err.message }));
+      }
+
+      return container;
+    }
+
+    // ─── Login ───
+    function renderLogin() {
+      const container = create('div', { className: 'py-8 max-w-md mx-auto' });
+      append(container,
+        create('h1', { className: 'text-3xl font-display font-bold text-center mb-6', text: 'Login' }),
+        create('form', { className: 'card', id: 'loginForm' },
+          create('div', { className: 'form-group' },
+            create('label', { text: 'Email' }),
+            create('input', { className: 'form-control', type: 'email', id: 'loginEmail', placeholder: 'your@email.com' })
+          ),
+          create('div', { className: 'form-group' },
+            create('label', { text: 'Password' }),
+            create('input', { className: 'form-control', type: 'password', id: 'loginPassword', placeholder: '••••••••' })
+          ),
+          create('button', { className: 'btn btn-primary w-full', type: 'submit', text: 'Login' })
+        )
+      );
+
+      const form = container.querySelector('#loginForm');
+      on(form, 'submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        try {
+          const data = await API.login(email, password);
+          API.auth.setToken(data.token);
+          API.auth.setUser(data.user);
+          Toast.success(`Welcome, ${data.user.full_name || data.user.email}`);
+          Router.navigate(data.user.role === 'admin' || data.user.role === 'manager' ? '/dashboard' : '/');
+        } catch (err) {
+          Toast.error(err.message || 'Login failed');
+        }
+      });
+
+      return container;
+    }
+
+    // ─── Register ───
+    function renderRegister() {
+      const container = create('div', { className: 'py-8 max-w-md mx-auto' });
+      append(container,
+        create('h1', { className: 'text-3xl font-display font-bold text-center mb-6', text: 'Register' }),
+        create('form', { className: 'card', id: 'registerForm' },
+          create('div', { className: 'form-group' },
+            create('label', { text: 'Full Name' }),
+            create('input', { className: 'form-control', type: 'text', id: 'regName', placeholder: 'Your name' })
+          ),
+          create('div', { className: 'form-group' },
+            create('label', { text: 'Email' }),
+            create('input', { className: 'form-control', type: 'email', id: 'regEmail', placeholder: 'your@email.com' })
+          ),
+          create('div', { className: 'form-group' },
+            create('label', { text: 'Password' }),
+            create('input', { className: 'form-control', type: 'password', id: 'regPassword', placeholder: '••••••••' })
+          ),
+          create('div', { className: 'form-group' },
+            create('label', { text: 'Role' }),
+            create('select', { className: 'form-control', id: 'regRole' },
+              ['player', 'content_creator'].map(r => create('option', { value: r, text: r }))
+            )
+          ),
+          create('button', { className: 'btn btn-primary w-full', type: 'submit', text: 'Register' })
+        )
+      );
+
+      const form = container.querySelector('#registerForm');
+      on(form, 'submit', async (e) => {
+        e.preventDefault();
+        const full_name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPassword').value;
+        const role = document.getElementById('regRole').value;
+        try {
+          await API.register(email, password, full_name, role);
+          Toast.success('Registration successful! Please login.');
+          Router.navigate('/login');
+        } catch (err) {
+          Toast.error(err.message || 'Registration failed');
+        }
+      });
+
+      return container;
+    }
+
+    // ─── Dashboard ───
+    function renderDashboard() {
+      const container = create('div', { className: 'py-8' });
+      const user = API.auth.getUser();
+      append(container,
+        create('h1', { className: 'text-3xl font-display font-bold mb-2', text: 'Dashboard' }),
+        create('p', { className: 'text-muted mb-6', text: `Welcome back, ${user?.full_name || user?.email}` })
+      );
+
+      // Stats placeholders
+      const stats = create('div', { className: 'grid grid-cols-2 md:grid-cols-4 gap-4' });
+      ['Players', 'Teams', 'Matches', 'Content'].forEach(label => {
+        const card = create('div', { className: 'card text-center' });
+        append(card,
+          create('div', { className: 'text-2xl font-bold text-teal-600', text: '0' }),
+          create('p', { className: 'text-muted text-sm', text: label })
+        );
+        stats.appendChild(card);
+      });
+      container.appendChild(stats);
+
+      // Quick actions
+      const actions = create('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-4 mt-6' });
+      ['Manage Players', 'Schedule Match', 'Post Announcement'].forEach(label => {
+        const btn = create('button', {
+          className: 'btn btn-outline w-full',
+          text: label,
+          onclick: () => Toast.info(`${label} feature coming soon!`)
+        });
+        actions.appendChild(btn);
+      });
+      container.appendChild(actions);
+
+      return container;
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // 8. BOOTSTRAP
+    // ──────────────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      Router.init();
+      window.__API = API;
+      window.__Router = Router;
+
+      window.addEventListener('online', () => Toast.info('Back online!'));
+      window.addEventListener('offline', () => Toast.info('You are offline. Some features may not work.'));
+    });
+  </script>
+</body>
+</html>
