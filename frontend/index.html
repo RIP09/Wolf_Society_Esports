@@ -1,1058 +1,2400 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-  <title>Wolf Society Esports</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Wolf Society Esports — Divine Wolf</title>
+    <meta name="description" content="Wolf Society Esports is a premier Indian underdog esports organization. We compete in BGMI, Valorant, and MOBA 5v5 with pride, skill, and strategy." />
+    <meta name="theme-color" content="#0a0a1a" />
 
-  <!-- ===== MODERN FONTS ===== -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Outfit:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+    <!-- Fonts: Inter, Outfit, JetBrains Mono, Oswald (from Cockroach) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-  <!-- ===== LUCIDE ICONS ===== -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- ===== GSAP + SCROLLTRIGGER ===== -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <!-- GSAP + ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
-  <!-- ===== CHART.JS ===== -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        /* ============================================================
+           ROOT VARIABLES — PURPLE-BLUISH THEME
+           ============================================================ */
+        :root {
+            --bg-primary: #070714;
+            --bg-secondary: #0d0d20;
+            --bg-card: rgba(18, 12, 40, 0.75);
+            --bg-dark: #04040e;
+            --text-primary: #f0ecff;
+            --text-secondary: #b8b0d8;
+            --text-muted: #7a72a0;
+            --accent-purple: #8b5cf6;
+            --accent-purple-dark: #6d28d9;
+            --accent-purple-light: #a78bfa;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-gold: #fbbf24;
+            --border-color: rgba(139, 92, 246, 0.15);
+            --radius: 14px;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-sans: 'Inter', -apple-system, sans-serif;
+            --font-display: 'Outfit', 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-oswald: 'Oswald', sans-serif;
+        }
 
-  <!-- ===== THREE.JS ===== -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        /* ============================================================
+           RESET & BASE
+           ============================================================ */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <!-- ===== STYLES ===== (same as previous, but included here for completeness) -->
-  <style>
-    /* ============================================================
-       ROOT VARIABLES – LIGHT THEME (default)
-       ============================================================ */
-    :root {
-      --bg-primary: #f8fafc;
-      --bg-secondary: #ffffff;
-      --bg-card: rgba(255, 255, 255, 0.75);
-      --text-primary: #0f172a;
-      --text-secondary: #475569;
-      --text-muted: #94a3b8;
-      --accent-teal: #0ea5e9;
-      --accent-rose: #f43f5e;
-      --accent-gold: #f59e0b;
-      --border-color: rgba(203, 213, 225, 0.4);
-      --radius: 12px;
-      --shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
-      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      --font-sans: 'Inter', -apple-system, sans-serif;
-      --font-display: 'Outfit', 'Inter', sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
-    }
+        html {
+            scroll-behavior: smooth;
+        }
 
-    .dark {
-      --bg-primary: #0B0F19;
-      --bg-secondary: #111827;
-      --bg-card: rgba(17, 24, 39, 0.8);
-      --text-primary: #F0F6FC;
-      --text-secondary: #8B949E;
-      --text-muted: #6B7280;
-      --border-color: rgba(255, 255, 255, 0.06);
-      --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-    }
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-    /* ----- RESET & BASE ----- */
-    * { margin:0; padding:0; box-sizing:border-box; }
-    html { scroll-behavior:smooth; }
-    body {
-      font-family: var(--font-sans);
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      line-height:1.6;
-      -webkit-font-smoothing:antialiased;
-      min-height:100vh;
-      overflow-x:hidden;
-      transition: background 0.3s, color 0.3s;
-      position:relative;
-    }
-    body::before {
-      content:'';
-      position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:0.04;
-      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-    }
-    ::selection { background:var(--accent-teal); color:#fff; }
-    ::-webkit-scrollbar { width:8px; }
-    ::-webkit-scrollbar-track { background:var(--bg-primary); }
-    ::-webkit-scrollbar-thumb { background:var(--accent-teal); border-radius:10px; }
-    a { color:inherit; text-decoration:none; }
-    ul, ol { list-style:none; }
-    img { max-width:100%; display:block; }
-    button, input, select, textarea { font-family:inherit; font-size:inherit; line-height:inherit; }
-    button { cursor:pointer; border:none; background:none; color:inherit; }
+        /* Grainy texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.035;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
 
-    /* ----- UTILITIES ----- */
-    .container { max-width:1280px; margin:0 auto; padding:0 1.5rem; }
-    .flex { display:flex; }
-    .flex-col { flex-direction:column; }
-    .items-center { align-items:center; }
-    .justify-between { justify-content:space-between; }
-    .gap-1 { gap:0.5rem; }
-    .gap-2 { gap:1rem; }
-    .gap-3 { gap:1.5rem; }
-    .grid { display:grid; }
-    .grid-cols-1 { grid-template-columns:1fr; }
-    .grid-cols-2 { grid-template-columns:repeat(2,1fr); }
-    .grid-cols-3 { grid-template-columns:repeat(3,1fr); }
-    .grid-cols-4 { grid-template-columns:repeat(4,1fr); }
-    .text-center { text-align:center; }
-    .text-left { text-align:left; }
-    .text-right { text-align:right; }
-    .w-full { width:100%; }
-    .h-full { height:100%; }
-    .p-1 { padding:0.5rem; }
-    .p-2 { padding:1rem; }
-    .p-3 { padding:1.5rem; }
-    .p-4 { padding:2rem; }
-    .m-1 { margin:0.5rem; }
-    .m-2 { margin:1rem; }
-    .mt-2 { margin-top:1rem; }
-    .mt-3 { margin-top:1.5rem; }
-    .mt-4 { margin-top:2rem; }
-    .mb-2 { margin-bottom:1rem; }
-    .mb-3 { margin-bottom:1.5rem; }
-    .mb-4 { margin-bottom:2rem; }
-    .rounded { border-radius:var(--radius); }
-    .rounded-full { border-radius:9999px; }
-    .shadow { box-shadow:var(--shadow); }
-    .hidden { display:none !important; }
-    .block { display:block; }
-    .relative { position:relative; }
-    .absolute { position:absolute; }
-    .fixed { position:fixed; }
-    .z-10 { z-index:10; }
-    .z-20 { z-index:20; }
-    .z-50 { z-index:50; }
-    .z-100 { z-index:100; }
-    .z-999 { z-index:999; }
-    .z-9999 { z-index:9999; }
+        ::selection {
+            background: var(--accent-purple);
+            color: #fff;
+        }
 
-    /* ----- COMPONENTS ----- */
-    .btn {
-      display:inline-flex; align-items:center; justify-content:center; gap:0.5rem;
-      padding:0.65rem 1.4rem; border:none; border-radius:var(--radius);
-      font-weight:600; font-size:0.875rem; transition:var(--transition);
-      cursor:pointer; text-decoration:none; position:relative; overflow:hidden;
-    }
-    .btn-primary { background:var(--accent-teal); color:#fff; }
-    .btn-primary:hover { transform:translateY(-2px); box-shadow:0 0 30px rgba(14,165,233,0.25); }
-    .btn-secondary { background:var(--accent-rose); color:#fff; }
-    .btn-secondary:hover { transform:translateY(-2px); box-shadow:0 0 30px rgba(244,63,94,0.25); }
-    .btn-outline { background:transparent; border:1px solid var(--border-color); color:var(--text-primary); }
-    .btn-outline:hover { background:rgba(0,0,0,0.02); border-color:var(--accent-teal); }
-    .btn-glow {
-      position:relative; background:transparent; color:var(--accent-teal);
-      padding:0.8rem 2rem; border-radius:var(--radius); font-weight:700; font-size:1rem;
-      transition:var(--transition);
-    }
-    .btn-glow svg { position:absolute; inset:-2px; width:calc(100%+4px); height:calc(100%+4px); pointer-events:none; }
-    .btn-glow svg rect { fill:none; stroke:var(--accent-teal); stroke-width:2; stroke-dasharray:400; stroke-dashoffset:400; transition:stroke-dashoffset 0.6s ease; }
-    .btn-glow:hover svg rect { stroke-dashoffset:0; }
-    .btn-glow:hover { box-shadow:0 0 40px rgba(14,165,233,0.12); transform:scale(1.02); }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-purple);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-purple-light);
+        }
 
-    .card {
-      background:var(--bg-card); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-      border:1px solid var(--border-color); border-radius:var(--radius); padding:1.5rem;
-      box-shadow:var(--shadow); transition:var(--transition);
-    }
-    .card:hover { transform:translateY(-4px); border-color:rgba(14,165,233,0.2); box-shadow:0 12px 48px rgba(0,0,0,0.06); }
-    .card-title { font-family:var(--font-display); font-weight:700; font-size:1.125rem; color:var(--text-primary); margin-bottom:0.5rem; }
-    .card-subtitle { font-size:0.875rem; color:var(--text-secondary); }
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        ul,
+        ol {
+            list-style: none;
+        }
+        img {
+            max-width: 100%;
+            display: block;
+        }
+        button,
+        input,
+        select,
+        textarea {
+            font-family: inherit;
+            font-size: inherit;
+            line-height: inherit;
+        }
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: inherit;
+        }
 
-    .form-group { margin-bottom:1rem; }
-    .form-group label { display:block; margin-bottom:0.25rem; font-weight:600; font-size:0.8125rem; color:var(--text-secondary); letter-spacing:0.02em; }
-    .form-control {
-      width:100%; padding:0.65rem 1rem; border:1px solid var(--border-color); border-radius:var(--radius);
-      background:rgba(255,255,255,0.5); color:var(--text-primary); font-size:0.875rem;
-      transition:var(--transition); appearance:none;
-    }
-    .form-control:focus { border-color:var(--accent-teal); outline:none; box-shadow:0 0 0 4px rgba(14,165,233,0.1); }
-    .form-control::placeholder { color:var(--text-muted); }
+        /* ============================================================
+           UTILITY CLASSES
+           ============================================================ */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
 
-    .table-container { overflow-x:auto; border-radius:var(--radius); border:1px solid var(--border-color); background:var(--bg-card); backdrop-filter:blur(4px); }
-    table { width:100%; border-collapse:collapse; font-size:0.875rem; }
-    table thead { background:rgba(0,0,0,0.02); }
-    table th { padding:0.75rem 1rem; text-align:left; font-weight:600; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-secondary); border-bottom:1px solid var(--border-color); }
-    table td { padding:0.75rem 1rem; border-bottom:1px solid var(--border-color); color:var(--text-primary); vertical-align:middle; }
-    table tbody tr:hover { background:rgba(0,0,0,0.01); }
+        .flex {
+            display: flex;
+        }
+        .flex-col {
+            flex-direction: column;
+        }
+        .flex-wrap {
+            flex-wrap: wrap;
+        }
+        .items-center {
+            align-items: center;
+        }
+        .items-start {
+            align-items: flex-start;
+        }
+        .items-end {
+            align-items: flex-end;
+        }
+        .justify-center {
+            justify-content: center;
+        }
+        .justify-between {
+            justify-content: space-between;
+        }
+        .justify-around {
+            justify-content: space-around;
+        }
+        .gap-1 {
+            gap: 0.5rem;
+        }
+        .gap-2 {
+            gap: 1rem;
+        }
+        .gap-3 {
+            gap: 1.5rem;
+        }
+        .gap-4 {
+            gap: 2rem;
+        }
 
-    .toggle-3d {
-      position:relative; width:60px; height:30px; background:var(--bg-secondary); border-radius:30px;
-      border:2px solid var(--border-color); cursor:pointer; transition:var(--transition);
-      perspective:100px; box-shadow:inset 0 2px 4px rgba(0,0,0,0.04);
-    }
-    .toggle-3d .ball {
-      position:absolute; top:2px; left:2px; width:22px; height:22px;
-      background:radial-gradient(circle at 30% 30%, #fff, #d1d5db);
-      border-radius:50%; transition:var(--transition);
-      transform:translateX(0) rotateY(0deg);
-      box-shadow:0 2px 8px rgba(0,0,0,0.08);
-    }
-    .toggle-3d.active { background:var(--accent-teal); }
-    .toggle-3d.active .ball { transform:translateX(30px) rotateY(180deg); }
+        .grid {
+            display: grid;
+        }
+        .grid-cols-1 {
+            grid-template-columns: 1fr;
+        }
+        .grid-cols-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .grid-cols-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        .grid-cols-4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
 
-    /* Preloader */
-    #preloader {
-      position:fixed; inset:0; background:var(--bg-primary); z-index:9999;
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      transition:opacity 0.8s ease, visibility 0.8s ease;
-    }
-    #preloader.hidden { opacity:0; visibility:hidden; pointer-events:none; }
-    #preloader .loader-logo { font-family:var(--font-display); font-size:3rem; font-weight:900; color:var(--accent-teal); animation:pulseLoader 1.2s ease-in-out infinite; }
-    #preloader .loader-logo span { color:var(--text-primary); }
-    #preloader .loader-bar { width:200px; height:4px; background:var(--border-color); border-radius:4px; margin-top:1.5rem; overflow:hidden; position:relative; }
-    #preloader .loader-bar::after { content:''; position:absolute; inset:0; width:0%; background:linear-gradient(90deg, var(--accent-teal), var(--accent-rose)); border-radius:4px; animation:loadProgress 2s ease-in-out forwards; }
-    @keyframes loadProgress { 0% { width:0%; } 100% { width:100%; } }
-    @keyframes pulseLoader { 0%,100% { transform:scale(1); } 50% { transform:scale(1.05); } }
+        .text-center {
+            text-align: center;
+        }
+        .text-left {
+            text-align: left;
+        }
+        .text-right {
+            text-align: right;
+        }
 
-    /* Page transition */
-    .page-transition { opacity:0; transform:translateY(20px); animation:pageIn 0.6s ease forwards; }
-    @keyframes pageIn { to { opacity:1; transform:translateY(0); } }
+        .w-full {
+            width: 100%;
+        }
+        .h-full {
+            height: 100%;
+        }
 
-    /* Navbar */
-    .navbar {
-      background:rgba(255,255,255,0.8); backdrop-filter:blur(12px); border-bottom:1px solid var(--border-color);
-      padding:0.75rem 1.5rem; position:sticky; top:0; z-index:100;
-      display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;
-    }
-    .navbar .brand { font-family:var(--font-display); font-size:1.5rem; font-weight:900; color:var(--accent-teal); }
-    .navbar .brand span { color:var(--text-primary); }
-    .navbar .nav-links { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; }
-    .navbar .nav-links a { color:var(--text-secondary); padding:0.4rem 0.8rem; border-radius:6px; font-size:0.875rem; font-weight:500; transition:var(--transition); }
-    .navbar .nav-links a:hover { color:var(--text-primary); background:rgba(0,0,0,0.02); }
-    .navbar .nav-links a.active { color:var(--accent-teal); background:rgba(14,165,233,0.06); }
-    .navbar .hamburger {
-      display:none; flex-direction:column; gap:6px; padding:8px; cursor:pointer; transition:var(--transition);
-    }
-    .navbar .hamburger span { display:block; width:28px; height:2px; background:var(--text-primary); border-radius:2px; transition:var(--transition); transform-origin:center; }
-    .navbar .hamburger.active span:nth-child(1) { transform:rotate(45deg) translate(5px,5px); }
-    .navbar .hamburger.active span:nth-child(2) { transform:translateX(-20px); opacity:0; }
-    .navbar .hamburger.active span:nth-child(3) { transform:rotate(-45deg) translate(5px,-5px); }
+        .p-1 {
+            padding: 0.5rem;
+        }
+        .p-2 {
+            padding: 1rem;
+        }
+        .p-3 {
+            padding: 1.5rem;
+        }
+        .p-4 {
+            padding: 2rem;
+        }
+        .px-1 {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+        .px-2 {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        .px-3 {
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+        .px-4 {
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+        .py-1 {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+        .py-2 {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+        .py-3 {
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+        .py-4 {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .py-5 {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+        }
 
-    /* Footer */
-    .footer { background:var(--bg-secondary); border-top:1px solid var(--border-color); padding:2rem 1.5rem; margin-top:auto; text-align:center; color:var(--text-muted); font-size:0.875rem; }
+        .m-1 {
+            margin: 0.5rem;
+        }
+        .m-2 {
+            margin: 1rem;
+        }
+        .m-3 {
+            margin: 1.5rem;
+        }
+        .mt-1 {
+            margin-top: 0.5rem;
+        }
+        .mt-2 {
+            margin-top: 1rem;
+        }
+        .mt-3 {
+            margin-top: 1.5rem;
+        }
+        .mt-4 {
+            margin-top: 2rem;
+        }
+        .mt-5 {
+            margin-top: 3rem;
+        }
+        .mb-1 {
+            margin-bottom: 0.5rem;
+        }
+        .mb-2 {
+            margin-bottom: 1rem;
+        }
+        .mb-3 {
+            margin-bottom: 1.5rem;
+        }
+        .mb-4 {
+            margin-bottom: 2rem;
+        }
+        .mx-auto {
+            margin-left: auto;
+            margin-right: auto;
+        }
 
-    /* 3D container */
-    #three-container { width:100%; height:400px; border-radius:var(--radius); overflow:hidden; position:relative; border:1px solid var(--border-color); margin:2rem 0; }
-    #three-container canvas { display:block; width:100% !important; height:100% !important; }
+        .rounded {
+            border-radius: var(--radius);
+        }
+        .rounded-full {
+            border-radius: 9999px;
+        }
+        .rounded-lg {
+            border-radius: 20px;
+        }
 
-    /* Dock, flashlight, eye‑form, etc. – keep from previous */
+        .shadow {
+            box-shadow: var(--shadow);
+        }
 
-    @media (max-width:768px) {
-      .navbar .nav-links { display:none; width:100%; flex-direction:column; align-items:stretch; padding:1rem 0; }
-      .navbar .nav-links.open { display:flex; }
-      .navbar .hamburger { display:flex; }
-      .grid-cols-2,.grid-cols-3,.grid-cols-4 { grid-template-columns:1fr; }
-      #three-container { height:250px; }
-    }
-    @media (max-width:480px) { .container { padding:0 1rem; } .navbar .brand { font-size:1.2rem; } }
-  </style>
+        .hidden {
+            display: none !important;
+        }
+        .block {
+            display: block;
+        }
+        .inline-block {
+            display: inline-block;
+        }
+        .relative {
+            position: relative;
+        }
+        .absolute {
+            position: absolute;
+        }
+        .fixed {
+            position: fixed;
+        }
+        .sticky {
+            position: sticky;
+        }
+
+        .z-10 {
+            z-index: 10;
+        }
+        .z-20 {
+            z-index: 20;
+        }
+        .z-50 {
+            z-index: 50;
+        }
+        .z-100 {
+            z-index: 100;
+        }
+
+        .overflow-hidden {
+            overflow: hidden;
+        }
+        .overflow-auto {
+            overflow: auto;
+        }
+
+        /* ============================================================
+           COMPONENT STYLES
+           ============================================================ */
+
+        /* ---- Buttons ---- */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.6rem;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: var(--transition);
+            cursor: pointer;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            color: #fff;
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.25);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 50px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1.5px solid var(--accent-purple);
+            color: var(--text-primary);
+        }
+        .btn-secondary:hover {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: var(--accent-purple-light);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+        }
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: var(--accent-purple);
+            color: var(--text-primary);
+        }
+
+        .btn-glow {
+            position: relative;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            color: #fff;
+            padding: 0.8rem 2rem;
+            border-radius: var(--radius);
+            font-weight: 700;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        .btn-glow::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan), var(--accent-purple));
+            background-size: 300% 300%;
+            z-index: -1;
+            animation: borderSpin 4s linear infinite;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+        .btn-glow:hover::before {
+            opacity: 1;
+        }
+        .btn-glow:hover {
+            transform: translateY(-2px);
+        }
+        @keyframes borderSpin {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* ---- Cards (from Cockroach Janta Party style) ---- */
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue));
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .card:hover::before {
+            opacity: 1;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(139, 92, 246, 0.3);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
+        }
+
+        .card-title {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .card-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* ---- Glass morphism ---- */
+        .glass {
+            background: rgba(26, 10, 46, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(139, 92, 246, 0.08);
+        }
+        .glass:hover {
+            border-color: rgba(139, 92, 246, 0.2);
+        }
+
+        /* ============================================================
+           NAVBAR — from True Rippers & MadKings
+           ============================================================ */
+        .navbar {
+            background: rgba(10, 6, 24, 0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+            padding: 0.75rem 1.5rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            transition: var(--transition);
+        }
+        .navbar.scrolled {
+            background: rgba(10, 6, 24, 0.98);
+            border-bottom-color: rgba(139, 92, 246, 0.15);
+        }
+
+        .navbar .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-family: var(--font-oswald);
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: 0.02em;
+        }
+        .navbar .brand .logo-icon {
+            width: 2.4rem;
+            height: 2.4rem;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+        .navbar .brand .highlight {
+            background: linear-gradient(135deg, var(--accent-purple-light), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .navbar .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .navbar .nav-links a {
+            color: var(--text-secondary);
+            padding: 0.4rem 0.9rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: var(--transition);
+            letter-spacing: 0.02em;
+            font-family: var(--font-sans);
+        }
+        .navbar .nav-links a:hover {
+            color: var(--text-primary);
+            background: rgba(139, 92, 246, 0.08);
+        }
+        .navbar .nav-links a.active {
+            color: var(--accent-purple-light);
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .navbar .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            padding: 6px;
+            cursor: pointer;
+        }
+        .navbar .hamburger span {
+            display: block;
+            width: 26px;
+            height: 2px;
+            background: var(--text-primary);
+            border-radius: 2px;
+            transition: var(--transition);
+            transform-origin: center;
+        }
+        .navbar .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .navbar .hamburger.active span:nth-child(2) {
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+        .navbar .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* ============================================================
+           HERO SECTION — with esports background image
+           ============================================================ */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 1.5rem 3rem;
+            position: relative;
+            overflow: hidden;
+            background: var(--bg-primary);
+        }
+
+        /* Background image overlay */
+        .hero-bg-image {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080"%3E%3Crect width="1920" height="1080" fill="%23070714"/%3E%3Ccircle cx="300" cy="300" r="400" fill="%238b5cf6" opacity="0.08"/%3E%3Ccircle cx="1600" cy="700" r="500" fill="%233b82f6" opacity="0.06"/%3E%3Ccircle cx="960" cy="500" r="600" fill="%2306b6d4" opacity="0.04"/%3E%3C/svg%3E') center/cover no-repeat;
+            background-blend-mode: overlay;
+        }
+        .hero-bg-image::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 30%, var(--bg-primary) 100%);
+            opacity: 0.7;
+        }
+        /* You can replace the background with a real esports image by setting background-image: url('your-image.jpg'); */
+
+        .hero .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            text-align: center;
+        }
+
+        .hero .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 1rem;
+            border-radius: 9999px;
+            background: rgba(139, 92, 246, 0.12);
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            color: var(--accent-purple-light);
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 1.5rem;
+        }
+        .hero .hero-badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-cyan);
+            animation: pulseDot 2s ease-in-out infinite;
+        }
+        @keyframes pulseDot {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.4;
+                transform: scale(0.7);
+            }
+        }
+
+        .hero .hero-title {
+            font-family: var(--font-oswald);
+            font-size: clamp(3rem, 12vw, 6.5rem);
+            font-weight: 700;
+            line-height: 1.05;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            letter-spacing: 0.02em;
+        }
+        .hero .hero-title .highlight {
+            background: linear-gradient(135deg, var(--accent-purple-light), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero .hero-title .highlight-2 {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero .hero-sub {
+            font-size: clamp(1rem, 1.5vw, 1.25rem);
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            line-height: 1.8;
+            font-family: var(--font-sans);
+        }
+
+        .hero .hero-ctas {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1.5rem;
+            max-width: 500px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(139, 92, 246, 0.08);
+        }
+        .hero .hero-stats .stat-item {
+            text-align: center;
+        }
+        .hero .hero-stats .stat-item .stat-number {
+            font-family: var(--font-oswald);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-purple-light);
+        }
+        .hero .hero-stats .stat-item .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+        }
+
+        /* ============================================================
+           TICKER (from True Rippers)
+           ============================================================ */
+        .ticker {
+            overflow: hidden;
+            background: rgba(139, 92, 246, 0.04);
+            border-top: 1px solid rgba(139, 92, 246, 0.06);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.06);
+            padding: 0.6rem 0;
+            position: relative;
+        }
+        .ticker .ticker-track {
+            display: flex;
+            gap: 3rem;
+            white-space: nowrap;
+            animation: tickerScroll 25s linear infinite;
+            width: max-content;
+        }
+        .ticker .ticker-track span {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .ticker .ticker-track .ticker-accent {
+            color: var(--accent-purple-light);
+        }
+        .ticker .ticker-track .ticker-dot {
+            color: var(--accent-cyan);
+        }
+        @keyframes tickerScroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* ============================================================
+           SECTION TITLES (from Cockroach)
+           ============================================================ */
+        .section-head {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .section-head .eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--accent-purple-light);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .section-head .title {
+            font-family: var(--font-oswald);
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            letter-spacing: 0.02em;
+        }
+        .section-head .title .highlight {
+            background: linear-gradient(135deg, var(--accent-purple-light), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .section-head .subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            max-width: 550px;
+            margin: 0 auto;
+            font-family: var(--font-sans);
+        }
+
+        /* ============================================================
+           ABOUT SECTION
+           ============================================================ */
+        .about {
+            padding: 5rem 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid rgba(139, 92, 246, 0.05);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.05);
+        }
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        .about-content .about-text {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            font-family: var(--font-sans);
+        }
+        .about-content .about-text strong {
+            color: var(--text-primary);
+        }
+        .about-content .about-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .about-content .about-features .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-family: var(--font-sans);
+        }
+        .about-content .about-features .feature-item .fi-icon {
+            color: var(--accent-purple-light);
+            font-size: 1.1rem;
+        }
+
+        .about-image {
+            position: relative;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid rgba(139, 92, 246, 0.08);
+        }
+        .about-image img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            display: block;
+        }
+        .about-image .image-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.05));
+            pointer-events: none;
+        }
+
+        /* ============================================================
+           ROSTER / TEAMS SECTION (cards from Cockroach)
+           ============================================================ */
+        .roster {
+            padding: 5rem 0;
+            background: var(--bg-primary);
+        }
+
+        .roster-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .player-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: var(--transition);
+            text-align: center;
+            padding: 1.5rem 1rem;
+            position: relative;
+        }
+        .player-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue));
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .player-card:hover::before {
+            opacity: 1;
+        }
+        .player-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(139, 92, 246, 0.3);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+        }
+        .player-card .player-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            overflow: hidden;
+            border: 2px solid rgba(139, 92, 246, 0.2);
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--accent-purple-light);
+        }
+        .player-card .player-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .player-card .player-name {
+            font-family: var(--font-oswald);
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: 0.02em;
+        }
+        .player-card .player-role {
+            font-size: 0.75rem;
+            color: var(--accent-purple-light);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .player-card .player-stats {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .player-card .player-stats .ps-item {
+            text-align: center;
+        }
+        .player-card .player-stats .ps-item .ps-number {
+            font-family: var(--font-oswald);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-purple-light);
+        }
+        .player-card .player-stats .ps-item .ps-label {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        /* ============================================================
+           SCHEDULE / MATCHES SECTION
+           ============================================================ */
+        .schedule {
+            padding: 5rem 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid rgba(139, 92, 246, 0.05);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.05);
+        }
+
+        .match-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.2rem 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            transition: var(--transition);
+            flex-wrap: wrap;
+            gap: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .match-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--accent-purple), var(--accent-blue));
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .match-card:hover::before {
+            opacity: 1;
+        }
+        .match-card:hover {
+            border-color: rgba(139, 92, 246, 0.2);
+            background: rgba(26, 10, 46, 0.5);
+        }
+        .match-card .match-teams {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .match-card .match-teams .team-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            font-family: var(--font-sans);
+        }
+        .match-card .match-teams .team-name.our-team {
+            color: var(--accent-purple-light);
+        }
+        .match-card .match-teams .vs {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .match-card .match-teams .vs .score {
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        .match-card .match-info {
+            text-align: right;
+        }
+        .match-card .match-info .match-date {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .match-card .match-info .match-result {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.2rem 0.8rem;
+            border-radius: 9999px;
+            display: inline-block;
+            margin-top: 0.2rem;
+        }
+        .match-card .match-info .match-result.win {
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--accent-cyan);
+        }
+        .match-card .match-info .match-result.loss {
+            background: rgba(239, 68, 68, 0.12);
+            color: #f87171;
+        }
+        .match-card .match-info .match-result.upcoming {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--accent-purple-light);
+        }
+
+        /* ============================================================
+           ACHIEVEMENTS SECTION (cards)
+           ============================================================ */
+        .achievements {
+            padding: 5rem 0;
+            background: var(--bg-primary);
+        }
+
+        .achievement-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .achievement-card {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .achievement-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .achievement-card:hover::before {
+            opacity: 1;
+        }
+        .achievement-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(139, 92, 246, 0.2);
+        }
+        .achievement-card .ach-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .achievement-card .ach-title {
+            font-family: var(--font-oswald);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: 0.02em;
+        }
+        .achievement-card .ach-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 0.3rem;
+            font-family: var(--font-sans);
+        }
+
+        /* ============================================================
+           CONTENT / MEDIA SECTION
+           ============================================================ */
+        .content {
+            padding: 5rem 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid rgba(139, 92, 246, 0.05);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.05);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .content-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: var(--transition);
+            position: relative;
+        }
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue));
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .content-card:hover::before {
+            opacity: 1;
+        }
+        .content-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(139, 92, 246, 0.2);
+        }
+        .content-card .content-thumb {
+            width: 100%;
+            height: 180px;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--text-muted);
+            position: relative;
+            overflow: hidden;
+        }
+        .content-card .content-thumb .play-btn {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: var(--transition);
+            font-size: 3rem;
+            color: #fff;
+        }
+        .content-card:hover .content-thumb .play-btn {
+            opacity: 1;
+        }
+        .content-card .content-body {
+            padding: 1.2rem 1.5rem;
+        }
+        .content-card .content-body .content-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+        }
+        .content-card .content-body .content-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+
+        /* ============================================================
+           SHOP / MERCH (from MadKings)
+           ============================================================ */
+        .shop {
+            padding: 5rem 0;
+            background: var(--bg-primary);
+        }
+
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .shop-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: var(--transition);
+            text-align: center;
+            padding: 1.5rem 1rem;
+        }
+        .shop-item:hover {
+            transform: translateY(-4px);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+        .shop-item .shop-image {
+            width: 100%;
+            height: 160px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        .shop-item .shop-name {
+            font-family: var(--font-oswald);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .shop-item .shop-price {
+            color: var(--accent-purple-light);
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-top: 0.3rem;
+        }
+        .shop-item .shop-btn {
+            margin-top: 1rem;
+        }
+
+        /* ============================================================
+           SOCIAL / COMMUNITY SECTION
+           ============================================================ */
+        .social {
+            padding: 4rem 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid rgba(139, 92, 246, 0.05);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.05);
+        }
+
+        .social-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.7rem 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius);
+            color: var(--text-secondary);
+            transition: var(--transition);
+            background: rgba(255, 255, 255, 0.02);
+            font-family: var(--font-sans);
+        }
+        .social-link:hover {
+            border-color: var(--accent-purple);
+            color: var(--text-primary);
+            background: rgba(139, 92, 246, 0.05);
+            transform: translateY(-2px);
+        }
+        .social-link .social-icon {
+            font-size: 1.2rem;
+        }
+        .social-link.discord:hover {
+            border-color: #5865F2;
+            background: rgba(88, 101, 242, 0.05);
+        }
+        .social-link.instagram:hover {
+            border-color: #E4405F;
+            background: rgba(228, 64, 95, 0.05);
+        }
+        .social-link.twitter:hover {
+            border-color: #1DA1F2;
+            background: rgba(29, 161, 242, 0.05);
+        }
+        .social-link.youtube:hover {
+            border-color: #FF0000;
+            background: rgba(255, 0, 0, 0.05);
+        }
+
+        /* ============================================================
+           FOOTER (from True Rippers & Cockroach)
+           ============================================================ */
+        .footer {
+            background: var(--bg-dark);
+            border-top: 1px solid rgba(139, 92, 246, 0.06);
+            padding: 3rem 1.5rem 1.5rem;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .footer .brand-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .footer .brand-footer .brand-name {
+            font-family: var(--font-oswald);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: 0.02em;
+        }
+        .footer .brand-footer .brand-name .highlight {
+            background: linear-gradient(135deg, var(--accent-purple-light), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .footer .brand-footer p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            max-width: 300px;
+            line-height: 1.7;
+            font-family: var(--font-sans);
+        }
+        .footer .col h4 {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        .footer .col ul {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .footer .col ul li a {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            transition: var(--transition);
+            font-family: var(--font-sans);
+        }
+        .footer .col ul li a:hover {
+            color: var(--accent-purple-light);
+        }
+        .footer .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            padding-top: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .footer .footer-bottom p {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-family: var(--font-sans);
+        }
+        .footer .footer-bottom .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        .footer .footer-bottom .footer-links a {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            transition: var(--transition);
+            font-family: var(--font-sans);
+        }
+        .footer .footer-bottom .footer-links a:hover {
+            color: var(--accent-purple-light);
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 992px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .about-image img {
+                height: 300px;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: stretch;
+                padding: 1rem 0;
+                gap: 0.3rem;
+            }
+            .navbar .nav-links.open {
+                display: flex;
+            }
+            .navbar .hamburger {
+                display: flex;
+            }
+
+            .hero .hero-title {
+                font-size: 2.8rem;
+            }
+            .hero .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .about-content .about-features {
+                grid-template-columns: 1fr;
+            }
+
+            .roster-grid {
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .footer .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .match-card {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+            .match-card .match-teams {
+                justify-content: center;
+            }
+            .match-card .match-info {
+                text-align: center;
+            }
+
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            .grid-cols-3 {
+                grid-template-columns: 1fr;
+            }
+            .grid-cols-4 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 1rem;
+            }
+            .hero .hero-title {
+                font-size: 2.2rem;
+            }
+            .hero .hero-ctas .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .roster-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .player-card .player-avatar {
+                width: 70px;
+                height: 70px;
+                font-size: 1.8rem;
+            }
+            .section-head .title {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* ============================================================
+           ANIMATIONS
+           ============================================================ */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-left.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(30px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-right.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-scale.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+    </style>
 </head>
 <body>
 
-  <!-- ===== PRE‑LOADER ===== -->
-  <div id="preloader">
-    <div class="loader-logo">Wolf<span>Society</span></div>
-    <div class="loader-bar"></div>
-  </div>
-
-  <!-- ===== NAVBAR ===== -->
-  <nav class="navbar" id="navbar">
-    <a href="#" class="brand" data-route="/">Wolf<span>Society</span></a>
-    <div class="hamburger" id="hamburgerBtn">
-      <span></span><span></span><span></span>
-    </div>
-    <div class="nav-links" id="navLinks">
-      <a href="#" data-route="/" class="active">Home</a>
-      <a href="#" data-route="/teams">Teams</a>
-      <a href="#" data-route="/schedule">Schedule</a>
-      <a href="#" data-route="/content">Content</a>
-      <a href="#" data-route="/dashboard" id="dashboardLink" style="display:none;">Dashboard</a>
-      <a href="#" data-route="/login" id="loginLink">Login</a>
-      <a href="#" data-route="/register" id="registerLink">Register</a>
-      <a href="#" id="logoutLink" style="display:none;">Logout</a>
-      <div class="toggle-3d" id="themeToggle">
-        <div class="ball"></div>
-      </div>
-    </div>
-  </nav>
-
-  <!-- ===== APP ===== -->
-  <main id="app" class="container" style="min-height:70vh; padding-top:2rem; padding-bottom:2rem;"></main>
-
-  <!-- ===== FOOTER ===== -->
-  <footer class="footer">
-    <p>&copy; 2026 Wolf Society Esports. All rights reserved.</p>
-    <div class="mt-2" style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
-      <span style="color:var(--text-muted);font-size:0.75rem;">🐺</span>
-      <span style="color:var(--text-muted);font-size:0.75rem;">⚡</span>
-      <span style="color:var(--text-muted);font-size:0.75rem;">🔥</span>
-    </div>
-  </footer>
-
-  <!-- ===== TOAST ===== -->
-  <div id="toastContainer" style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;display:flex;flex-direction:column;gap:0.5rem;max-width:360px;width:100%;"></div>
-
-  <!-- ============================================================
-       JAVASCRIPT – COMPLETE APPLICATION
+    <!-- ============================================================
+       NAVBAR
        ============================================================ -->
-  <script>
-    /**
-     * ============================================================
-     * WOLF SOCIETY ESPORTS – FULL SPA WITH REAL DATA
-     * ============================================================
-     */
+    <nav class="navbar" id="navbar">
+        <a href="#" class="brand">
+            <span class="logo-icon">🐺</span>
+            <span>WOLF <span class="highlight">SOCIETY</span></span>
+        </a>
 
-    // ─── CONFIG ────────────────────────────────────────────────────
-    const CONFIG = {
-      API_BASE: 'https://wolf-society-esports.onrender.com', // ← CHANGE TO YOUR BACKEND URL
-      APP_NAME: 'Wolf Society Esports',
-      REFRESH_INTERVAL: 10000,
-    };
+        <div class="hamburger" id="hamburgerBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
 
-    // ─── HELPERS ──────────────────────────────────────────────────
-    const $ = (sel, ctx = document) => ctx.querySelector(sel);
-    const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
-    const create = (tag, attrs = {}, children = []) => {
-      const el = document.createElement(tag);
-      Object.entries(attrs).forEach(([k, v]) => {
-        if (k === 'text') el.textContent = v;
-        else if (k === 'html') el.innerHTML = v;
-        else if (k === 'className') el.className = v;
-        else el.setAttribute(k, v);
-      });
-      children.forEach(c => {
-        if (typeof c === 'string') el.appendChild(document.createTextNode(c));
-        else if (c instanceof HTMLElement) el.appendChild(c);
-      });
-      return el;
-    };
-    const append = (parent, ...children) => {
-      children.forEach(c => {
-        if (Array.isArray(c)) c.forEach(ch => parent.appendChild(ch));
-        else if (c instanceof HTMLElement) parent.appendChild(c);
-        else parent.appendChild(document.createTextNode(String(c)));
-      });
-      return parent;
-    };
-    const empty = (el) => { while (el.firstChild) el.removeChild(el.firstChild); return el; };
-    const remove = (el) => el.remove();
-    const on = (el, event, handler) => el.addEventListener(event, handler);
+        <div class="nav-links" id="navLinks">
+            <a href="#" class="active" data-route="/">Home</a>
+            <a href="#about" data-route="/about">About</a>
+            <a href="#roster" data-route="/roster">Roster</a>
+            <a href="#schedule" data-route="/schedule">Schedule</a>
+            <a href="#achievements" data-route="/achievements">Achievements</a>
+            <a href="#content" data-route="/content">Media</a>
+            <a href="#shop" data-route="/shop">Shop</a>
+            <a href="#social" data-route="/social">Community</a>
+            <a href="#contact" data-route="/contact">Contact</a>
+        </div>
+    </nav>
 
-    // ─── TOAST ────────────────────────────────────────────────────
-    const Toast = {
-      show(message, type = 'info', duration = 4000) {
-        const container = document.getElementById('toastContainer');
-        const colors = { success: '#22c55e', error: '#f43f5e', info: '#0ea5e9', warning: '#f59e0b' };
-        const toast = create('div', { className: `toast toast-${type}`, style: `
-          padding: 0.75rem 1.25rem; border-radius: 8px; background: var(--bg-secondary);
-          border-left: 4px solid ${colors[type] || colors.info}; box-shadow: var(--shadow);
-          color: var(--text-primary); font-size: 0.875rem; animation: slideInRight 0.3s ease;
-          border: 1px solid var(--border-color);
-        `});
-        const icon = { success:'✅', error:'❌', info:'ℹ️', warning:'⚠️' }[type] || 'ℹ️';
-        toast.innerHTML = `<span style="margin-right:0.5rem;">${icon}</span> ${message}`;
-        container.appendChild(toast);
-        setTimeout(() => {
-          toast.style.opacity = '0';
-          toast.style.transform = 'translateX(100%)';
-          setTimeout(() => remove(toast), 300);
-        }, duration);
-      },
-      success(msg) { this.show(msg, 'success'); },
-      error(msg) { this.show(msg, 'error'); },
-      info(msg) { this.show(msg, 'info'); },
-      warning(msg) { this.show(msg, 'warning'); }
-    };
+    <!-- ============================================================
+       HERO
+       ============================================================ -->
+    <section class="hero" id="home">
+        <div class="hero-bg-image"></div>
 
-    // ─── API WRAPPER (with mock fallback) ──────────────────────
-    const API = {
-      auth: {
-        getToken() { return localStorage.getItem('wolf_token'); },
-        setToken(t) { localStorage.setItem('wolf_token', t); },
-        removeToken() { localStorage.removeItem('wolf_token'); },
-        getUser() { try { return JSON.parse(localStorage.getItem('wolf_user')); } catch { return null; } },
-        setUser(u) { localStorage.setItem('wolf_user', JSON.stringify(u)); },
-        removeUser() { localStorage.removeItem('wolf_user'); },
-        isLoggedIn() { return !!this.getToken(); }
-      },
-      async request(method, endpoint, data = null) {
-        const url = `${CONFIG.API_BASE}${endpoint}`;
-        const options = { method, headers: { 'Content-Type': 'application/json' } };
-        const token = this.auth.getToken();
-        if (token) options.headers['Authorization'] = `Bearer ${token}`;
-        if (data) options.body = JSON.stringify(data);
-        try {
-          const res = await fetch(url, options);
-          const result = await res.json();
-          if (!res.ok) throw new Error(result.error || 'API error');
-          return result;
-        } catch (err) {
-          console.warn('API error, using mock data:', err.message);
-          return this._mock(method, endpoint, data);
-        }
-      },
-      get(endpoint) { return this.request('GET', endpoint); },
-      post(endpoint, data) { return this.request('POST', endpoint, data); },
-      put(endpoint, data) { return this.request('PUT', endpoint, data); },
-      delete(endpoint) { return this.request('DELETE', endpoint); },
-      login(email, password) { return this.post('/auth/login', { email, password }); },
-      register(email, password, full_name, role = 'player') { return this.post('/auth/register', { email, password, full_name, role }); },
-      getMe() { return this.get('/auth/me'); },
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="dot"></span>
+                India's Premier Underdog Esports Organization
+            </div>
 
-      _mock(method, endpoint, data) {
-        const mock = {
-          '/teams': [{ id: 1, name: 'Divine Wolf', tag: 'DW', game: 'Valorant', wins: 10, losses: 3 }],
-          '/players': [{ id: 1, display_name: 'KaiKishi', game: 'Valorant', role: 'Captain', status: 'active' }],
-          '/matches': [{ id: 1, opponent: 'Phoenix Rising', game: 'Valorant', match_date: '2026-08-01', result: 'win' }],
-          '/content': [{ id: 1, title: 'Highlight Reel', type: 'video', url: '#', description: 'Best plays' }],
-          '/announcements': [{ id: 1, title: 'Welcome', content: 'New season starts soon!', published: true }],
-          '/auth/login': { token: 'mock-token', user: { id: 1, email: 'admin@test.com', full_name: 'Admin', role: 'admin' } },
-        };
-        const key = endpoint.split('?')[0];
-        const response = mock[key] || [];
-        if (method === 'GET') return response;
-        if (method === 'POST') return { success: true, id: Date.now() };
-        if (method === 'DELETE') return { success: true };
-        return { success: true };
-      }
-    };
+            <h1 class="hero-title">
+                <span class="highlight">Wolf</span> Society<br/>
+                <span class="highlight-2">Divine Wolf</span>
+            </h1>
 
-    // ─── ROUTER ────────────────────────────────────────────────────
-    const Router = {
-      routes: [],
-      current: null,
+            <p class="hero-sub">
+                We are the underdogs who refuse to stay down. Wolf Society Esports is built on
+                skill, strategy, and an unbreakable spirit. From BGMI to Valorant and MOBA 5v5,
+                we compete with heart.
+            </p>
 
-      init() {
-        this.routes = [
-          { path: '/', render: renderHome, guard: 'public' },
-          { path: '/teams', render: renderTeams, guard: 'public' },
-          { path: '/schedule', render: renderSchedule, guard: 'public' },
-          { path: '/content', render: renderContent, guard: 'public' },
-          { path: '/login', render: renderLogin, guard: 'public' },
-          { path: '/register', render: renderRegister, guard: 'public' },
-          { path: '/dashboard', render: renderDashboard, guard: 'auth' },
-        ];
+            <div class="hero-ctas">
+                <a href="#roster" class="btn btn-primary">Meet the Pack</a>
+                <a href="#about" class="btn btn-secondary">Our Story</a>
+            </div>
 
-        window.addEventListener('popstate', () => this.handle());
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">Tournament Wins</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Matches Played</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">Active Players</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">100K+</div>
+                    <div class="stat-label">Community</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        // Intercept clicks on data-route
-        document.addEventListener('click', (e) => {
-          const link = e.target.closest('[data-route]');
-          if (!link) return;
-          e.preventDefault();
-          const path = link.getAttribute('data-route');
-          if (path) this.navigate(path);
-        });
+    <!-- ============================================================
+       TICKER
+       ============================================================ -->
+    <div class="ticker">
+        <div class="ticker-track">
+            <span>🐺 WOLF SOCIETY — DIVINE WOLF</span>
+            <span class="ticker-dot">✦</span>
+            <span class="ticker-accent">#UNDERDOGS</span>
+            <span class="ticker-dot">✦</span>
+            <span>BGMI · VALORANT · MOBA 5v5</span>
+            <span class="ticker-dot">✦</span>
+            <span class="ticker-accent">BUILT FOR GLORY</span>
+            <span class="ticker-dot">✦</span>
+            <span>🐺 WOLF SOCIETY — DIVINE WOLF</span>
+            <span class="ticker-dot">✦</span>
+            <span class="ticker-accent">#UNDERDOGS</span>
+            <span class="ticker-dot">✦</span>
+            <span>BGMI · VALORANT · MOBA 5v5</span>
+            <span class="ticker-dot">✦</span>
+            <span class="ticker-accent">BUILT FOR GLORY</span>
+            <span class="ticker-dot">✦</span>
+        </div>
+    </div>
 
-        // Hamburger
+    <!-- ============================================================
+       ABOUT SECTION
+       ============================================================ -->
+    <section class="about" id="about">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-content reveal">
+                    <div class="section-head text-left" style="margin-bottom:1.5rem;">
+                        <span class="eyebrow">Our Story</span>
+                        <h2 class="title" style="font-size:2.2rem;">
+                            The <span class="highlight">Underdog</span> Revolution
+                        </h2>
+                    </div>
+                    <p class="about-text">
+                        <strong>Wolf Society Esports</strong> was born from a simple belief: that
+                        passion, strategy, and heart matter more than money or reputation.
+                        We are India's premier underdog esports organization, competing across
+                        <strong>BGMI, Valorant, and MOBA 5v5</strong> with a hunger to prove
+                        that underdogs can conquer the world.
+                    </p>
+                    <p class="about-text">
+                        Our flagship team, <strong>Divine Wolf</strong>, represents the pinnacle
+                        of our competitive spirit. We started as a group of passionate players
+                        who refused to be overlooked. Today, we stand as a professional esports
+                        organization with a growing fanbase, multiple tournament wins, and a roster
+                        of elite players who share one vision: to dominate the Indian esports scene.
+                    </p>
+                    <div class="about-features">
+                        <div class="feature-item">
+                            <span class="fi-icon">🎯</span>
+                            <span>Precision Strategy</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="fi-icon">🤝</span>
+                            <span>Unbreakable Teamwork</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="fi-icon">🔥</span>
+                            <span>Relentless Grind</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="fi-icon">🏆</span>
+                            <span>Champion Mindset</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-image reveal-right">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'%3E%3Crect width='600' height='400' fill='%23120c28'/%3E%3Ctext x='300' y='200' text-anchor='middle' font-family='Oswald, sans-serif' font-size='32' fill='%238b5cf6' font-weight='700'%3EWOLF SOCIETY%3C/text%3E%3Ctext x='300' y='240' text-anchor='middle' font-family='Oswald, sans-serif' font-size='22' fill='%23b8b0d8'%3EDIVINE WOLF%3C/text%3E%3C/svg%3E"
+                    alt="Wolf Society Esports Team" />
+                    <div class="image-overlay"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+       ROSTER SECTION
+       ============================================================ -->
+    <section class="roster" id="roster">
+        <div class="container">
+            <div class="section-head reveal">
+                <span class="eyebrow">The Pack</span>
+                <h2 class="title">Divine <span class="highlight">Wolf</span> Roster</h2>
+                <p class="subtitle">Meet the elite players who represent us on the battlefield.</p>
+            </div>
+
+            <div class="roster-grid">
+                <!-- Player 1 -->
+                <div class="player-card reveal" style="transition-delay:0.05s;">
+                    <div class="player-avatar">🐺</div>
+                    <div class="player-name">AlphaWolf</div>
+                    <div class="player-role">Captain · IGL</div>
+                    <div class="player-stats">
+                        <div class="ps-item">
+                            <div class="ps-number">4.8</div>
+                            <div class="ps-label">KDA</div>
+                        </div>
+                        <div class="ps-item">
+                            <div class="ps-number">67%</div>
+                            <div class="ps-label">Win Rate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player 2 -->
+                <div class="player-card reveal" style="transition-delay:0.1s;">
+                    <div class="player-avatar">🐺</div>
+                    <div class="player-name">ShadowStrike</div>
+                    <div class="player-role">Fragger</div>
+                    <div class="player-stats">
+                        <div class="ps-item">
+                            <div class="ps-number">5.2</div>
+                            <div class="ps-label">KDA</div>
+                        </div>
+                        <div class="ps-item">
+                            <div class="ps-number">72%</div>
+                            <div class="ps-label">Win Rate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player 3 -->
+                <div class="player-card reveal" style="transition-delay:0.15s;">
+                    <div class="player-avatar">🐺</div>
+                    <div class="player-name">FrostMage</div>
+                    <div class="player-role">Support</div>
+                    <div class="player-stats">
+                        <div class="ps-item">
+                            <div class="ps-number">4.5</div>
+                            <div class="ps-label">KDA</div>
+                        </div>
+                        <div class="ps-item">
+                            <div class="ps-number">63%</div>
+                            <div class="ps-label">Win Rate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player 4 -->
+                <div class="player-card reveal" style="transition-delay:0.2s;">
+                    <div class="player-avatar">🐺</div>
+                    <div class="player-name">IronWall</div>
+                    <div class="player-role">Anchor</div>
+                    <div class="player-stats">
+                        <div class="ps-item">
+                            <div class="ps-number">3.9</div>
+                            <div class="ps-label">KDA</div>
+                        </div>
+                        <div class="ps-item">
+                            <div class="ps-number">58%</div>
+                            <div class="ps-label">Win Rate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player 5 -->
+                <div class="player-card reveal" style="transition-delay:0.25s;">
+                    <div class="player-avatar">🐺</div>
+                    <div class="player-name">PhantomSniper</div>
+                    <div class="player-role">AWPer</div>
+                    <div class="player-stats">
+                        <div class="ps-item">
+                            <div class="ps-number">4.2</div>
+                            <div class="ps-label">KDA</div>
+                        </div>
+                        <div class="ps-item">
+                            <div class="ps-number">65%</div>
+                            <div class="ps-label">Win Rate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player 6 -->
+                <div class="player-card reveal" style="transition-delay:0.3s;">
+                    <div class="player-avatar">🐺</div>
+                    <div class="player-name">StormChaser</div>
+                    <div class="player-role">Flex</div>
+                    <div class="player-stats">
+                        <div class="ps-item">
+                            <div class="ps-number">4.0</div>
+                            <div class="ps-label">KDA</div>
+                        </div>
+                        <div class="ps-item">
+                            <div class="ps-number">61%</div>
+                            <div class="ps-label">Win Rate</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+       SCHEDULE SECTION
+       ============================================================ -->
+    <section class="schedule" id="schedule">
+        <div class="container">
+            <div class="section-head reveal">
+                <span class="eyebrow">Match Schedule</span>
+                <h2 class="title">Upcoming <span class="highlight">Battles</span></h2>
+                <p class="subtitle">Track our journey as we conquer the esports arena.</p>
+            </div>
+
+            <div class="space-y-3">
+                <div class="match-card reveal" style="transition-delay:0.05s;">
+                    <div class="match-teams">
+                        <span class="team-name our-team">DIVINE WOLF</span>
+                        <span class="vs">VS <span class="score">—</span></span>
+                        <span class="team-name">Phoenix Rising</span>
+                    </div>
+                    <div class="match-info">
+                        <div class="match-date">Aug 15, 2026 · 7:00 PM IST</div>
+                        <span class="match-result upcoming">Upcoming</span>
+                    </div>
+                </div>
+
+                <div class="match-card reveal" style="transition-delay:0.1s;">
+                    <div class="match-teams">
+                        <span class="team-name our-team">DIVINE WOLF</span>
+                        <span class="vs">VS <span class="score">3 — 1</span></span>
+                        <span class="team-name">Shadow Knights</span>
+                    </div>
+                    <div class="match-info">
+                        <div class="match-date">Aug 10, 2026 · 8:30 PM IST</div>
+                        <span class="match-result win">WIN</span>
+                    </div>
+                </div>
+
+                <div class="match-card reveal" style="transition-delay:0.15s;">
+                    <div class="match-teams">
+                        <span class="team-name our-team">DIVINE WOLF</span>
+                        <span class="vs">VS <span class="score">2 — 2</span></span>
+                        <span class="team-name">Titan Storm</span>
+                    </div>
+                    <div class="match-info">
+                        <div class="match-date">Aug 5, 2026 · 7:30 PM IST</div>
+                        <span class="match-result loss">DRAW</span>
+                    </div>
+                </div>
+
+                <div class="match-card reveal" style="transition-delay:0.2s;">
+                    <div class="match-teams">
+                        <span class="team-name our-team">DIVINE WOLF</span>
+                        <span class="vs">VS <span class="score">3 — 0</span></span>
+                        <span class="team-name">Crimson Wolves</span>
+                    </div>
+                    <div class="match-info">
+                        <div class="match-date">Aug 1, 2026 · 9:00 PM IST</div>
+                        <span class="match-result win">WIN</span>
+                    </div>
+                </div>
+
+                <div class="match-card reveal" style="transition-delay:0.25s;">
+                    <div class="match-teams">
+                        <span class="team-name our-team">DIVINE WOLF</span>
+                        <span class="vs">VS <span class="score">—</span></span>
+                        <span class="team-name">Royal Legion</span>
+                    </div>
+                    <div class="match-info">
+                        <div class="match-date">Aug 20, 2026 · 7:00 PM IST</div>
+                        <span class="match-result upcoming">Upcoming</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+       ACHIEVEMENTS SECTION
+       ============================================================ -->
+    <section class="achievements" id="achievements">
+        <div class="container">
+            <div class="section-head reveal">
+                <span class="eyebrow">Our Trophies</span>
+                <h2 class="title">What We've <span class="highlight">Achieved</span></h2>
+                <p class="subtitle">Every victory is a step toward greatness.</p>
+            </div>
+
+            <div class="achievement-grid">
+                <div class="achievement-card reveal" style="transition-delay:0.05s;">
+                    <div class="ach-icon">🏆</div>
+                    <div class="ach-title">BGMI Champions Cup</div>
+                    <div class="ach-desc">Season 3 Winners · 2026</div>
+                </div>
+
+                <div class="achievement-card reveal" style="transition-delay:0.1s;">
+                    <div class="ach-icon">🥇</div>
+                    <div class="ach-title">Valorant India Finals</div>
+                    <div class="ach-desc">1st Place · 2025</div>
+                </div>
+
+                <div class="achievement-card reveal" style="transition-delay:0.15s;">
+                    <div class="ach-icon">🌟</div>
+                    <div class="ach-title">MOBA Masters Series</div>
+                    <div class="ach-desc">Grand Finalists · 2025</div>
+                </div>
+
+                <div class="achievement-card reveal" style="transition-delay:0.2s;">
+                    <div class="ach-icon">🏅</div>
+                    <div class="ach-title">Underdog Invitational</div>
+                    <div class="ach-desc">Champions · 2024</div>
+                </div>
+
+                <div class="achievement-card reveal" style="transition-delay:0.25s;">
+                    <div class="ach-icon">⚡</div>
+                    <div class="ach-title">Ranked Dominance</div>
+                    <div class="ach-desc">Top 10 Indian Teams</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+       CONTENT / MEDIA SECTION
+       ============================================================ -->
+    <section class="content" id="content">
+        <div class="container">
+            <div class="section-head reveal">
+                <span class="eyebrow">Wolf Media</span>
+                <h2 class="title">Watch <span class="highlight">Highlights</span></h2>
+                <p class="subtitle">Relive our best moments and clutch plays.</p>
+            </div>
+
+            <div class="content-grid">
+                <div class="content-card reveal" style="transition-delay:0.05s;">
+                    <div class="content-thumb" style="background:linear-gradient(135deg, #1a0a2e, #2a1a4e);">
+                        🎬
+                        <div class="play-btn">▶</div>
+                    </div>
+                    <div class="content-body">
+                        <div class="content-title">BGMI Finals — Divine Wolf Victory</div>
+                        <div class="content-meta">Watch · 12,340 views · 3 days ago</div>
+                    </div>
+                </div>
+
+                <div class="content-card reveal" style="transition-delay:0.1s;">
+                    <div class="content-thumb" style="background:linear-gradient(135deg, #0a1a3e, #1a2a5e);">
+                        🎮
+                        <div class="play-btn">▶</div>
+                    </div>
+                    <div class="content-body">
+                        <div class="content-title">Valorant Clutch — 1v5 Ace</div>
+                        <div class="content-meta">Watch · 8,901 views · 1 week ago</div>
+                    </div>
+                </div>
+
+                <div class="content-card reveal" style="transition-delay:0.15s;">
+                    <div class="content-thumb" style="background:linear-gradient(135deg, #1a0a3e, #2a1a5e);">
+                        🏆
+                        <div class="play-btn">▶</div>
+                    </div>
+                    <div class="content-body">
+                        <div class="content-title">MOBA 5v5 — Grand Slam Play</div>
+                        <div class="content-meta">Watch · 6,543 views · 2 weeks ago</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+       SHOP / MERCH SECTION
+       ============================================================ -->
+    <section class="shop" id="shop">
+        <div class="container">
+            <div class="section-head reveal">
+                <span class="eyebrow">Merchandise</span>
+                <h2 class="title">Wolf <span class="highlight">Society</span> Gear</h2>
+                <p class="subtitle">Rep the pack with our official merchandise.</p>
+            </div>
+
+            <div class="shop-grid">
+                <div class="shop-item reveal" style="transition-delay:0.05s;">
+                    <div class="shop-image">👕</div>
+                    <div class="shop-name">Divine Wolf Jersey</div>
+                    <div class="shop-price">₹1,999</div>
+                    <a href="#" class="btn btn-primary shop-btn">Buy Now</a>
+                </div>
+
+                <div class="shop-item reveal" style="transition-delay:0.1s;">
+                    <div class="shop-image">🧢</div>
+                    <div class="shop-name">Wolf Society Cap</div>
+                    <div class="shop-price">₹799</div>
+                    <a href="#" class="btn btn-primary shop-btn">Buy Now</a>
+                </div>
+
+                <div class="shop-item reveal" style="transition-delay:0.15s;">
+                    <div class="shop-image">🎒</div>
+                    <div class="shop-name">Gaming Backpack</div>
+                    <div class="shop-price">₹2,499</div>
+                    <a href="#" class="btn btn-primary shop-btn">Buy Now</a>
+                </div>
+
+                <div class="shop-item reveal" style="transition-delay:0.2s;">
+                    <div class="shop-image">⌨️</div>
+                    <div class="shop-name">Wolf Mechanical Keyboard</div>
+                    <div class="shop-price">₹4,999</div>
+                    <a href="#" class="btn btn-primary shop-btn">Buy Now</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+       SOCIAL / COMMUNITY SECTION
+       ============================================================ -->
+    <section class="social" id="social">
+        <div class="container">
+            <div class="section-head reveal">
+                <span class="eyebrow">Join the Pack</span>
+                <h2 class="title">Our <span class="highlight">Community</span></h2>
+                <p class="subtitle">Connect with us across all platforms. We're stronger together.</p>
+            </div>
+
+            <div class="social-grid">
+                <a href="#" class="social-link discord">
+                    <span class="social-icon">💬</span>
+                    Discord
+                </a>
+                <a href="#" class="social-link instagram">
+                    <span class="social-icon">📸</span>
+                    Instagram
+                </a>
+                <a href="#" class="social-link twitter">
+                    <span class="social-icon">🐦</span>
+                    Twitter
+                </a>
+                <a href="#" class="social-link youtube">
+                    <span class="social-icon">▶️</span>
+                    YouTube
+                </a>
+                <a href="#" class="social-link">
+                    <span class="social-icon">📱</span>
+                    WhatsApp Channel
+                </a>
+                <a href="#" class="social-link">
+                    <span class="social-icon">📺</span>
+                    Twitch
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="brand-footer">
+                    <div class="brand-name">
+                        🐺 WOLF <span class="highlight">SOCIETY</span>
+                    </div>
+                    <p>
+                        India's premier underdog esports organization. Competing in BGMI,
+                        Valorant, and MOBA 5v5 with skill, strategy, and heart.
+                    </p>
+                </div>
+
+                <div class="col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#roster">Roster</a></li>
+                        <li><a href="#schedule">Schedule</a></li>
+                    </ul>
+                </div>
+
+                <div class="col">
+                    <h4>More</h4>
+                    <ul>
+                        <li><a href="#achievements">Achievements</a></li>
+                        <li><a href="#content">Media</a></li>
+                        <li><a href="#shop">Shop</a></li>
+                        <li><a href="#social">Community</a></li>
+                    </ul>
+                </div>
+
+                <div class="col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Disclaimer</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Wolf Society Esports. All rights reserved. Built with ❤️ in India.</p>
+                <div class="footer-links">
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms</a>
+                    <a href="#">Contact</a>
+                    <a href="#">Press</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================================
+       JAVASCRIPT
+       ============================================================ -->
+    <script>
+        // ──────────────────────────────────────────────────────────────
+        // 1. NAVBAR — SCROLL EFFECT
+        // ──────────────────────────────────────────────────────────────
+        const navbar = document.getElementById('navbar');
+        let isNavScrolled = false;
+
+        window.addEventListener('scroll', () => {
+            const shouldBeScrolled = window.scrollY > 50;
+            if (shouldBeScrolled !== isNavScrolled) {
+                navbar.classList.toggle('scrolled', shouldBeScrolled);
+                isNavScrolled = shouldBeScrolled;
+            }
+        }, { passive: true });
+
+        // ──────────────────────────────────────────────────────────────
+        // 2. HAMBURGER MENU
+        // ──────────────────────────────────────────────────────────────
         const hamburger = document.getElementById('hamburgerBtn');
         const navLinks = document.getElementById('navLinks');
-        on(hamburger, 'click', () => {
-          hamburger.classList.toggle('active');
-          navLinks.classList.toggle('open');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('open');
         });
 
-        // Logout
-        document.getElementById('logoutLink').addEventListener('click', (e) => {
-          e.preventDefault();
-          API.auth.removeToken();
-          API.auth.removeUser();
-          this.navigate('/');
-          Toast.success('Logged out');
-          this.updateNav();
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('open');
+            });
         });
 
-        // Theme toggle
-        const themeToggle = document.getElementById('themeToggle');
-        if (themeToggle) {
-          const savedTheme = localStorage.getItem('wolf_theme');
-          if (savedTheme === 'dark') {
-            document.body.classList.add('dark');
-            themeToggle.classList.add('active');
-          }
-          themeToggle.addEventListener('click', () => {
-            themeToggle.classList.toggle('active');
-            document.body.classList.toggle('dark');
-            localStorage.setItem('wolf_theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-          });
-        }
+        // ──────────────────────────────────────────────────────────────
+        // 3. ACTIVE NAV LINK
+        // ──────────────────────────────────────────────────────────────
+        const navLinkEls = document.querySelectorAll('.nav-links a');
 
-        this.handle();
-        this.updateNav();
-        this.startRealtimeRefresh();
-      },
-
-      navigate(path) {
-        history.pushState(null, '', path);
-        this.handle();
-        document.getElementById('hamburgerBtn').classList.remove('active');
-        document.getElementById('navLinks').classList.remove('open');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      },
-
-      handle() {
-        const path = window.location.pathname || '/';
-        const user = API.auth.getUser();
-        const role = user?.role || 'public';
-
-        let route = this.routes.find(r => r.path === path);
-        if (!route) route = this.routes.find(r => r.path === '/');
-
-        if (route && route.guard === 'auth' && !API.auth.isLoggedIn()) {
-          Toast.warning('Please log in to access this page');
-          this.navigate('/login');
-          return;
-        }
-
-        this.current = route;
-        const app = document.getElementById('app');
-        empty(app);
-
-        if (route) {
-          const content = route.render({ user, role });
-          if (content instanceof HTMLElement) {
-            content.classList.add('page-transition');
-            app.appendChild(content);
-          } else {
-            app.appendChild(create('div', { html: content, className: 'page-transition' }));
-          }
-        } else {
-          app.appendChild(create('div', { className: 'text-center py-16' }, create('h2', { text: '404 – Page not found' })));
-        }
-        this.updateNav();
-        this.initAnimations();
-        this.init3D();
-      },
-
-      updateNav() {
-        const user = API.auth.getUser();
-        const isLoggedIn = API.auth.isLoggedIn();
-        const role = user?.role || 'public';
-
-        document.getElementById('loginLink').style.display = isLoggedIn ? 'none' : 'inline-block';
-        document.getElementById('registerLink').style.display = isLoggedIn ? 'none' : 'inline-block';
-        document.getElementById('logoutLink').style.display = isLoggedIn ? 'inline-block' : 'none';
-        document.getElementById('dashboardLink').style.display = (isLoggedIn && ['admin','manager','player'].includes(role)) ? 'inline-block' : 'none';
-
-        const path = window.location.pathname || '/';
-        $$('.nav-links a').forEach(a => {
-          a.classList.toggle('active', a.getAttribute('data-route') === path);
+        navLinkEls.forEach(link => {
+            link.addEventListener('click', function() {
+                navLinkEls.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
         });
-      },
 
-      startRealtimeRefresh() {
-        setInterval(() => {
-          const path = window.location.pathname || '/';
-          if (['/teams','/schedule','/content','/dashboard'].includes(path)) {
-            this.handle();
-          }
-        }, CONFIG.REFRESH_INTERVAL);
-      },
+        // ──────────────────────────────────────────────────────────────
+        // 4. SCROLL REVEAL (Intersection Observer)
+        // ──────────────────────────────────────────────────────────────
+        const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
 
-      initAnimations() {
-        // Eye tracking
-        initEyeTracking();
-        // Flashlight
-        initFlashlight();
-        // Copy buttons
-        initCopyButtons();
-        // GSAP scroll reveals
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const delay = entry.target.style.transitionDelay || '0s';
+                    setTimeout(() => {
+                        entry.target.classList.add('active');
+                    }, parseFloat(delay) * 1000 || 50);
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // ──────────────────────────────────────────────────────────────
+        // 5. GSAP ADVANCED ANIMATIONS
+        // ──────────────────────────────────────────────────────────────
         if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-          gsap.registerPlugin(ScrollTrigger);
-          gsap.from('.feature-card', {
-            opacity:0, y:40, stagger:0.15, duration:0.8, ease:'power2.out',
-            scrollTrigger: { trigger:'.feature-card', start:'top 80%', toggleActions:'play none none none' }
-          });
+            gsap.registerPlugin(ScrollTrigger);
+
+            gsap.from('.hero-title .highlight, .hero-title .highlight-2', {
+                opacity: 0,
+                y: 30,
+                duration: 1,
+                stagger: 0.2,
+                ease: 'power2.out',
+                delay: 0.3
+            });
+
+            gsap.from('.player-card', {
+                scrollTrigger: {
+                    trigger: '.roster-grid',
+                    start: 'top 80%',
+                    toggleActions: 'play none none none'
+                },
+                opacity: 0,
+                y: 30,
+                stagger: 0.1,
+                duration: 0.6,
+                ease: 'power2.out'
+            });
+
+            gsap.from('.achievement-card', {
+                scrollTrigger: {
+                    trigger: '.achievement-grid',
+                    start: 'top 80%',
+                    toggleActions: 'play none none none'
+                },
+                opacity: 0,
+                y: 20,
+                stagger: 0.08,
+                duration: 0.5,
+                ease: 'power2.out'
+            });
+
+            gsap.from('.match-card', {
+                scrollTrigger: {
+                    trigger: '#schedule .space-y-3',
+                    start: 'top 80%',
+                    toggleActions: 'play none none none'
+                },
+                opacity: 0,
+                x: -20,
+                stagger: 0.1,
+                duration: 0.5,
+                ease: 'power2.out'
+            });
+
+            gsap.from('.content-card', {
+                scrollTrigger: {
+                    trigger: '.content-grid',
+                    start: 'top 80%',
+                    toggleActions: 'play none none none'
+                },
+                opacity: 0,
+                y: 20,
+                stagger: 0.1,
+                duration: 0.5,
+                ease: 'power2.out'
+            });
+
+            gsap.from('.shop-item', {
+                scrollTrigger: {
+                    trigger: '.shop-grid',
+                    start: 'top 80%',
+                    toggleActions: 'play none none none'
+                },
+                opacity: 0,
+                y: 20,
+                stagger: 0.1,
+                duration: 0.5,
+                ease: 'power2.out'
+            });
         }
-      },
 
-      init3D() {
-        const container = document.getElementById('three-container');
-        if (!container || container._threeInitialized) return;
-        container._threeInitialized = true;
-        empty(container);
+        // ──────────────────────────────────────────────────────────────
+        // 6. SMOOTH SCROLL FOR NAV LINKS
+        // ──────────────────────────────────────────────────────────────
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href === '#') return;
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
 
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x0f172a);
-        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-        camera.position.z = 8;
-        const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
-        renderer.setSize(container.clientWidth, container.clientHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        container.appendChild(renderer.domElement);
+        // ──────────────────────────────────────────────────────────────
+        // 7. TICKER PAUSE ON HOVER
+        // ──────────────────────────────────────────────────────────────
+        const ticker = document.querySelector('.ticker');
+        const tickerTrack = document.querySelector('.ticker-track');
 
-        const ambient = new THREE.AmbientLight(0x404060);
-        scene.add(ambient);
-        const dirLight = new THREE.DirectionalLight(0xffffff,1);
-        dirLight.position.set(5,10,7);
-        scene.add(dirLight);
-
-        const colors = [0x0ea5e9, 0xf43f5e, 0xf59e0b, 0x22c55e, 0x8b5cf6];
-        const cards = [];
-        for (let i=0; i<5; i++) {
-          const geometry = new THREE.BoxGeometry(1.2,1.8,0.2);
-          const material = new THREE.MeshStandardMaterial({
-            color: colors[i % colors.length],
-            roughness:0.3, metalness:0.1,
-            emissive: new THREE.Color(colors[i % colors.length]).multiplyScalar(0.1)
-          });
-          const cube = new THREE.Mesh(geometry, material);
-          const angle = (i/5) * Math.PI * 2;
-          cube.position.x = Math.sin(angle) * 3.5;
-          cube.position.z = Math.cos(angle) * 3.5;
-          cube.userData = { angle, speed: 0.005 + i * 0.001 };
-          scene.add(cube);
-          cards.push(cube);
+        if (ticker && tickerTrack) {
+            ticker.addEventListener('mouseenter', () => {
+                tickerTrack.style.animationPlayState = 'paused';
+            });
+            ticker.addEventListener('mouseleave', () => {
+                tickerTrack.style.animationPlayState = 'running';
+            });
         }
 
-        const starsGeometry = new THREE.BufferGeometry();
-        const posArray = new Float32Array(1000*3);
-        for (let i=0; i<1000*3; i++) posArray[i] = (Math.random()-0.5)*200;
-        starsGeometry.setAttribute('position', new THREE.BufferAttribute(posArray,3));
-        const stars = new THREE.Points(starsGeometry, new THREE.PointsMaterial({ color:0xffffff, size:0.15, transparent:true, opacity:0.5 }));
-        scene.add(stars);
-
-        let animationId;
-        function animate() {
-          animationId = requestAnimationFrame(animate);
-          cards.forEach((cube) => {
-            cube.userData.angle += cube.userData.speed;
-            cube.position.x = Math.sin(cube.userData.angle) * 3.5;
-            cube.position.z = Math.cos(cube.userData.angle) * 3.5;
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.015;
-          });
-          stars.rotation.y += 0.0002;
-          renderer.render(scene, camera);
+        // ──────────────────────────────────────────────────────────────
+        // 8. LUCIDE ICONS INIT
+        // ──────────────────────────────────────────────────────────────
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
         }
-        animate();
 
-        const resize = () => {
-          const w = container.clientWidth, h = container.clientHeight;
-          camera.aspect = w/h; camera.updateProjectionMatrix();
-          renderer.setSize(w,h);
-        };
-        window.addEventListener('resize', resize);
-        container._cleanup = () => {
-          window.removeEventListener('resize', resize);
-          cancelAnimationFrame(animationId);
-          renderer.dispose();
-        };
-      }
-    };
+        // ──────────────────────────────────────────────────────────────
+        // 9. STAT COUNTER ANIMATION
+        // ──────────────────────────────────────────────────────────────
+        const statNumbers = document.querySelectorAll('.stat-number');
 
-    // ─── ANIMATION HELPERS ──────────────────────────────────────
-    function initEyeTracking() {
-      const pupils = document.querySelectorAll('.pupil');
-      if (!pupils.length) return;
-      document.addEventListener('mousemove', (e) => {
-        const x = e.clientX / window.innerWidth;
-        const y = e.clientY / window.innerHeight;
-        pupils.forEach(p => {
-          const px = (x - 0.5) * 20;
-          const py = (y - 0.5) * 20;
-          p.style.transform = `translate(calc(-50% + ${px}px), calc(-50% + ${py}px))`;
-        });
-      });
-    }
-    function initFlashlight() {
-      const container = document.querySelector('.flashlight-container');
-      if (!container) return;
-      const overlay = container.querySelector('.flashlight-overlay');
-      if (!overlay) return;
-      container.addEventListener('mousemove', (e) => {
-        const rect = container.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width) * 100;
-        const y = ((e.clientY - rect.top) / rect.height) * 100;
-        overlay.style.setProperty('--x', x + '%');
-        overlay.style.setProperty('--y', y + '%');
-      });
-    }
-    function initCopyButtons() {
-      document.querySelectorAll('.copy-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const text = btn.getAttribute('data-copy') || 'Wolf Society Esports';
-          navigator.clipboard.writeText(text).then(() => {
-            btn.classList.add('copied');
-            btn.querySelector('.label').textContent = 'Copied!';
-            setTimeout(() => {
-              btn.classList.remove('copied');
-              btn.querySelector('.label').textContent = 'Copy';
-            }, 2000);
-          }).catch(() => Toast.error('Failed to copy'));
-        });
-      });
-    }
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const text = el.textContent;
+                    const num = parseFloat(text.replace(/[^0-9.]/g, ''));
+                    if (!isNaN(num)) {
+                        let current = 0;
+                        const increment = Math.ceil(num / 40);
+                        const timer = setInterval(() => {
+                            current += increment;
+                            if (current >= num) {
+                                el.textContent = text.includes('+') ? num + '+' : num.toString();
+                                clearInterval(timer);
+                            } else {
+                                el.textContent = Math.floor(current).toString();
+                            }
+                        }, 30);
+                    }
+                    statObserver.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
 
-    // ─── PAGE RENDERERS ──────────────────────────────────────────
-
-    // Home
-    function renderHome() {
-      const container = create('div', { className: 'py-8' });
-
-      const hero = create('div', { className: 'text-center py-12' });
-      append(hero,
-        create('h1', { className: 'text-4xl md:text-6xl font-display font-black',
-          html: 'Wolf Society <span style="color: var(--accent-teal);">Esports</span>' }),
-        create('p', { className: 'text-muted text-lg mt-4 max-w-2xl mx-auto',
-          text: 'Where champions rise. Join the pack and dominate the leaderboards.' }),
-        create('div', { className: 'flex gap-4 justify-center mt-6 flex-wrap' },
-          create('button', { className: 'btn btn-primary', text: 'Watch Live',
-            onclick: () => Toast.info('Live stream coming soon!') }),
-          create('button', { className: 'btn-glow',
-            html: 'Our Teams <svg><rect x="0" y="0" width="100%" height="100%" /></svg>',
-            onclick: () => Router.navigate('/teams') })
-        )
-      );
-      container.appendChild(hero);
-
-      const threeContainer = create('div', { id: 'three-container' });
-      container.appendChild(threeContainer);
-
-      const cards = create('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-6 mt-8' });
-      [
-        { icon: '🏆', title: 'Live Matches', desc: 'Watch our teams battle in real-time.' },
-        { icon: '🎮', title: 'Roster', desc: 'Meet our talented players and their stats.' },
-        { icon: '📺', title: 'Content Hub', desc: 'Exclusive highlights and behind-the-scenes.' }
-      ].forEach(f => {
-        const card = create('div', { className: 'card feature-card' });
-        append(card,
-          create('div', { className: 'text-3xl mb-2', text: f.icon }),
-          create('h3', { className: 'card-title', text: f.title }),
-          create('p', { className: 'card-subtitle', text: f.desc })
-        );
-        cards.appendChild(card);
-      });
-      container.appendChild(cards);
-
-      // Logo carousel
-      const carousel = create('div', { className: 'mt-12' });
-      append(carousel,
-        create('h3', { className: 'text-center text-muted mb-4', text: 'Our Partners' }),
-        create('div', { className: 'logo-carousel' },
-          create('div', { className: 'track' },
-            ['Wolf Society','Divine Wolf','GamerFuel','TechGear','Phoenix Rising','Shadow Clan']
-            .map(n => create('span', { className: 'logo-item', text: `⚡ ${n}` }))
-            .concat(['Wolf Society','Divine Wolf','GamerFuel','TechGear','Phoenix Rising','Shadow Clan']
-            .map(n => create('span', { className: 'logo-item', text: `⚡ ${n}` })))
-          )
-        )
-      );
-      container.appendChild(carousel);
-
-      // Dock
-      const dock = create('div', { className: 'dock' });
-      ['🏠','🎮','🏆','📺','📅','⚙️'].forEach(icon => {
-        const item = create('div', { className: 'dock-item', text: icon });
-        dock.appendChild(item);
-      });
-      container.appendChild(dock);
-
-      // Flashlight
-      const flashlight = create('div', { className: 'flashlight-container mt-8' });
-      append(flashlight,
-        create('div', { className: 'flashlight-text', html: '🐺 <br>Discover the Wolf' }),
-        create('div', { className: 'flashlight-overlay' })
-      );
-      container.appendChild(flashlight);
-
-      // Eye form
-      const form = create('div', { className: 'eye-form mt-8' });
-      append(form,
-        create('div', { className: 'character' },
-          create('div', { className: 'eye' }, create('div', { className: 'pupil' })),
-          create('div', { className: 'eye' }, create('div', { className: 'pupil' })),
-          create('span', { style: 'font-size:2.5rem;', text: '👤' })
-        ),
-        create('h3', { className: 'text-center font-bold mb-2', text: 'Join the Pack' }),
-        create('input', { type: 'email', placeholder: 'Enter your email', id: 'subscribeEmail' }),
-        create('button', {
-          className: 'subscribe-btn',
-          text: 'Subscribe',
-          onclick: () => {
-            const email = document.getElementById('subscribeEmail').value;
-            if (email) Toast.success('Subscribed! Check your email.');
-            else Toast.error('Please enter an email.');
-          }
-        })
-      );
-      container.appendChild(form);
-
-      return container;
-    }
-
-    // Teams
-    async function renderTeams() {
-      const container = create('div', { className: 'py-8' });
-      append(container, create('h1', { className: 'text-3xl font-display font-bold mb-6', text: 'Our Teams' }));
-
-      try {
-        const teams = await API.get('/teams');
-        const grid = create('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-6' });
-        teams.forEach(team => {
-          const card = create('div', { className: 'card' });
-          append(card,
-            create('h3', { className: 'card-title', text: team.name }),
-            create('p', { className: 'card-subtitle', text: `Game: ${team.game}` }),
-            create('p', { className: 'text-sm text-muted', text: `Tag: ${team.tag}` }),
-            create('p', { className: 'text-sm text-muted', text: `Wins: ${team.wins} | Losses: ${team.losses}` })
-          );
-          grid.appendChild(card);
-        });
-        container.appendChild(grid);
-      } catch (err) {
-        container.appendChild(create('p', { className: 'text-muted', text: 'Error loading teams: ' + err.message }));
-      }
-
-      return container;
-    }
-
-    // Schedule
-    async function renderSchedule() {
-      const container = create('div', { className: 'py-8' });
-      append(container, create('h1', { className: 'text-3xl font-display font-bold mb-6', text: 'Match Schedule' }));
-
-      try {
-        const matches = await API.get('/matches');
-        const table = create('div', { className: 'table-container' });
-        const thead = create('thead', {},
-          create('tr', {},
-            ['Team','Opponent','Game','Date','Result'].map(h => create('th', { text: h }))
-          )
-        );
-        const tbody = create('tbody');
-        matches.forEach(m => {
-          const tr = create('tr');
-          append(tr,
-            create('td', { text: m.team_name || 'TBD' }),
-            create('td', { text: m.opponent }),
-            create('td', { text: m.game }),
-            create('td', { text: m.match_date }),
-            create('td', {
-              className: `text-sm ${m.result === 'win' ? 'text-success' : m.result === 'loss' ? 'text-alert' : 'text-muted'}`,
-              text: m.result || 'upcoming'
-            })
-          );
-          tbody.appendChild(tr);
-        });
-        table.appendChild(create('table', {}, thead, tbody));
-        container.appendChild(table);
-      } catch (err) {
-        container.appendChild(create('p', { className: 'text-muted', text: 'Error loading matches: ' + err.message }));
-      }
-
-      return container;
-    }
-
-    // Content
-    async function renderContent() {
-      const container = create('div', { className: 'py-8' });
-      append(container, create('h1', { className: 'text-3xl font-display font-bold mb-6', text: 'Content Hub' }));
-
-      try {
-        const content = await API.get('/content');
-        const grid = create('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-6' });
-        content.forEach(item => {
-          const card = create('div', { className: 'card' });
-          append(card,
-            create('h3', { className: 'card-title', text: item.title }),
-            create('p', { className: 'card-subtitle', text: item.description || '' }),
-            create('p', { className: 'text-xs text-muted mt-2', text: `${item.type} • ${new Date(item.upload_date).toLocaleDateString()}` }),
-            create('a', {
-              className: 'text-teal-600 hover:underline text-sm mt-2 inline-block',
-              href: item.url,
-              target: '_blank',
-              text: 'View Content'
-            })
-          );
-          grid.appendChild(card);
-        });
-        container.appendChild(grid);
-      } catch (err) {
-        container.appendChild(create('p', { className: 'text-muted', text: 'Error loading content: ' + err.message }));
-      }
-
-      return container;
-    }
-
-    // Login
-    function renderLogin() {
-      const container = create('div', { className: 'py-8 max-w-md mx-auto' });
-      append(container,
-        create('h1', { className: 'text-3xl font-display font-bold text-center mb-6', text: 'Login' }),
-        create('form', { className: 'card', id: 'loginForm' },
-          create('div', { className: 'form-group' },
-            create('label', { text: 'Email' }),
-            create('input', { className: 'form-control', type: 'email', id: 'loginEmail', placeholder: 'your@email.com' })
-          ),
-          create('div', { className: 'form-group' },
-            create('label', { text: 'Password' }),
-            create('input', { className: 'form-control', type: 'password', id: 'loginPassword', placeholder: '••••••••' })
-          ),
-          create('button', { className: 'btn btn-primary w-full', type: 'submit', text: 'Login' })
-        )
-      );
-
-      const form = container.querySelector('#loginForm');
-      on(form, 'submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-        try {
-          const data = await API.login(email, password);
-          API.auth.setToken(data.token);
-          API.auth.setUser(data.user);
-          Toast.success(`Welcome, ${data.user.full_name || data.user.email}`);
-          Router.navigate(data.user.role === 'admin' || data.user.role === 'manager' ? '/dashboard' : '/');
-        } catch (err) {
-          Toast.error(err.message || 'Login failed');
-        }
-      });
-
-      return container;
-    }
-
-    // Register
-    function renderRegister() {
-      const container = create('div', { className: 'py-8 max-w-md mx-auto' });
-      append(container,
-        create('h1', { className: 'text-3xl font-display font-bold text-center mb-6', text: 'Register' }),
-        create('form', { className: 'card', id: 'registerForm' },
-          create('div', { className: 'form-group' },
-            create('label', { text: 'Full Name' }),
-            create('input', { className: 'form-control', type: 'text', id: 'regName', placeholder: 'Your name' })
-          ),
-          create('div', { className: 'form-group' },
-            create('label', { text: 'Email' }),
-            create('input', { className: 'form-control', type: 'email', id: 'regEmail', placeholder: 'your@email.com' })
-          ),
-          create('div', { className: 'form-group' },
-            create('label', { text: 'Password' }),
-            create('input', { className: 'form-control', type: 'password', id: 'regPassword', placeholder: '••••••••' })
-          ),
-          create('div', { className: 'form-group' },
-            create('label', { text: 'Role' }),
-            create('select', { className: 'form-control', id: 'regRole' },
-              ['player','content_creator'].map(r => create('option', { value: r, text: r }))
-            )
-          ),
-          create('button', { className: 'btn btn-primary w-full', type: 'submit', text: 'Register' })
-        )
-      );
-
-      const form = container.querySelector('#registerForm');
-      on(form, 'submit', async (e) => {
-        e.preventDefault();
-        const full_name = document.getElementById('regName').value;
-        const email = document.getElementById('regEmail').value;
-        const password = document.getElementById('regPassword').value;
-        const role = document.getElementById('regRole').value;
-        try {
-          await API.register(email, password, full_name, role);
-          Toast.success('Registration successful! Please login.');
-          Router.navigate('/login');
-        } catch (err) {
-          Toast.error(err.message || 'Registration failed');
-        }
-      });
-
-      return container;
-    }
-
-    // Dashboard
-    async function renderDashboard() {
-      const container = create('div', { className: 'py-8' });
-      const user = API.auth.getUser();
-      append(container,
-        create('h1', { className: 'text-3xl font-display font-bold mb-2', text: 'Dashboard' }),
-        create('p', { className: 'text-muted mb-6', text: `Welcome back, ${user?.full_name || user?.email}` })
-      );
-
-      // Stats
-      const stats = create('div', { className: 'grid grid-cols-2 md:grid-cols-4 gap-4' });
-      ['Players','Teams','Matches','Content'].forEach(label => {
-        const card = create('div', { className: 'card text-center' });
-        append(card,
-          create('div', { className: 'text-2xl font-bold text-teal-600', text: '0' }),
-          create('p', { className: 'text-muted text-sm', text: label })
-        );
-        stats.appendChild(card);
-      });
-      container.appendChild(stats);
-
-      // Chart
-      const chartContainer = create('div', { className: 'card mt-6' });
-      append(chartContainer,
-        create('canvas', { id: 'dashboardChart', style: 'max-height:300px;' })
-      );
-      container.appendChild(chartContainer);
-
-      // Actions
-      const actions = create('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-4 mt-6' });
-      ['Manage Players','Schedule Match','Post Announcement'].forEach(label => {
-        const btn = create('button', {
-          className: 'btn btn-outline w-full',
-          text: label,
-          onclick: () => Toast.info(`${label} feature coming soon!`)
-        });
-        actions.appendChild(btn);
-      });
-      container.appendChild(actions);
-
-      // Init chart
-      setTimeout(() => {
-        const ctx = document.getElementById('dashboardChart');
-        if (ctx) {
-          new Chart(ctx, {
-            type: 'bar',
-            data: {
-              labels: ['Jan','Feb','Mar','Apr','May','Jun'],
-              datasets: [{
-                label: 'Matches',
-                data: [5,8,6,10,12,9],
-                backgroundColor: 'rgba(14,165,233,0.6)',
-                borderColor: '#0ea5e9',
-                borderWidth: 1
-              }]
-            },
-            options: {
-              responsive: true,
-              plugins: {
-                legend: { labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary') } }
-              },
-              scales: {
-                y: { ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary') } },
-                x: { ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary') } }
-              }
-            }
-          });
-        }
-      }, 100);
-
-      return container;
-    }
-
-    // ─── BOOT ──────────────────────────────────────────────────────
-    window.addEventListener('load', () => {
-      const preloader = document.getElementById('preloader');
-      setTimeout(() => preloader.classList.add('hidden'), 2200);
-    });
-
-    document.addEventListener('DOMContentLoaded', () => {
-      Router.init();
-      window.__API = API;
-      window.__Router = Router;
-      window.addEventListener('online', () => Toast.info('Back online!'));
-      window.addEventListener('offline', () => Toast.info('You are offline. Some features may not work.'));
-    });
-  </script>
+        statNumbers.forEach(el => statObserver.observe(el));
+    </script>
 
 </body>
 </html>
