@@ -1944,5 +1944,103 @@ document.addEventListener('DOMContentLoaded', function() {
       window.addEventListener('offline', () => Toast.info('You are offline. Some features may not work.'));
     });
   </script>
+  <script>
+  (function() {
+    // Wait for DOM to be ready
+    document.addEventListener('DOMContentLoaded', function() {
+      // If Router is not defined, we create a simple router
+      if (typeof Router === 'undefined') {
+        console.warn('Router not found – using fallback navigation.');
+        // Simple router: just change the URL and render based on path
+        window.navigate = function(path) {
+          history.pushState(null, '', path);
+          // You can re-render by calling your render functions directly.
+          // For now, we'll just show an alert.
+          alert('Navigating to ' + path + ' – implement your render logic here.');
+        };
+      } else {
+        // If Router exists, just ensure it's initialized
+        if (typeof Router.init === 'function') {
+          Router.init();
+          console.log('Router initialized.');
+        } else {
+          console.warn('Router exists but has no init method.');
+        }
+      }
+
+      // Intercept clicks on data-route links
+      document.addEventListener('click', function(e) {
+        const link = e.target.closest('[data-route]');
+        if (!link) return;
+        e.preventDefault();
+        const path = link.getAttribute('data-route');
+        if (path) {
+          if (typeof Router !== 'undefined' && typeof Router.navigate === 'function') {
+            Router.navigate(path);
+          } else if (typeof navigate === 'function') {
+            navigate(path);
+          } else {
+            // Fallback: change URL and reload (but we want SPA)
+            window.location.hash = path;
+            // You can add custom render logic here.
+            console.log('Navigating to', path);
+          }
+        }
+      });
+    });
+  })();
+</script>
+  <script>
+  // Simple SPA Router – no dependencies
+  (function() {
+    const routes = {
+      '/': 'Home',
+      '/teams': 'Teams',
+      '/schedule': 'Schedule',
+      '/content': 'Content',
+      '/login': 'Login',
+      '/register': 'Register',
+      '/dashboard': 'Dashboard',
+    };
+
+    function render(path) {
+      const app = document.getElementById('app');
+      if (!app) return;
+      const content = routes[path] || '404';
+      app.innerHTML = `<h1>${content}</h1><p>This is the ${content} page.</p>`;
+      // Update nav active class
+      document.querySelectorAll('.nav-links a').forEach(a => {
+        a.classList.toggle('active', a.getAttribute('data-route') === path);
+      });
+    }
+
+    function navigate(path) {
+      history.pushState(null, '', path);
+      render(path);
+    }
+
+    // Handle popstate (back/forward)
+    window.addEventListener('popstate', () => {
+      render(window.location.pathname);
+    });
+
+    // Intercept clicks on data-route links
+    document.addEventListener('click', function(e) {
+      const link = e.target.closest('[data-route]');
+      if (!link) return;
+      e.preventDefault();
+      const path = link.getAttribute('data-route');
+      if (path) navigate(path);
+    });
+
+    // Initial render
+    window.addEventListener('DOMContentLoaded', () => {
+      render(window.location.pathname);
+    });
+
+    // Expose navigate globally
+    window.navigate = navigate;
+  })();
+</script>
 </body>
 </html>
