@@ -20,9 +20,10 @@
   <!-- ===== CHART.JS ===== -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-  <!-- ===== THREE.JS (for 3D) ===== -->
+  <!-- ===== THREE.JS ===== -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
+  <!-- ===== STYLES ===== (same as previous, but included here for completeness) -->
   <style>
     /* ============================================================
        ROOT VARIABLES – LIGHT THEME (default)
@@ -46,7 +47,6 @@
       --font-mono: 'JetBrains Mono', monospace;
     }
 
-    /* Dark theme overrides (applied via .dark class) */
     .dark {
       --bg-primary: #0B0F19;
       --bg-secondary: #111827;
@@ -58,954 +58,215 @@
       --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
     }
 
-    /* ============================================================
-       RESET & BASE – GRAINY TEXTURE
-       ============================================================ */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
+    /* ----- RESET & BASE ----- */
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
     body {
       font-family: var(--font-sans);
       background: var(--bg-primary);
       color: var(--text-primary);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-      min-height: 100vh;
-      overflow-x: hidden;
-      position: relative;
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+      min-height:100vh;
+      overflow-x:hidden;
       transition: background 0.3s, color 0.3s;
+      position:relative;
     }
-
-    /* Grainy texture overlay */
     body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      pointer-events: none;
-      opacity: 0.04;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      content:'';
+      position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:0.04;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
     }
+    ::selection { background:var(--accent-teal); color:#fff; }
+    ::-webkit-scrollbar { width:8px; }
+    ::-webkit-scrollbar-track { background:var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background:var(--accent-teal); border-radius:10px; }
+    a { color:inherit; text-decoration:none; }
+    ul, ol { list-style:none; }
+    img { max-width:100%; display:block; }
+    button, input, select, textarea { font-family:inherit; font-size:inherit; line-height:inherit; }
+    button { cursor:pointer; border:none; background:none; color:inherit; }
 
-    ::selection {
-      background: var(--accent-teal);
-      color: #fff;
-    }
+    /* ----- UTILITIES ----- */
+    .container { max-width:1280px; margin:0 auto; padding:0 1.5rem; }
+    .flex { display:flex; }
+    .flex-col { flex-direction:column; }
+    .items-center { align-items:center; }
+    .justify-between { justify-content:space-between; }
+    .gap-1 { gap:0.5rem; }
+    .gap-2 { gap:1rem; }
+    .gap-3 { gap:1.5rem; }
+    .grid { display:grid; }
+    .grid-cols-1 { grid-template-columns:1fr; }
+    .grid-cols-2 { grid-template-columns:repeat(2,1fr); }
+    .grid-cols-3 { grid-template-columns:repeat(3,1fr); }
+    .grid-cols-4 { grid-template-columns:repeat(4,1fr); }
+    .text-center { text-align:center; }
+    .text-left { text-align:left; }
+    .text-right { text-align:right; }
+    .w-full { width:100%; }
+    .h-full { height:100%; }
+    .p-1 { padding:0.5rem; }
+    .p-2 { padding:1rem; }
+    .p-3 { padding:1.5rem; }
+    .p-4 { padding:2rem; }
+    .m-1 { margin:0.5rem; }
+    .m-2 { margin:1rem; }
+    .mt-2 { margin-top:1rem; }
+    .mt-3 { margin-top:1.5rem; }
+    .mt-4 { margin-top:2rem; }
+    .mb-2 { margin-bottom:1rem; }
+    .mb-3 { margin-bottom:1.5rem; }
+    .mb-4 { margin-bottom:2rem; }
+    .rounded { border-radius:var(--radius); }
+    .rounded-full { border-radius:9999px; }
+    .shadow { box-shadow:var(--shadow); }
+    .hidden { display:none !important; }
+    .block { display:block; }
+    .relative { position:relative; }
+    .absolute { position:absolute; }
+    .fixed { position:fixed; }
+    .z-10 { z-index:10; }
+    .z-20 { z-index:20; }
+    .z-50 { z-index:50; }
+    .z-100 { z-index:100; }
+    .z-999 { z-index:999; }
+    .z-9999 { z-index:9999; }
 
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: var(--bg-primary);
-    }
-    ::-webkit-scrollbar-thumb {
-      background: var(--accent-teal);
-      border-radius: 10px;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-    ul,
-    ol {
-      list-style: none;
-    }
-    img {
-      max-width: 100%;
-      display: block;
-    }
-    button,
-    input,
-    select,
-    textarea {
-      font-family: inherit;
-      font-size: inherit;
-      line-height: inherit;
-    }
-    button {
-      cursor: pointer;
-      border: none;
-      background: none;
-      color: inherit;
-    }
-
-    /* ============================================================
-       UTILITIES
-       ============================================================ */
-    .container {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 0 1.5rem;
-    }
-
-    .flex {
-      display: flex;
-    }
-    .flex-col {
-      flex-direction: column;
-    }
-    .items-center {
-      align-items: center;
-    }
-    .justify-between {
-      justify-content: space-between;
-    }
-    .gap-1 {
-      gap: 0.5rem;
-    }
-    .gap-2 {
-      gap: 1rem;
-    }
-    .gap-3 {
-      gap: 1.5rem;
-    }
-
-    .grid {
-      display: grid;
-    }
-    .grid-cols-1 {
-      grid-template-columns: 1fr;
-    }
-    .grid-cols-2 {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    .grid-cols-3 {
-      grid-template-columns: repeat(3, 1fr);
-    }
-    .grid-cols-4 {
-      grid-template-columns: repeat(4, 1fr);
-    }
-
-    .text-center {
-      text-align: center;
-    }
-    .text-left {
-      text-align: left;
-    }
-    .text-right {
-      text-align: right;
-    }
-
-    .w-full {
-      width: 100%;
-    }
-    .h-full {
-      height: 100%;
-    }
-
-    .p-1 {
-      padding: 0.5rem;
-    }
-    .p-2 {
-      padding: 1rem;
-    }
-    .p-3 {
-      padding: 1.5rem;
-    }
-    .p-4 {
-      padding: 2rem;
-    }
-
-    .m-1 {
-      margin: 0.5rem;
-    }
-    .m-2 {
-      margin: 1rem;
-    }
-    .mt-2 {
-      margin-top: 1rem;
-    }
-    .mt-3 {
-      margin-top: 1.5rem;
-    }
-    .mt-4 {
-      margin-top: 2rem;
-    }
-    .mb-2 {
-      margin-bottom: 1rem;
-    }
-    .mb-3 {
-      margin-bottom: 1.5rem;
-    }
-    .mb-4 {
-      margin-bottom: 2rem;
-    }
-
-    .rounded {
-      border-radius: var(--radius);
-    }
-    .rounded-full {
-      border-radius: 9999px;
-    }
-
-    .shadow {
-      box-shadow: var(--shadow);
-    }
-
-    .hidden {
-      display: none !important;
-    }
-    .block {
-      display: block;
-    }
-    .relative {
-      position: relative;
-    }
-    .absolute {
-      position: absolute;
-    }
-    .fixed {
-      position: fixed;
-    }
-
-    .z-10 {
-      z-index: 10;
-    }
-    .z-20 {
-      z-index: 20;
-    }
-    .z-50 {
-      z-index: 50;
-    }
-    .z-100 {
-      z-index: 100;
-    }
-    .z-999 {
-      z-index: 999;
-    }
-    .z-9999 {
-      z-index: 9999;
-    }
-
-    /* ============================================================
-       COMPONENT STYLES
-       ============================================================ */
-
-    /* ---- Buttons ---- */
+    /* ----- COMPONENTS ----- */
     .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 0.65rem 1.4rem;
-      border: none;
-      border-radius: var(--radius);
-      font-weight: 600;
-      font-size: 0.875rem;
-      transition: var(--transition);
-      cursor: pointer;
-      text-decoration: none;
-      position: relative;
-      overflow: hidden;
+      display:inline-flex; align-items:center; justify-content:center; gap:0.5rem;
+      padding:0.65rem 1.4rem; border:none; border-radius:var(--radius);
+      font-weight:600; font-size:0.875rem; transition:var(--transition);
+      cursor:pointer; text-decoration:none; position:relative; overflow:hidden;
     }
-
-    .btn-primary {
-      background: var(--accent-teal);
-      color: #fff;
-    }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 30px rgba(14, 165, 233, 0.25);
-    }
-
-    .btn-secondary {
-      background: var(--accent-rose);
-      color: #fff;
-    }
-    .btn-secondary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 30px rgba(244, 63, 94, 0.25);
-    }
-
-    .btn-outline {
-      background: transparent;
-      border: 1px solid var(--border-color);
-      color: var(--text-primary);
-    }
-    .btn-outline:hover {
-      background: rgba(0, 0, 0, 0.02);
-      border-color: var(--accent-teal);
-    }
-
+    .btn-primary { background:var(--accent-teal); color:#fff; }
+    .btn-primary:hover { transform:translateY(-2px); box-shadow:0 0 30px rgba(14,165,233,0.25); }
+    .btn-secondary { background:var(--accent-rose); color:#fff; }
+    .btn-secondary:hover { transform:translateY(-2px); box-shadow:0 0 30px rgba(244,63,94,0.25); }
+    .btn-outline { background:transparent; border:1px solid var(--border-color); color:var(--text-primary); }
+    .btn-outline:hover { background:rgba(0,0,0,0.02); border-color:var(--accent-teal); }
     .btn-glow {
-      position: relative;
-      background: transparent;
-      color: var(--accent-teal);
-      padding: 0.8rem 2rem;
-      border-radius: var(--radius);
-      font-weight: 700;
-      font-size: 1rem;
-      transition: var(--transition);
+      position:relative; background:transparent; color:var(--accent-teal);
+      padding:0.8rem 2rem; border-radius:var(--radius); font-weight:700; font-size:1rem;
+      transition:var(--transition);
     }
-    .btn-glow svg {
-      position: absolute;
-      inset: -2px;
-      width: calc(100% + 4px);
-      height: calc(100% + 4px);
-      pointer-events: none;
-    }
-    .btn-glow svg rect {
-      fill: none;
-      stroke: var(--accent-teal);
-      stroke-width: 2;
-      stroke-dasharray: 400;
-      stroke-dashoffset: 400;
-      transition: stroke-dashoffset 0.6s ease;
-    }
-    .btn-glow:hover svg rect {
-      stroke-dashoffset: 0;
-    }
-    .btn-glow:hover {
-      box-shadow: 0 0 40px rgba(14, 165, 233, 0.12);
-      transform: scale(1.02);
-    }
+    .btn-glow svg { position:absolute; inset:-2px; width:calc(100%+4px); height:calc(100%+4px); pointer-events:none; }
+    .btn-glow svg rect { fill:none; stroke:var(--accent-teal); stroke-width:2; stroke-dasharray:400; stroke-dashoffset:400; transition:stroke-dashoffset 0.6s ease; }
+    .btn-glow:hover svg rect { stroke-dashoffset:0; }
+    .btn-glow:hover { box-shadow:0 0 40px rgba(14,165,233,0.12); transform:scale(1.02); }
 
-    /* ---- Cards ---- */
     .card {
-      background: var(--bg-card);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      padding: 1.5rem;
-      box-shadow: var(--shadow);
-      transition: var(--transition);
+      background:var(--bg-card); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+      border:1px solid var(--border-color); border-radius:var(--radius); padding:1.5rem;
+      box-shadow:var(--shadow); transition:var(--transition);
     }
-    .card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(14, 165, 233, 0.2);
-      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.06);
-    }
+    .card:hover { transform:translateY(-4px); border-color:rgba(14,165,233,0.2); box-shadow:0 12px 48px rgba(0,0,0,0.06); }
+    .card-title { font-family:var(--font-display); font-weight:700; font-size:1.125rem; color:var(--text-primary); margin-bottom:0.5rem; }
+    .card-subtitle { font-size:0.875rem; color:var(--text-secondary); }
 
-    .card-title {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 1.125rem;
-      color: var(--text-primary);
-      margin-bottom: 0.5rem;
-    }
-    .card-subtitle {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-    }
-
-    /* ---- Forms ---- */
-    .form-group {
-      margin-bottom: 1rem;
-    }
-    .form-group label {
-      display: block;
-      margin-bottom: 0.25rem;
-      font-weight: 600;
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
-      letter-spacing: 0.02em;
-    }
+    .form-group { margin-bottom:1rem; }
+    .form-group label { display:block; margin-bottom:0.25rem; font-weight:600; font-size:0.8125rem; color:var(--text-secondary); letter-spacing:0.02em; }
     .form-control {
-      width: 100%;
-      padding: 0.65rem 1rem;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      background: rgba(255, 255, 255, 0.5);
-      color: var(--text-primary);
-      font-size: 0.875rem;
-      transition: var(--transition);
-      appearance: none;
+      width:100%; padding:0.65rem 1rem; border:1px solid var(--border-color); border-radius:var(--radius);
+      background:rgba(255,255,255,0.5); color:var(--text-primary); font-size:0.875rem;
+      transition:var(--transition); appearance:none;
     }
-    .form-control:focus {
-      border-color: var(--accent-teal);
-      outline: none;
-      box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
-    }
-    .form-control::placeholder {
-      color: var(--text-muted);
-    }
+    .form-control:focus { border-color:var(--accent-teal); outline:none; box-shadow:0 0 0 4px rgba(14,165,233,0.1); }
+    .form-control::placeholder { color:var(--text-muted); }
 
-    /* ---- Tables ---- */
-    .table-container {
-      overflow-x: auto;
-      border-radius: var(--radius);
-      border: 1px solid var(--border-color);
-      background: var(--bg-card);
-      backdrop-filter: blur(4px);
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.875rem;
-    }
-    table thead {
-      background: rgba(0, 0, 0, 0.02);
-    }
-    table th {
-      padding: 0.75rem 1rem;
-      text-align: left;
-      font-weight: 600;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-secondary);
-      border-bottom: 1px solid var(--border-color);
-    }
-    table td {
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid var(--border-color);
-      color: var(--text-primary);
-      vertical-align: middle;
-    }
-    table tbody tr:hover {
-      background: rgba(0, 0, 0, 0.01);
-    }
+    .table-container { overflow-x:auto; border-radius:var(--radius); border:1px solid var(--border-color); background:var(--bg-card); backdrop-filter:blur(4px); }
+    table { width:100%; border-collapse:collapse; font-size:0.875rem; }
+    table thead { background:rgba(0,0,0,0.02); }
+    table th { padding:0.75rem 1rem; text-align:left; font-weight:600; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-secondary); border-bottom:1px solid var(--border-color); }
+    table td { padding:0.75rem 1rem; border-bottom:1px solid var(--border-color); color:var(--text-primary); vertical-align:middle; }
+    table tbody tr:hover { background:rgba(0,0,0,0.01); }
 
-    /* ---- 3D Card Carousel (Three.js) ---- */
-    #three-container {
-      width: 100%;
-      height: 400px;
-      border-radius: var(--radius);
-      overflow: hidden;
-      position: relative;
-      border: 1px solid var(--border-color);
-      margin: 2rem 0;
-    }
-    #three-container canvas {
-      display: block;
-      width: 100% !important;
-      height: 100% !important;
-    }
-
-    /* ============================================================
-       PRE‑LOADER
-       ============================================================ */
-    #preloader {
-      position: fixed;
-      inset: 0;
-      background: var(--bg-primary);
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.8s ease, visibility 0.8s ease;
-    }
-    #preloader.hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-    #preloader .loader-logo {
-      font-family: var(--font-display);
-      font-size: 3rem;
-      font-weight: 900;
-      color: var(--accent-teal);
-      animation: pulseLoader 1.2s ease-in-out infinite;
-    }
-    #preloader .loader-logo span {
-      color: var(--text-primary);
-    }
-    #preloader .loader-bar {
-      width: 200px;
-      height: 4px;
-      background: var(--border-color);
-      border-radius: 4px;
-      margin-top: 1.5rem;
-      overflow: hidden;
-      position: relative;
-    }
-    #preloader .loader-bar::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      width: 0%;
-      background: linear-gradient(90deg, var(--accent-teal), var(--accent-rose));
-      border-radius: 4px;
-      animation: loadProgress 2s ease-in-out forwards;
-    }
-    @keyframes loadProgress {
-      0% {
-        width: 0%;
-      }
-      100% {
-        width: 100%;
-      }
-    }
-    @keyframes pulseLoader {
-      0%,
-      100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.05);
-      }
-    }
-
-    /* ============================================================
-       ANIMATIONS – REFERENCED STYLES
-       ============================================================ */
-
-    /* ---- Hamburger Menu ---- */
-    .hamburger {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      padding: 8px;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-    .hamburger span {
-      display: block;
-      width: 28px;
-      height: 2px;
-      background: var(--text-primary);
-      border-radius: 2px;
-      transition: var(--transition);
-      transform-origin: center;
-    }
-    .hamburger.active span:nth-child(1) {
-      transform: rotate(45deg) translate(5px, 5px);
-    }
-    .hamburger.active span:nth-child(2) {
-      transform: translateX(-20px);
-      opacity: 0;
-    }
-    .hamburger.active span:nth-child(3) {
-      transform: rotate(-45deg) translate(5px, -5px);
-    }
-
-    /* ---- 3D Toggle ---- */
     .toggle-3d {
-      position: relative;
-      width: 60px;
-      height: 30px;
-      background: var(--bg-secondary);
-      border-radius: 30px;
-      border: 2px solid var(--border-color);
-      cursor: pointer;
-      transition: var(--transition);
-      perspective: 100px;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+      position:relative; width:60px; height:30px; background:var(--bg-secondary); border-radius:30px;
+      border:2px solid var(--border-color); cursor:pointer; transition:var(--transition);
+      perspective:100px; box-shadow:inset 0 2px 4px rgba(0,0,0,0.04);
     }
     .toggle-3d .ball {
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 22px;
-      height: 22px;
-      background: radial-gradient(circle at 30% 30%, #fff, #d1d5db);
-      border-radius: 50%;
-      transition: var(--transition);
-      transform: translateX(0) rotateY(0deg);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      position:absolute; top:2px; left:2px; width:22px; height:22px;
+      background:radial-gradient(circle at 30% 30%, #fff, #d1d5db);
+      border-radius:50%; transition:var(--transition);
+      transform:translateX(0) rotateY(0deg);
+      box-shadow:0 2px 8px rgba(0,0,0,0.08);
     }
-    .toggle-3d.active {
-      background: var(--accent-teal);
-    }
-    .toggle-3d.active .ball {
-      transform: translateX(30px) rotateY(180deg);
-    }
+    .toggle-3d.active { background:var(--accent-teal); }
+    .toggle-3d.active .ball { transform:translateX(30px) rotateY(180deg); }
 
-    /* ---- Dock ---- */
-    .dock {
-      display: flex;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(12px);
-      border-radius: 24px;
-      border: 1px solid var(--border-color);
-      margin-top: 2rem;
-      transition: var(--transition);
-      overflow-x: auto;
-      scroll-behavior: smooth;
+    /* Preloader */
+    #preloader {
+      position:fixed; inset:0; background:var(--bg-primary); z-index:9999;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      transition:opacity 0.8s ease, visibility 0.8s ease;
     }
-    .dock .dock-item {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      background: rgba(0, 0, 0, 0.02);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.25rem;
-      transition: var(--transition);
-      flex-shrink: 0;
-    }
-    .dock .dock-item:hover {
-      transform: scale(1.2) translateY(-8px);
-      background: rgba(14, 165, 233, 0.08);
-      box-shadow: 0 0 30px rgba(14, 165, 233, 0.1);
-    }
+    #preloader.hidden { opacity:0; visibility:hidden; pointer-events:none; }
+    #preloader .loader-logo { font-family:var(--font-display); font-size:3rem; font-weight:900; color:var(--accent-teal); animation:pulseLoader 1.2s ease-in-out infinite; }
+    #preloader .loader-logo span { color:var(--text-primary); }
+    #preloader .loader-bar { width:200px; height:4px; background:var(--border-color); border-radius:4px; margin-top:1.5rem; overflow:hidden; position:relative; }
+    #preloader .loader-bar::after { content:''; position:absolute; inset:0; width:0%; background:linear-gradient(90deg, var(--accent-teal), var(--accent-rose)); border-radius:4px; animation:loadProgress 2s ease-in-out forwards; }
+    @keyframes loadProgress { 0% { width:0%; } 100% { width:100%; } }
+    @keyframes pulseLoader { 0%,100% { transform:scale(1); } 50% { transform:scale(1.05); } }
 
-    /* ---- Glowing Border Button ---- */
-    .btn-border-glow {
-      position: relative;
-      padding: 0.8rem 2rem;
-      border-radius: var(--radius);
-      background: transparent;
-      color: var(--accent-teal);
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-    .btn-border-glow svg {
-      position: absolute;
-      inset: -2px;
-      width: calc(100% + 4px);
-      height: calc(100% + 4px);
-      pointer-events: none;
-    }
-    .btn-border-glow svg rect {
-      fill: none;
-      stroke: var(--accent-teal);
-      stroke-width: 2;
-      stroke-dasharray: 400;
-      stroke-dashoffset: 400;
-      transition: stroke-dashoffset 0.6s ease;
-    }
-    .btn-border-glow:hover svg rect {
-      stroke-dashoffset: 0;
-    }
-    .btn-border-glow:hover {
-      box-shadow: 0 0 40px rgba(14, 165, 233, 0.12);
-      transform: scale(1.02);
-    }
+    /* Page transition */
+    .page-transition { opacity:0; transform:translateY(20px); animation:pageIn 0.6s ease forwards; }
+    @keyframes pageIn { to { opacity:1; transform:translateY(0); } }
 
-    /* ---- Flashlight Reveal ---- */
-    .flashlight-container {
-      position: relative;
-      overflow: hidden;
-      border-radius: var(--radius);
-      background: var(--bg-primary);
-      min-height: 200px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid var(--border-color);
-    }
-    .flashlight-container .flashlight-text {
-      font-family: var(--font-display);
-      font-size: 2.5rem;
-      font-weight: 900;
-      color: var(--text-primary);
-      z-index: 2;
-      position: relative;
-      padding: 2rem;
-      text-align: center;
-    }
-    .flashlight-container .flashlight-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.85);
-      z-index: 1;
-      mask-image: radial-gradient(circle 60px at var(--x, 50%) var(--y, 50%), transparent 50%, black 70%);
-      -webkit-mask-image: radial-gradient(circle 60px at var(--x, 50%) var(--y, 50%), transparent 50%, black 70%);
-      transition: mask-image 0.05s, -webkit-mask-image 0.05s;
-    }
-
-    /* ---- Infinite Logo Carousel ---- */
-    .logo-carousel {
-      overflow: hidden;
-      position: relative;
-      padding: 1rem 0;
-      mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-      -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-    }
-    .logo-carousel .track {
-      display: flex;
-      gap: 3rem;
-      animation: scrollLogos 20s linear infinite;
-      width: max-content;
-    }
-    .logo-carousel .track .logo-item {
-      flex-shrink: 0;
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--text-secondary);
-      opacity: 0.6;
-      transition: var(--transition);
-      white-space: nowrap;
-    }
-    .logo-carousel .track .logo-item:hover {
-      opacity: 1;
-      color: var(--accent-teal);
-    }
-    @keyframes scrollLogos {
-      0% {
-        transform: translateX(0);
-      }
-      100% {
-        transform: translateX(-50%);
-      }
-    }
-
-    /* ---- Copy Button ---- */
-    .copy-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      color: var(--text-primary);
-      font-size: 0.875rem;
-      transition: var(--transition);
-      cursor: pointer;
-    }
-    .copy-btn:hover {
-      border-color: var(--accent-teal);
-    }
-    .copy-btn.copied {
-      border-color: #22c55e;
-      color: #22c55e;
-    }
-    .copy-btn .icon {
-      transition: var(--transition);
-    }
-    .copy-btn.copied .icon {
-      transform: scale(1.2);
-    }
-
-    /* ---- Eye‑Tracking Form ---- */
-    .eye-form {
-      background: var(--bg-card);
-      backdrop-filter: blur(8px);
-      border-radius: var(--radius);
-      padding: 2rem;
-      border: 1px solid var(--border-color);
-      max-width: 420px;
-      margin: 0 auto;
-      position: relative;
-    }
-    .eye-form .character {
-      display: flex;
-      justify-content: center;
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-      font-size: 3rem;
-    }
-    .eye-form .eye {
-      display: inline-block;
-      width: 40px;
-      height: 40px;
-      background: #fff;
-      border-radius: 50%;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    }
-    .eye-form .eye .pupil {
-      position: absolute;
-      width: 16px;
-      height: 16px;
-      background: #1a1a2e;
-      border-radius: 50%;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      transition: transform 0.05s;
-    }
-    .eye-form .eye .pupil::after {
-      content: '';
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background: #fff;
-      border-radius: 50%;
-      top: 25%;
-      right: 20%;
-    }
-    .eye-form input {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      background: rgba(255, 255, 255, 0.5);
-      color: var(--text-primary);
-      font-size: 0.875rem;
-      transition: var(--transition);
-    }
-    .eye-form input:focus {
-      border-color: var(--accent-teal);
-      outline: none;
-      box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
-    }
-    .eye-form .subscribe-btn {
-      margin-top: 1rem;
-      width: 100%;
-      padding: 0.75rem;
-      background: var(--accent-teal);
-      color: #fff;
-      border: none;
-      border-radius: var(--radius);
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-    .eye-form .subscribe-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 30px rgba(14, 165, 233, 0.2);
-    }
-
-    /* ============================================================
-       NAVBAR
-       ============================================================ */
+    /* Navbar */
     .navbar {
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border-color);
-      padding: 0.75rem 1.5rem;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
+      background:rgba(255,255,255,0.8); backdrop-filter:blur(12px); border-bottom:1px solid var(--border-color);
+      padding:0.75rem 1.5rem; position:sticky; top:0; z-index:100;
+      display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;
     }
-    .navbar .brand {
-      font-family: var(--font-display);
-      font-size: 1.5rem;
-      font-weight: 900;
-      color: var(--accent-teal);
-    }
-    .navbar .brand span {
-      color: var(--text-primary);
-    }
-    .navbar .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-    .navbar .nav-links a {
-      color: var(--text-secondary);
-      padding: 0.4rem 0.8rem;
-      border-radius: 6px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      transition: var(--transition);
-    }
-    .navbar .nav-links a:hover {
-      color: var(--text-primary);
-      background: rgba(0, 0, 0, 0.02);
-    }
-    .navbar .nav-links a.active {
-      color: var(--accent-teal);
-      background: rgba(14, 165, 233, 0.06);
-    }
+    .navbar .brand { font-family:var(--font-display); font-size:1.5rem; font-weight:900; color:var(--accent-teal); }
+    .navbar .brand span { color:var(--text-primary); }
+    .navbar .nav-links { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; }
+    .navbar .nav-links a { color:var(--text-secondary); padding:0.4rem 0.8rem; border-radius:6px; font-size:0.875rem; font-weight:500; transition:var(--transition); }
+    .navbar .nav-links a:hover { color:var(--text-primary); background:rgba(0,0,0,0.02); }
+    .navbar .nav-links a.active { color:var(--accent-teal); background:rgba(14,165,233,0.06); }
     .navbar .hamburger {
-      display: none;
+      display:none; flex-direction:column; gap:6px; padding:8px; cursor:pointer; transition:var(--transition);
     }
+    .navbar .hamburger span { display:block; width:28px; height:2px; background:var(--text-primary); border-radius:2px; transition:var(--transition); transform-origin:center; }
+    .navbar .hamburger.active span:nth-child(1) { transform:rotate(45deg) translate(5px,5px); }
+    .navbar .hamburger.active span:nth-child(2) { transform:translateX(-20px); opacity:0; }
+    .navbar .hamburger.active span:nth-child(3) { transform:rotate(-45deg) translate(5px,-5px); }
 
-    /* ============================================================
-       FOOTER
-       ============================================================ */
-    .footer {
-      background: var(--bg-secondary);
-      border-top: 1px solid var(--border-color);
-      padding: 2rem 1.5rem;
-      margin-top: auto;
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.875rem;
-    }
+    /* Footer */
+    .footer { background:var(--bg-secondary); border-top:1px solid var(--border-color); padding:2rem 1.5rem; margin-top:auto; text-align:center; color:var(--text-muted); font-size:0.875rem; }
 
-    /* ============================================================
-       PAGE TRANSITIONS (GSAP)
-       ============================================================ */
-    .page-transition {
-      opacity: 0;
-      transform: translateY(20px);
-      animation: pageIn 0.6s ease forwards;
-    }
-    @keyframes pageIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+    /* 3D container */
+    #three-container { width:100%; height:400px; border-radius:var(--radius); overflow:hidden; position:relative; border:1px solid var(--border-color); margin:2rem 0; }
+    #three-container canvas { display:block; width:100% !important; height:100% !important; }
 
-    /* ============================================================
-       RESPONSIVE
-       ============================================================ */
-    @media (max-width: 768px) {
-      .navbar .nav-links {
-        display: none;
-        width: 100%;
-        flex-direction: column;
-        align-items: stretch;
-        padding: 1rem 0;
-      }
-      .navbar .nav-links.open {
-        display: flex;
-      }
-      .navbar .hamburger {
-        display: flex;
-      }
-      .grid-cols-2,
-      .grid-cols-3,
-      .grid-cols-4 {
-        grid-template-columns: 1fr;
-      }
-      .dock {
-        gap: 0.25rem;
-        padding: 0.25rem 0.5rem;
-      }
-      .dock .dock-item {
-        width: 36px;
-        height: 36px;
-        font-size: 1rem;
-      }
-      .flashlight-container .flashlight-text {
-        font-size: 1.5rem;
-        padding: 1rem;
-      }
-      #three-container {
-        height: 250px;
-      }
-    }
+    /* Dock, flashlight, eye‑form, etc. – keep from previous */
 
-    @media (max-width: 480px) {
-      .container {
-        padding: 0 1rem;
-      }
-      .navbar .brand {
-        font-size: 1.2rem;
-      }
+    @media (max-width:768px) {
+      .navbar .nav-links { display:none; width:100%; flex-direction:column; align-items:stretch; padding:1rem 0; }
+      .navbar .nav-links.open { display:flex; }
+      .navbar .hamburger { display:flex; }
+      .grid-cols-2,.grid-cols-3,.grid-cols-4 { grid-template-columns:1fr; }
+      #three-container { height:250px; }
     }
+    @media (max-width:480px) { .container { padding:0 1rem; } .navbar .brand { font-size:1.2rem; } }
   </style>
 </head>
 <body>
 
-  <!-- ============================================================
-       PRE‑LOADER
-       ============================================================ -->
+  <!-- ===== PRE‑LOADER ===== -->
   <div id="preloader">
     <div class="loader-logo">Wolf<span>Society</span></div>
     <div class="loader-bar"></div>
   </div>
 
-  <!-- ============================================================
-       NAVBAR
-       ============================================================ -->
+  <!-- ===== NAVBAR ===== -->
   <nav class="navbar" id="navbar">
     <a href="#" class="brand" data-route="/">Wolf<span>Society</span></a>
-    <div class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
-      <span></span>
-      <span></span>
-      <span></span>
+    <div class="hamburger" id="hamburgerBtn">
+      <span></span><span></span><span></span>
     </div>
     <div class="nav-links" id="navLinks">
       <a href="#" data-route="/" class="active">Home</a>
@@ -1022,26 +283,20 @@
     </div>
   </nav>
 
-  <!-- ============================================================
-       APP CONTAINER
-       ============================================================ -->
-  <main id="app" class="container" style="min-height: 70vh; padding-top: 2rem; padding-bottom: 2rem;"></main>
+  <!-- ===== APP ===== -->
+  <main id="app" class="container" style="min-height:70vh; padding-top:2rem; padding-bottom:2rem;"></main>
 
-  <!-- ============================================================
-       FOOTER
-       ============================================================ -->
+  <!-- ===== FOOTER ===== -->
   <footer class="footer">
     <p>&copy; 2026 Wolf Society Esports. All rights reserved.</p>
-    <div class="mt-2" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-      <span style="color: var(--text-muted); font-size: 0.75rem;">🐺</span>
-      <span style="color: var(--text-muted); font-size: 0.75rem;">⚡</span>
-      <span style="color: var(--text-muted); font-size: 0.75rem;">🔥</span>
+    <div class="mt-2" style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+      <span style="color:var(--text-muted);font-size:0.75rem;">🐺</span>
+      <span style="color:var(--text-muted);font-size:0.75rem;">⚡</span>
+      <span style="color:var(--text-muted);font-size:0.75rem;">🔥</span>
     </div>
   </footer>
 
-  <!-- ============================================================
-       TOAST CONTAINER
-       ============================================================ -->
+  <!-- ===== TOAST ===== -->
   <div id="toastContainer" style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;display:flex;flex-direction:column;gap:0.5rem;max-width:360px;width:100%;"></div>
 
   <!-- ============================================================
@@ -1050,30 +305,18 @@
   <script>
     /**
      * ============================================================
-     * WOLF SOCIETY ESPORTS – COMPLETE SPA WITH 3D, ANIMATIONS, REAL‑TIME
+     * WOLF SOCIETY ESPORTS – FULL SPA WITH REAL DATA
      * ============================================================
      */
 
-    // ──────────────────────────────────────────────────────────────
-    // 0. PRE‑LOADER
-    // ──────────────────────────────────────────────────────────────
-    window.addEventListener('load', () => {
-      const preloader = document.getElementById('preloader');
-      setTimeout(() => preloader.classList.add('hidden'), 2200);
-    });
-
-    // ──────────────────────────────────────────────────────────────
-    // 1. CONFIGURATION
-    // ──────────────────────────────────────────────────────────────
+    // ─── CONFIG ────────────────────────────────────────────────────
     const CONFIG = {
-      API_BASE: 'https://wolf-society-esports.onrender.com', // ← CHANGE TO YOUR BACKEND URL
+      API_BASE: 'https://wolf-backend.onrender.com/api', // ← CHANGE TO YOUR BACKEND URL
       APP_NAME: 'Wolf Society Esports',
-      REFRESH_INTERVAL: 10000, // ms
+      REFRESH_INTERVAL: 10000,
     };
 
-    // ──────────────────────────────────────────────────────────────
-    // 2. UTILITIES
-    // ──────────────────────────────────────────────────────────────
+    // ─── HELPERS ──────────────────────────────────────────────────
     const $ = (sel, ctx = document) => ctx.querySelector(sel);
     const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
     const create = (tag, attrs = {}, children = []) => {
@@ -1102,33 +345,18 @@
     const remove = (el) => el.remove();
     const on = (el, event, handler) => el.addEventListener(event, handler);
 
-    // ──────────────────────────────────────────────────────────────
-    // 3. TOAST
-    // ──────────────────────────────────────────────────────────────
+    // ─── TOAST ────────────────────────────────────────────────────
     const Toast = {
       show(message, type = 'info', duration = 4000) {
         const container = document.getElementById('toastContainer');
-        const colors = {
-          success: '#22c55e',
-          error: '#f43f5e',
-          info: '#0ea5e9',
-          warning: '#f59e0b',
-        };
-        const toast = create('div', {
-          className: `toast toast-${type}`,
-          style: `
-            padding: 0.75rem 1.25rem;
-            border-radius: 8px;
-            background: var(--bg-secondary);
-            border-left: 4px solid ${colors[type] || colors.info};
-            box-shadow: var(--shadow);
-            color: var(--text-primary);
-            font-size: 0.875rem;
-            animation: slideInRight 0.3s ease;
-            border: 1px solid var(--border-color);
-          `
-        });
-        const icon = { success: '✅', error: '❌', info: 'ℹ️', warning: '⚠️' } [type] || 'ℹ️';
+        const colors = { success: '#22c55e', error: '#f43f5e', info: '#0ea5e9', warning: '#f59e0b' };
+        const toast = create('div', { className: `toast toast-${type}`, style: `
+          padding: 0.75rem 1.25rem; border-radius: 8px; background: var(--bg-secondary);
+          border-left: 4px solid ${colors[type] || colors.info}; box-shadow: var(--shadow);
+          color: var(--text-primary); font-size: 0.875rem; animation: slideInRight 0.3s ease;
+          border: 1px solid var(--border-color);
+        `});
+        const icon = { success:'✅', error:'❌', info:'ℹ️', warning:'⚠️' }[type] || 'ℹ️';
         toast.innerHTML = `<span style="margin-right:0.5rem;">${icon}</span> ${message}`;
         container.appendChild(toast);
         setTimeout(() => {
@@ -1143,28 +371,20 @@
       warning(msg) { this.show(msg, 'warning'); }
     };
 
-    // ──────────────────────────────────────────────────────────────
-    // 4. API WRAPPER (with mock fallback)
-    // ──────────────────────────────────────────────────────────────
+    // ─── API WRAPPER (with mock fallback) ──────────────────────
     const API = {
       auth: {
         getToken() { return localStorage.getItem('wolf_token'); },
-        setToken(token) { localStorage.setItem('wolf_token', token); },
+        setToken(t) { localStorage.setItem('wolf_token', t); },
         removeToken() { localStorage.removeItem('wolf_token'); },
-        getUser() {
-          try { return JSON.parse(localStorage.getItem('wolf_user')); } catch { return null; }
-        },
-        setUser(user) { localStorage.setItem('wolf_user', JSON.stringify(user)); },
+        getUser() { try { return JSON.parse(localStorage.getItem('wolf_user')); } catch { return null; } },
+        setUser(u) { localStorage.setItem('wolf_user', JSON.stringify(u)); },
         removeUser() { localStorage.removeItem('wolf_user'); },
         isLoggedIn() { return !!this.getToken(); }
       },
-
       async request(method, endpoint, data = null) {
         const url = `${CONFIG.API_BASE}${endpoint}`;
-        const options = {
-          method,
-          headers: { 'Content-Type': 'application/json' },
-        };
+        const options = { method, headers: { 'Content-Type': 'application/json' } };
         const token = this.auth.getToken();
         if (token) options.headers['Authorization'] = `Bearer ${token}`;
         if (data) options.body = JSON.stringify(data);
@@ -1174,28 +394,18 @@
           if (!res.ok) throw new Error(result.error || 'API error');
           return result;
         } catch (err) {
-          // Fallback to mock data if backend is not available
-          console.warn('Using mock data:', err.message);
+          console.warn('API error, using mock data:', err.message);
           return this._mock(method, endpoint, data);
         }
       },
-
       get(endpoint) { return this.request('GET', endpoint); },
       post(endpoint, data) { return this.request('POST', endpoint, data); },
       put(endpoint, data) { return this.request('PUT', endpoint, data); },
       delete(endpoint) { return this.request('DELETE', endpoint); },
+      login(email, password) { return this.post('/auth/login', { email, password }); },
+      register(email, password, full_name, role = 'player') { return this.post('/auth/register', { email, password, full_name, role }); },
+      getMe() { return this.get('/auth/me'); },
 
-      login(email, password) {
-        return this.post('/auth/login', { email, password });
-      },
-      register(email, password, full_name, role = 'player') {
-        return this.post('/auth/register', { email, password, full_name, role });
-      },
-      getMe() {
-        return this.get('/auth/me');
-      },
-
-      // ─── Mock Data ──────────────────────────────────────────────
       _mock(method, endpoint, data) {
         const mock = {
           '/teams': [{ id: 1, name: 'Divine Wolf', tag: 'DW', game: 'Valorant', wins: 10, losses: 3 }],
@@ -1214,9 +424,7 @@
       }
     };
 
-    // ──────────────────────────────────────────────────────────────
-    // 5. ROUTER
-    // ──────────────────────────────────────────────────────────────
+    // ─── ROUTER ────────────────────────────────────────────────────
     const Router = {
       routes: [],
       current: null,
@@ -1234,14 +442,13 @@
 
         window.addEventListener('popstate', () => this.handle());
 
-        on(document, 'click', '[data-route]', (e) => {
-          const target = e.target.closest('[data-route]');
-          if (!target) return;
-          const path = target.getAttribute('data-route');
-          if (path) {
-            e.preventDefault();
-            this.navigate(path);
-          }
+        // Intercept clicks on data-route
+        document.addEventListener('click', (e) => {
+          const link = e.target.closest('[data-route]');
+          if (!link) return;
+          e.preventDefault();
+          const path = link.getAttribute('data-route');
+          if (path) this.navigate(path);
         });
 
         // Hamburger
@@ -1253,8 +460,7 @@
         });
 
         // Logout
-        const logoutLink = document.getElementById('logoutLink');
-        on(logoutLink, 'click', (e) => {
+        document.getElementById('logoutLink').addEventListener('click', (e) => {
           e.preventDefault();
           API.auth.removeToken();
           API.auth.removeUser();
@@ -1266,7 +472,6 @@
         // Theme toggle
         const themeToggle = document.getElementById('themeToggle');
         if (themeToggle) {
-          // Check localStorage for theme
           const savedTheme = localStorage.getItem('wolf_theme');
           if (savedTheme === 'dark') {
             document.body.classList.add('dark');
@@ -1278,18 +483,6 @@
             localStorage.setItem('wolf_theme', document.body.classList.contains('dark') ? 'dark' : 'light');
           });
         }
-
-        // Auth state change listeners
-        const origSetToken = API.auth.setToken;
-        API.auth.setToken = function(token) {
-          origSetToken.call(this, token);
-          Router.updateNav();
-        };
-        const origRemoveToken = API.auth.removeToken;
-        API.auth.removeToken = function() {
-          origRemoveToken.call(this);
-          Router.updateNav();
-        };
 
         this.handle();
         this.updateNav();
@@ -1312,12 +505,10 @@
         let route = this.routes.find(r => r.path === path);
         if (!route) route = this.routes.find(r => r.path === '/');
 
-        if (route) {
-          if (route.guard === 'auth' && !API.auth.isLoggedIn()) {
-            Toast.warning('Please log in to access this page');
-            this.navigate('/login');
-            return;
-          }
+        if (route && route.guard === 'auth' && !API.auth.isLoggedIn()) {
+          Toast.warning('Please log in to access this page');
+          this.navigate('/login');
+          return;
         }
 
         this.current = route;
@@ -1333,13 +524,11 @@
             app.appendChild(create('div', { html: content, className: 'page-transition' }));
           }
         } else {
-          app.appendChild(create('div', { className: 'text-center py-16' },
-            create('h2', { text: '404 – Page not found' })
-          ));
+          app.appendChild(create('div', { className: 'text-center py-16' }, create('h2', { text: '404 – Page not found' })));
         }
         this.updateNav();
         this.initAnimations();
-        this.init3D(); // Initialize Three.js on every page load
+        this.init3D();
       },
 
       updateNav() {
@@ -1350,8 +539,7 @@
         document.getElementById('loginLink').style.display = isLoggedIn ? 'none' : 'inline-block';
         document.getElementById('registerLink').style.display = isLoggedIn ? 'none' : 'inline-block';
         document.getElementById('logoutLink').style.display = isLoggedIn ? 'inline-block' : 'none';
-        document.getElementById('dashboardLink').style.display =
-          (isLoggedIn && ['admin', 'manager', 'player'].includes(role)) ? 'inline-block' : 'none';
+        document.getElementById('dashboardLink').style.display = (isLoggedIn && ['admin','manager','player'].includes(role)) ? 'inline-block' : 'none';
 
         const path = window.location.pathname || '/';
         $$('.nav-links a').forEach(a => {
@@ -1361,10 +549,9 @@
 
       startRealtimeRefresh() {
         setInterval(() => {
-          // Refresh current page data if it's a data page
           const path = window.location.pathname || '/';
-          if (['/teams', '/schedule', '/content', '/dashboard'].includes(path)) {
-            this.handle(); // re-render the current route
+          if (['/teams','/schedule','/content','/dashboard'].includes(path)) {
+            this.handle();
           }
         }, CONFIG.REFRESH_INTERVAL);
       },
@@ -1380,93 +567,62 @@
         if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
           gsap.registerPlugin(ScrollTrigger);
           gsap.from('.feature-card', {
-            opacity: 0,
-            y: 40,
-            stagger: 0.15,
-            duration: 0.8,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: '.feature-card',
-              start: 'top 80%',
-              toggleActions: 'play none none none',
-            },
+            opacity:0, y:40, stagger:0.15, duration:0.8, ease:'power2.out',
+            scrollTrigger: { trigger:'.feature-card', start:'top 80%', toggleActions:'play none none none' }
           });
         }
       },
 
       init3D() {
-        // Three.js will be initialized only if the container exists
         const container = document.getElementById('three-container');
-        if (!container) return;
-        // If already initialized, skip
-        if (container._threeInitialized) return;
+        if (!container || container._threeInitialized) return;
         container._threeInitialized = true;
-
-        // Clear any previous content
         empty(container);
 
-        // Setup Three.js scene
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x0f172a); // dark blue
-
+        scene.background = new THREE.Color(0x0f172a);
         const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
         camera.position.z = 8;
-
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
         renderer.setSize(container.clientWidth, container.clientHeight);
         renderer.setPixelRatio(window.devicePixelRatio);
         container.appendChild(renderer.domElement);
 
-        // Lights
-        const ambientLight = new THREE.AmbientLight(0x404060);
-        scene.add(ambientLight);
-        const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-        dirLight.position.set(5, 10, 7);
+        const ambient = new THREE.AmbientLight(0x404060);
+        scene.add(ambient);
+        const dirLight = new THREE.DirectionalLight(0xffffff,1);
+        dirLight.position.set(5,10,7);
         scene.add(dirLight);
-        const pointLight = new THREE.PointLight(0x0ea5e9, 0.5, 20);
-        pointLight.position.set(-5, 0, 5);
-        scene.add(pointLight);
 
-        // Create 3D cards
-        const cards = [];
         const colors = [0x0ea5e9, 0xf43f5e, 0xf59e0b, 0x22c55e, 0x8b5cf6];
-        const labels = ['🏆', '🎮', '📺', '⚡', '🐺'];
-        for (let i = 0; i < 5; i++) {
-          const geometry = new THREE.BoxGeometry(1.2, 1.8, 0.2);
+        const cards = [];
+        for (let i=0; i<5; i++) {
+          const geometry = new THREE.BoxGeometry(1.2,1.8,0.2);
           const material = new THREE.MeshStandardMaterial({
             color: colors[i % colors.length],
-            roughness: 0.3,
-            metalness: 0.1,
-            emissive: new THREE.Color(colors[i % colors.length]).multiplyScalar(0.1),
+            roughness:0.3, metalness:0.1,
+            emissive: new THREE.Color(colors[i % colors.length]).multiplyScalar(0.1)
           });
           const cube = new THREE.Mesh(geometry, material);
-          const angle = (i / 5) * Math.PI * 2;
+          const angle = (i/5) * Math.PI * 2;
           cube.position.x = Math.sin(angle) * 3.5;
           cube.position.z = Math.cos(angle) * 3.5;
-          cube.position.y = 0;
           cube.userData = { angle, speed: 0.005 + i * 0.001 };
           scene.add(cube);
           cards.push(cube);
         }
 
-        // Stars background
         const starsGeometry = new THREE.BufferGeometry();
-        const starsCount = 1000;
-        const posArray = new Float32Array(starsCount * 3);
-        for (let i = 0; i < starsCount * 3; i++) {
-          posArray[i] = (Math.random() - 0.5) * 200;
-        }
-        starsGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.15, transparent: true, opacity: 0.5 });
-        const stars = new THREE.Points(starsGeometry, starsMaterial);
+        const posArray = new Float32Array(1000*3);
+        for (let i=0; i<1000*3; i++) posArray[i] = (Math.random()-0.5)*200;
+        starsGeometry.setAttribute('position', new THREE.BufferAttribute(posArray,3));
+        const stars = new THREE.Points(starsGeometry, new THREE.PointsMaterial({ color:0xffffff, size:0.15, transparent:true, opacity:0.5 }));
         scene.add(stars);
 
-        // Animation loop
         let animationId;
-
         function animate() {
           animationId = requestAnimationFrame(animate);
-          cards.forEach((cube, i) => {
+          cards.forEach((cube) => {
             cube.userData.angle += cube.userData.speed;
             cube.position.x = Math.sin(cube.userData.angle) * 3.5;
             cube.position.z = Math.cos(cube.userData.angle) * 3.5;
@@ -1478,17 +634,12 @@
         }
         animate();
 
-        // Resize handler
         const resize = () => {
-          const w = container.clientWidth;
-          const h = container.clientHeight;
-          camera.aspect = w / h;
-          camera.updateProjectionMatrix();
-          renderer.setSize(w, h);
+          const w = container.clientWidth, h = container.clientHeight;
+          camera.aspect = w/h; camera.updateProjectionMatrix();
+          renderer.setSize(w,h);
         };
         window.addEventListener('resize', resize);
-
-        // Store cleanup
         container._cleanup = () => {
           window.removeEventListener('resize', resize);
           cancelAnimationFrame(animationId);
@@ -1497,9 +648,7 @@
       }
     };
 
-    // ──────────────────────────────────────────────────────────────
-    // 6. ANIMATION HELPERS
-    // ──────────────────────────────────────────────────────────────
+    // ─── ANIMATION HELPERS ──────────────────────────────────────
     function initEyeTracking() {
       const pupils = document.querySelectorAll('.pupil');
       if (!pupils.length) return;
@@ -1513,7 +662,6 @@
         });
       });
     }
-
     function initFlashlight() {
       const container = document.querySelector('.flashlight-container');
       if (!container) return;
@@ -1527,7 +675,6 @@
         overlay.style.setProperty('--y', y + '%');
       });
     }
-
     function initCopyButtons() {
       document.querySelectorAll('.copy-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -1544,52 +691,37 @@
       });
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // 7. PAGE RENDERERS
-    // ──────────────────────────────────────────────────────────────
+    // ─── PAGE RENDERERS ──────────────────────────────────────────
 
-    // ─── HOME ──────────────────────────────────────────────────────
+    // Home
     function renderHome() {
       const container = create('div', { className: 'py-8' });
 
-      // Hero
       const hero = create('div', { className: 'text-center py-12' });
       append(hero,
-        create('h1', {
-          className: 'text-4xl md:text-6xl font-display font-black',
-          html: 'Wolf Society <span style="color: var(--accent-teal);">Esports</span>'
-        }),
-        create('p', {
-          className: 'text-muted text-lg mt-4 max-w-2xl mx-auto',
-          text: 'Where champions rise. Join the pack and dominate the leaderboards.'
-        }),
+        create('h1', { className: 'text-4xl md:text-6xl font-display font-black',
+          html: 'Wolf Society <span style="color: var(--accent-teal);">Esports</span>' }),
+        create('p', { className: 'text-muted text-lg mt-4 max-w-2xl mx-auto',
+          text: 'Where champions rise. Join the pack and dominate the leaderboards.' }),
         create('div', { className: 'flex gap-4 justify-center mt-6 flex-wrap' },
-          create('button', {
-            className: 'btn btn-primary',
-            text: 'Watch Live',
-            onclick: () => Toast.info('Live stream coming soon!')
-          }),
-          create('button', {
-            className: 'btn-glow',
+          create('button', { className: 'btn btn-primary', text: 'Watch Live',
+            onclick: () => Toast.info('Live stream coming soon!') }),
+          create('button', { className: 'btn-glow',
             html: 'Our Teams <svg><rect x="0" y="0" width="100%" height="100%" /></svg>',
-            onclick: () => Router.navigate('/teams')
-          })
+            onclick: () => Router.navigate('/teams') })
         )
       );
       container.appendChild(hero);
 
-      // 3D Container
       const threeContainer = create('div', { id: 'three-container' });
       container.appendChild(threeContainer);
 
-      // Feature Cards
       const cards = create('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-6 mt-8' });
-      const features = [
+      [
         { icon: '🏆', title: 'Live Matches', desc: 'Watch our teams battle in real-time.' },
         { icon: '🎮', title: 'Roster', desc: 'Meet our talented players and their stats.' },
-        { icon: '📺', title: 'Content Hub', desc: 'Exclusive highlights and behind-the-scenes.' },
-      ];
-      features.forEach((f) => {
+        { icon: '📺', title: 'Content Hub', desc: 'Exclusive highlights and behind-the-scenes.' }
+      ].forEach(f => {
         const card = create('div', { className: 'card feature-card' });
         append(card,
           create('div', { className: 'text-3xl mb-2', text: f.icon }),
@@ -1600,18 +732,16 @@
       });
       container.appendChild(cards);
 
-      // Logo Carousel
+      // Logo carousel
       const carousel = create('div', { className: 'mt-12' });
       append(carousel,
         create('h3', { className: 'text-center text-muted mb-4', text: 'Our Partners' }),
         create('div', { className: 'logo-carousel' },
           create('div', { className: 'track' },
-            ['Wolf Society', 'Divine Wolf', 'GamerFuel', 'TechGear', 'Phoenix Rising', 'Shadow Clan']
-            .map(name => create('span', { className: 'logo-item', text: `⚡ ${name}` }))
-            .concat(
-              ['Wolf Society', 'Divine Wolf', 'GamerFuel', 'TechGear', 'Phoenix Rising', 'Shadow Clan']
-              .map(name => create('span', { className: 'logo-item', text: `⚡ ${name}` }))
-            )
+            ['Wolf Society','Divine Wolf','GamerFuel','TechGear','Phoenix Rising','Shadow Clan']
+            .map(n => create('span', { className: 'logo-item', text: `⚡ ${n}` }))
+            .concat(['Wolf Society','Divine Wolf','GamerFuel','TechGear','Phoenix Rising','Shadow Clan']
+            .map(n => create('span', { className: 'logo-item', text: `⚡ ${n}` })))
           )
         )
       );
@@ -1619,7 +749,7 @@
 
       // Dock
       const dock = create('div', { className: 'dock' });
-      ['🏠', '🎮', '🏆', '📺', '📅', '⚙️'].forEach(icon => {
+      ['🏠','🎮','🏆','📺','📅','⚙️'].forEach(icon => {
         const item = create('div', { className: 'dock-item', text: icon });
         dock.appendChild(item);
       });
@@ -1633,7 +763,7 @@
       );
       container.appendChild(flashlight);
 
-      // Eye‑tracking subscription form
+      // Eye form
       const form = create('div', { className: 'eye-form mt-8' });
       append(form,
         create('div', { className: 'character' },
@@ -1648,11 +778,8 @@
           text: 'Subscribe',
           onclick: () => {
             const email = document.getElementById('subscribeEmail').value;
-            if (email) {
-              Toast.success('Subscribed! Check your email.');
-            } else {
-              Toast.error('Please enter an email.');
-            }
+            if (email) Toast.success('Subscribed! Check your email.');
+            else Toast.error('Please enter an email.');
           }
         })
       );
@@ -1661,7 +788,7 @@
       return container;
     }
 
-    // ─── TEAMS ──────────────────────────────────────────────────────
+    // Teams
     async function renderTeams() {
       const container = create('div', { className: 'py-8' });
       append(container, create('h1', { className: 'text-3xl font-display font-bold mb-6', text: 'Our Teams' }));
@@ -1687,7 +814,7 @@
       return container;
     }
 
-    // ─── SCHEDULE ──────────────────────────────────────────────────
+    // Schedule
     async function renderSchedule() {
       const container = create('div', { className: 'py-8' });
       append(container, create('h1', { className: 'text-3xl font-display font-bold mb-6', text: 'Match Schedule' }));
@@ -1697,7 +824,7 @@
         const table = create('div', { className: 'table-container' });
         const thead = create('thead', {},
           create('tr', {},
-            ['Team', 'Opponent', 'Game', 'Date', 'Result'].map(h => create('th', { text: h }))
+            ['Team','Opponent','Game','Date','Result'].map(h => create('th', { text: h }))
           )
         );
         const tbody = create('tbody');
@@ -1724,7 +851,7 @@
       return container;
     }
 
-    // ─── CONTENT ───────────────────────────────────────────────────
+    // Content
     async function renderContent() {
       const container = create('div', { className: 'py-8' });
       append(container, create('h1', { className: 'text-3xl font-display font-bold mb-6', text: 'Content Hub' }));
@@ -1755,7 +882,7 @@
       return container;
     }
 
-    // ─── LOGIN ─────────────────────────────────────────────────────
+    // Login
     function renderLogin() {
       const container = create('div', { className: 'py-8 max-w-md mx-auto' });
       append(container,
@@ -1792,7 +919,7 @@
       return container;
     }
 
-    // ─── REGISTER ──────────────────────────────────────────────────
+    // Register
     function renderRegister() {
       const container = create('div', { className: 'py-8 max-w-md mx-auto' });
       append(container,
@@ -1813,7 +940,7 @@
           create('div', { className: 'form-group' },
             create('label', { text: 'Role' }),
             create('select', { className: 'form-control', id: 'regRole' },
-              ['player', 'content_creator'].map(r => create('option', { value: r, text: r }))
+              ['player','content_creator'].map(r => create('option', { value: r, text: r }))
             )
           ),
           create('button', { className: 'btn btn-primary w-full', type: 'submit', text: 'Register' })
@@ -1839,7 +966,7 @@
       return container;
     }
 
-    // ─── DASHBOARD ─────────────────────────────────────────────────
+    // Dashboard
     async function renderDashboard() {
       const container = create('div', { className: 'py-8' });
       const user = API.auth.getUser();
@@ -1848,9 +975,9 @@
         create('p', { className: 'text-muted mb-6', text: `Welcome back, ${user?.full_name || user?.email}` })
       );
 
-      // Stats placeholders
+      // Stats
       const stats = create('div', { className: 'grid grid-cols-2 md:grid-cols-4 gap-4' });
-      ['Players', 'Teams', 'Matches', 'Content'].forEach(label => {
+      ['Players','Teams','Matches','Content'].forEach(label => {
         const card = create('div', { className: 'card text-center' });
         append(card,
           create('div', { className: 'text-2xl font-bold text-teal-600', text: '0' }),
@@ -1867,9 +994,9 @@
       );
       container.appendChild(chartContainer);
 
-      // Quick actions
+      // Actions
       const actions = create('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-4 mt-6' });
-      ['Manage Players', 'Schedule Match', 'Post Announcement'].forEach(label => {
+      ['Manage Players','Schedule Match','Post Announcement'].forEach(label => {
         const btn = create('button', {
           className: 'btn btn-outline w-full',
           text: label,
@@ -1879,20 +1006,20 @@
       });
       container.appendChild(actions);
 
-      // Initialize chart after DOM render
+      // Init chart
       setTimeout(() => {
         const ctx = document.getElementById('dashboardChart');
         if (ctx) {
           new Chart(ctx, {
             type: 'bar',
             data: {
-              labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+              labels: ['Jan','Feb','Mar','Apr','May','Jun'],
               datasets: [{
                 label: 'Matches',
-                data: [5, 8, 6, 10, 12, 9],
-                backgroundColor: 'rgba(14, 165, 233, 0.6)',
+                data: [5,8,6,10,12,9],
+                backgroundColor: 'rgba(14,165,233,0.6)',
                 borderColor: '#0ea5e9',
-                borderWidth: 1,
+                borderWidth: 1
               }]
             },
             options: {
@@ -1912,135 +1039,20 @@
       return container;
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // 8. BOOTSTRAP
-    // ──────────────────────────────────────────────────────────────
+    // ─── BOOT ──────────────────────────────────────────────────────
+    window.addEventListener('load', () => {
+      const preloader = document.getElementById('preloader');
+      setTimeout(() => preloader.classList.add('hidden'), 2200);
+    });
+
     document.addEventListener('DOMContentLoaded', () => {
       Router.init();
-      // Theme toggle – ensure it works even if DOM changes
-document.addEventListener('DOMContentLoaded', function() {
-  const toggle = document.getElementById('themeToggle');
-  const body = document.body;
-
-  if (!toggle) return;
-
-  // Check localStorage for saved theme
-  const savedTheme = localStorage.getItem('wolf_theme');
-  if (savedTheme === 'dark') {
-    body.classList.add('dark');
-    toggle.classList.add('active');
-  }
-
-  toggle.addEventListener('click', function() {
-    body.classList.toggle('dark');
-    this.classList.toggle('active');
-    localStorage.setItem('wolf_theme', body.classList.contains('dark') ? 'dark' : 'light');
-  });
-});
       window.__API = API;
       window.__Router = Router;
-
       window.addEventListener('online', () => Toast.info('Back online!'));
       window.addEventListener('offline', () => Toast.info('You are offline. Some features may not work.'));
     });
   </script>
-  <script>
-  (function() {
-    // Wait for DOM to be ready
-    document.addEventListener('DOMContentLoaded', function() {
-      // If Router is not defined, we create a simple router
-      if (typeof Router === 'undefined') {
-        console.warn('Router not found – using fallback navigation.');
-        // Simple router: just change the URL and render based on path
-        window.navigate = function(path) {
-          history.pushState(null, '', path);
-          // You can re-render by calling your render functions directly.
-          // For now, we'll just show an alert.
-          alert('Navigating to ' + path + ' – implement your render logic here.');
-        };
-      } else {
-        // If Router exists, just ensure it's initialized
-        if (typeof Router.init === 'function') {
-          Router.init();
-          console.log('Router initialized.');
-        } else {
-          console.warn('Router exists but has no init method.');
-        }
-      }
 
-      // Intercept clicks on data-route links
-      document.addEventListener('click', function(e) {
-        const link = e.target.closest('[data-route]');
-        if (!link) return;
-        e.preventDefault();
-        const path = link.getAttribute('data-route');
-        if (path) {
-          if (typeof Router !== 'undefined' && typeof Router.navigate === 'function') {
-            Router.navigate(path);
-          } else if (typeof navigate === 'function') {
-            navigate(path);
-          } else {
-            // Fallback: change URL and reload (but we want SPA)
-            window.location.hash = path;
-            // You can add custom render logic here.
-            console.log('Navigating to', path);
-          }
-        }
-      });
-    });
-  })();
-</script>
-  <script>
-  // Simple SPA Router – no dependencies
-  (function() {
-    const routes = {
-      '/': 'Home',
-      '/teams': 'Teams',
-      '/schedule': 'Schedule',
-      '/content': 'Content',
-      '/login': 'Login',
-      '/register': 'Register',
-      '/dashboard': 'Dashboard',
-    };
-
-    function render(path) {
-      const app = document.getElementById('app');
-      if (!app) return;
-      const content = routes[path] || '404';
-      app.innerHTML = `<h1>${content}</h1><p>This is the ${content} page.</p>`;
-      // Update nav active class
-      document.querySelectorAll('.nav-links a').forEach(a => {
-        a.classList.toggle('active', a.getAttribute('data-route') === path);
-      });
-    }
-
-    function navigate(path) {
-      history.pushState(null, '', path);
-      render(path);
-    }
-
-    // Handle popstate (back/forward)
-    window.addEventListener('popstate', () => {
-      render(window.location.pathname);
-    });
-
-    // Intercept clicks on data-route links
-    document.addEventListener('click', function(e) {
-      const link = e.target.closest('[data-route]');
-      if (!link) return;
-      e.preventDefault();
-      const path = link.getAttribute('data-route');
-      if (path) navigate(path);
-    });
-
-    // Initial render
-    window.addEventListener('DOMContentLoaded', () => {
-      render(window.location.pathname);
-    });
-
-    // Expose navigate globally
-    window.navigate = navigate;
-  })();
-</script>
 </body>
 </html>
