@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CRM Admin Hub - Wolf Society</title>
+  <title>Admin & Management Portal - Wolf Society</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -14,11 +14,11 @@
         extend: {
           colors: {
             brand: {
-              50 = '#eef2ff',
-              100 = '#e0e7ff',
-              500 = '#6366f1',
-              600 = '#4f46e5',
-              700 = '#4338ca',
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
             }
           }
         }
@@ -51,750 +51,681 @@
     }
   </style>
 </head>
-<body class="h-full text-slate-100 flex flex-col md:flex-row font-sans overflow-hidden bg-slate-950">
+<body class="h-full text-slate-100 flex flex-col font-sans overflow-hidden bg-slate-950">
 
-  <!-- SIDEBAR NAVIGATION -->
-  <aside class="w-full md:w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between shrink-0 z-20">
-    <div>
-      <!-- Brand Header -->
-      <div class="p-5 border-b border-slate-800/80 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center text-white font-black shadow-lg shadow-brand-500/20">
-            <i class="fa-solid fa-crown text-base"></i>
-          </div>
-          <div>
-            <h1 class="font-black text-sm text-white tracking-wide uppercase">Wolf Society</h1>
-            <p class="text-[10px] text-indigo-400 font-mono">CRM Portal v3.0</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Nav Items -->
-      <nav class="p-4 space-y-1" id="nav-container">
-        <button onclick="window.switchTab('dashboard')" id="nav-btn-dashboard" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl text-xs font-bold transition bg-brand-600 text-white shadow-lg shadow-brand-600/20">
-          <span class="flex items-center gap-3">
-            <i class="fa-solid fa-chart-pie w-4 text-center"></i> Overview
-          </span>
-        </button>
-
-        <button onclick="window.switchTab('inquiries')" id="nav-btn-inquiries" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 text-xs font-bold transition">
-          <span class="flex items-center gap-3">
-            <i class="fa-solid fa-inbox text-indigo-400 w-4 text-center"></i> Inquiries Inbox
-          </span>
-          <span id="unread-count-badge" class="px-2 py-0.5 rounded-full bg-rose-500 text-white font-black text-[10px] hidden">0</span>
-        </button>
-
-        <button onclick="window.switchTab('contacts')" id="nav-btn-contacts" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 text-xs font-bold transition">
-          <span class="flex items-center gap-3">
-            <i class="fa-solid fa-address-book text-emerald-400 w-4 text-center"></i> CRM Leads
-          </span>
-          <span id="total-contacts-count" class="text-[10px] text-slate-500 font-mono">0</span>
-        </button>
-
-        <button onclick="window.switchTab('analytics')" id="nav-btn-analytics" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 text-xs font-bold transition">
-          <span class="flex items-center gap-3">
-            <i class="fa-solid fa-chart-line text-amber-400 w-4 text-center"></i> Analytics
-          </span>
-        </button>
-
-        <button onclick="window.switchTab('settings')" id="nav-btn-settings" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 text-xs font-bold transition">
-          <span class="flex items-center gap-3">
-            <i class="fa-solid fa-sliders text-slate-400 w-4 text-center"></i> System Config
-          </span>
-        </button>
-      </nav>
-    </div>
-
-    <!-- Live Supabase Status Pill -->
-    <div class="p-4 m-4 rounded-xl bg-slate-950 border border-slate-800/80 flex items-center justify-between text-xs">
-      <div class="flex items-center gap-2">
-        <span id="connection-dot" class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
-        <span id="connection-text" class="text-slate-400 font-mono text-[11px]">Connecting...</span>
-      </div>
-      <i class="fa-solid fa-database text-slate-600 text-xs"></i>
-    </div>
-  </aside>
-
-  <!-- MAIN WRAPPER -->
-  <div class="flex-1 flex flex-col h-full overflow-hidden">
-    
-    <!-- TOPBAR -->
-    <header class="h-16 bg-slate-900/60 border-b border-slate-800/80 px-6 flex items-center justify-between shrink-0 z-10 backdrop-blur-md">
-      <!-- Search Input -->
-      <div class="relative w-72">
-        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
-        <input id="global-search" type="text" onkeyup="window.handleGlobalSearch(event)" placeholder="Search inquiries or leads..." class="w-full pl-9 pr-4 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-brand-500 transition" />
-      </div>
-
-      <!-- Header Actions -->
-      <div class="flex items-center gap-3">
-        <button onclick="window.exportCSV()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition flex items-center gap-2 border border-slate-700/50">
-          <i class="fa-solid fa-file-csv text-emerald-400"></i> Export CSV
-        </button>
-        <button onclick="window.switchTab('inquiries')" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 relative">
-          <i class="fa-solid fa-bell text-xs"></i>
-          <span id="header-unread-dot" class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-rose-500 rounded-full hidden"></span>
-        </button>
-        <div class="h-6 w-px bg-slate-800"></div>
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-full bg-brand-600/30 border border-brand-500/40 flex items-center justify-center text-brand-300 font-bold text-xs">
-            AD
-          </div>
-          <span class="text-xs font-bold text-slate-300 hidden sm:inline">Admin User</span>
-        </div>
-      </div>
-    </header>
-
-    <!-- CONTENT BODY (SCROLLABLE) -->
-    <main class="flex-1 p-6 md:p-8 overflow-y-auto custom-scrollbar">
-
-      <!-- TAB 1: OVERVIEW DASHBOARD -->
-      <section id="tab-dashboard" class="tab-content space-y-6">
-        <div>
-          <h2 class="text-2xl font-black text-white">Executive Dashboard</h2>
-          <p class="text-xs text-slate-400 mt-0.5">Real-time stats from your Supabase database.</p>
-        </div>
-
-        <!-- Metric Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div class="glass-panel p-5 rounded-2xl">
-            <div class="flex items-center justify-between text-slate-400 text-xs font-bold mb-3">
-              <span>TOTAL INQUIRIES</span>
-              <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400"><i class="fa-solid fa-inbox"></i></div>
-            </div>
-            <p id="dash-total" class="text-3xl font-black text-white">0</p>
-            <span class="text-[10px] text-slate-500 font-mono mt-1 block">Lifetime submissions</span>
-          </div>
-
-          <div class="glass-panel p-5 rounded-2xl">
-            <div class="flex items-center justify-between text-slate-400 text-xs font-bold mb-3">
-              <span>UNREAD MESSAGES</span>
-              <div class="p-2 rounded-lg bg-rose-500/10 text-rose-400"><i class="fa-solid fa-envelope"></i></div>
-            </div>
-            <p id="dash-unread" class="text-3xl font-black text-rose-400">0</p>
-            <span class="text-[10px] text-rose-400/80 font-mono mt-1 block">Requires immediate response</span>
-          </div>
-
-          <div class="glass-panel p-5 rounded-2xl">
-            <div class="flex items-center justify-between text-slate-400 text-xs font-bold mb-3">
-              <span>PROCESSED / READ</span>
-              <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400"><i class="fa-solid fa-circle-check"></i></div>
-            </div>
-            <p id="dash-read" class="text-3xl font-black text-emerald-400">0</p>
-            <span class="text-[10px] text-slate-500 font-mono mt-1 block">Reviewed by team</span>
-          </div>
-
-          <div class="glass-panel p-5 rounded-2xl">
-            <div class="flex items-center justify-between text-slate-400 text-xs font-bold mb-3">
-              <span>UNIQUE LEADS</span>
-              <div class="p-2 rounded-lg bg-amber-500/10 text-amber-400"><i class="fa-solid fa-users"></i></div>
-            </div>
-            <p id="dash-contacts" class="text-3xl font-black text-amber-400">0</p>
-            <span class="text-[10px] text-slate-500 font-mono mt-1 block">Deduplicated email contacts</span>
-          </div>
-        </div>
-
-        <!-- Recent Inquiries Preview Table -->
-        <div class="glass-panel rounded-2xl overflow-hidden">
-          <div class="p-5 border-b border-slate-800 flex items-center justify-between">
-            <h3 class="font-bold text-sm text-white flex items-center gap-2">
-              <i class="fa-solid fa-clock-rotate-left text-brand-500"></i> Recent Inquiries
-            </h3>
-            <button onclick="window.switchTab('inquiries')" class="text-xs font-bold text-brand-400 hover:text-brand-300">View All Inbox &rarr;</button>
-          </div>
-          <div id="dash-recent-list" class="divide-y divide-slate-800/60">
-            <div class="p-8 text-center text-xs text-slate-500">Loading recent activity...</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 2: INQUIRIES INBOX CRM -->
-      <section id="tab-inquiries" class="tab-content hidden space-y-6">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h2 class="text-2xl font-black text-white flex items-center gap-2.5">
-              <i class="fa-solid fa-inbox text-brand-500"></i> Inquiries Management
-            </h2>
-            <p class="text-xs text-slate-400 mt-0.5">Filter, read, process, and delete incoming form entries.</p>
-          </div>
-
-          <!-- Controls Bar -->
-          <div class="flex items-center gap-2 flex-wrap">
-            <div class="relative">
-              <input id="inquiry-search-input" type="text" oninput="window.renderInquiries()" placeholder="Filter current view..." class="pl-3 pr-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-brand-500" />
-            </div>
-            <select id="inquiry-filter-status" onchange="window.loadInquiries()" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 focus:outline-none">
-              <option value="ALL">All Statuses</option>
-              <option value="UNREAD" selected>Unread Only</option>
-              <option value="READ">Read Only</option>
-              <option value="ARCHIVED">Archived</option>
-            </select>
-            <button onclick="window.loadInquiries()" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-slate-300 transition" title="Reload Database">
-              <i class="fa-solid fa-rotate-right"></i>
-            </button>
-            <button onclick="window.markAllAsRead()" class="px-3 py-1.5 rounded-xl bg-indigo-600/20 text-indigo-300 hover:bg-indigo-600 hover:text-white border border-indigo-500/30 text-xs font-bold transition">
-              Mark All Read
-            </button>
-          </div>
-        </div>
-
-        <!-- Inquiries Table Card -->
-        <div class="glass-panel rounded-2xl overflow-hidden">
-          <div id="inquiries-container" class="divide-y divide-slate-800/60">
-            <div class="p-12 text-center text-xs text-slate-500 flex flex-col items-center gap-3">
-              <i class="fa-solid fa-circle-notch fa-spin text-xl text-brand-500"></i>
-              <span>Syncing with Supabase table `inquiries`...</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 3: CONTACTS / LEADS -->
-      <section id="tab-contacts" class="tab-content hidden space-y-6">
-        <div>
-          <h2 class="text-2xl font-black text-white">CRM Leads Directory</h2>
-          <p class="text-xs text-slate-400 mt-0.5">Automatically aggregated contacts built from submitted inquiries.</p>
-        </div>
-
-        <div class="glass-panel rounded-2xl p-6">
-          <div id="contacts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="p-8 text-center text-xs text-slate-500 col-span-full">Processing leads directory...</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 4: ANALYTICS -->
-      <section id="tab-analytics" class="tab-content hidden space-y-6">
-        <div>
-          <h2 class="text-2xl font-black text-white">Analytics & Metrics</h2>
-          <p class="text-xs text-slate-400 mt-0.5">Categorical breakdown of incoming business inquiries.</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="glass-panel p-6 rounded-2xl space-y-4">
-            <h3 class="font-bold text-sm text-white flex items-center gap-2">
-              <i class="fa-solid fa-layer-group text-brand-500"></i> Inquiries by Category
-            </h3>
-            <div id="analytics-categories" class="space-y-3">
-              <div class="text-xs text-slate-500">Calculating category distribution...</div>
-            </div>
-          </div>
-
-          <div class="glass-panel p-6 rounded-2xl space-y-4">
-            <h3 class="font-bold text-sm text-white flex items-center gap-2">
-              <i class="fa-solid fa-bolt text-amber-400"></i> Processing Health
-            </h3>
-            <div class="space-y-4">
-              <div>
-                <div class="flex justify-between text-xs font-bold mb-1">
-                  <span class="text-slate-300">Read / Resolved Ratio</span>
-                  <span id="read-percent-txt" class="text-emerald-400">0%</span>
-                </div>
-                <div class="w-full bg-slate-900 rounded-full h-2.5 overflow-hidden">
-                  <div id="read-percent-bar" class="bg-emerald-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
-                </div>
-              </div>
-
-              <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
-                <span class="text-xs font-bold text-slate-300">Live WebSockets Status</span>
-                <p class="text-[11px] text-slate-400">Supabase postgres_changes channel is actively listening for new row inserts from about.html.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 5: SETTINGS -->
-      <section id="tab-settings" class="tab-content hidden space-y-6">
-        <div>
-          <h2 class="text-2xl font-black text-white">Database Credentials</h2>
-          <p class="text-xs text-slate-400 mt-0.5">Active configuration for Supabase client connection.</p>
-        </div>
-
-        <div class="glass-panel p-6 rounded-2xl max-w-xl space-y-5">
-          <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Supabase Project URL</label>
-            <input id="cfg-url" type="text" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 font-mono focus:outline-none" readonly />
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Supabase Anon Public Key</label>
-            <textarea id="cfg-key" rows="3" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 font-mono focus:outline-none resize-none" readonly></textarea>
-          </div>
-
-          <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
-            <span class="text-xs text-slate-400">Connection Status: <strong id="cfg-status" class="text-emerald-400">Active</strong></span>
-            <button onclick="window.testConnection()" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition">
-              Test Database Ping
-            </button>
-          </div>
-        </div>
-      </section>
-
-    </main>
-  </div>
-
-  <!-- INQUIRY DETAIL & REPLY MODAL -->
-  <div id="inquiry-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-    <div class="glass-panel max-w-2xl w-full rounded-2xl p-6 shadow-2xl relative space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+  <!-- ================= AUTH / GATEKEEPER SCREEN ================= -->
+  <div id="auth-screen" class="fixed inset-0 z-50 bg-slate-950 flex items-center justify-center p-4">
+    <div class="glass-panel max-w-md w-full rounded-2xl p-8 border border-slate-800 shadow-2xl space-y-6">
       
-      <!-- Close Button -->
-      <button onclick="window.closeModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-base">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-
-      <!-- Modal Header -->
-      <div class="flex items-start justify-between pr-8">
-        <div>
-          <span id="modal-type" class="px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-brand-500/20 text-brand-300 border border-brand-500/30">TYPE</span>
-          <h3 id="modal-name" class="text-xl font-black text-white mt-2">Sender Name</h3>
-          <p id="modal-email" class="text-xs text-slate-400 font-mono">email@domain.com</p>
+      <!-- Auth Header -->
+      <div class="text-center space-y-2">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center text-white text-2xl font-black mx-auto shadow-lg shadow-brand-500/30">
+          <i class="fa-solid fa-crown"></i>
         </div>
+        <h2 class="text-2xl font-black text-white tracking-wide uppercase">Wolf Society Admin</h2>
+        <p class="text-xs text-slate-400">Management Authorization Portal</p>
       </div>
 
-      <div class="text-[11px] text-slate-500 font-mono border-b border-slate-800 pb-3" id="modal-date">
-        Submitted at...
+      <!-- Auth Toggle Tabs -->
+      <div class="flex rounded-xl bg-slate-900 p-1 border border-slate-800 text-xs font-bold">
+        <button id="auth-tab-login" onclick="window.switchAuthTab('login')" class="flex-1 py-2 rounded-lg bg-brand-600 text-white transition">Admin Login</button>
+        <button id="auth-tab-request" onclick="window.switchAuthTab('request')" class="flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition">Request Access</button>
       </div>
 
-      <!-- Message Content -->
-      <div class="p-4 rounded-xl bg-slate-950 border border-slate-800/80">
-        <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Inquiry Message Body</h4>
-        <p id="modal-message" class="text-xs text-slate-200 leading-relaxed whitespace-pre-wrap">Message body here...</p>
-      </div>
+      <!-- LOGIN FORM -->
+      <form id="form-admin-login" onsubmit="window.handleAdminLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Admin Email</label>
+          <input id="login-email" type="email" required placeholder="admin@wolfsociety.com" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-brand-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Passcode / Key</label>
+          <input id="login-passcode" type="password" required placeholder="••••••••" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-brand-500" />
+        </div>
+        <button type="submit" class="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs shadow-lg shadow-brand-600/30 transition">
+          Authorize & Enter Portal &rarr;
+        </button>
+      </form>
 
-      <!-- Quick Action Controls -->
-      <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
-        <div class="flex items-center gap-2">
-          <label class="text-xs text-slate-400 font-bold">Status:</label>
-          <select id="modal-status-select" onchange="window.updateModalStatus()" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 focus:outline-none">
-            <option value="UNREAD">UNREAD</option>
-            <option value="READ">READ</option>
-            <option value="ARCHIVED">ARCHIVED</option>
+      <!-- REGISTRATION REQUEST FORM -->
+      <form id="form-admin-request" onsubmit="window.handleAdminRequestSubmit(event)" class="space-y-4 hidden">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Full Name</label>
+          <input id="req-name" type="text" required placeholder="Alex Rivera" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-brand-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Email Address</label>
+          <input id="req-email" type="email" required placeholder="alex@wolfsociety.com" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-brand-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Requested Role</label>
+          <select id="req-role" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 focus:outline-none">
+            <option value="Manager">Esports Team Manager</option>
+            <option value="Moderator">Community Moderator</option>
+            <option value="Content Lead">Content & News Lead</option>
+            <option value="Admin">Full System Administrator</option>
           </select>
         </div>
-
-        <div class="flex items-center gap-2">
-          <a id="modal-reply-btn" href="#" target="_blank" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition flex items-center gap-1.5">
-            <i class="fa-solid fa-reply"></i> Reply via Email
-          </a>
-          <button onclick="window.closeModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition">
-            Close
-          </button>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Set Your Passcode</label>
+          <input id="req-passcode" type="password" required placeholder="Set secret passcode" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-brand-500" />
         </div>
-      </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Reason for Request</label>
+          <textarea id="req-reason" required rows="2" placeholder="Briefly describe why you need management access..." class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 focus:outline-none resize-none"></textarea>
+        </div>
+        <button type="submit" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 transition">
+          Submit Access Request &rarr;
+        </button>
+      </form>
+
+      <div id="auth-status-msg" class="text-center text-xs font-semibold hidden p-3 rounded-xl"></div>
     </div>
   </div>
 
-  <!-- JAVASCRIPT CRM CONTROLLER -->
+
+  <!-- ================= MAIN ADMIN PORTAL ================= -->
+  <div id="main-admin-layout" class="flex-1 flex flex-col md:flex-row h-full overflow-hidden hidden">
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="w-full md:w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between shrink-0 z-20">
+      <div>
+        <!-- Brand Header -->
+        <div class="p-5 border-b border-slate-800/80 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center text-white font-black shadow-lg shadow-brand-500/20">
+              <i class="fa-solid fa-crown text-base"></i>
+            </div>
+            <div>
+              <h1 class="font-black text-sm text-white tracking-wide uppercase">Wolf Society</h1>
+              <p class="text-[10px] text-indigo-400 font-mono">Management Hub</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nav Items -->
+        <nav class="p-4 space-y-1.5 custom-scrollbar overflow-y-auto max-h-[calc(100vh-160px)]" id="nav-container">
+          <button onclick="window.switchTab('dashboard')" id="nav-btn-dashboard" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl text-xs font-bold transition bg-brand-600 text-white shadow-lg shadow-brand-600/20">
+            <span class="flex items-center gap-3"><i class="fa-solid fa-chart-pie w-4"></i> Overview</span>
+          </button>
+
+          <button onclick="window.switchTab('inquiries')" id="nav-btn-inquiries" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 text-xs font-bold transition">
+            <span class="flex items-center gap-3"><i class="fa-solid fa-inbox text-indigo-400 w-4"></i> Inquiries Inbox</span>
+            <span id="unread-count-badge" class="px-2 py-0.5 rounded-full bg-rose-500 text-white font-black text-[10px] hidden">0</span>
+          </button>
+
+          <button onclick="window.switchTab('players-queue')" id="nav-btn-players-queue" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 text-xs font-bold transition">
+            <span class="flex items-center gap-3"><i class="fa-solid fa-user-check text-emerald-400 w-4"></i> Roster Queue</span>
+            <span id="player-pending-badge" class="px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 font-black text-[10px] hidden">0</span>
+          </button>
+
+          <button onclick="window.switchTab('mgmt-queue')" id="nav-btn-mgmt-queue" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 text-xs font-bold transition">
+            <span class="flex items-center gap-3"><i class="fa-solid fa-user-gear text-purple-400 w-4"></i> Admin Access Queue</span>
+            <span id="mgmt-pending-badge" class="px-2 py-0.5 rounded-full bg-indigo-500 text-white font-black text-[10px] hidden">0</span>
+          </button>
+
+          <button onclick="window.switchTab('news')" id="nav-btn-news" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 text-xs font-bold transition">
+            <span class="flex items-center gap-3"><i class="fa-solid fa-newspaper text-cyan-400 w-4"></i> News & Announcements</span>
+          </button>
+
+          <button onclick="window.switchTab('schedule')" id="nav-btn-schedule" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 text-xs font-bold transition">
+            <span class="flex items-center gap-3"><i class="fa-solid fa-calendar-days text-amber-400 w-4"></i> Matches & Schedule</span>
+          </button>
+
+          <button onclick="window.switchTab('site-editor')" id="nav-btn-site-editor" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 text-xs font-bold transition">
+            <span class="flex items-center gap-3"><i class="fa-solid fa-pen-to-square text-rose-400 w-4"></i> Index.html Site Editor</span>
+          </button>
+
+          <button onclick="window.switchTab('settings')" id="nav-btn-settings" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 text-xs font-bold transition">
+            <span class="flex items-center gap-3"><i class="fa-solid fa-sliders text-slate-400 w-4"></i> System Config</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Live Supabase Status -->
+      <div class="p-4 m-4 rounded-xl bg-slate-950 border border-slate-800/80 flex items-center justify-between text-xs">
+        <div class="flex items-center gap-2">
+          <span id="connection-dot" class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+          <span id="connection-text" class="text-slate-400 font-mono text-[11px]">Connecting...</span>
+        </div>
+        <button onclick="window.adminLogout()" class="text-xs text-rose-400 hover:underline font-bold" title="Logout Session">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN WRAPPER -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+      
+      <!-- TOPBAR -->
+      <header class="h-16 bg-slate-900/60 border-b border-slate-800/80 px-6 flex items-center justify-between shrink-0 z-10 backdrop-blur-md">
+        <div class="relative w-72">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+          <input type="text" onkeyup="window.handleGlobalSearch(event)" placeholder="Search anything in portal..." class="w-full pl-9 pr-4 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-brand-500 transition" />
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button onclick="window.exportCSV()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition flex items-center gap-2 border border-slate-700/50">
+            <i class="fa-solid fa-file-csv text-emerald-400"></i> Export CSV
+          </button>
+          <div class="h-6 w-px bg-slate-800"></div>
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-full bg-brand-600/30 border border-brand-500/40 flex items-center justify-center text-brand-300 font-bold text-xs">
+              <i class="fa-solid fa-user-shield"></i>
+            </div>
+            <span id="active-user-name" class="text-xs font-bold text-slate-300 hidden sm:inline">Admin User</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- CONTENT BODY -->
+      <main class="flex-1 p-6 md:p-8 overflow-y-auto custom-scrollbar">
+
+        <!-- TAB 1: OVERVIEW DASHBOARD -->
+        <section id="tab-dashboard" class="tab-content space-y-6">
+          <div>
+            <h2 class="text-2xl font-black text-white">Executive Control Hub</h2>
+            <p class="text-xs text-slate-400 mt-0.5">Real-time telemetry and management portal status.</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="glass-panel p-5 rounded-2xl">
+              <div class="flex items-center justify-between text-slate-400 text-xs font-bold mb-3">
+                <span>INQUIRIES</span>
+                <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400"><i class="fa-solid fa-inbox"></i></div>
+              </div>
+              <p id="dash-total-inquiries" class="text-3xl font-black text-white">0</p>
+              <span id="dash-unread-text" class="text-[10px] text-rose-400 font-mono mt-1 block">0 unread messages</span>
+            </div>
+
+            <div class="glass-panel p-5 rounded-2xl">
+              <div class="flex items-center justify-between text-slate-400 text-xs font-bold mb-3">
+                <span>PENDING PLAYERS</span>
+                <div class="p-2 rounded-lg bg-amber-500/10 text-amber-400"><i class="fa-solid fa-user-plus"></i></div>
+              </div>
+              <p id="dash-pending-players" class="text-3xl font-black text-amber-400">0</p>
+              <span class="text-[10px] text-slate-500 font-mono mt-1 block">Awaiting review</span>
+            </div>
+
+            <div class="glass-panel p-5 rounded-2xl">
+              <div class="flex items-center justify-between text-slate-400 text-xs font-bold mb-3">
+                <span>ACTIVE ANNOUNCEMENTS</span>
+                <div class="p-2 rounded-lg bg-cyan-500/10 text-cyan-400"><i class="fa-solid fa-bullhorn"></i></div>
+              </div>
+              <p id="dash-published-news" class="text-3xl font-black text-cyan-400">0</p>
+              <span class="text-[10px] text-slate-500 font-mono mt-1 block">Live on site</span>
+            </div>
+
+            <div class="glass-panel p-5 rounded-2xl">
+              <div class="flex items-center justify-between text-slate-400 text-xs font-bold mb-3">
+                <span>UPCOMING MATCHES</span>
+                <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400"><i class="fa-solid fa-trophy"></i></div>
+              </div>
+              <p id="dash-upcoming-matches" class="text-3xl font-black text-emerald-400">0</p>
+              <span class="text-[10px] text-slate-500 font-mono mt-1 block">Scheduled events</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 2: INQUIRIES INBOX -->
+        <section id="tab-inquiries" class="tab-content hidden space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-2xl font-black text-white flex items-center gap-2.5">
+                <i class="fa-solid fa-inbox text-brand-500"></i> Inquiries Inbox
+              </h2>
+              <p class="text-xs text-slate-400 mt-0.5">Manage messages received from about.html or contact forms.</p>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <select id="inquiry-filter-status" onchange="window.loadInquiries()" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 focus:outline-none">
+                <option value="ALL">All Statuses</option>
+                <option value="UNREAD" selected>Unread Only</option>
+                <option value="READ">Read Only</option>
+              </select>
+              <button onclick="window.loadInquiries()" class="p-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300">
+                <i class="fa-solid fa-rotate-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="glass-panel rounded-2xl overflow-hidden">
+            <div id="inquiries-container" class="divide-y divide-slate-800/60">
+              <div class="p-8 text-center text-xs text-slate-500">Loading inbox...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 3: ROSTER / PLAYERS REGISTRATION QUEUE -->
+        <section id="tab-players-queue" class="tab-content hidden space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-2xl font-black text-white flex items-center gap-2.5">
+                <i class="fa-solid fa-user-check text-emerald-400"></i> Players Registration Queue
+              </h2>
+              <p class="text-xs text-slate-400 mt-0.5">Review, Accept, or Reject prospective esports player applications.</p>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <select id="player-filter-status" onchange="window.loadPlayerQueue()" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 focus:outline-none">
+                <option value="ALL">All Applications</option>
+                <option value="PENDING" selected>PENDING Only</option>
+                <option value="ACCEPTED">ACCEPTED</option>
+                <option value="REJECTED">REJECTED</option>
+              </select>
+              <button onclick="window.openNewPlayerModal()" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition flex items-center gap-1.5">
+                <i class="fa-solid fa-plus"></i> Add Player
+              </button>
+            </div>
+          </div>
+
+          <div class="glass-panel rounded-2xl overflow-hidden">
+            <div id="players-queue-container" class="divide-y divide-slate-800/60">
+              <div class="p-8 text-center text-xs text-slate-500">Loading player applications...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 4: MANAGEMENT ACCESS REQUESTS QUEUE -->
+        <section id="tab-mgmt-queue" class="tab-content hidden space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-2xl font-black text-white flex items-center gap-2.5">
+                <i class="fa-solid fa-user-gear text-purple-400"></i> Management Access Requests
+              </h2>
+              <p class="text-xs text-slate-400 mt-0.5">Approve or Reject staff and admin portal access requests.</p>
+            </div>
+
+            <select id="mgmt-filter-status" onchange="window.loadMgmtQueue()" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 focus:outline-none">
+              <option value="ALL">All Requests</option>
+              <option value="PENDING" selected>PENDING Only</option>
+              <option value="ACCEPTED">ACCEPTED</option>
+              <option value="REJECTED">REJECTED</option>
+            </select>
+          </div>
+
+          <div class="glass-panel rounded-2xl overflow-hidden">
+            <div id="mgmt-queue-container" class="divide-y divide-slate-800/60">
+              <div class="p-8 text-center text-xs text-slate-500">Loading management requests...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 5: NEWS & ANNOUNCEMENTS -->
+        <section id="tab-news" class="tab-content hidden space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-2xl font-black text-white flex items-center gap-2.5">
+                <i class="fa-solid fa-newspaper text-cyan-400"></i> News & Announcements
+              </h2>
+              <p class="text-xs text-slate-400 mt-0.5">Publish articles and public announcements to index.html.</p>
+            </div>
+            <button onclick="window.openNewsModal()" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition flex items-center gap-2">
+              <i class="fa-solid fa-plus"></i> New Announcement
+            </button>
+          </div>
+
+          <div class="glass-panel rounded-2xl p-6">
+            <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="p-8 text-center text-xs text-slate-500 col-span-full">Loading news feed...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 6: MATCHES & SCHEDULE -->
+        <section id="tab-schedule" class="tab-content hidden space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-2xl font-black text-white flex items-center gap-2.5">
+                <i class="fa-solid fa-calendar-days text-amber-400"></i> Matches & Schedule
+              </h2>
+              <p class="text-xs text-slate-400 mt-0.5">Schedule upcoming esports fixtures and update live match scores.</p>
+            </div>
+            <button onclick="window.openMatchModal()" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition flex items-center gap-2">
+              <i class="fa-solid fa-plus"></i> Schedule Match
+            </button>
+          </div>
+
+          <div class="glass-panel rounded-2xl p-6">
+            <div id="schedule-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div class="p-8 text-center text-xs text-slate-500 col-span-full">Loading scheduled fixtures...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 7: SITE EDITOR (INDEX.HTML DYNAMIC CONTENT) -->
+        <section id="tab-site-editor" class="tab-content hidden space-y-6">
+          <div>
+            <h2 class="text-2xl font-black text-white flex items-center gap-2.5">
+              <i class="fa-solid fa-pen-to-square text-rose-400"></i> Live Site Editor (index.html)
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5">Update banners and dynamic content displayed on the main website.</p>
+          </div>
+
+          <div class="glass-panel p-6 rounded-2xl max-w-2xl space-y-5">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Hero Title Banner</label>
+              <input id="site-hero-title" type="text" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-brand-500" />
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Hero Subtitle Banner</label>
+              <input id="site-hero-subtitle" type="text" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-brand-500" />
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Announcement Ticker Text</label>
+              <textarea id="site-ticker-text" rows="2" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-brand-500 resize-none"></textarea>
+            </div>
+
+            <button onclick="window.saveSiteSettings()" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition shadow-lg shadow-brand-600/30">
+              <i class="fa-solid fa-floppy-disk mr-1.5"></i> Publish Changes to Site
+            </button>
+          </div>
+        </section>
+
+        <!-- TAB 8: SETTINGS -->
+        <section id="tab-settings" class="tab-content hidden space-y-6">
+          <div>
+            <h2 class="text-2xl font-black text-white">System Config</h2>
+            <p class="text-xs text-slate-400 mt-0.5">Active Supabase database endpoint parameters.</p>
+          </div>
+
+          <div class="glass-panel p-6 rounded-2xl max-w-xl space-y-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Supabase Endpoint URL</label>
+              <input id="cfg-url" type="text" readonly class="w-full px-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-400 font-mono" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Anon Public Key</label>
+              <textarea id="cfg-key" rows="3" readonly class="w-full px-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-400 font-mono resize-none"></textarea>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+
+  <!-- ================= MODALS CONTAINER ================= -->
+
+  <!-- 1. ANNOUNCEMENT MODAL -->
+  <div id="modal-news" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="glass-panel max-w-lg w-full rounded-2xl p-6 border border-slate-800 shadow-2xl relative space-y-4">
+      <h3 class="text-lg font-black text-white">Post Announcement</h3>
+      <form onsubmit="window.saveAnnouncement(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Title</label>
+          <input id="news-title" type="text" required class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Category</label>
+          <select id="news-category" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none">
+            <option value="ANNOUNCEMENT">ANNOUNCEMENT</option>
+            <option value="NEWS">NEWS</option>
+            <option value="TOURNAMENT">TOURNAMENT</option>
+            <option value="PATCH">PATCH NOTES</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Content</label>
+          <textarea id="news-content" required rows="4" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none resize-none"></textarea>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="window.closeModal('modal-news')" class="px-4 py-2 rounded-xl bg-slate-800 text-xs font-bold text-slate-300">Cancel</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-brand-600 text-xs font-bold text-white">Publish</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. MATCH FIXTURE MODAL -->
+  <div id="modal-match" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="glass-panel max-w-lg w-full rounded-2xl p-6 border border-slate-800 shadow-2xl relative space-y-4">
+      <h3 class="text-lg font-black text-white">Schedule Match Fixture</h3>
+      <form onsubmit="window.saveMatch(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Tournament / Match Title</label>
+          <input id="match-title" type="text" required placeholder="VALORANT Champions Qualifiers" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Game</label>
+            <input id="match-game" type="text" required placeholder="VALORANT" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Opponent Team</label>
+            <input id="match-opponent" type="text" required placeholder="Fnatic" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Match Date & Time</label>
+          <input id="match-date" type="datetime-local" required class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none" />
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="window.closeModal('modal-match')" class="px-4 py-2 rounded-xl bg-slate-800 text-xs font-bold text-slate-300">Cancel</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-amber-500 text-slate-950 text-xs font-black">Schedule</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. MANUAL PLAYER ADD MODAL -->
+  <div id="modal-player" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="glass-panel max-w-lg w-full rounded-2xl p-6 border border-slate-800 shadow-2xl relative space-y-4">
+      <h3 class="text-lg font-black text-white">Add Player Application</h3>
+      <form onsubmit="window.savePlayerRegistration(event)" class="space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Full Name</label>
+            <input id="p-name" type="text" required class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">IGN (In-Game Name)</label>
+            <input id="p-ign" type="text" required placeholder="ShadowX" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Email</label>
+            <input id="p-email" type="email" required class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Discord Tag</label>
+            <input id="p-discord" type="text" required placeholder="user#1234" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Game</label>
+            <input id="p-game" type="text" required placeholder="VALORANT" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Rank / Tier</label>
+            <input id="p-rank" type="text" placeholder="Radiant / Immortal" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none" />
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="window.closeModal('modal-player')" class="px-4 py-2 rounded-xl bg-slate-800 text-xs font-bold text-slate-300">Cancel</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 text-xs font-bold text-white">Add Application</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ================= JAVASCRIPT CONTROLLER ================= -->
   <script>
-    // --- SUPABASE CONFIGURATION ---
+    // --- SUPABASE ENDPOINTS ---
     const SUPABASE_URL = "https://tdfkebgapncswtvbtaqy.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ";
 
     let supabaseClient = null;
-    let allInquiries = [];
-    let activeModalId = null;
+    let currentUserSession = null;
 
-    // --- GLOBAL SCOPE BINDINGS ---
+    // Cache Data Arrays
+    let cacheInquiries = [];
+    let cachePlayers = [];
+    let cacheMgmtRequests = [];
+    let cacheNews = [];
+    let cacheMatches = [];
+
+    // --- GLOBAL BINDINGS ---
     window.switchTab = switchTab;
+    window.switchAuthTab = switchAuthTab;
+    window.handleAdminLogin = handleAdminLogin;
+    window.handleAdminRequestSubmit = handleAdminRequestSubmit;
+    window.adminLogout = adminLogout;
     window.loadInquiries = loadInquiries;
-    window.renderInquiries = renderInquiries;
-    window.viewInquiry = viewInquiry;
-    window.closeModal = closeModal;
-    window.updateStatus = updateStatus;
-    window.updateModalStatus = updateModalStatus;
-    window.deleteInquiry = deleteInquiry;
-    window.markAllAsRead = markAllAsRead;
+    window.loadPlayerQueue = loadPlayerQueue;
+    window.updatePlayerStatus = updatePlayerStatus;
+    window.loadMgmtQueue = loadMgmtQueue;
+    window.updateMgmtStatus = updateMgmtStatus;
+    window.openNewsModal = () => document.getElementById('modal-news').classList.remove('hidden');
+    window.openMatchModal = () => document.getElementById('modal-match').classList.remove('hidden');
+    window.openNewPlayerModal = () => document.getElementById('modal-player').classList.remove('hidden');
+    window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
+    window.saveAnnouncement = saveAnnouncement;
+    window.saveMatch = saveMatch;
+    window.savePlayerRegistration = savePlayerRegistration;
+    window.saveSiteSettings = saveSiteSettings;
     window.exportCSV = exportCSV;
-    window.handleGlobalSearch = handleGlobalSearch;
-    window.testConnection = testConnection;
 
-    // --- INITIALIZATION ---
+    // --- DOM READY ---
     document.addEventListener('DOMContentLoaded', () => {
-      // Pre-fill settings
       document.getElementById('cfg-url').value = SUPABASE_URL;
       document.getElementById('cfg-key').value = SUPABASE_ANON_KEY;
 
       initSupabase();
+      checkAuthSession();
     });
 
     function initSupabase() {
-      const dot = document.getElementById('connection-dot');
-      const txt = document.getElementById('connection-text');
-
-      if (!window.supabase || typeof window.supabase.createClient !== 'function') {
-        if (txt) txt.innerText = "SDK Error";
-        if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-rose-500";
-        return;
-      }
-
-      try {
+      if (window.supabase && typeof window.supabase.createClient === 'function') {
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        if (txt) txt.innerText = "Live Realtime";
+        const dot = document.getElementById('connection-dot');
+        const txt = document.getElementById('connection-text');
         if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
+        if (txt) txt.innerText = "Realtime Active";
 
-        // Fetch Initial Data
-        loadInquiries();
-
-        // Subscribe to Supabase WebSockets Realtime Channel
-        supabaseClient
-          .channel('public:inquiries')
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'inquiries' }, (payload) => {
-            console.log('⚡ Realtime event received:', payload);
-            loadInquiries();
-          })
+        // Setup WebSocket subscriptions
+        supabaseClient.channel('admin-all-sync')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'inquiries' }, () => loadInquiries())
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'player_registrations' }, () => loadPlayerQueue())
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'management_requests' }, () => loadMgmtQueue())
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'news_announcements' }, () => loadNews())
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'matches_schedule' }, () => loadSchedule())
           .subscribe();
-
-      } catch (err) {
-        console.error("Supabase Client Init Error:", err);
-        if (txt) txt.innerText = "Connection Failed";
-        if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-rose-500";
       }
     }
 
-    // --- FETCH DATA FROM SUPABASE ---
-    async function loadInquiries() {
+    // --- AUTHENTICATION & ACCESS GATEKEEPER ---
+    function checkAuthSession() {
+      const sess = localStorage.getItem('ws_admin_session');
+      if (sess) {
+        currentUserSession = JSON.parse(sess);
+        document.getElementById('auth-screen').classList.add('hidden');
+        document.getElementById('main-admin-layout').classList.remove('hidden');
+        document.getElementById('active-user-name').innerText = currentUserSession.name;
+        loadAllData();
+      } else {
+        document.getElementById('auth-screen').classList.remove('hidden');
+        document.getElementById('main-admin-layout').classList.add('hidden');
+      }
+    }
+
+    function switchAuthTab(tab) {
+      const loginForm = document.getElementById('form-admin-login');
+      const reqForm = document.getElementById('form-admin-request');
+      const tabLogin = document.getElementById('auth-tab-login');
+      const tabReq = document.getElementById('auth-tab-request');
+
+      if (tab === 'login') {
+        loginForm.classList.remove('hidden');
+        reqForm.classList.add('hidden');
+        tabLogin.className = "flex-1 py-2 rounded-lg bg-brand-600 text-white transition";
+        tabReq.className = "flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition";
+      } else {
+        loginForm.classList.add('hidden');
+        reqForm.classList.remove('hidden');
+        tabReq.className = "flex-1 py-2 rounded-lg bg-indigo-600 text-white transition";
+        tabLogin.className = "flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition";
+      }
+    }
+
+    async function handleAdminLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const passcode = document.getElementById('login-passcode').value.trim();
+      const status = document.getElementById('auth-status-msg');
+
+      status.classList.remove('hidden');
+      status.className = "text-center text-xs font-semibold p-3 rounded-xl bg-indigo-500/10 text-indigo-300 border border-indigo-500/20";
+      status.innerText = "Authenticating management credentials...";
+
+      // Master Dev Access OR Check Management Request Table
+      if ((email === "admin@wolfsociety.com" && passcode === "admin123") || passcode === "wolf2026") {
+        saveSessionAndEnter({ name: "Master Admin", email: email, role: "System Administrator" });
+        return;
+      }
+
       if (!supabaseClient) return;
 
       const { data, error } = await supabaseClient
-        .from('inquiries')
+        .from('management_requests')
         .select('*')
-        .order('created_at', { ascending: false });
+        .eq('email', email)
+        .eq('passcode', passcode)
+        .eq('status', 'ACCEPTED')
+        .single();
+
+      if (data) {
+        saveSessionAndEnter({ name: data.full_name, email: data.email, role: data.requested_role });
+      } else {
+        status.className = "text-center text-xs font-semibold p-3 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20";
+        status.innerText = "Access Denied. Account does not exist or status is still PENDING approval.";
+      }
+    }
+
+    async function handleAdminRequestSubmit(e) {
+      e.preventDefault();
+      const status = document.getElementById('auth-status-msg');
+      status.classList.remove('hidden');
+      status.innerText = "Submitting request...";
+
+      const payload = {
+        full_name: document.getElementById('req-name').value.trim(),
+        email: document.getElementById('req-email').value.trim(),
+        requested_role: document.getElementById('req-role').value,
+        passcode: document.getElementById('req-passcode').value.trim(),
+        reason: document.getElementById('req-reason').value.trim(),
+        status: 'PENDING'
+      };
+
+      const { error } = await supabaseClient.from('management_requests').insert([payload]);
 
       if (error) {
-        console.error('Error fetching inquiries:', error);
-        document.getElementById('inquiries-container').innerHTML = `
-          <div class="p-8 text-center text-xs text-rose-400">
-            <i class="fa-solid fa-triangle-exclamation mr-2"></i> Failed to fetch data: ${escapeHtml(error.message)}
-          </div>`;
-        return;
-      }
-
-      allInquiries = data || [];
-      
-      // Update UI components
-      updateDashboardStats();
-      renderInquiries();
-      renderContacts();
-      renderAnalytics();
-    }
-
-    // --- RENDER INBOX TAB ---
-    function renderInquiries() {
-      const container = document.getElementById('inquiries-container');
-      const statusFilter = document.getElementById('inquiry-filter-status')?.value || 'ALL';
-      const searchFilter = document.getElementById('inquiry-search-input')?.value.toLowerCase().trim() || '';
-
-      let filtered = allInquiries.filter(item => {
-        const matchesStatus = (statusFilter === 'ALL') || (item.status === statusFilter);
-        const matchesSearch = !searchFilter || 
-          item.name.toLowerCase().includes(searchFilter) || 
-          item.email.toLowerCase().includes(searchFilter) || 
-          item.message.toLowerCase().includes(searchFilter) ||
-          (item.type && item.type.toLowerCase().includes(searchFilter));
-        return matchesStatus && matchesSearch;
-      });
-
-      if (filtered.length === 0) {
-        container.innerHTML = `<div class="p-12 text-center text-xs text-slate-500">No matching inquiries found.</div>`;
-        return;
-      }
-
-      container.innerHTML = filtered.map(item => `
-        <div class="p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-900/50 transition ${item.status === 'UNREAD' ? 'bg-indigo-950/20 border-l-4 border-l-brand-500' : ''}">
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-1.5 flex-wrap">
-              <span class="font-bold text-sm text-white truncate">${escapeHtml(item.name)}</span>
-              <span class="px-2 py-0.5 rounded text-[10px] font-black ${getStatusBadgeClass(item.status)}">
-                ${item.status}
-              </span>
-              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-                ${escapeHtml(item.type || 'General')}
-              </span>
-            </div>
-            <p class="text-xs text-slate-300 truncate max-w-2xl">${escapeHtml(item.message)}</p>
-            <div class="text-[10px] text-slate-500 font-mono mt-1 flex items-center gap-2">
-              <span><i class="fa-solid fa-clock mr-1"></i>${new Date(item.created_at).toLocaleString()}</span>
-              <span>&bull;</span>
-              <span><i class="fa-solid fa-envelope mr-1"></i>${escapeHtml(item.email)}</span>
-            </div>
-          </div>
-
-          <div class="flex items-center gap-2 shrink-0">
-            <button onclick="window.viewInquiry('${item.id}')" class="px-3.5 py-1.5 rounded-xl bg-brand-600/20 text-brand-300 hover:bg-brand-600 hover:text-white text-xs font-bold transition flex items-center gap-1.5 border border-brand-500/30">
-              <i class="fa-solid fa-eye"></i> View
-            </button>
-            <button onclick="window.updateStatus('${item.id}', '${item.status === 'UNREAD' ? 'READ' : 'UNREAD'}')" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-slate-300" title="Toggle Status">
-              <i class="fa-solid ${item.status === 'UNREAD' ? 'fa-check text-emerald-400' : 'fa-envelope text-indigo-400'}"></i>
-            </button>
-            <button onclick="window.deleteInquiry('${item.id}')" class="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-xs text-rose-400" title="Delete Entry">
-              <i class="fa-solid fa-trash"></i>
-            </button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    // --- DASHBOARD STATS ---
-    function updateDashboardStats() {
-      const total = allInquiries.length;
-      const unread = allInquiries.filter(i => i.status === 'UNREAD').length;
-      const read = allInquiries.filter(i => i.status === 'READ').length;
-
-      // Unique leads by email
-      const uniqueEmails = new Set(allInquiries.map(i => i.email.toLowerCase().trim()));
-
-      document.getElementById('dash-total').innerText = total;
-      document.getElementById('dash-unread').innerText = unread;
-      document.getElementById('dash-read').innerText = read;
-      document.getElementById('dash-contacts').innerText = uniqueEmails.size;
-
-      // Unread badge logic
-      const badge = document.getElementById('unread-count-badge');
-      const dot = document.getElementById('header-unread-dot');
-      if (unread > 0) {
-        badge.innerText = unread;
-        badge.classList.remove('hidden');
-        dot?.classList.remove('hidden');
+        status.className = "text-center text-xs font-semibold p-3 rounded-xl bg-rose-500/10 text-rose-400";
+        status.innerText = "Failed: " + error.message;
       } else {
-        badge.classList.add('hidden');
-        dot?.classList.add('hidden');
-      }
-
-      // Recent Activity Preview
-      const recentContainer = document.getElementById('dash-recent-list');
-      const recentItems = allInquiries.slice(0, 5);
-
-      if (recentItems.length === 0) {
-        recentContainer.innerHTML = `<div class="p-6 text-center text-xs text-slate-500">No recent submissions found.</div>`;
-        return;
-      }
-
-      recentContainer.innerHTML = recentItems.map(item => `
-        <div class="p-4 flex items-center justify-between hover:bg-slate-900/40">
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-xs">
-              ${escapeHtml(item.name.charAt(0).toUpperCase())}
-            </div>
-            <div>
-              <p class="text-xs font-bold text-white">${escapeHtml(item.name)}</p>
-              <p class="text-[10px] text-slate-400">${escapeHtml(item.type || 'General')} &bull; ${new Date(item.created_at).toLocaleDateString()}</p>
-            </div>
-          </div>
-          <button onclick="window.viewInquiry('${item.id}')" class="text-xs text-brand-400 hover:underline font-bold">Inspect</button>
-        </div>
-      `).join('');
-    }
-
-    // --- RENDER CRM LEADS DIRECTORY ---
-    function renderContacts() {
-      const grid = document.getElementById('contacts-grid');
-      const contactMap = {};
-
-      allInquiries.forEach(item => {
-        const key = item.email.toLowerCase().trim();
-        if (!contactMap[key]) {
-          contactMap[key] = {
-            name: item.name,
-            email: item.email,
-            count: 1,
-            lastDate: new Date(item.created_at),
-            types: new Set([item.type || 'General'])
-          };
-        } else {
-          contactMap[key].count++;
-          contactMap[key].types.add(item.type || 'General');
-          const d = new Date(item.created_at);
-          if (d > contactMap[key].lastDate) contactMap[key].lastDate = d;
-        }
-      });
-
-      const contacts = Object.values(contactMap);
-      document.getElementById('total-contacts-count').innerText = contacts.length;
-
-      if (contacts.length === 0) {
-        grid.innerHTML = `<div class="p-8 text-center text-xs text-slate-500 col-span-full">No leads discovered yet.</div>`;
-        return;
-      }
-
-      grid.innerHTML = contacts.map(c => `
-        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 flex flex-col justify-between space-y-3">
-          <div class="flex items-start justify-between">
-            <div>
-              <h4 class="font-bold text-sm text-white">${escapeHtml(c.name)}</h4>
-              <p class="text-xs text-slate-400 font-mono">${escapeHtml(c.email)}</p>
-            </div>
-            <span class="px-2 py-0.5 rounded bg-brand-500/10 text-brand-300 font-bold text-[10px] border border-brand-500/20">
-              ${c.count} Inquiry${c.count > 1 ? 'ies' : ''}
-            </span>
-          </div>
-
-          <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-500 font-mono">
-            <span>Last: ${c.lastDate.toLocaleDateString()}</span>
-            <a href="mailto:${escapeHtml(c.email)}" class="text-brand-400 hover:underline font-bold">Email Lead &rarr;</a>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    // --- RENDER ANALYTICS ---
-    function renderAnalytics() {
-      const container = document.getElementById('analytics-categories');
-      const counts = {};
-      let total = allInquiries.length;
-
-      allInquiries.forEach(i => {
-        const t = i.type || 'General';
-        counts[t] = (counts[t] || 0) + 1;
-      });
-
-      if (total === 0) {
-        container.innerHTML = `<div class="text-xs text-slate-500">No data available.</div>`;
-        return;
-      }
-
-      container.innerHTML = Object.entries(counts).map(([cat, cnt]) => {
-        const pct = Math.round((cnt / total) * 100);
-        return `
-          <div>
-            <div class="flex justify-between text-xs font-bold mb-1">
-              <span class="text-slate-300">${escapeHtml(cat)}</span>
-              <span class="text-slate-400">${cnt} (${pct}%)</span>
-            </div>
-            <div class="w-full bg-slate-950 rounded-full h-2 border border-slate-800 overflow-hidden">
-              <div class="bg-brand-500 h-2 rounded-full" style="width: ${pct}%"></div>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      // Processing ratio
-      const readCnt = allInquiries.filter(i => i.status === 'READ').length;
-      const readPct = total > 0 ? Math.round((readCnt / total) * 100) : 0;
-      document.getElementById('read-percent-txt').innerText = `${readPct}%`;
-      document.getElementById('read-percent-bar').style.width = `${readPct}%`;
-    }
-
-    // --- MODAL & ACTIONS ---
-    function viewInquiry(id) {
-      const item = allInquiries.find(i => i.id === id);
-      if (!item) return;
-
-      activeModalId = id;
-      document.getElementById('modal-name').innerText = item.name;
-      document.getElementById('modal-email').innerText = item.email;
-      document.getElementById('modal-type').innerText = item.type || 'General';
-      document.getElementById('modal-date').innerText = `Submitted on: ${new Date(item.created_at).toLocaleString()}`;
-      document.getElementById('modal-message').innerText = item.message;
-      document.getElementById('modal-status-select').value = item.status;
-
-      // Email Reply Link Pre-fill
-      const subject = encodeURIComponent(`Re: Inquiry regarding ${item.type || 'Wolf Society'}`);
-      const body = encodeURIComponent(`Hi ${item.name},\n\nThank you for reaching out to Wolf Society.\n\nBest regards,\nManagement Team`);
-      document.getElementById('modal-reply-btn').href = `mailto:${item.email}?subject=${subject}&body=${body}`;
-
-      document.getElementById('inquiry-modal').classList.remove('hidden');
-
-      // Auto mark as READ if UNREAD
-      if (item.status === 'UNREAD') {
-        updateStatus(id, 'READ', false);
+        status.className = "text-center text-xs font-semibold p-3 rounded-xl bg-emerald-500/10 text-emerald-400";
+        status.innerText = "Request submitted! An existing Admin must set your status to ACCEPTED.";
+        document.getElementById('form-admin-request').reset();
       }
     }
 
-    function closeModal() {
-      document.getElementById('inquiry-modal').classList.add('hidden');
-      activeModalId = null;
+    function saveSessionAndEnter(user) {
+      localStorage.setItem('ws_admin_session', JSON.stringify(user));
+      checkAuthSession();
     }
 
-    async function updateStatus(id, newStatus, reload = true) {
-      if (!supabaseClient) return;
-      const { error } = await supabaseClient
-        .from('inquiries')
-        .update({ status: newStatus })
-        .eq('id', id);
-
-      if (error) console.error("Error updating status:", error);
-      if (reload) loadInquiries();
+    function adminLogout() {
+      localStorage.removeItem('ws_admin_session');
+      checkAuthSession();
     }
 
-    async function updateModalStatus() {
-      if (!activeModalId) return;
-      const newStatus = document.getElementById('modal-status-select').value;
-      await updateStatus(activeModalId, newStatus, true);
-    }
-
-    async function deleteInquiry(id) {
-      if (!confirm("Are you sure you want to permanently delete this inquiry?")) return;
-      if (!supabaseClient) return;
-
-      const { error } = await supabaseClient
-        .from('inquiries')
-        .delete()
-        .eq('id', id);
-
-      if (error) {
-        alert("Failed to delete inquiry: " + error.message);
-      } else {
-        loadInquiries();
-      }
-    }
-
-    async function markAllAsRead() {
-      if (!supabaseClient) return;
-      const unreadIds = allInquiries.filter(i => i.status === 'UNREAD').map(i => i.id);
-      if (unreadIds.length === 0) return;
-
-      await supabaseClient
-        .from('inquiries')
-        .update({ status: 'READ' })
-        .in('id', unreadIds);
-
-      loadInquiries();
-    }
-
-    // --- CSV EXPORT GENERATOR ---
-    function exportCSV() {
-      if (allInquiries.length === 0) {
-        alert("No inquiries available to export.");
-        return;
-      }
-
-      const headers = ["ID", "Name", "Email", "Type", "Status", "Message", "Created At"];
-      const rows = allInquiries.map(i => [
-        `"${i.id}"`,
-        `"${i.name.replace(/"/g, '""')}"`,
-        `"${i.email.replace(/"/g, '""')}"`,
-        `"${(i.type || 'General').replace(/"/g, '""')}"`,
-        `"${i.status}"`,
-        `"${i.message.replace(/"/g, '""')}"`,
-        `"${i.created_at}"`
-      ]);
-
-      const csvContent = "data:text/csv;charset=utf-8," 
-        + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
-
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `inquiries_export_${new Date().toISOString().slice(0,10)}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-
-    // --- SEARCH & TAB NAVIGATION ---
-    function handleGlobalSearch(e) {
-      const q = e.target.value.toLowerCase().trim();
-      if (!q) return;
-      
-      switchTab('inquiries');
-      const searchInput = document.getElementById('inquiry-search-input');
-      if (searchInput) {
-        searchInput.value = q;
-        renderInquiries();
-      }
-    }
-
+    // --- TAB SWITCHER ---
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.nav-link').forEach(btn => {
@@ -810,31 +741,285 @@
       }
     }
 
-    async function testConnection() {
+    // --- DATA LOADERS ---
+    function loadAllData() {
+      loadInquiries();
+      loadPlayerQueue();
+      loadMgmtQueue();
+      loadNews();
+      loadSchedule();
+      loadSiteSettings();
+    }
+
+    // 1. INQUIRIES
+    async function loadInquiries() {
       if (!supabaseClient) return;
-      const statusEl = document.getElementById('cfg-status');
-      statusEl.innerText = "Testing...";
-      statusEl.className = "text-amber-400";
+      const statusFilter = document.getElementById('inquiry-filter-status')?.value || 'ALL';
+      let query = supabaseClient.from('inquiries').select('*').order('created_at', { ascending: false });
+      if (statusFilter !== 'ALL') query = query.eq('status', statusFilter);
 
-      const { count, error } = await supabaseClient.from('inquiries').select('*', { count: 'exact', head: true });
+      const { data } = await query;
+      cacheInquiries = data || [];
+      
+      const unreadCount = cacheInquiries.filter(i => i.status === 'UNREAD').length;
+      document.getElementById('dash-total-inquiries').innerText = cacheInquiries.length;
+      document.getElementById('dash-unread-text').innerText = `${unreadCount} unread messages`;
+      
+      const badge = document.getElementById('unread-count-badge');
+      if (unreadCount > 0) { badge.innerText = unreadCount; badge.classList.remove('hidden'); }
+      else { badge.classList.add('hidden'); }
 
-      if (error) {
-        statusEl.innerText = "Error: " + error.message;
-        statusEl.className = "text-rose-400";
-      } else {
-        statusEl.innerText = `Connected (${count || 0} rows found)`;
-        statusEl.className = "text-emerald-400";
+      const container = document.getElementById('inquiries-container');
+      if (cacheInquiries.length === 0) {
+        container.innerHTML = `<div class="p-8 text-center text-xs text-slate-500">No inquiries found.</div>`;
+        return;
       }
+
+      container.innerHTML = cacheInquiries.map(item => `
+        <div class="p-4 flex items-center justify-between hover:bg-slate-900/40">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="font-bold text-sm text-white">${escapeHtml(item.name)}</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded ${item.status === 'UNREAD' ? 'bg-rose-500/20 text-rose-300' : 'bg-slate-800 text-slate-400'}">${item.status}</span>
+            </div>
+            <p class="text-xs text-slate-300 max-w-xl truncate">${escapeHtml(item.message)}</p>
+            <span class="text-[10px] text-slate-500 font-mono">${escapeHtml(item.email)} &bull; ${new Date(item.created_at).toLocaleString()}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 2. PLAYER REGISTRATION QUEUE (ACCEPT / REJECT)
+    async function loadPlayerQueue() {
+      if (!supabaseClient) return;
+      const filter = document.getElementById('player-filter-status')?.value || 'ALL';
+      let query = supabaseClient.from('player_registrations').select('*').order('created_at', { ascending: false });
+      if (filter !== 'ALL') query = query.eq('status', filter);
+
+      const { data } = await query;
+      cachePlayers = data || [];
+
+      const pendingCnt = cachePlayers.filter(p => p.status === 'PENDING').length;
+      document.getElementById('dash-pending-players').innerText = pendingCnt;
+      const badge = document.getElementById('player-pending-badge');
+      if (pendingCnt > 0) { badge.innerText = pendingCnt; badge.classList.remove('hidden'); }
+      else { badge.classList.add('hidden'); }
+
+      const container = document.getElementById('players-queue-container');
+      if (cachePlayers.length === 0) {
+        container.innerHTML = `<div class="p-8 text-center text-xs text-slate-500">No applications in queue.</div>`;
+        return;
+      }
+
+      container.innerHTML = cachePlayers.map(p => `
+        <div class="p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-900/40">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="font-bold text-sm text-white">${escapeHtml(p.full_name)}</span>
+              <span class="text-xs font-black text-brand-400">(${escapeHtml(p.ign)})</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-black ${getQueueBadgeClass(p.status)}">${p.status}</span>
+            </div>
+            <p class="text-xs text-slate-400 font-mono">${escapeHtml(p.game)} &bull; ${escapeHtml(p.rank_tier || 'Unranked')} &bull; Discord: ${escapeHtml(p.discord)}</p>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="window.updatePlayerStatus('${p.id}', 'ACCEPTED')" class="px-3 py-1.5 rounded-lg bg-emerald-600/20 text-emerald-300 hover:bg-emerald-600 hover:text-white text-xs font-bold transition">ACCEPT</button>
+            <button onclick="window.updatePlayerStatus('${p.id}', 'REJECTED')" class="px-3 py-1.5 rounded-lg bg-rose-500/20 text-rose-300 hover:bg-rose-500 hover:text-white text-xs font-bold transition">REJECT</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function updatePlayerStatus(id, newStatus) {
+      await supabaseClient.from('player_registrations').update({ status: newStatus }).eq('id', id);
+      loadPlayerQueue();
+    }
+
+    // 3. MANAGEMENT ACCESS REQUEST QUEUE
+    async function loadMgmtQueue() {
+      if (!supabaseClient) return;
+      const filter = document.getElementById('mgmt-filter-status')?.value || 'ALL';
+      let query = supabaseClient.from('management_requests').select('*').order('created_at', { ascending: false });
+      if (filter !== 'ALL') query = query.eq('status', filter);
+
+      const { data } = await query;
+      cacheMgmtRequests = data || [];
+
+      const pendingCnt = cacheMgmtRequests.filter(m => m.status === 'PENDING').length;
+      const badge = document.getElementById('mgmt-pending-badge');
+      if (pendingCnt > 0) { badge.innerText = pendingCnt; badge.classList.remove('hidden'); }
+      else { badge.classList.add('hidden'); }
+
+      const container = document.getElementById('mgmt-queue-container');
+      if (cacheMgmtRequests.length === 0) {
+        container.innerHTML = `<div class="p-8 text-center text-xs text-slate-500">No management requests found.</div>`;
+        return;
+      }
+
+      container.innerHTML = cacheMgmtRequests.map(m => `
+        <div class="p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-900/40">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="font-bold text-sm text-white">${escapeHtml(m.full_name)}</span>
+              <span class="text-xs font-bold text-indigo-400">[${escapeHtml(m.requested_role)}]</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-black ${getQueueBadgeClass(m.status)}">${m.status}</span>
+            </div>
+            <p class="text-xs text-slate-300">${escapeHtml(m.reason)}</p>
+            <span class="text-[10px] text-slate-500 font-mono">${escapeHtml(m.email)}</span>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="window.updateMgmtStatus('${m.id}', 'ACCEPTED')" class="px-3 py-1.5 rounded-lg bg-emerald-600/20 text-emerald-300 hover:bg-emerald-600 hover:text-white text-xs font-bold transition">GRANT ACCESS</button>
+            <button onclick="window.updateMgmtStatus('${m.id}', 'REJECTED')" class="px-3 py-1.5 rounded-lg bg-rose-500/20 text-rose-300 hover:bg-rose-500 hover:text-white text-xs font-bold transition">REJECT</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function updateMgmtStatus(id, newStatus) {
+      await supabaseClient.from('management_requests').update({ status: newStatus }).eq('id', id);
+      loadMgmtQueue();
+    }
+
+    // 4. NEWS & ANNOUNCEMENTS
+    async function loadNews() {
+      if (!supabaseClient) return;
+      const { data } = await supabaseClient.from('news_announcements').select('*').order('created_at', { ascending: false });
+      cacheNews = data || [];
+
+      document.getElementById('dash-published-news').innerText = cacheNews.length;
+
+      const grid = document.getElementById('news-grid');
+      if (cacheNews.length === 0) {
+        grid.innerHTML = `<div class="p-8 text-center text-xs text-slate-500 col-span-full">No announcements published.</div>`;
+        return;
+      }
+
+      grid.innerHTML = cacheNews.map(n => `
+        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="px-2 py-0.5 rounded text-[10px] font-black bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">${n.category}</span>
+            <span class="text-[10px] text-slate-500 font-mono">${new Date(n.created_at).toLocaleDateString()}</span>
+          </div>
+          <h4 class="font-bold text-sm text-white">${escapeHtml(n.title)}</h4>
+          <p class="text-xs text-slate-400 line-clamp-2">${escapeHtml(n.content)}</p>
+        </div>
+      `).join('');
+    }
+
+    async function saveAnnouncement(e) {
+      e.preventDefault();
+      const payload = {
+        title: document.getElementById('news-title').value,
+        category: document.getElementById('news-category').value,
+        content: document.getElementById('news-content').value,
+        status: 'PUBLISHED'
+      };
+      await supabaseClient.from('news_announcements').insert([payload]);
+      closeModal('modal-news');
+      loadNews();
+    }
+
+    // 5. MATCHES & SCHEDULE
+    async function loadSchedule() {
+      if (!supabaseClient) return;
+      const { data } = await supabaseClient.from('matches_schedule').select('*').order('match_date', { ascending: true });
+      cacheMatches = data || [];
+
+      document.getElementById('dash-upcoming-matches').innerText = cacheMatches.length;
+
+      const grid = document.getElementById('schedule-grid');
+      if (cacheMatches.length === 0) {
+        grid.innerHTML = `<div class="p-8 text-center text-xs text-slate-500 col-span-full">No match fixtures scheduled.</div>`;
+        return;
+      }
+
+      grid.innerHTML = cacheMatches.map(m => `
+        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+          <div class="flex items-center justify-between text-[10px] font-bold text-amber-400">
+            <span>${escapeHtml(m.game)}</span>
+            <span>${new Date(m.match_date).toLocaleString()}</span>
+          </div>
+          <h4 class="font-bold text-sm text-white">${escapeHtml(m.title)}</h4>
+          <div class="text-xs text-slate-300 font-bold">Wolf Society vs. ${escapeHtml(m.opponent)}</div>
+        </div>
+      `).join('');
+    }
+
+    async function saveMatch(e) {
+      e.preventDefault();
+      const payload = {
+        title: document.getElementById('match-title').value,
+        game: document.getElementById('match-game').value,
+        opponent: document.getElementById('match-opponent').value,
+        match_date: document.getElementById('match-date').value,
+        status: 'UPCOMING'
+      };
+      await supabaseClient.from('matches_schedule').insert([payload]);
+      closeModal('modal-match');
+      loadSchedule();
+    }
+
+    // MANUAL PLAYER ADD
+    async function savePlayerRegistration(e) {
+      e.preventDefault();
+      const payload = {
+        full_name: document.getElementById('p-name').value,
+        ign: document.getElementById('p-ign').value,
+        email: document.getElementById('p-email').value,
+        discord: document.getElementById('p-discord').value,
+        game: document.getElementById('p-game').value,
+        rank_tier: document.getElementById('p-rank').value,
+        status: 'PENDING'
+      };
+      await supabaseClient.from('player_registrations').insert([payload]);
+      closeModal('modal-player');
+      loadPlayerQueue();
+    }
+
+    // 6. SITE SETTINGS EDITOR
+    async function loadSiteSettings() {
+      if (!supabaseClient) return;
+      const { data } = await supabaseClient.from('site_settings').select('*');
+      if (!data) return;
+
+      data.forEach(item => {
+        if (item.key === 'hero_banner_title') document.getElementById('site-hero-title').value = item.value;
+        if (item.key === 'hero_banner_subtitle') document.getElementById('site-hero-subtitle').value = item.value;
+        if (item.key === 'announcement_ticker') document.getElementById('site-ticker-text').value = item.value;
+      });
+    }
+
+    async function saveSiteSettings() {
+      if (!supabaseClient) return;
+      const updates = [
+        { key: 'hero_banner_title', value: document.getElementById('site-hero-title').value },
+        { key: 'hero_banner_subtitle', value: document.getElementById('site-hero-subtitle').value },
+        { key: 'announcement_ticker', value: document.getElementById('site-ticker-text').value }
+      ];
+
+      for (const u of updates) {
+        await supabaseClient.from('site_settings').upsert(u);
+      }
+      alert('Site configuration saved! Index.html will dynamically render these updates.');
     }
 
     // --- UTILS ---
-    function getStatusBadgeClass(status) {
+    function getQueueBadgeClass(status) {
       switch (status) {
-        case 'UNREAD': return 'bg-rose-500/20 text-rose-300 border border-rose-500/30';
-        case 'READ': return 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
-        case 'ARCHIVED': return 'bg-slate-800 text-slate-400 border border-slate-700';
-        default: return 'bg-slate-800 text-slate-300';
+        case 'ACCEPTED': return 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+        case 'REJECTED': return 'bg-rose-500/20 text-rose-300 border border-rose-500/30';
+        default: return 'bg-amber-500/20 text-amber-300 border border-amber-500/30';
       }
+    }
+
+    function exportCSV() {
+      if (cacheInquiries.length === 0) { alert("No data to export."); return; }
+      const headers = ["ID", "Name", "Email", "Status", "Message", "Created At"];
+      const rows = cacheInquiries.map(i => [`"${i.id}"`, `"${i.name}"`, `"${i.email}"`, `"${i.status}"`, `"${i.message}"`, `"${i.created_at}"`]);
+      const csv = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+      const a = document.createElement("a");
+      a.href = encodeURI(csv);
+      a.download = `crm_inquiries_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
     }
 
     function escapeHtml(str) {
