@@ -204,8 +204,8 @@
   <!-- JAVASCRIPT CONTROLLER -->
   <script>
     // --- 1. CONFIGURATION & STATE ---
-    let DEFAULT_URL = "YOUR_SUPABASE_URL";
-    let DEFAULT_KEY = "YOUR_SUPABASE_ANON_KEY";
+    let DEFAULT_URL = "https://tdfkebgapncswtvbtaqy.supabase.co";
+    let DEFAULT_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ";
 
     let SUPABASE_URL = localStorage.getItem('sb_url') || DEFAULT_URL;
     let SUPABASE_KEY = localStorage.getItem('sb_key') || DEFAULT_KEY;
@@ -227,8 +227,8 @@
       // Pre-fill credentials tab
       const urlInput = document.getElementById('cfg-url');
       const keyInput = document.getElementById('cfg-key');
-      if (urlInput) urlInput.value = SUPABASE_URL !== 'YOUR_SUPABASE_URL' ? SUPABASE_URL : '';
-      if (keyInput) keyInput.value = SUPABASE_KEY !== 'YOUR_SUPABASE_ANON_KEY' ? SUPABASE_KEY : '';
+      if (urlInput) urlInput.value = SUPABASE_URL !== 'https://tdfkebgapncswtvbtaqy.supabase.co' ? SUPABASE_URL : '';
+      if (keyInput) keyInput.value = SUPABASE_KEY !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ' ? SUPABASE_KEY : '';
 
       initSupabase();
     });
@@ -244,7 +244,7 @@
         return;
       }
 
-      if (!SUPABASE_URL || SUPABASE_URL === "YOUR_SUPABASE_URL" || !SUPABASE_KEY || SUPABASE_KEY === "YOUR_SUPABASE_ANON_KEY") {
+      if (!SUPABASE_URL || SUPABASE_URL === "https://tdfkebgapncswtvbtaqy.supabase.co" || !SUPABASE_KEY || SUPABASE_KEY === "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ") {
         if (txt) txt.innerText = "Config Required";
         if (dot) dot.className = "w-2 h-2 rounded-full bg-amber-500";
         document.getElementById('inquiries-list').innerHTML = `
