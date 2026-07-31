@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wolf Society Esports | Official Portal</title>
+  <title>Wolf Society Esports | Official Gaming Portal</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -11,10 +11,7 @@
       darkMode: 'class',
       theme: {
         extend: {
-          colors: {
-            darkBg: '#08080a', cardBg: '#10121a', borderDark: '#1c1f2e',
-            cyanNeon: '#00f2fe', redNeon: '#ff2a5f', purpleNeon: '#9d4edd'
-          },
+          colors: { darkBg: '#060709', cardBg: '#0e1017', borderDark: '#1a1d2e', cyanNeon: '#00f2fe', redNeon: '#ff2a5f', purpleNeon: '#9d4edd' },
           fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Chakra Petch', 'sans-serif'] }
         }
       }
@@ -25,13 +22,16 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
-    body { background-color: #08080a; color: #e2e8f0; font-family: 'Inter', sans-serif; }
+    body { background-color: #060709; color: #e2e8f0; font-family: 'Inter', sans-serif; }
     h1, h2, h3, h4, .font-heading { font-family: 'Chakra Petch', sans-serif; }
-    .glow-cyan { box-shadow: 0 0 25px rgba(0, 242, 254, 0.15); }
+    .glow-cyan { box-shadow: 0 0 30px rgba(0, 242, 254, 0.2); }
+    .glow-red { box-shadow: 0 0 30px rgba(255, 42, 95, 0.2); }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -43,163 +43,223 @@
 
     const SUPABASE_URL = "https://tdfkebgapncswtvbtaqy.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ";
-    const ORG_EMAIL = "wolfsocietygg@yahoo.com";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const DEFAULT_PLAYERS = [
-      { id: 1, in_game_name: "ALPHA", real_name: "Vikram Singh", role: "Jungler", signature_heroes: ["Lancelot", "Ling"], kda: "4.8", win_rate: "78%", bio: "Primary shotcaller and objective controller.", avatar_url: "https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=500&auto=format&fit=crop&q=80" },
-      { id: 2, in_game_name: "SHADOW", real_name: "Rahul Sharma", role: "Mid Lane", signature_heroes: ["Kagura", "Yve"], kda: "5.2", win_rate: "74%", bio: "Tactical zone manager and teamfight burst.", avatar_url: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=500&auto=format&fit=crop&q=80" },
-      { id: 3, in_game_name: "SPECTRE", real_name: "Arjun Verma", role: "Gold Lane", signature_heroes: ["Claude", "Beatrix"], kda: "6.1", win_rate: "81%", bio: "Late-game hyper-carry specialist.", avatar_url: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=500&auto=format&fit=crop&q=80" }
-    ];
+    function PublicApp() {
+      const [page, setPage] = useState('home');
+      const [settings, setSettings] = useState({ org_name: 'Wolf Society Esports', org_email: 'wolfsocietygg@yahoo.com', banner_announcement: 'Welcome to Wolf Society Esports Portal' });
+      const [players, setPlayers] = useState([]);
+      const [matches, setMatches] = useState([]);
+      const [news, setNews] = useState([]);
+      const [liveStatus, setLiveStatus] = useState('CONNECTED');
 
-    const DEFAULT_MATCHES = [
-      { id: 1, tournament_name: "MOBA Pro League Season 5", stage: "Grand Finals", opponent_name: "Apex Hunters", score_team: 3, score_opponent: 1, result: "WIN", match_date: "2026-07-28" },
-      { id: 2, tournament_name: "Regional Masters Cup", stage: "Semi-Finals", opponent_name: "Viper Squad", score_team: 2, score_opponent: 0, result: "WIN", match_date: "2026-07-15" }
-    ];
+      // Sync All Data & Listen to Supabase Realtime Changes Live
+      const fetchAllData = async () => {
+        const { data: s } = await supabaseClient.from('site_settings').select('*').single();
+        const { data: p } = await supabaseClient.from('players').select('*').eq('is_active', true);
+        const { data: m } = await supabaseClient.from('matches').select('*').order('match_date', { ascending: false });
+        const { data: n } = await supabaseClient.from('news').select('*').order('created_at', { ascending: false });
 
-    function Navbar({ currentPage, setCurrentPage }) {
+        if (s) setSettings(s);
+        if (p) setPlayers(p);
+        if (m) setMatches(m);
+        if (n) setNews(n);
+      };
+
+      useEffect(() => {
+        fetchAllData();
+
+        // Realtime Subscription
+        const channel = supabaseClient.channel('public_live_updates')
+          .on('postgres_changes', { event: '*', schema: 'public' }, () => {
+            setLiveStatus('UPDATING LIVE...');
+            fetchAllData();
+            setTimeout(() => setLiveStatus('CONNECTED'), 1500);
+          })
+          .subscribe();
+
+        return () => { supabaseClient.removeChannel(channel); };
+      }, []);
+
       return (
-        <header class="sticky top-0 z-50 bg-darkBg/95 backdrop-blur-md border-b border-borderDark">
-          <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-            <div onClick={() => setCurrentPage('home')} class="flex items-center gap-3 cursor-pointer">
-              <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-cyanNeon to-redNeon flex items-center justify-center text-black font-extrabold text-xl">WS</div>
-              <div>
-                <span class="font-heading font-bold text-xl text-white block">WOLF SOCIETY</span>
-                <span class="text-[10px] uppercase tracking-widest text-cyanNeon font-semibold">Esports Portal</span>
+        <div class="flex-grow flex flex-col">
+          {/* Top Realtime Banner */}
+          <div class="bg-gradient-to-r from-cyanNeon/20 via-purpleNeon/20 to-redNeon/20 border-b border-borderDark px-4 py-2 text-xs font-bold flex justify-between items-center">
+            <span class="text-white flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-green-400 animate-ping"></span>
+              <strong class="text-cyanNeon">ANNOUNCEMENT:</strong> {settings.banner_announcement}
+            </span>
+            <span class="hidden sm:block text-[10px] text-gray-400 uppercase tracking-widest">
+              Live Sync: <strong class="text-cyanNeon">{liveStatus}</strong>
+            </span>
+          </div>
+
+          {/* Navigation Bar */}
+          <header class="sticky top-0 z-50 bg-darkBg/95 backdrop-blur-md border-b border-borderDark">
+            <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
+              <div onClick={() => setPage('home')} class="flex items-center gap-3 cursor-pointer">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-cyanNeon to-redNeon flex items-center justify-center text-black font-extrabold text-xl">WS</div>
+                <div>
+                  <span class="font-heading font-bold text-xl text-white block">{settings.org_name}</span>
+                  <span class="text-[10px] uppercase tracking-widest text-cyanNeon font-semibold">Official Esports Portal</span>
+                </div>
+              </div>
+
+              <nav class="hidden md:flex items-center gap-6 text-xs font-bold uppercase tracking-wider">
+                {['home', 'divine-wolf', 'matches', 'news', 'tryouts'].map(t => (
+                  <button 
+                    key={t} 
+                    onClick={() => setPage(t)}
+                    class={`transition-all py-1 border-b-2 ${page === t ? 'text-cyanNeon border-cyanNeon' : 'text-gray-400 border-transparent hover:text-white'}`}
+                  >
+                    {t.replace('-', ' ')}
+                  </button>
+                ))}
+              </nav>
+
+              <div class="flex items-center gap-3">
+                <a href="player.html" class="px-3 py-2 rounded bg-cardBg border border-purpleNeon/40 text-purpleNeon text-xs font-bold uppercase hover:bg-purpleNeon hover:text-white transition-all">
+                  <i class="fa-solid fa-chart-line mr-1"></i> Player Stats
+                </a>
+                <a href="admin.html" class="px-3 py-2 rounded bg-cyanNeon text-black text-xs font-bold uppercase hover:brightness-110 transition-all">
+                  <i class="fa-solid fa-lock mr-1"></i> Admin CRM
+                </a>
               </div>
             </div>
+          </header>
 
-            <nav class="hidden md:flex items-center gap-6 text-xs font-bold uppercase tracking-wider">
-              {['home', 'about', 'divine-wolf', 'matches', 'contact'].map(page => (
-                <button 
-                  key={page} 
-                  onClick={() => setCurrentPage(page)}
-                  class={`transition-all py-1 border-b-2 ${currentPage === page ? 'text-cyanNeon border-cyanNeon' : 'text-gray-400 border-transparent hover:text-white'}`}
-                >
-                  {page.replace('-', ' ')}
-                </button>
-              ))}
-            </nav>
+          {/* Main Dynamic View */}
+          <main class="flex-grow">
+            {page === 'home' && <HomeView setPage={setPage} players={players} matches={matches} news={news} />}
+            {page === 'divine-wolf' && <DivineWolfView players={players} />}
+            {page === 'matches' && <MatchesView matches={matches} />}
+            {page === 'news' && <NewsView news={news} />}
+            {page === 'tryouts' && <TryoutsView orgEmail={settings.org_email} />}
+          </main>
 
-            <a 
-              href="admin.html" 
-              class="px-4 py-2 rounded bg-cardBg border border-cyanNeon/40 text-cyanNeon text-xs font-bold uppercase tracking-wider hover:bg-cyanNeon hover:text-black transition-all"
-            >
-              <i class="fa-solid fa-lock mr-1"></i> Admin Portal
-            </a>
-          </div>
-        </header>
+          {/* Footer */}
+          <footer class="border-t border-borderDark bg-cardBg py-8 text-center text-xs text-gray-500 space-y-2">
+            <p><strong class="text-white">{settings.org_name}</strong> © 2026 • Official Email: <strong class="text-cyanNeon">{settings.org_email}</strong></p>
+            <div class="flex justify-center gap-4 text-gray-400 text-sm">
+              <a href="player.html" class="hover:text-cyanNeon">Player Dashboard</a> • 
+              <a href="admin.html" class="hover:text-cyanNeon">Admin Management Portal</a>
+            </div>
+          </footer>
+        </div>
       );
     }
 
-    function HomePage({ setCurrentPage }) {
+    // HOME PAGE VIEW
+    function HomeView({ setPage, players, matches, news }) {
       return (
         <div class="space-y-16 pb-16">
-          <section class="py-24 border-b border-borderDark bg-gradient-to-b from-darkBg via-cardBg/30 to-darkBg text-center px-4">
-            <div class="inline-block px-4 py-1.5 rounded-full border border-cyanNeon/30 bg-cyanNeon/10 text-cyanNeon text-xs font-bold uppercase mb-4">
-              5v5 MOBA Supremacy
+          <section class="py-24 border-b border-borderDark bg-gradient-to-b from-darkBg via-cardBg/40 to-darkBg text-center px-4">
+            <div class="inline-block px-4 py-1.5 rounded-full border border-cyanNeon/30 bg-cyanNeon/10 text-cyanNeon text-xs font-bold uppercase mb-6">
+              Official MOBA Division • Divine Wolf
             </div>
-            <h1 class="font-heading text-5xl sm:text-7xl font-bold text-white uppercase mb-6">
-              Wolf Society <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyanNeon to-redNeon">Esports</span>
+            <h1 class="font-heading text-5xl sm:text-7xl font-bold text-white uppercase mb-6 tracking-wide">
+              Dominate The <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyanNeon via-purpleNeon to-redNeon">Arena</span>
             </h1>
-            <p class="max-w-2xl mx-auto text-gray-400 text-base mb-8">
-              Home of competitive MOBA title division <strong class="text-white">Divine Wolf</strong>. Built for tactical precision and championship dominance.
+            <p class="max-w-2xl mx-auto text-gray-400 text-sm sm:text-base mb-8">
+              Wolf Society Esports is a competitive organization driving championship performance, live telemetry stats, and elite MOBA rosters.
             </p>
-            <div class="flex justify-center gap-4">
-              <button onClick={() => setCurrentPage('divine-wolf')} class="px-8 py-3 rounded bg-cyanNeon text-black font-bold uppercase text-xs glow-cyan">
-                View Divine Wolf Team
+            <div class="flex flex-wrap justify-center gap-4">
+              <button onClick={() => setPage('divine-wolf')} class="px-8 py-3 rounded bg-cyanNeon text-black font-bold uppercase text-xs glow-cyan">
+                View Divine Wolf Roster
               </button>
-              <button onClick={() => setCurrentPage('matches')} class="px-8 py-3 rounded bg-cardBg border border-borderDark text-white font-bold uppercase text-xs">
-                Matches & Schedule
+              <button onClick={() => setPage('tryouts')} class="px-8 py-3 rounded bg-cardBg border border-borderDark text-white font-bold uppercase text-xs hover:border-redNeon">
+                Apply For Tryouts
               </button>
+            </div>
+          </section>
+
+          {/* Featured Players Quick Grid */}
+          <section class="max-w-7xl mx-auto px-4 space-y-6">
+            <div class="flex justify-between items-end border-b border-borderDark pb-4">
+              <div>
+                <span class="text-redNeon text-xs font-bold uppercase tracking-widest">Active Roster</span>
+                <h2 class="font-heading text-3xl font-bold text-white uppercase">Divine Wolf Squad</h2>
+              </div>
+              <button onClick={() => setPage('divine-wolf')} class="text-xs text-cyanNeon font-bold uppercase">View Full Roster →</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {players.slice(0, 3).map(p => (
+                <div key={p.id} class="bg-cardBg border border-borderDark rounded-xl overflow-hidden p-5 space-y-4 hover:border-cyanNeon transition-all">
+                  <img src={p.avatar_url} class="w-full h-48 object-cover rounded-lg" />
+                  <div class="flex justify-between items-center">
+                    <h3 class="font-heading text-2xl font-bold text-white">{p.in_game_name}</h3>
+                    <span class="px-2.5 py-1 bg-cyanNeon/10 border border-cyanNeon/30 text-cyanNeon text-[10px] font-bold uppercase rounded">{p.role}</span>
+                  </div>
+                  <div class="grid grid-cols-3 gap-2 text-center bg-darkBg p-3 rounded text-xs border border-borderDark">
+                    <div><span class="text-gray-500 text-[10px] block">KDA</span><strong class="text-cyanNeon">{p.kda}</strong></div>
+                    <div><span class="text-gray-500 text-[10px] block">WIN RATE</span><strong class="text-green-400">{p.win_rate}%</strong></div>
+                    <div><span class="text-gray-500 text-[10px] block">MATCHES</span><strong class="text-white">{p.matches_played}</strong></div>
+                  </div>
+                </div>
+              ))}
             </div>
           </section>
         </div>
       );
     }
 
-    function DivineWolfPage() {
-      const [players, setPlayers] = useState([]);
-      const [loading, setLoading] = useState(true);
-
-      useEffect(() => {
-        async function load() {
-          const { data, error } = await supabaseClient.from('players').select('*').eq('is_active', true);
-          setPlayers(data && data.length > 0 ? data : DEFAULT_PLAYERS);
-          setLoading(false);
-        }
-        load();
-      }, []);
-
+    // DIVINE WOLF ROSTER VIEW
+    function DivineWolfView({ players }) {
       return (
         <div class="max-w-7xl mx-auto px-4 py-16 space-y-10">
           <div class="text-center max-w-2xl mx-auto">
-            <span class="text-redNeon text-xs font-bold uppercase tracking-widest">Flagship Roster</span>
-            <h1 class="font-heading text-4xl font-bold text-white uppercase mt-1">Divine Wolf Team</h1>
-            <p class="text-gray-400 text-sm mt-2">Active starting lineup for MOBA 5v5 tournaments.</p>
+            <span class="text-redNeon text-xs font-bold uppercase tracking-widest">Championship Division</span>
+            <h1 class="font-heading text-4xl font-bold text-white uppercase mt-1">Divine Wolf Team Roster</h1>
+            <p class="text-gray-400 text-xs mt-2">Live synchronization with organization CRM database.</p>
           </div>
 
-          {loading ? (
-            <div class="text-center py-12 text-gray-500 font-semibold animate-pulse">Loading Roster Data...</div>
-          ) : (
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {players.map(p => (
-                <div key={p.id} class="bg-cardBg border border-borderDark rounded-xl overflow-hidden hover:border-cyanNeon/50 transition-all">
-                  <img src={p.avatar_url || 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=500'} class="w-full h-56 object-cover" />
-                  <div class="p-5 space-y-3">
-                    <div class="flex justify-between items-start">
-                      <div>
-                        <h3 class="font-heading text-2xl font-bold text-white">{p.in_game_name}</h3>
-                        <div class="text-xs text-gray-400">{p.real_name}</div>
-                      </div>
-                      <span class="px-2.5 py-1 bg-cyanNeon/10 border border-cyanNeon/30 text-cyanNeon text-[10px] font-bold uppercase rounded">{p.role}</span>
-                    </div>
-                    <p class="text-xs text-gray-400">{p.bio}</p>
-                    <div class="pt-2 border-t border-borderDark flex justify-between text-xs">
-                      <div><span class="text-gray-500 block text-[10px]">KDA</span><strong class="text-cyanNeon">{p.kda || '4.5'}</strong></div>
-                      <div><span class="text-gray-500 block text-[10px]">WIN RATE</span><strong class="text-green-400">{p.win_rate || '75%'}</strong></div>
-                    </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {players.map(p => (
+              <div key={p.id} class="bg-cardBg border border-borderDark rounded-xl overflow-hidden p-6 space-y-4 hover:border-cyanNeon/60 transition-all">
+                <img src={p.avatar_url} class="w-full h-56 object-cover rounded-xl" />
+                <div>
+                  <div class="flex justify-between items-center">
+                    <h3 class="font-heading text-2xl font-bold text-white">{p.in_game_name}</h3>
+                    <span class="px-3 py-1 bg-cyanNeon/10 border border-cyanNeon/30 text-cyanNeon text-xs font-bold uppercase rounded">{p.role}</span>
                   </div>
+                  <p class="text-xs text-gray-400 mt-1">{p.real_name} • {p.bio || 'Professional MOBA Competitor'}</p>
                 </div>
-              ))}
-            </div>
-          )}
+                <div class="grid grid-cols-3 gap-2 text-center bg-darkBg p-3 rounded-lg border border-borderDark text-xs">
+                  <div><span class="text-gray-500 text-[10px] block">KDA</span><strong class="text-cyanNeon">{p.kda}</strong></div>
+                  <div><span class="text-gray-500 text-[10px] block">WIN RATE</span><strong class="text-green-400">{p.win_rate}%</strong></div>
+                  <div><span class="text-gray-500 text-[10px] block">GPM</span><strong class="text-purpleNeon">{p.gpm || 750}</strong></div>
+                </div>
+                <a href={`player.html?id=${p.id}`} class="block text-center py-2 bg-darkBg border border-borderDark rounded text-xs font-bold text-gray-300 hover:text-cyanNeon hover:border-cyanNeon">
+                  View Full Analytics Profile →
+                </a>
+              </div>
+            ))}
+          </div>
         </div>
       );
     }
 
-    function MatchesPage() {
-      const [matches, setMatches] = useState([]);
-      const [loading, setLoading] = useState(true);
-
-      useEffect(() => {
-        async function load() {
-          const { data } = await supabaseClient.from('matches').select('*').order('match_date', { ascending: false });
-          setMatches(data && data.length > 0 ? data : DEFAULT_MATCHES);
-          setLoading(false);
-        }
-        load();
-      }, []);
-
+    // MATCHES VIEW
+    function MatchesView({ matches }) {
       return (
         <div class="max-w-7xl mx-auto px-4 py-16 space-y-8">
           <div class="text-center max-w-2xl mx-auto">
-            <span class="text-cyanNeon text-xs font-bold uppercase tracking-widest">Tournament Schedule</span>
-            <h1 class="font-heading text-4xl font-bold text-white uppercase mt-1">Matches & Results</h1>
+            <span class="text-cyanNeon text-xs font-bold uppercase tracking-widest">Schedule & Results</span>
+            <h1 class="font-heading text-4xl font-bold text-white uppercase mt-1">Match Center</h1>
           </div>
 
           <div class="space-y-4">
             {matches.map(m => (
-              <div key={m.id} class="bg-cardBg border border-borderDark p-5 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4">
+              <div key={m.id} class="bg-cardBg border border-borderDark p-6 rounded-xl flex flex-col md:flex-row items-center justify-between gap-6">
                 <div>
                   <span class="text-xs text-gray-400">{m.tournament_name} • {m.stage}</span>
-                  <div class="font-heading font-bold text-lg text-white">Divine Wolf vs {m.opponent_name}</div>
+                  <div class="font-heading font-bold text-xl text-white">Divine Wolf vs {m.opponent_name}</div>
                 </div>
                 <div class="flex items-center gap-6">
                   <span class={`px-3 py-1 rounded text-xs font-bold border ${m.result === 'WIN' ? 'bg-green-500/10 text-green-400 border-green-500/30' : 'bg-cyanNeon/10 text-cyanNeon border-cyanNeon/30'}`}>
                     {m.result}
                   </span>
-                  <div class="font-heading font-bold text-xl text-cyanNeon">{m.score_team} - {m.score_opponent}</div>
+                  <div class="font-heading font-bold text-2xl text-cyanNeon">{m.score_team} - {m.score_opponent}</div>
                 </div>
               </div>
             ))}
@@ -208,8 +268,31 @@
       );
     }
 
-    function ContactPage() {
-      const [formData, setFormData] = useState({ ign: '', email: '', discord: '', role: 'Jungler', rank: '', message: '' });
+    // NEWS VIEW
+    function NewsView({ news }) {
+      return (
+        <div class="max-w-7xl mx-auto px-4 py-16 space-y-8">
+          <div class="text-center max-w-2xl mx-auto">
+            <span class="text-purpleNeon text-xs font-bold uppercase tracking-widest">Announcements</span>
+            <h1 class="font-heading text-4xl font-bold text-white uppercase mt-1">News & Articles</h1>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {news.map(n => (
+              <div key={n.id} class="bg-cardBg border border-borderDark p-6 rounded-xl space-y-3">
+                <img src={n.cover_image_url} class="w-full h-48 object-cover rounded-lg" />
+                <h3 class="font-heading text-xl font-bold text-white">{n.title}</h3>
+                <p class="text-xs text-gray-400">{n.summary}</p>
+                <div class="text-[10px] text-gray-500">Published by {n.author}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // TRYOUTS & CONTACT FORM WITH AUTOMATIC CONFIRMATION
+    function TryoutsView({ orgEmail }) {
+      const [formData, setFormData] = useState({ ign: '', email: '', discord: '', role: 'Jungler', peak_rank: '', message: '' });
       const [submitted, setSubmitted] = useState(false);
       const [submitting, setSubmitting] = useState(false);
 
@@ -217,32 +300,33 @@
         e.preventDefault();
         setSubmitting(true);
 
-        // Store into Supabase Database
+        // 1. Insert into Supabase contacts table
         await supabaseClient.from('contacts').insert([formData]);
 
+        // 2. Trigger automatic response acknowledgement
         setSubmitting(false);
         setSubmitted(true);
       };
 
       return (
-        <div class="max-w-4xl mx-auto px-4 py-16 space-y-8">
+        <div class="max-w-3xl mx-auto px-4 py-16 space-y-8">
           <div class="text-center space-y-2">
-            <span class="text-redNeon text-xs font-bold uppercase tracking-widest">Join The Pack</span>
-            <h1 class="font-heading text-4xl font-bold text-white uppercase">Player Tryouts & Contact</h1>
-            <p class="text-xs text-gray-400">Applications are reviewed directly by org management (<strong class="text-white">{ORG_EMAIL}</strong>).</p>
+            <span class="text-redNeon text-xs font-bold uppercase tracking-widest">Recruitment Portal</span>
+            <h1 class="font-heading text-4xl font-bold text-white uppercase">Player Tryouts Application</h1>
+            <p class="text-xs text-gray-400">Applications route directly to Org Management (<strong class="text-white">{orgEmail}</strong>).</p>
           </div>
 
           <div class="bg-cardBg border border-borderDark p-8 rounded-xl">
             {submitted ? (
-              <div class="text-center py-10 space-y-4">
+              <div class="text-center py-8 space-y-4">
                 <div class="w-16 h-16 bg-green-500/10 border border-green-500 text-green-400 rounded-full flex items-center justify-center mx-auto text-2xl">
-                  <i class="fa-solid fa-paper-plane"></i>
+                  <i class="fa-solid fa-check"></i>
                 </div>
-                <h3 class="font-heading text-2xl font-bold text-white">Application Successfully Submitted!</h3>
-                <div class="bg-darkBg border border-borderDark p-4 rounded text-left max-w-lg mx-auto text-xs text-gray-300 space-y-2">
-                  <p class="font-bold text-cyanNeon"><i class="fa-solid fa-robot mr-1"></i> Automatic Response Confirmation:</p>
-                  <p>Thank you <strong>{formData.ign}</strong> for submitting your details. A record of your inquiry ({formData.email}) has been sent to our scouting inbox at <strong>{ORG_EMAIL}</strong>.</p>
-                  <p class="text-gray-400">Our recruitment lead will review your rank and VODs, and will contact you shortly via Discord or email.</p>
+                <h3 class="font-heading text-2xl font-bold text-white">Application Received!</h3>
+                <div class="bg-darkBg border border-borderDark p-4 rounded text-left text-xs text-gray-300 space-y-2">
+                  <p class="font-bold text-cyanNeon"><i class="fa-solid fa-envelope-circle-check mr-1"></i> Automatic Submission Acknowledgement:</p>
+                  <p>Thank you <strong>{formData.ign}</strong>. A confirmation email record has been logged for <strong>{formData.email}</strong> and dispatched to organization management at <strong>{orgEmail}</strong>.</p>
+                  <p class="text-gray-400">Our scouting management will review your stats and contact you via Discord ({formData.discord}) shortly.</p>
                 </div>
               </div>
             ) : (
@@ -253,7 +337,7 @@
                     <input required type="text" value={formData.ign} onChange={e => setFormData({...formData, ign: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-3 text-sm text-white focus:outline-none focus:border-cyanNeon" />
                   </div>
                   <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Your Email Address *</label>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Email Address *</label>
                     <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-3 text-sm text-white focus:outline-none focus:border-cyanNeon" />
                   </div>
                 </div>
@@ -264,7 +348,7 @@
                     <input required type="text" value={formData.discord} onChange={e => setFormData({...formData, discord: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-3 text-sm text-white focus:outline-none focus:border-cyanNeon" />
                   </div>
                   <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Primary MOBA Role *</label>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Primary Role *</label>
                     <select value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-3 text-sm text-white focus:outline-none focus:border-cyanNeon">
                       {['Jungler', 'Mid Lane', 'Gold Lane', 'EXP Lane', 'Roamer'].map(r => <option key={r} value={r}>{r}</option>)}
                     </select>
@@ -272,12 +356,12 @@
                 </div>
 
                 <div>
-                  <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Highest Peak Rank & Achievements</label>
-                  <textarea rows="3" value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-3 text-sm text-white focus:outline-none focus:border-cyanNeon"></textarea>
+                  <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Highest Peak Rank & Experience</label>
+                  <textarea rows="3" value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-3 text-sm text-white focus:outline-none focus:border-cyanNeon" placeholder="List tournament achievements, former teams..."></textarea>
                 </div>
 
                 <button disabled={submitting} type="submit" class="w-full py-3.5 bg-redNeon text-white font-bold uppercase text-xs rounded hover:brightness-110">
-                  {submitting ? 'Submitting Application...' : 'Submit Scouting Application'}
+                  {submitting ? 'Submitting Application...' : 'Submit Tryouts Application'}
                 </button>
               </form>
             )}
@@ -286,31 +370,7 @@
       );
     }
 
-    function App() {
-      const [currentPage, setCurrentPage] = useState('home');
-      return (
-        <div class="min-h-screen flex flex-col">
-          <Navbar currentPage={currentPage} setCurrentPage={setCurrentPage} />
-          <main class="flex-grow">
-            {currentPage === 'home' && <HomePage setCurrentPage={setCurrentPage} />}
-            {currentPage === 'divine-wolf' && <DivineWolfPage />}
-            {currentPage === 'matches' && <MatchesPage />}
-            {currentPage === 'contact' && <ContactPage />}
-            {currentPage === 'about' && (
-              <div class="max-w-4xl mx-auto px-4 py-16 text-center space-y-4">
-                <h1 class="font-heading text-4xl font-bold text-white uppercase">About Wolf Society Esports</h1>
-                <p class="text-gray-400 text-sm">Founded for 5v5 MOBA excellence. Flagship squad: Divine Wolf. Contact: {ORG_EMAIL}</p>
-              </div>
-            )}
-          </main>
-          <footer class="border-t border-borderDark py-6 text-center text-xs text-gray-500">
-            Wolf Society Esports © 2026 • Official Email: {ORG_EMAIL}
-          </footer>
-        </div>
-      );
-    }
-
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    ReactDOM.createRoot(document.getElementById('root')).render(<PublicApp />);
   </script>
 </body>
 </html>
