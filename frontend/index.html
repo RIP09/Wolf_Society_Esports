@@ -22,7 +22,6 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -31,7 +30,6 @@
     body { background-color: #060709; color: #e2e8f0; font-family: 'Inter', sans-serif; }
     h1, h2, h3, h4, .font-heading { font-family: 'Chakra Petch', sans-serif; }
     .glow-cyan { box-shadow: 0 0 30px rgba(0, 242, 254, 0.2); }
-    .glow-red { box-shadow: 0 0 30px rgba(255, 42, 95, 0.2); }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -39,58 +37,78 @@
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useEffect } = React;
+    const { useState, useEffect, useCallback } = React;
 
     const SUPABASE_URL = "https://tdfkebgapncswtvbtaqy.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // Activepieces Webhook Automation Helper
+    const triggerActivepieces = async (webhookUrl, eventPayload) => {
+      if (!webhookUrl) return;
+      try {
+        await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ timestamp: new Date().toISOString(), ...eventPayload })
+        });
+      } catch (err) {
+        console.warn('Activepieces automation dispatch error:', err);
+      }
+    };
+
     function PublicApp() {
       const [page, setPage] = useState('home');
-      const [settings, setSettings] = useState({ org_name: 'Wolf Society Esports', org_email: 'wolfsocietygg@yahoo.com', banner_announcement: 'Welcome to Wolf Society Esports Portal' });
+      const [settings, setSettings] = useState({ org_name: 'Wolf Society Esports', org_email: 'wolfsocietygg@yahoo.com', banner_announcement: 'Welcome to Wolf Society Esports Portal', activepieces_webhook: '' });
       const [players, setPlayers] = useState([]);
       const [matches, setMatches] = useState([]);
       const [news, setNews] = useState([]);
-      const [liveStatus, setLiveStatus] = useState('CONNECTED');
+      const [liveStatus, setLiveStatus] = useState('LIVE SYNC ACTIVE');
 
-      // Sync All Data & Listen to Supabase Realtime Changes Live
-      const fetchAllData = async () => {
-        const { data: s } = await supabaseClient.from('site_settings').select('*').single();
-        const { data: p } = await supabaseClient.from('players').select('*').eq('is_active', true);
-        const { data: m } = await supabaseClient.from('matches').select('*').order('match_date', { ascending: false });
-        const { data: n } = await supabaseClient.from('news').select('*').order('created_at', { ascending: false });
+      // Fetch Data with Full Error Catching
+      const fetchAllData = useCallback(async () => {
+        try {
+          const { data: s } = await supabaseClient.from('site_settings').select('*').single();
+          const { data: p } = await supabaseClient.from('players').select('*').order('created_at', { ascending: false });
+          const { data: m } = await supabaseClient.from('matches').select('*').order('match_date', { ascending: false });
+          const { data: n } = await supabaseClient.from('news').select('*').order('created_at', { ascending: false });
 
-        if (s) setSettings(s);
-        if (p) setPlayers(p);
-        if (m) setMatches(m);
-        if (n) setNews(n);
-      };
+          if (s) setSettings(s);
+          if (p) setPlayers(p);
+          if (m) setMatches(m);
+          if (n) setNews(n);
+        } catch (error) {
+          console.error("Data Fetching Error:", error);
+        }
+      }, []);
 
       useEffect(() => {
         fetchAllData();
 
-        // Realtime Subscription
-        const channel = supabaseClient.channel('public_live_updates')
-          .on('postgres_changes', { event: '*', schema: 'public' }, () => {
-            setLiveStatus('UPDATING LIVE...');
+        // Subscribing to Supabase Realtime Channels for Live Sync
+        const channel = supabaseClient.channel('public_realtime_channel')
+          .on('postgres_changes', { event: '*', schema: 'public' }, (payload) => {
+            setLiveStatus('UPDATED REALTIME');
             fetchAllData();
-            setTimeout(() => setLiveStatus('CONNECTED'), 1500);
+            setTimeout(() => setLiveStatus('LIVE SYNC ACTIVE'), 2000);
           })
-          .subscribe();
+          .subscribe((status) => {
+            if (status !== 'SUBSCRIBED') setLiveStatus('RECONNECTING...');
+          });
 
         return () => { supabaseClient.removeChannel(channel); };
-      }, []);
+      }, [fetchAllData]);
 
       return (
         <div class="flex-grow flex flex-col">
-          {/* Top Realtime Banner */}
+          {/* Top Announcement Banner */}
           <div class="bg-gradient-to-r from-cyanNeon/20 via-purpleNeon/20 to-redNeon/20 border-b border-borderDark px-4 py-2 text-xs font-bold flex justify-between items-center">
             <span class="text-white flex items-center gap-2">
               <span class="w-2 h-2 rounded-full bg-green-400 animate-ping"></span>
               <strong class="text-cyanNeon">ANNOUNCEMENT:</strong> {settings.banner_announcement}
             </span>
             <span class="hidden sm:block text-[10px] text-gray-400 uppercase tracking-widest">
-              Live Sync: <strong class="text-cyanNeon">{liveStatus}</strong>
+              Database: <strong class="text-cyanNeon">{liveStatus}</strong>
             </span>
           </div>
 
@@ -101,7 +119,7 @@
                 <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-cyanNeon to-redNeon flex items-center justify-center text-black font-extrabold text-xl">WS</div>
                 <div>
                   <span class="font-heading font-bold text-xl text-white block">{settings.org_name}</span>
-                  <span class="text-[10px] uppercase tracking-widest text-cyanNeon font-semibold">Official Esports Portal</span>
+                  <span class="text-[10px] uppercase tracking-widest text-cyanNeon font-semibold">Esports Portal</span>
                 </div>
               </div>
 
@@ -128,28 +146,23 @@
             </div>
           </header>
 
-          {/* Main Dynamic View */}
+          {/* Dynamic Content Views */}
           <main class="flex-grow">
             {page === 'home' && <HomeView setPage={setPage} players={players} matches={matches} news={news} />}
             {page === 'divine-wolf' && <DivineWolfView players={players} />}
             {page === 'matches' && <MatchesView matches={matches} />}
             {page === 'news' && <NewsView news={news} />}
-            {page === 'tryouts' && <TryoutsView orgEmail={settings.org_email} />}
+            {page === 'tryouts' && <TryoutsView settings={settings} />}
           </main>
 
           {/* Footer */}
           <footer class="border-t border-borderDark bg-cardBg py-8 text-center text-xs text-gray-500 space-y-2">
             <p><strong class="text-white">{settings.org_name}</strong> © 2026 • Official Email: <strong class="text-cyanNeon">{settings.org_email}</strong></p>
-            <div class="flex justify-center gap-4 text-gray-400 text-sm">
-              <a href="player.html" class="hover:text-cyanNeon">Player Dashboard</a> • 
-              <a href="admin.html" class="hover:text-cyanNeon">Admin Management Portal</a>
-            </div>
           </footer>
         </div>
       );
     }
 
-    // HOME PAGE VIEW
     function HomeView({ setPage, players, matches, news }) {
       return (
         <div class="space-y-16 pb-16">
@@ -161,7 +174,7 @@
               Dominate The <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyanNeon via-purpleNeon to-redNeon">Arena</span>
             </h1>
             <p class="max-w-2xl mx-auto text-gray-400 text-sm sm:text-base mb-8">
-              Wolf Society Esports is a competitive organization driving championship performance, live telemetry stats, and elite MOBA rosters.
+              Wolf Society Esports is a competitive organization driving championship performance and live telemetry stats.
             </p>
             <div class="flex flex-wrap justify-center gap-4">
               <button onClick={() => setPage('divine-wolf')} class="px-8 py-3 rounded bg-cyanNeon text-black font-bold uppercase text-xs glow-cyan">
@@ -173,7 +186,6 @@
             </div>
           </section>
 
-          {/* Featured Players Quick Grid */}
           <section class="max-w-7xl mx-auto px-4 space-y-6">
             <div class="flex justify-between items-end border-b border-borderDark pb-4">
               <div>
@@ -183,7 +195,7 @@
               <button onClick={() => setPage('divine-wolf')} class="text-xs text-cyanNeon font-bold uppercase">View Full Roster →</button>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {players.slice(0, 3).map(p => (
+              {players.length === 0 ? <p class="text-gray-500 text-xs">No active roster players found.</p> : players.slice(0, 3).map(p => (
                 <div key={p.id} class="bg-cardBg border border-borderDark rounded-xl overflow-hidden p-5 space-y-4 hover:border-cyanNeon transition-all">
                   <img src={p.avatar_url} class="w-full h-48 object-cover rounded-lg" />
                   <div class="flex justify-between items-center">
@@ -203,18 +215,17 @@
       );
     }
 
-    // DIVINE WOLF ROSTER VIEW
     function DivineWolfView({ players }) {
       return (
         <div class="max-w-7xl mx-auto px-4 py-16 space-y-10">
           <div class="text-center max-w-2xl mx-auto">
             <span class="text-redNeon text-xs font-bold uppercase tracking-widest">Championship Division</span>
             <h1 class="font-heading text-4xl font-bold text-white uppercase mt-1">Divine Wolf Team Roster</h1>
-            <p class="text-gray-400 text-xs mt-2">Live synchronization with organization CRM database.</p>
+            <p class="text-gray-400 text-xs mt-2">Live sync enabled. Edits in Admin CRM reflect instantly below.</p>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {players.map(p => (
+            {players.length === 0 ? <p class="text-center col-span-3 text-gray-500 text-xs">No players registered yet. Add players in Admin Panel.</p> : players.map(p => (
               <div key={p.id} class="bg-cardBg border border-borderDark rounded-xl overflow-hidden p-6 space-y-4 hover:border-cyanNeon/60 transition-all">
                 <img src={p.avatar_url} class="w-full h-56 object-cover rounded-xl" />
                 <div>
@@ -222,7 +233,7 @@
                     <h3 class="font-heading text-2xl font-bold text-white">{p.in_game_name}</h3>
                     <span class="px-3 py-1 bg-cyanNeon/10 border border-cyanNeon/30 text-cyanNeon text-xs font-bold uppercase rounded">{p.role}</span>
                   </div>
-                  <p class="text-xs text-gray-400 mt-1">{p.real_name} • {p.bio || 'Professional MOBA Competitor'}</p>
+                  <p class="text-xs text-gray-400 mt-1">{p.real_name} • {p.bio || 'Competitor'}</p>
                 </div>
                 <div class="grid grid-cols-3 gap-2 text-center bg-darkBg p-3 rounded-lg border border-borderDark text-xs">
                   <div><span class="text-gray-500 text-[10px] block">KDA</span><strong class="text-cyanNeon">{p.kda}</strong></div>
@@ -230,7 +241,7 @@
                   <div><span class="text-gray-500 text-[10px] block">GPM</span><strong class="text-purpleNeon">{p.gpm || 750}</strong></div>
                 </div>
                 <a href={`player.html?id=${p.id}`} class="block text-center py-2 bg-darkBg border border-borderDark rounded text-xs font-bold text-gray-300 hover:text-cyanNeon hover:border-cyanNeon">
-                  View Full Analytics Profile →
+                  View Player Analytics Profile →
                 </a>
               </div>
             ))}
@@ -239,7 +250,6 @@
       );
     }
 
-    // MATCHES VIEW
     function MatchesView({ matches }) {
       return (
         <div class="max-w-7xl mx-auto px-4 py-16 space-y-8">
@@ -247,9 +257,8 @@
             <span class="text-cyanNeon text-xs font-bold uppercase tracking-widest">Schedule & Results</span>
             <h1 class="font-heading text-4xl font-bold text-white uppercase mt-1">Match Center</h1>
           </div>
-
           <div class="space-y-4">
-            {matches.map(m => (
+            {matches.length === 0 ? <p class="text-center text-gray-500 text-xs">No matches logged yet.</p> : matches.map(m => (
               <div key={m.id} class="bg-cardBg border border-borderDark p-6 rounded-xl flex flex-col md:flex-row items-center justify-between gap-6">
                 <div>
                   <span class="text-xs text-gray-400">{m.tournament_name} • {m.stage}</span>
@@ -268,7 +277,6 @@
       );
     }
 
-    // NEWS VIEW
     function NewsView({ news }) {
       return (
         <div class="max-w-7xl mx-auto px-4 py-16 space-y-8">
@@ -282,7 +290,6 @@
                 <img src={n.cover_image_url} class="w-full h-48 object-cover rounded-lg" />
                 <h3 class="font-heading text-xl font-bold text-white">{n.title}</h3>
                 <p class="text-xs text-gray-400">{n.summary}</p>
-                <div class="text-[10px] text-gray-500">Published by {n.author}</div>
               </div>
             ))}
           </div>
@@ -290,8 +297,7 @@
       );
     }
 
-    // TRYOUTS & CONTACT FORM WITH AUTOMATIC CONFIRMATION
-    function TryoutsView({ orgEmail }) {
+    function TryoutsView({ settings }) {
       const [formData, setFormData] = useState({ ign: '', email: '', discord: '', role: 'Jungler', peak_rank: '', message: '' });
       const [submitted, setSubmitted] = useState(false);
       const [submitting, setSubmitting] = useState(false);
@@ -300,12 +306,22 @@
         e.preventDefault();
         setSubmitting(true);
 
-        // 1. Insert into Supabase contacts table
-        await supabaseClient.from('contacts').insert([formData]);
+        try {
+          // 1. Save to database
+          await supabaseClient.from('contacts').insert([formData]);
 
-        // 2. Trigger automatic response acknowledgement
-        setSubmitting(false);
-        setSubmitted(true);
+          // 2. Fire Activepieces Automation Trigger asynchronously
+          triggerActivepieces(settings.activepieces_webhook, {
+            event_type: 'TRYOUT_SUBMITTED',
+            ...formData
+          });
+
+          setSubmitted(true);
+        } catch (err) {
+          alert('Error submitting application: ' + err.message);
+        } finally {
+          setSubmitting(false);
+        }
       };
 
       return (
@@ -313,7 +329,7 @@
           <div class="text-center space-y-2">
             <span class="text-redNeon text-xs font-bold uppercase tracking-widest">Recruitment Portal</span>
             <h1 class="font-heading text-4xl font-bold text-white uppercase">Player Tryouts Application</h1>
-            <p class="text-xs text-gray-400">Applications route directly to Org Management (<strong class="text-white">{orgEmail}</strong>).</p>
+            <p class="text-xs text-gray-400">Route applications to Org Management (<strong class="text-white">{settings.org_email}</strong>).</p>
           </div>
 
           <div class="bg-cardBg border border-borderDark p-8 rounded-xl">
@@ -323,11 +339,7 @@
                   <i class="fa-solid fa-check"></i>
                 </div>
                 <h3 class="font-heading text-2xl font-bold text-white">Application Received!</h3>
-                <div class="bg-darkBg border border-borderDark p-4 rounded text-left text-xs text-gray-300 space-y-2">
-                  <p class="font-bold text-cyanNeon"><i class="fa-solid fa-envelope-circle-check mr-1"></i> Automatic Submission Acknowledgement:</p>
-                  <p>Thank you <strong>{formData.ign}</strong>. A confirmation email record has been logged for <strong>{formData.email}</strong> and dispatched to organization management at <strong>{orgEmail}</strong>.</p>
-                  <p class="text-gray-400">Our scouting management will review your stats and contact you via Discord ({formData.discord}) shortly.</p>
-                </div>
+                <p class="text-xs text-gray-300">Logged into database and dispatched to <strong class="text-cyanNeon">{settings.org_email}</strong>.</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} class="space-y-4">
@@ -356,8 +368,8 @@
                 </div>
 
                 <div>
-                  <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Highest Peak Rank & Experience</label>
-                  <textarea rows="3" value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-3 text-sm text-white focus:outline-none focus:border-cyanNeon" placeholder="List tournament achievements, former teams..."></textarea>
+                  <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Peak Rank & Achievements</label>
+                  <textarea rows="3" value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-3 text-sm text-white focus:outline-none focus:border-cyanNeon"></textarea>
                 </div>
 
                 <button disabled={submitting} type="submit" class="w-full py-3.5 bg-redNeon text-white font-bold uppercase text-xs rounded hover:brightness-110">
