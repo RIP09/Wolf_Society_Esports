@@ -1,2145 +1,734 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>Wolf Society Esports — Divine Wolf</title>
-    <meta name="description" content="Wolf Society Esports is a premier Indian underdog esports organization. We compete in BGMI, Valorant, and MOBA 5v5." />
-    <meta name="theme-color" content="#0a0a1a" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wolf Society Esports</title>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- GSAP -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-    <style>
-        /* ============================================================
-           ROOT VARIABLES — WOLF SOCIETY THEME (Purple-Blue)
-           ============================================================ */
-        :root {
-            --bg-primary: #070714;
-            --bg-secondary: #0d0d20;
-            --bg-card: rgba(18, 12, 40, 0.75);
-            --bg-dark: #04040e;
-            --text-primary: #f0ecff;
-            --text-secondary: #b8b0d8;
-            --text-muted: #7a72a0;
-            --accent-purple: #8b5cf6;
-            --accent-purple-dark: #6d28d9;
-            --accent-purple-light: #a78bfa;
-            --accent-blue: #3b82f6;
-            --accent-cyan: #06b6d4;
-            --accent-gold: #fbbf24;
-            --border-color: rgba(139, 92, 246, 0.15);
-            --radius: 14px;
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --font-sans: 'Inter', -apple-system, sans-serif;
-            --font-display: 'Outfit', 'Inter', sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
-            --font-oswald: 'Oswald', sans-serif;
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
-            /* API Base URL — change this to your deployed backend */
-            --api-base: 'http://localhost:5000/api';
-        }
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        /* ============================================================
-           RESET & BASE
-           ============================================================ */
-        *,
-        *::before,
-        *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        html {
-            scroll-behavior: smooth;
-        }
-        body {
-            font-family: var(--font-sans);
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            z-index: -1;
-            pointer-events: none;
-            opacity: 0.035;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-        }
-
-        ::selection {
-            background: var(--accent-purple);
-            color: #fff;
-        }
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--bg-primary);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--accent-purple);
-            border-radius: 10px;
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-        ul,
-        ol {
-            list-style: none;
-        }
-        img {
-            max-width: 100%;
-            display: block;
-        }
-        button {
-            cursor: pointer;
-            border: none;
-            background: none;
-            color: inherit;
-        }
-
-        /* ============================================================
-           UTILITY CLASSES
-           ============================================================ */
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
-        .flex {
-            display: flex;
-        }
-        .flex-col {
-            flex-direction: column;
-        }
-        .flex-wrap {
-            flex-wrap: wrap;
-        }
-        .items-center {
-            align-items: center;
-        }
-        .justify-between {
-            justify-content: space-between;
-        }
-        .gap-1 {
-            gap: 0.5rem;
-        }
-        .gap-2 {
-            gap: 1rem;
-        }
-        .gap-3 {
-            gap: 1.5rem;
-        }
-        .gap-4 {
-            gap: 2rem;
-        }
-        .grid {
-            display: grid;
-        }
-        .grid-cols-1 {
-            grid-template-columns: 1fr;
-        }
-        .grid-cols-2 {
-            grid-template-columns: repeat(2, 1fr);
-        }
-        .grid-cols-3 {
-            grid-template-columns: repeat(3, 1fr);
-        }
-        .grid-cols-4 {
-            grid-template-columns: repeat(4, 1fr);
-        }
-        .text-center {
-            text-align: center;
-        }
-        .text-left {
-            text-align: left;
-        }
-        .w-full {
-            width: 100%;
-        }
-        .rounded {
-            border-radius: var(--radius);
-        }
-        .rounded-full {
-            border-radius: 9999px;
-        }
-        .shadow {
-            box-shadow: var(--shadow);
-        }
-        .hidden {
-            display: none !important;
-        }
-        .block {
-            display: block;
-        }
-        .relative {
-            position: relative;
-        }
-        .absolute {
-            position: absolute;
-        }
-        .fixed {
-            position: fixed;
-        }
-        .sticky {
-            position: sticky;
-        }
-        .z-10 {
-            z-index: 10;
-        }
-        .z-20 {
-            z-index: 20;
-        }
-        .z-50 {
-            z-index: 50;
-        }
-        .z-100 {
-            z-index: 100;
-        }
-        .overflow-hidden {
-            overflow: hidden;
-        }
-
-        /* ============================================================
-           BUTTONS
-           ============================================================ */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.7rem 1.6rem;
-            border: none;
-            border-radius: var(--radius);
-            font-weight: 600;
-            font-size: 0.875rem;
-            transition: var(--transition);
-            cursor: pointer;
-            text-decoration: none;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
-            color: #fff;
-            box-shadow: 0 0 30px rgba(139, 92, 246, 0.25);
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 50px rgba(139, 92, 246, 0.4);
-        }
-        .btn-secondary {
-            background: transparent;
-            border: 1.5px solid var(--accent-purple);
-            color: var(--text-primary);
-        }
-        .btn-secondary:hover {
-            background: rgba(139, 92, 246, 0.1);
-            border-color: var(--accent-purple-light);
-        }
-        .btn-outline {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-secondary);
-        }
-        .btn-outline:hover {
-            background: rgba(255, 255, 255, 0.03);
-            border-color: var(--accent-purple);
-            color: var(--text-primary);
-        }
-        .btn-danger {
-            background: #ef4444;
-            color: #fff;
-        }
-        .btn-danger:hover {
-            background: #dc2626;
-        }
-
-        /* ============================================================
-           CARDS
-           ============================================================ */
-        .card {
-            background: var(--bg-card);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue));
-            opacity: 0;
-            transition: var(--transition);
-        }
-        .card:hover::before {
-            opacity: 1;
-        }
-        .card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(139, 92, 246, 0.3);
-            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
-        }
-
-        /* ============================================================
-           NAVBAR
-           ============================================================ */
-        .navbar {
-            background: rgba(10, 6, 24, 0.92);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(139, 92, 246, 0.08);
-            padding: 0.75rem 1.5rem;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 1rem;
-            transition: var(--transition);
-        }
-        .navbar.scrolled {
-            background: rgba(10, 6, 24, 0.98);
-            border-bottom-color: rgba(139, 92, 246, 0.15);
-        }
-        .navbar .brand {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            font-family: var(--font-oswald);
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        .navbar .brand .logo-icon {
-            width: 2.4rem;
-            height: 2.4rem;
-            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            color: #fff;
-        }
-        .navbar .brand .highlight {
-            background: linear-gradient(135deg, var(--accent-purple-light), var(--accent-cyan));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .navbar .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-        .navbar .nav-links a {
-            color: var(--text-secondary);
-            padding: 0.4rem 0.9rem;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            transition: var(--transition);
-        }
-        .navbar .nav-links a:hover {
-            color: var(--text-primary);
-            background: rgba(139, 92, 246, 0.08);
-        }
-        .navbar .nav-links a.active {
-            color: var(--accent-purple-light);
-            background: rgba(139, 92, 246, 0.1);
-        }
-        .navbar .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            padding: 6px;
-            cursor: pointer;
-        }
-        .navbar .hamburger span {
-            display: block;
-            width: 26px;
-            height: 2px;
-            background: var(--text-primary);
-            border-radius: 2px;
-            transition: var(--transition);
-            transform-origin: center;
-        }
-        .navbar .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 5px);
-        }
-        .navbar .hamburger.active span:nth-child(2) {
-            opacity: 0;
-            transform: translateX(-10px);
-        }
-        .navbar .hamburger.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(5px, -5px);
-        }
-
-        /* ============================================================
-           HERO
-           ============================================================ */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 6rem 1.5rem 3rem;
-            position: relative;
-            overflow: hidden;
-            background: var(--bg-primary);
-        }
-        .hero-bg-image {
-            position: absolute;
-            inset: 0;
-            z-index: 0;
-            background: radial-gradient(ellipse at 20% 30%, rgba(139, 92, 246, 0.08) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 70%, rgba(59, 130, 246, 0.06) 0%, transparent 50%);
-        }
-        .hero .hero-content {
-            position: relative;
-            z-index: 1;
-            max-width: 900px;
-            text-align: center;
-        }
-        .hero .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.3rem 1rem;
-            border-radius: 9999px;
-            background: rgba(139, 92, 246, 0.12);
-            border: 1px solid rgba(139, 92, 246, 0.15);
-            color: var(--accent-purple-light);
-            font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-bottom: 1.5rem;
-        }
-        .hero .hero-badge .dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--accent-cyan);
-            animation: pulseDot 2s ease-in-out infinite;
-        }
-        @keyframes pulseDot {
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.4;
-                transform: scale(0.7);
-            }
-        }
-        .hero .hero-title {
-            font-family: var(--font-oswald);
-            font-size: clamp(3rem, 12vw, 6.5rem);
-            font-weight: 700;
-            line-height: 1.05;
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-        }
-        .hero .hero-title .highlight {
-            background: linear-gradient(135deg, var(--accent-purple-light), var(--accent-cyan));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .hero .hero-sub {
-            font-size: clamp(1rem, 1.5vw, 1.25rem);
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto 2rem;
-            line-height: 1.8;
-        }
-        .hero .hero-ctas {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-            margin-bottom: 2.5rem;
-        }
-        .hero .hero-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 1.5rem;
-            max-width: 500px;
-            margin: 0 auto;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(139, 92, 246, 0.08);
-        }
-        .hero .hero-stats .stat-item {
-            text-align: center;
-        }
-        .hero .hero-stats .stat-item .stat-number {
-            font-family: var(--font-oswald);
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--accent-purple-light);
-        }
-        .hero .hero-stats .stat-item .stat-label {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-weight: 500;
-        }
-
-        /* ============================================================
-           TICKER
-           ============================================================ */
-        .ticker {
-            overflow: hidden;
-            background: rgba(139, 92, 246, 0.04);
-            border-top: 1px solid rgba(139, 92, 246, 0.06);
-            border-bottom: 1px solid rgba(139, 92, 246, 0.06);
-            padding: 0.6rem 0;
-        }
-        .ticker .ticker-track {
-            display: flex;
-            gap: 3rem;
-            white-space: nowrap;
-            animation: tickerScroll 25s linear infinite;
-            width: max-content;
-        }
-        .ticker .ticker-track span {
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            font-weight: 500;
-            color: var(--text-muted);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
-        .ticker .ticker-track .ticker-accent {
-            color: var(--accent-purple-light);
-        }
-        .ticker .ticker-track .ticker-dot {
-            color: var(--accent-cyan);
-        }
-        @keyframes tickerScroll {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(-50%);
-            }
-        }
-
-        /* ============================================================
-           SECTION HEADS
-           ============================================================ */
-        .section-head {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        .section-head .eyebrow {
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: var(--accent-purple-light);
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-        .section-head .title {
-            font-family: var(--font-oswald);
-            font-size: clamp(2rem, 4vw, 3rem);
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.75rem;
-        }
-        .section-head .title .highlight {
-            background: linear-gradient(135deg, var(--accent-purple-light), var(--accent-cyan));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .section-head .subtitle {
-            color: var(--text-secondary);
-            font-size: 1rem;
-            max-width: 550px;
-            margin: 0 auto;
-        }
-
-        /* ============================================================
-           ABOUT
-           ============================================================ */
-        .about {
-            padding: 5rem 0;
-            background: var(--bg-secondary);
-            border-top: 1px solid rgba(139, 92, 246, 0.05);
-            border-bottom: 1px solid rgba(139, 92, 246, 0.05);
-        }
-        .about-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            align-items: center;
-        }
-        .about-content .about-text {
-            color: var(--text-secondary);
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
-        }
-        .about-content .about-text strong {
-            color: var(--text-primary);
-        }
-        .about-content .about-features {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-        .about-content .about-features .feature-item {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-        .about-content .about-features .feature-item .fi-icon {
-            color: var(--accent-purple-light);
-            font-size: 1.1rem;
-        }
-        .about-image {
-            position: relative;
-            border-radius: var(--radius);
-            overflow: hidden;
-            border: 1px solid rgba(139, 92, 246, 0.08);
-        }
-        .about-image img {
-            width: 100%;
-            height: 400px;
-            object-fit: cover;
-        }
-        .about-image .image-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.05));
-            pointer-events: none;
-        }
-
-        /* ============================================================
-           ROSTER
-           ============================================================ */
-        .roster {
-            padding: 5rem 0;
-            background: var(--bg-primary);
-        }
-        .roster-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-        }
-        .player-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            overflow: hidden;
-            transition: var(--transition);
-            text-align: center;
-            padding: 1.5rem 1rem;
-        }
-        .player-card:hover {
-            transform: translateY(-6px);
-            border-color: rgba(139, 92, 246, 0.3);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-        }
-        .player-card .player-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            margin: 0 auto 1rem;
-            overflow: hidden;
-            border: 2px solid rgba(139, 92, 246, 0.2);
-            background: var(--bg-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            color: var(--accent-purple-light);
-        }
-        .player-card .player-name {
-            font-family: var(--font-oswald);
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        .player-card .player-role {
-            font-size: 0.75rem;
-            color: var(--accent-purple-light);
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .player-card .player-stats {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.04);
-        }
-        .player-card .player-stats .ps-item {
-            text-align: center;
-        }
-        .player-card .player-stats .ps-item .ps-number {
-            font-family: var(--font-oswald);
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--accent-purple-light);
-        }
-        .player-card .player-stats .ps-item .ps-label {
-            font-size: 0.6rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-        }
-
-        /* ============================================================
-           SCHEDULE
-           ============================================================ */
-        .schedule {
-            padding: 5rem 0;
-            background: var(--bg-secondary);
-            border-top: 1px solid rgba(139, 92, 246, 0.05);
-            border-bottom: 1px solid rgba(139, 92, 246, 0.05);
-        }
-        .match-card {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1.2rem 1.5rem;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            transition: var(--transition);
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        .match-card:hover {
-            border-color: rgba(139, 92, 246, 0.2);
-            background: rgba(26, 10, 46, 0.5);
-        }
-        .match-card .match-teams {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        .match-card .match-teams .team-name {
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-        .match-card .match-teams .team-name.our-team {
-            color: var(--accent-purple-light);
-        }
-        .match-card .match-teams .vs {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .match-card .match-teams .vs .score {
-            color: var(--text-primary);
-            font-weight: 700;
-            font-size: 1rem;
-        }
-        .match-card .match-info {
-            text-align: right;
-        }
-        .match-card .match-info .match-date {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-        .match-card .match-info .match-result {
-            font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 0.2rem 0.8rem;
-            border-radius: 9999px;
-            display: inline-block;
-            margin-top: 0.2rem;
-        }
-        .match-card .match-info .match-result.win {
-            background: rgba(6, 182, 212, 0.15);
-            color: var(--accent-cyan);
-        }
-        .match-card .match-info .match-result.loss {
-            background: rgba(239, 68, 68, 0.12);
-            color: #f87171;
-        }
-        .match-card .match-info .match-result.upcoming {
-            background: rgba(139, 92, 246, 0.1);
-            color: var(--accent-purple-light);
-        }
-
-        /* ============================================================
-           ACHIEVEMENTS
-           ============================================================ */
-        .achievements {
-            padding: 5rem 0;
-            background: var(--bg-primary);
-        }
-        .achievement-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-        }
-        .achievement-card {
-            text-align: center;
-            padding: 2rem 1.5rem;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            transition: var(--transition);
-        }
-        .achievement-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(139, 92, 246, 0.2);
-        }
-        .achievement-card .ach-icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-        .achievement-card .ach-title {
-            font-family: var(--font-oswald);
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        .achievement-card .ach-desc {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin-top: 0.3rem;
-        }
-
-        /* ============================================================
-           SHOP
-           ============================================================ */
-        .shop {
-            padding: 5rem 0;
-            background: var(--bg-secondary);
-            border-top: 1px solid rgba(139, 92, 246, 0.05);
-            border-bottom: 1px solid rgba(139, 92, 246, 0.05);
-        }
-        .shop-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1.5rem;
-        }
-        .shop-item {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            overflow: hidden;
-            transition: var(--transition);
-            text-align: center;
-            padding: 1.5rem 1rem;
-        }
-        .shop-item:hover {
-            transform: translateY(-4px);
-            border-color: rgba(139, 92, 246, 0.3);
-        }
-        .shop-item .shop-image {
-            width: 100%;
-            height: 160px;
-            background: var(--bg-secondary);
-            border-radius: var(--radius);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            color: var(--text-muted);
-            margin-bottom: 1rem;
-        }
-        .shop-item .shop-name {
-            font-family: var(--font-oswald);
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        .shop-item .shop-price {
-            color: var(--accent-purple-light);
-            font-weight: 700;
-            font-size: 1.1rem;
-            margin-top: 0.3rem;
-        }
-
-        /* ============================================================
-           SOCIAL
-           ============================================================ */
-        .social {
-            padding: 4rem 0;
-            background: var(--bg-primary);
-        }
-        .social-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-        }
-        .social-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.6rem;
-            padding: 0.7rem 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: var(--radius);
-            color: var(--text-secondary);
-            transition: var(--transition);
-            background: rgba(255, 255, 255, 0.02);
-        }
-        .social-link:hover {
-            border-color: var(--accent-purple);
-            color: var(--text-primary);
-            background: rgba(139, 92, 246, 0.05);
-            transform: translateY(-2px);
-        }
-        .social-link .social-icon {
-            font-size: 1.2rem;
-        }
-
-        /* ============================================================
-           FOOTER
-           ============================================================ */
-        .footer {
-            background: var(--bg-dark);
-            border-top: 1px solid rgba(139, 92, 246, 0.06);
-            padding: 3rem 1.5rem 1.5rem;
-        }
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-        .footer .brand-footer .brand-name {
-            font-family: var(--font-oswald);
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        .footer .brand-footer .brand-name .highlight {
-            background: linear-gradient(135deg, var(--accent-purple-light), var(--accent-cyan));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .footer .brand-footer p {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            max-width: 300px;
-            line-height: 1.7;
-        }
-        .footer .col h4 {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-        }
-        .footer .col ul {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        .footer .col ul li a {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            transition: var(--transition);
-        }
-        .footer .col ul li a:hover {
-            color: var(--accent-purple-light);
-        }
-        .footer .footer-bottom {
-            border-top: 1px solid rgba(255, 255, 255, 0.03);
-            padding-top: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        .footer .footer-bottom p {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-        .footer .footer-bottom .footer-links {
-            display: flex;
-            gap: 1.5rem;
-        }
-        .footer .footer-bottom .footer-links a {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            transition: var(--transition);
-        }
-        .footer .footer-bottom .footer-links a:hover {
-            color: var(--accent-purple-light);
-        }
-
-        /* ============================================================
-           MODAL / AUTH
-           ============================================================ */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(8px);
-            z-index: 200;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-        .modal-overlay.hidden {
-            display: none;
-        }
-        .modal {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            max-width: 420px;
-            width: 100%;
-            padding: 2rem;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-        }
-        .modal .modal-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            color: var(--text-muted);
-            font-size: 1.5rem;
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-        .modal .modal-close:hover {
-            color: var(--text-primary);
-        }
-        .modal .modal-title {
-            font-family: var(--font-oswald);
-            font-size: 1.8rem;
-            text-align: center;
-            margin-bottom: 1.5rem;
-            color: var(--text-primary);
-        }
-        .modal .form-group {
-            margin-bottom: 1rem;
-        }
-        .modal .form-group label {
-            display: block;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.3rem;
-            font-weight: 500;
-        }
-        .modal .form-group input,
-        .modal .form-group select,
-        .modal .form-group textarea {
-            width: 100%;
-            padding: 0.7rem 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            background: rgba(0, 0, 0, 0.3);
-            color: var(--text-primary);
-            font-size: 0.9rem;
-            transition: var(--transition);
-        }
-        .modal .form-group input:focus,
-        .modal .form-group select:focus,
-        .modal .form-group textarea:focus {
-            border-color: var(--accent-purple);
-            outline: none;
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.1);
-        }
-        .modal .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-        .modal .auth-toggle {
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-        .modal .auth-toggle a {
-            color: var(--accent-purple-light);
-            cursor: pointer;
-        }
-        .modal .auth-toggle a:hover {
-            text-decoration: underline;
-        }
-        .modal .error-msg {
-            color: #ef4444;
-            font-size: 0.8rem;
-            text-align: center;
-            margin-top: 0.5rem;
-        }
-
-        /* ============================================================
-           TOAST
-           ============================================================ */
-        .toast-container {
-            position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
-            z-index: 300;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            max-width: 360px;
-            width: 100%;
-        }
-        .toast {
-            padding: 0.75rem 1.25rem;
-            border-radius: var(--radius);
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow);
-            color: var(--text-primary);
-            font-size: 0.875rem;
-            animation: slideInRight 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        .toast-success {
-            border-left: 4px solid #22c55e;
-        }
-        .toast-error {
-            border-left: 4px solid #ef4444;
-        }
-        .toast-info {
-            border-left: 4px solid var(--accent-cyan);
-        }
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(100%);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        /* ============================================================
-           RESPONSIVE
-           ============================================================ */
-        @media (max-width: 992px) {
-            .about-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            .about-image img {
-                height: 300px;
-            }
-            .footer-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 2rem;
-            }
-        }
-        @media (max-width: 768px) {
-            .navbar .nav-links {
-                display: none;
-                width: 100%;
-                flex-direction: column;
-                align-items: stretch;
-                padding: 1rem 0;
-                gap: 0.3rem;
-            }
-            .navbar .nav-links.open {
-                display: flex;
-            }
-            .navbar .hamburger {
-                display: flex;
-            }
-            .hero .hero-title {
-                font-size: 2.8rem;
-            }
-            .hero .hero-stats {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
-            }
-            .roster-grid {
-                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            }
-            .footer-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-            .footer .footer-bottom {
-                flex-direction: column;
-                text-align: center;
-            }
-            .match-card {
-                flex-direction: column;
-                align-items: stretch;
-                text-align: center;
-            }
-            .match-card .match-teams {
-                justify-content: center;
-            }
-            .match-card .match-info {
-                text-align: center;
-            }
-            .grid-cols-2,
-            .grid-cols-3,
-            .grid-cols-4 {
-                grid-template-columns: 1fr;
-            }
-        }
-        @media (max-width: 480px) {
-            .container {
-                padding: 0 1rem;
-            }
-            .hero .hero-title {
-                font-size: 2.2rem;
-            }
-            .hero .hero-ctas .btn {
-                width: 100%;
-                justify-content: center;
-            }
-            .roster-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            .player-card .player-avatar {
-                width: 70px;
-                height: 70px;
-                font-size: 1.8rem;
-            }
-            .section-head .title {
-                font-size: 1.8rem;
-            }
-        }
-
-        /* ============================================================
-           REVEAL ANIMATIONS
-           ============================================================ */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .reveal-left {
-            opacity: 0;
-            transform: translateX(-30px);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .reveal-left.active {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        .reveal-right {
-            opacity: 0;
-            transform: translateX(30px);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .reveal-right.active {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        .reveal-scale {
-            opacity: 0;
-            transform: scale(0.95);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .reveal-scale.active {
-            opacity: 1;
-            transform: scale(1);
-        }
-    </style>
+  <style>
+    /* Custom styles */
+    body {
+      font-family: 'Montserrat', sans-serif;
+    }
+    .font-great {
+      font-family: 'Great Vibes', cursive;
+    }
+    /* Hide all pages by default, show only active */
+    .page {
+      display: none;
+    }
+    .page.active {
+      display: block;
+    }
+    /* Nav link active state */
+    .nav-link.active {
+      color: #fbbf24; /* yellow-400 */
+      border-bottom: 2px solid #fbbf24;
+    }
+    /* Three.js canvas behind hero */
+    #three-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 10;
+    }
+    /* Dashboard cards */
+    .stat-card {
+      transition: transform 0.2s;
+    }
+    .stat-card:hover {
+      transform: translateY(-4px);
+    }
+  </style>
 </head>
 <body>
 
-    <!-- ============================================================
-       NAVBAR
-       ============================================================ -->
-    <nav class="navbar" id="navbar">
-        <a href="#" class="brand">
-            <span class="logo-icon">🐺</span>
-            <span>WOLF <span class="highlight">SOCIETY</span></span>
-        </a>
-        <div class="hamburger" id="hamburgerBtn">
-            <span></span><span></span><span></span>
-        </div>
-        <div class="nav-links" id="navLinks">
-            <a href="#" class="active" data-route="/">Home</a>
-            <a href="#about" data-route="/about">About</a>
-            <a href="#roster" data-route="/roster">Roster</a>
-            <a href="#schedule" data-route="/schedule">Schedule</a>
-            <a href="#achievements" data-route="/achievements">Achievements</a>
-            <a href="#shop" data-route="/shop">Shop</a>
-            <a href="#social" data-route="/social">Community</a>
-            <a href="#contact" data-route="/contact">Contact</a>
-            <span id="authNav" style="display:flex;gap:0.5rem;align-items:center;">
-                <a href="#" id="loginBtn" data-route="/login" style="color:var(--accent-purple-light);">Login</a>
-                <a href="#" id="registerBtn" data-route="/register">Register</a>
-                <a href="#" id="logoutBtn" style="display:none;color:var(--text-muted);">Logout</a>
-            </span>
-        </div>
-    </nav>
+  <!-- ===== NAVIGATION ===== -->
+  <nav class="bg-gray-900 text-white p-4 sticky top-0 z-50 shadow-lg">
+    <div class="container mx-auto flex flex-wrap items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <span class="font-great text-3xl text-yellow-400">Wolf Society</span>
+        <span class="text-sm bg-yellow-400 text-gray-900 px-2 py-0.5 rounded-full font-bold">ESPORTS</span>
+      </div>
 
-    <!-- ============================================================
-       TOAST CONTAINER
-       ============================================================ -->
-    <div id="toastContainer" class="toast-container"></div>
-
-    <!-- ============================================================
-       AUTH MODAL
-       ============================================================ -->
-    <div id="authModal" class="modal-overlay hidden">
-        <div class="modal">
-            <button class="modal-close" id="authModalClose">✕</button>
-            <h2 class="modal-title" id="authModalTitle">Welcome Back</h2>
-            <div id="authFormContainer">
-                <!-- Login Form -->
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label>Email Address</label>
-                        <input type="email" id="loginEmail" placeholder="you@example.com" required />
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" id="loginPassword" placeholder="••••••••" required />
-                    </div>
-                    <button type="submit" class="btn btn-primary w-full">Sign In</button>
-                    <div class="auth-toggle">
-                        Don't have an account? <a id="switchToRegister">Create one</a>
-                    </div>
-                    <div id="loginError" class="error-msg hidden"></div>
-                </form>
-                <!-- Register Form -->
-                <form id="registerForm" style="display:none;">
-                    <div class="form-group">
-                        <label>Full Name</label>
-                        <input type="text" id="regName" placeholder="Your full name" required />
-                    </div>
-                    <div class="form-group">
-                        <label>Email Address</label>
-                        <input type="email" id="regEmail" placeholder="you@example.com" required />
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" id="regPassword" placeholder="Min 6 characters" required />
-                    </div>
-                    <div class="form-group">
-                        <label>Role</label>
-                        <select id="regRole">
-                            <option value="player">Player</option>
-                            <option value="content_creator">Content Creator</option>
-                            <option value="manager">Manager</option>
-                            <option value="admin">Admin</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-full">Create Account</button>
-                    <div class="auth-toggle">
-                        Already have an account? <a id="switchToLogin">Sign in</a>
-                    </div>
-                    <div id="regError" class="error-msg hidden"></div>
-                </form>
-            </div>
-        </div>
+      <div class="flex flex-wrap items-center space-x-4 text-sm md:text-base">
+        <a href="#home" class="nav-link hover:text-yellow-400 transition" data-page="home">Home</a>
+        <a href="#about" class="nav-link hover:text-yellow-400 transition" data-page="about">About</a>
+        <a href="#teams" class="nav-link hover:text-yellow-400 transition" data-page="teams">Teams</a>
+        <a href="#news" class="nav-link hover:text-yellow-400 transition" data-page="news">News</a>
+        <a href="#analytics" class="nav-link hover:text-yellow-400 transition" data-page="analytics">Analytics</a>
+        <a href="#contact" class="nav-link hover:text-yellow-400 transition" data-page="contact">Contact</a>
+        <!-- Admin only visible when logged in -->
+        <a href="#admin" id="adminNavLink" class="nav-link hover:text-yellow-400 transition hidden" data-page="admin">Admin</a>
+        <!-- Auth buttons -->
+        <span id="authButtons">
+          <button id="loginBtn" class="bg-yellow-400 text-gray-900 px-3 py-1 rounded hover:bg-yellow-300 transition">Log In</button>
+          <button id="signupBtn" class="bg-gray-700 px-3 py-1 rounded hover:bg-gray-600 transition">Sign Up</button>
+        </span>
+        <span id="userInfo" class="hidden">
+          <span id="userEmail" class="text-sm text-gray-300 mr-2"></span>
+          <button id="logoutBtn" class="bg-red-600 px-3 py-1 rounded hover:bg-red-500 transition">Logout</button>
+        </span>
+      </div>
     </div>
+  </nav>
 
-    <!-- ============================================================
-       HERO
-       ============================================================ -->
-    <section class="hero" id="home">
-        <div class="hero-bg-image"></div>
-        <div class="hero-content">
-            <div class="hero-badge">
-                <span class="dot"></span>
-                India's Premier Underdog Esports Organization
-            </div>
-            <h1 class="hero-title">
-                <span class="highlight">Wolf</span> Society<br/>
-                <span class="highlight-2">Divine Wolf</span>
-            </h1>
-            <p class="hero-sub">
-                We are the underdogs who refuse to stay down. Wolf Society Esports is built on
-                skill, strategy, and an unbreakable spirit. From BGMI to Valorant and MOBA 5v5,
-                we compete with heart.
-            </p>
-            <div class="hero-ctas">
-                <a href="#roster" class="btn btn-primary">Meet the Pack</a>
-                <a href="#about" class="btn btn-secondary">Our Story</a>
-                <a href="#" id="heroLoginBtn" class="btn btn-outline">Join Us</a>
-            </div>
-            <div class="hero-stats" id="heroStats">
-                <div class="stat-item">
-                    <div class="stat-number">12</div>
-                    <div class="stat-label">Tournament Wins</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">50+</div>
-                    <div class="stat-label">Matches Played</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">8</div>
-                    <div class="stat-label">Active Players</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">100K+</div>
-                    <div class="stat-label">Community</div>
-                </div>
-            </div>
+  <!-- ===== PAGES ===== -->
+  <div id="app" class="container mx-auto px-4 py-8">
+
+    <!-- HOME -->
+    <section id="page-home" class="page active relative overflow-hidden min-h-[600px] flex items-center">
+      <div id="three-container"></div>
+      <div class="hero-content text-white max-w-3xl">
+        <h1 class="font-great text-6xl md:text-7xl text-yellow-400">Wolf Society</h1>
+        <p class="text-2xl md:text-3xl font-bold mt-2">Where Legends Are Born</p>
+        <p class="text-lg mt-4 text-gray-200">Join the pack – competitive gaming, community, and glory.</p>
+        <div class="mt-6 flex gap-4">
+          <a href="#teams" class="bg-yellow-400 text-gray-900 px-6 py-3 rounded-lg font-bold hover:bg-yellow-300 transition">Meet the Teams</a>
+          <a href="#contact" class="bg-gray-800 text-white px-6 py-3 rounded-lg font-bold hover:bg-gray-700 transition">Get in Touch</a>
         </div>
+      </div>
     </section>
 
-    <!-- ============================================================
-       TICKER
-       ============================================================ -->
-    <div class="ticker">
-        <div class="ticker-track">
-            <span>🐺 WOLF SOCIETY — DIVINE WOLF</span>
-            <span class="ticker-dot">✦</span>
-            <span class="ticker-accent">#UNDERDOGS</span>
-            <span class="ticker-dot">✦</span>
-            <span>BGMI · VALORANT · MOBA 5v5</span>
-            <span class="ticker-dot">✦</span>
-            <span class="ticker-accent">BUILT FOR GLORY</span>
-            <span class="ticker-dot">✦</span>
-            <span>🐺 WOLF SOCIETY — DIVINE WOLF</span>
-            <span class="ticker-dot">✦</span>
-            <span class="ticker-accent">#UNDERDOGS</span>
-            <span class="ticker-dot">✦</span>
-            <span>BGMI · VALORANT · MOBA 5v5</span>
-            <span class="ticker-dot">✦</span>
-            <span class="ticker-accent">BUILT FOR GLORY</span>
-            <span class="ticker-dot">✦</span>
+    <!-- ABOUT -->
+    <section id="page-about" class="page">
+      <h2 class="text-4xl font-bold text-gray-800 mb-6">About Wolf Society</h2>
+      <div class="grid md:grid-cols-2 gap-8">
+        <div>
+          <p class="text-lg text-gray-700 leading-relaxed">
+            Wolf Society Esports is a premier competitive gaming organization founded in 2020. We bring together the most talented players from around the globe to compete in titles like Valorant, League of Legends, CS:GO, and more.
+          </p>
+          <p class="text-lg text-gray-700 leading-relaxed mt-4">
+            Our mission is to foster a community where passion meets professionalism, and every member can grow as a player and as a person.
+          </p>
         </div>
+        <div class="bg-gray-100 p-6 rounded-xl shadow">
+          <h3 class="text-2xl font-bold text-gray-800">Our Values</h3>
+          <ul class="mt-3 space-y-2 text-gray-700">
+            <li>🐺 <strong>Loyalty</strong> – We stand by each other.</li>
+            <li>⚔️ <strong>Skill</strong> – We relentlessly improve.</li>
+            <li>🤝 <strong>Community</strong> – We grow together.</li>
+            <li>🏆 <strong>Excellence</strong> – We win with honor.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEAMS -->
+    <section id="page-teams" class="page">
+      <h2 class="text-4xl font-bold text-gray-800 mb-6">Our Teams</h2>
+      <div id="teamsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Teams will be injected here from Supabase or fallback mock data -->
+      </div>
+    </section>
+
+    <!-- NEWS -->
+    <section id="page-news" class="page">
+      <h2 class="text-4xl font-bold text-gray-800 mb-6">Latest News</h2>
+      <div id="newsContainer" class="space-y-6">
+        <!-- News items injected here -->
+      </div>
+    </section>
+
+    <!-- ANALYTICS -->
+    <section id="page-analytics" class="page">
+      <h2 class="text-4xl font-bold text-gray-800 mb-6">Analytics Dashboard</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-blue-100 p-6 rounded-xl shadow stat-card">
+          <p class="text-sm text-blue-600 uppercase font-bold">Total Matches</p>
+          <p class="text-4xl font-bold text-blue-800" id="totalMatches">245</p>
+        </div>
+        <div class="bg-green-100 p-6 rounded-xl shadow stat-card">
+          <p class="text-sm text-green-600 uppercase font-bold">Win Rate</p>
+          <p class="text-4xl font-bold text-green-800" id="winRate">68%</p>
+        </div>
+        <div class="bg-purple-100 p-6 rounded-xl shadow stat-card">
+          <p class="text-sm text-purple-600 uppercase font-bold">Active Players</p>
+          <p class="text-4xl font-bold text-purple-800" id="activePlayers">32</p>
+        </div>
+      </div>
+      <div class="mt-8 bg-gray-50 p-6 rounded-xl shadow">
+        <h3 class="text-xl font-bold mb-4">Performance Over Time</h3>
+        <canvas id="analyticsChart" width="400" height="200" class="w-full h-auto max-h-64"></canvas>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="page-contact" class="page">
+      <h2 class="text-4xl font-bold text-gray-800 mb-6">Contact Us</h2>
+      <div class="grid md:grid-cols-2 gap-8">
+        <form id="contactForm" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Name</label>
+            <input type="text" id="contactName" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-yellow-400" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Email</label>
+            <input type="email" id="contactEmail" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-yellow-400" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Message</label>
+            <textarea id="contactMessage" rows="4" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-yellow-400" required></textarea>
+          </div>
+          <button type="submit" class="bg-yellow-400 text-gray-900 px-6 py-2 rounded-lg font-bold hover:bg-yellow-300 transition">Send Message</button>
+          <p id="contactStatus" class="text-sm mt-2"></p>
+        </form>
+        <div class="bg-gray-100 p-6 rounded-xl shadow">
+          <h3 class="text-xl font-bold">Reach Out</h3>
+          <p class="mt-2"><strong>Email:</strong> contact@wolfsociety.gg</p>
+          <p><strong>Discord:</strong> wolf-society</p>
+          <p><strong>Location:</strong> Global (Remote)</p>
+          <p class="mt-4 text-sm text-gray-600">We'll get back to you within 24 hours.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN DASHBOARD (protected) -->
+    <section id="page-admin" class="page">
+      <h2 class="text-4xl font-bold text-gray-800 mb-6">Admin Dashboard</h2>
+      <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+        <p class="text-yellow-800">Welcome, <span id="adminUserEmail" class="font-bold"></span>! You have administrative privileges.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-xl shadow">
+          <h3 class="text-2xl font-bold">Manage Teams</h3>
+          <p class="text-gray-600 mt-2">Add, edit, or remove teams.</p>
+          <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 transition">Add Team</button>
+          <button class="mt-4 ml-2 bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-500 transition">Edit</button>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow">
+          <h3 class="text-2xl font-bold">Recent Activity</h3>
+          <ul class="mt-2 space-y-1 text-gray-700">
+            <li>⚡ New player signed: "ShadowWolf"</li>
+            <li>📰 News post published: "Tournament Victory"</li>
+            <li>📊 Analytics updated: win rate +2%</li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-8 bg-gray-50 p-6 rounded-xl shadow">
+        <h3 class="text-xl font-bold">Member Management</h3>
+        <p class="text-gray-600">List of registered members (fetched from Supabase).</p>
+        <div id="memberList" class="mt-4">
+          <!-- Will be populated with Supabase query -->
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== AUTH MODALS (simple overlay) ===== -->
+  <div id="authModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full">
+      <h2 id="authModalTitle" class="text-2xl font-bold mb-4">Log In</h2>
+      <form id="authForm">
+        <input type="email" id="authEmail" placeholder="Email" class="w-full border p-2 rounded mb-3" required>
+        <input type="password" id="authPassword" placeholder="Password" class="w-full border p-2 rounded mb-3" required>
+        <button type="submit" id="authSubmitBtn" class="w-full bg-yellow-400 text-gray-900 py-2 rounded font-bold hover:bg-yellow-300 transition">Log In</button>
+        <p id="authError" class="text-red-500 text-sm mt-2"></p>
+        <p class="text-sm mt-4 text-center">
+          <span id="authToggleText">Don't have an account?</span>
+          <a href="#" id="authToggleLink" class="text-blue-600 hover:underline">Sign Up</a>
+        </p>
+        <button type="button" id="authCloseBtn" class="mt-4 text-gray-500 hover:text-gray-700 text-sm block mx-auto">Close</button>
+      </form>
     </div>
+  </div>
 
-    <!-- ============================================================
-       ABOUT
-       ============================================================ -->
-    <section class="about" id="about">
-        <div class="container">
-            <div class="about-grid">
-                <div class="about-content reveal">
-                    <div class="section-head text-left" style="margin-bottom:1.5rem;">
-                        <span class="eyebrow">Our Story</span>
-                        <h2 class="title" style="font-size:2.2rem;">The <span class="highlight">Underdog</span> Revolution</h2>
-                    </div>
-                    <p class="about-text">
-                        <strong>Wolf Society Esports</strong> was born from a simple belief: that
-                        passion, strategy, and heart matter more than money or reputation.
-                        We are India's premier underdog esports organization, competing across
-                        <strong>BGMI, Valorant, and MOBA 5v5</strong> with a hunger to prove
-                        that underdogs can conquer the world.
-                    </p>
-                    <p class="about-text">
-                        Our flagship team, <strong>Divine Wolf</strong>, represents the pinnacle
-                        of our competitive spirit. We started as a group of passionate players
-                        who refused to be overlooked. Today, we stand as a professional esports
-                        organization with a growing fanbase, multiple tournament wins, and a roster
-                        of elite players who share one vision: to dominate the Indian esports scene.
-                    </p>
-                    <div class="about-features">
-                        <div class="feature-item"><span class="fi-icon">🎯</span> Precision Strategy</div>
-                        <div class="feature-item"><span class="fi-icon">🤝</span> Unbreakable Teamwork</div>
-                        <div class="feature-item"><span class="fi-icon">🔥</span> Relentless Grind</div>
-                        <div class="feature-item"><span class="fi-icon">🏆</span> Champion Mindset</div>
-                    </div>
+  <!-- ===== JAVASCRIPT ===== -->
+  <script>
+    (function() {
+      // ----- Supabase config (REPLACE WITH YOUR OWN) -----
+      const SUPABASE_URL = 'https://your-project.supabase.co';
+      const SUPABASE_ANON_KEY = 'your-anon-key';
+      // If not set, fallback to mock mode (no real calls)
+      const USE_SUPABASE = SUPABASE_URL !== 'https://your-project.supabase.co';
+      let supabase = null;
+      if (USE_SUPABASE) {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+
+      // ----- Mock Data (if no Supabase) -----
+      const mockTeams = [
+        { id: 1, name: 'Wolf Valorant', game: 'Valorant', members: 5, logo: '🎯' },
+        { id: 2, name: 'Wolf League', game: 'League of Legends', members: 5, logo: '⚔️' },
+        { id: 3, name: 'Wolf CS:GO', game: 'Counter-Strike', members: 5, logo: '🔫' },
+        { id: 4, name: 'Wolf Apex', game: 'Apex Legends', members: 3, logo: '🦊' },
+        { id: 5, name: 'Wolf Dota', game: 'Dota 2', members: 5, logo: '🌿' },
+        { id: 6, name: 'Wolf Fortnite', game: 'Fortnite', members: 4, logo: '🎮' },
+      ];
+      const mockNews = [
+        { id: 1, title: 'Wolf Society Wins Regional Championship!', date: '2026-07-28', excerpt: 'Our Valorant team dominated the finals...' },
+        { id: 2, title: 'New Recruit Joins League Team', date: '2026-07-25', excerpt: 'We welcome "Mystic" to the roster...' },
+        { id: 3, title: 'Community Tournament Announced', date: '2026-07-20', excerpt: 'Sign up for our upcoming charity tournament...' },
+      ];
+
+      // ----- State -----
+      let currentUser = null; // { email }
+      let currentPage = 'home';
+
+      // ----- DOM refs -----
+      const pages = document.querySelectorAll('.page');
+      const navLinks = document.querySelectorAll('.nav-link');
+      const adminNavLink = document.getElementById('adminNavLink');
+      const authButtons = document.getElementById('authButtons');
+      const userInfo = document.getElementById('userInfo');
+      const userEmailSpan = document.getElementById('userEmail');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const loginBtn = document.getElementById('loginBtn');
+      const signupBtn = document.getElementById('signupBtn');
+      const authModal = document.getElementById('authModal');
+      const authForm = document.getElementById('authForm');
+      const authEmail = document.getElementById('authEmail');
+      const authPassword = document.getElementById('authPassword');
+      const authSubmitBtn = document.getElementById('authSubmitBtn');
+      const authError = document.getElementById('authError');
+      const authModalTitle = document.getElementById('authModalTitle');
+      const authToggleLink = document.getElementById('authToggleLink');
+      const authToggleText = document.getElementById('authToggleText');
+      const authCloseBtn = document.getElementById('authCloseBtn');
+      const adminUserEmailSpan = document.getElementById('adminUserEmail');
+      const memberList = document.getElementById('memberList');
+
+      // ----- Routing -----
+      function navigateTo(pageId) {
+        // Hide all pages
+        pages.forEach(p => p.classList.remove('active'));
+        const target = document.getElementById(`page-${pageId}`);
+        if (target) target.classList.add('active');
+        // Update nav links
+        navLinks.forEach(link => link.classList.remove('active'));
+        navLinks.forEach(link => {
+          if (link.dataset.page === pageId) link.classList.add('active');
+        });
+        currentPage = pageId;
+        // Show/hide admin nav based on login
+        if (pageId === 'admin' && !currentUser) {
+          // If not logged in, redirect to home
+          window.location.hash = '#home';
+          return;
+        }
+        // If admin page and logged in, set email
+        if (pageId === 'admin' && currentUser) {
+          adminUserEmailSpan.textContent = currentUser.email;
+          fetchMembers();
+        }
+        // GSAP animations on page change (optional)
+        animatePageIn(target);
+        // Update hash
+        if (window.location.hash !== `#${pageId}`) {
+          window.location.hash = `#${pageId}`;
+        }
+        // Re-init Three.js if home
+        if (pageId === 'home') {
+          initThree();
+        }
+      }
+
+      function animatePageIn(element) {
+        if (!element) return;
+        gsap.fromTo(element, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' });
+      }
+
+      // ----- Three.js background (Home) -----
+      let scene, camera, renderer, particles;
+      function initThree() {
+        const container = document.getElementById('three-container');
+        if (!container) return;
+        // Clean up existing
+        if (renderer) {
+          renderer.dispose();
+          container.innerHTML = '';
+        }
+        const width = container.clientWidth;
+        const height = container.clientHeight || 400;
+
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+        camera.position.z = 30;
+        renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        // Particles
+        const geometry = new THREE.BufferGeometry();
+        const count = 1500;
+        const positions = new Float32Array(count * 3);
+        const colors = new Float32Array(count * 3);
+        for (let i = 0; i < count * 3; i += 3) {
+          positions[i] = (Math.random() - 0.5) * 100;
+          positions[i+1] = (Math.random() - 0.5) * 60;
+          positions[i+2] = (Math.random() - 0.5) * 50;
+          const r = 0.8 + 0.4 * Math.random();
+          const g = 0.6 + 0.4 * Math.random();
+          const b = 0.2 + 0.3 * Math.random();
+          colors[i] = r;
+          colors[i+1] = g;
+          colors[i+2] = b;
+        }
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+        const material = new THREE.PointsMaterial({
+          size: 0.15,
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.8,
+          blending: THREE.AdditiveBlending,
+        });
+        particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+
+        function animate() {
+          requestAnimationFrame(animate);
+          if (particles) {
+            particles.rotation.y += 0.0005;
+            particles.rotation.x += 0.0002;
+          }
+          renderer.render(scene, camera);
+        }
+        animate();
+
+        // Resize
+        window.addEventListener('resize', () => {
+          const newWidth = container.clientWidth;
+          const newHeight = container.clientHeight || 400;
+          camera.aspect = newWidth / newHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(newWidth, newHeight);
+        });
+      }
+
+      // ----- Load content from Supabase or mock -----
+      async function loadTeams() {
+        const container = document.getElementById('teamsContainer');
+        if (!container) return;
+        let teams = [];
+        if (USE_SUPABASE && supabase) {
+          try {
+            const { data, error } = await supabase.from('teams').select('*');
+            if (error) throw error;
+            teams = data || [];
+          } catch (e) {
+            console.warn('Supabase teams fetch failed, using mock', e);
+            teams = mockTeams;
+          }
+        } else {
+          teams = mockTeams;
+        }
+        if (teams.length === 0) teams = mockTeams; // fallback
+        container.innerHTML = teams.map(t => `
+          <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+            <div class="text-4xl">${t.logo || '🐺'}</div>
+            <h3 class="text-2xl font-bold mt-2">${t.name}</h3>
+            <p class="text-gray-600">${t.game}</p>
+            <p class="text-sm text-gray-500">${t.members || '?'} members</p>
+          </div>
+        `).join('');
+      }
+
+      async function loadNews() {
+        const container = document.getElementById('newsContainer');
+        if (!container) return;
+        let news = [];
+        if (USE_SUPABASE && supabase) {
+          try {
+            const { data, error } = await supabase.from('news').select('*').order('date', { ascending: false });
+            if (error) throw error;
+            news = data || [];
+          } catch (e) {
+            console.warn('Supabase news fetch failed, using mock', e);
+            news = mockNews;
+          }
+        } else {
+          news = mockNews;
+        }
+        if (news.length === 0) news = mockNews;
+        container.innerHTML = news.map(n => `
+          <div class="border-b border-gray-200 pb-4">
+            <h3 class="text-2xl font-semibold">${n.title}</h3>
+            <p class="text-sm text-gray-500">${n.date || 'Recent'}</p>
+            <p class="text-gray-700 mt-1">${n.excerpt || 'Read more...'}</p>
+          </div>
+        `).join('');
+      }
+
+      async function fetchMembers() {
+        if (!memberList) return;
+        if (USE_SUPABASE && supabase && currentUser) {
+          try {
+            const { data, error } = await supabase.from('users').select('email, created_at').limit(5);
+            if (error) throw error;
+            if (data && data.length) {
+              memberList.innerHTML = data.map(u => `
+                <div class="flex justify-between border-b py-2">
+                  <span>${u.email}</span>
+                  <span class="text-sm text-gray-500">${new Date(u.created_at).toLocaleDateString()}</span>
                 </div>
-                <div class="about-image reveal-right">
-                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'%3E%3Crect width='600' height='400' fill='%23120c28'/%3E%3Ctext x='300' y='200' text-anchor='middle' font-family='Oswald, sans-serif' font-size='32' fill='%238b5cf6' font-weight='700'%3EWOLF SOCIETY%3C/text%3E%3Ctext x='300' y='240' text-anchor='middle' font-family='Oswald, sans-serif' font-size='22' fill='%23b8b0d8'%3EDIVINE WOLF%3C/text%3E%3C/svg%3E" alt="Wolf Society" />
-                    <div class="image-overlay"></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================
-       ROSTER
-       ============================================================ -->
-    <section class="roster" id="roster">
-        <div class="container">
-            <div class="section-head reveal">
-                <span class="eyebrow">The Pack</span>
-                <h2 class="title">Divine <span class="highlight">Wolf</span> Roster</h2>
-                <p class="subtitle">Meet the elite players who represent us on the battlefield.</p>
-            </div>
-            <div class="roster-grid" id="rosterGrid">
-                <!-- Roster loaded from API -->
-                <div class="text-center text-muted" style="grid-column:1/-1;padding:2rem;">Loading roster...</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================
-       SCHEDULE
-       ============================================================ -->
-    <section class="schedule" id="schedule">
-        <div class="container">
-            <div class="section-head reveal">
-                <span class="eyebrow">Match Schedule</span>
-                <h2 class="title">Upcoming <span class="highlight">Battles</span></h2>
-                <p class="subtitle">Track our journey as we conquer the esports arena.</p>
-            </div>
-            <div class="space-y-3" id="matchesContainer">
-                <!-- Matches loaded from API -->
-                <div class="text-center text-muted" style="padding:2rem;">Loading matches...</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================
-       ACHIEVEMENTS
-       ============================================================ -->
-    <section class="achievements" id="achievements">
-        <div class="container">
-            <div class="section-head reveal">
-                <span class="eyebrow">Our Trophies</span>
-                <h2 class="title">What We've <span class="highlight">Achieved</span></h2>
-                <p class="subtitle">Every victory is a step toward greatness.</p>
-            </div>
-            <div class="achievement-grid" id="achievementGrid">
-                <div class="achievement-card reveal"><div class="ach-icon">🏆</div><div class="ach-title">BGMI Champions Cup</div><div class="ach-desc">Season 3 Winners · 2026</div></div>
-                <div class="achievement-card reveal"><div class="ach-icon">🥇</div><div class="ach-title">Valorant India Finals</div><div class="ach-desc">1st Place · 2025</div></div>
-                <div class="achievement-card reveal"><div class="ach-icon">🌟</div><div class="ach-title">MOBA Masters Series</div><div class="ach-desc">Grand Finalists · 2025</div></div>
-                <div class="achievement-card reveal"><div class="ach-icon">🏅</div><div class="ach-title">Underdog Invitational</div><div class="ach-desc">Champions · 2024</div></div>
-                <class="achievement-card reveal"><div class="ach-icon">⚡</div><div class="ach-title">Ranked Dominance</div><div class="ach-desc">Top 10 Indian Teams</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================
-       SHOP
-       ============================================================ -->
-    <section class="shop" id="shop">
-        <div class="container">
-            <div class="section-head reveal">
-                <span class="eyebrow">Merchandise</span>
-                <h2 class="title">Wolf <span class="highlight">Society</span> Gear</h2>
-                <p class="subtitle">Rep the pack with our official merchandise.</p>
-            </div>
-            <div class="shop-grid" id="shopGrid">
-                <!-- Shop items loaded from API -->
-                <div class="text-center text-muted" style="grid-column:1/-1;padding:2rem;">Loading shop items...</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================
-       SOCIAL
-       ============================================================ -->
-    <section class="social" id="social">
-        <div class="container">
-            <div class="section-head reveal">
-                <span class="eyebrow">Join the Pack</span>
-                <h2 class="title">Our <span class="highlight">Community</span></h2>
-                <p class="subtitle">Connect with us across all platforms. We're stronger together.</p>
-            </div>
-            <div class="social-grid">
-                <a href="#" class="social-link discord"><span class="social-icon">💬</span> Discord</a>
-                <a href="#" class="social-link instagram"><span class="social-icon">📸</span> Instagram</a>
-                <a href="#" class="social-link twitter"><span class="social-icon">🐦</span> Twitter</a>
-                <a href="#" class="social-link youtube"><span class="social-icon">▶️</span> YouTube</a>
-                <a href="#" class="social-link"><span class="social-icon">📱</span> WhatsApp Channel</a>
-                <a href="#" class="social-link"><span class="social-icon">📺</span> Twitch</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================
-       CONTACT / FOOTER
-       ============================================================ -->
-    <footer class="footer" id="contact">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="brand-footer">
-                    <div class="brand-name">🐺 WOLF <span class="highlight">SOCIETY</span></div>
-                    <p>India's premier underdog esports organization. Competing in BGMI, Valorant, and MOBA 5v5 with skill, strategy, and heart.</p>
-                </div>
-                <div class="col">
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#about">About</a></li>
-                        <li><a href="#roster">Roster</a></li>
-                        <li><a href="#schedule">Schedule</a></li>
-                    </ul>
-                </div>
-                <div class="col">
-                    <h4>More</h4>
-                    <ul>
-                        <li><a href="#achievements">Achievements</a></li>
-                        <li><a href="#shop">Shop</a></li>
-                        <li><a href="#social">Community</a></li>
-                        <li><a href="#contact">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="col">
-                    <h4>Legal</h4>
-                    <ul>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Service</a></li>
-                        <li><a href="#">Disclaimer</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Wolf Society Esports. All rights reserved. Built with ❤️ in India.</p>
-                <div class="footer-links">
-                    <a href="#">Privacy</a>
-                    <a href="#">Terms</a>
-                    <a href="#">Contact</a>
-                    <a href="#">Press</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- ============================================================
-       JAVASCRIPT — COMPLETE APPLICATION
-       ============================================================ -->
-    <script>
-        // ============================================================
-        // CONFIGURATION
-        // ============================================================
-        const API_BASE = 'https://wolf-society-esports.onrender.com';
-        let currentUser = null;
-        let authToken = null;
-
-        // ============================================================
-        // UTILITY FUNCTIONS
-        // ============================================================
-        function $(sel, ctx = document) { return ctx.querySelector(sel); }
-        function $$(sel, ctx = document) { return [...ctx.querySelectorAll(sel)]; }
-        function create(tag, attrs = {}, children = []) {
-            const el = document.createElement(tag);
-            Object.entries(attrs).forEach(([k, v]) => {
-                if (k === 'text') el.textContent = v;
-                else if (k === 'html') el.innerHTML = v;
-                else if (k === 'className') el.className = v;
-                else el.setAttribute(k, v);
-            });
-            children.forEach(c => {
-                if (typeof c === 'string') el.appendChild(document.createTextNode(c));
-                else if (c instanceof HTMLElement) el.appendChild(c);
-            });
-            return el;
-        }
-        function append(parent, ...children) {
-            children.forEach(c => {
-                if (Array.isArray(c)) c.forEach(ch => parent.appendChild(ch));
-                else if (c instanceof HTMLElement) parent.appendChild(c);
-                else parent.appendChild(document.createTextNode(String(c)));
-            });
-            return parent;
-        }
-        function empty(el) { while (el.firstChild) el.removeChild(el.firstChild); return el; }
-        function remove(el) { el.remove(); }
-        function on(el, event, handler) { el.addEventListener(event, handler); }
-
-        // ─── Toast ──────────────────────────────────────────────────
-        function showToast(message, type = 'info', duration = 4000) {
-            const container = document.getElementById('toastContainer');
-            const colors = { success: '#22c55e', error: '#ef4444', info: '#06b6d4' };
-            const toast = create('div', { className: `toast toast-${type}` });
-            const icon = { success: '✅', error: '❌', info: 'ℹ️' } [type] || 'ℹ️';
-            toast.innerHTML = `<span>${icon}</span> ${message}`;
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateX(100%)';
-                setTimeout(() => remove(toast), 300);
-            }, duration);
-        }
-
-        // ─── API ────────────────────────────────────────────────────
-        async function apiRequest(method, endpoint, data = null) {
-            const url = `${API_BASE}${endpoint}`;
-            const options = {
-                method,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            };
-            if (authToken) {
-                options.headers['Authorization'] = `Bearer ${authToken}`;
+              `).join('');
+              return;
             }
-            if (data) {
-                options.body = JSON.stringify(data);
+          } catch (e) {
+            console.warn('Member fetch error', e);
+          }
+        }
+        memberList.innerHTML = '<p class="text-gray-500">No members found (mock data). Please set up Supabase.</p>';
+      }
+
+      // ----- Auth -----
+      function updateUIForUser(user) {
+        currentUser = user;
+        if (user) {
+          authButtons.classList.add('hidden');
+          userInfo.classList.remove('hidden');
+          userEmailSpan.textContent = user.email;
+          adminNavLink.classList.remove('hidden');
+          // If on admin page, refresh
+          if (currentPage === 'admin') {
+            adminUserEmailSpan.textContent = user.email;
+            fetchMembers();
+          }
+        } else {
+          authButtons.classList.remove('hidden');
+          userInfo.classList.add('hidden');
+          adminNavLink.classList.add('hidden');
+          // If on admin page, redirect to home
+          if (currentPage === 'admin') {
+            window.location.hash = '#home';
+          }
+        }
+      }
+
+      // Sign in with Supabase or mock
+      async function signIn(email, password) {
+        if (USE_SUPABASE && supabase) {
+          try {
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) throw error;
+            updateUIForUser(data.user);
+            closeModal();
+            return true;
+          } catch (e) {
+            authError.textContent = e.message || 'Login failed. Check credentials.';
+            return false;
+          }
+        } else {
+          // Mock: accept any email/password with @
+          if (email.includes('@') && password.length >= 6) {
+            updateUIForUser({ email });
+            closeModal();
+            return true;
+          } else {
+            authError.textContent = 'Invalid email or password (mock: need @ and 6+ chars)';
+            return false;
+          }
+        }
+      }
+
+      async function signUp(email, password) {
+        if (USE_SUPABASE && supabase) {
+          try {
+            const { data, error } = await supabase.auth.signUp({ email, password });
+            if (error) throw error;
+            // Confirmation email might be required; for demo we just log in
+            if (data.user) {
+              updateUIForUser(data.user);
+              closeModal();
+              return true;
             }
-            try {
-                const res = await fetch(url, options);
-                const result = await res.json();
-                if (!res.ok) {
-                    throw new Error(result.error || 'API request failed');
-                }
-                return result;
-            } catch (err) {
-                console.error('API Error:', err);
-                throw err;
-            }
+            return false;
+          } catch (e) {
+            authError.textContent = e.message || 'Signup failed.';
+            return false;
+          }
+        } else {
+          // Mock signup
+          if (email.includes('@') && password.length >= 6) {
+            updateUIForUser({ email });
+            closeModal();
+            return true;
+          } else {
+            authError.textContent = 'Invalid email or password (mock: need @ and 6+ chars)';
+            return false;
+          }
         }
+      }
 
-        async function apiGet(endpoint) { return apiRequest('GET', endpoint); }
-        async function apiPost(endpoint, data) { return apiRequest('POST', endpoint, data); }
-        async function apiPut(endpoint, data) { return apiRequest('PUT', endpoint, data); }
-        async function apiDelete(endpoint) { return apiRequest('DELETE', endpoint); }
-
-        // ============================================================
-        // AUTH FUNCTIONS
-        // ============================================================
-        function getStoredUser() {
-            try {
-                const data = JSON.parse(localStorage.getItem('wolf_user') || 'null');
-                if (data) {
-                    currentUser = data.user;
-                    authToken = data.token;
-                }
-                return data;
-            } catch { return null; }
+      async function signOut() {
+        if (USE_SUPABASE && supabase) {
+          try {
+            await supabase.auth.signOut();
+          } catch (e) {}
         }
+        updateUIForUser(null);
+        // Reload current page content
+        if (currentPage === 'home') initThree();
+        loadTeams();
+        loadNews();
+      }
 
-        function saveUser(user, token) {
-            currentUser = user;
-            authToken = token;
-            localStorage.setItem('wolf_user', JSON.stringify({ user, token }));
-            updateAuthUI();
+      // ----- Modal handling -----
+      let isLoginMode = true;
+
+      function openModal(login = true) {
+        isLoginMode = login;
+        authModal.classList.remove('hidden');
+        authModalTitle.textContent = login ? 'Log In' : 'Sign Up';
+        authSubmitBtn.textContent = login ? 'Log In' : 'Sign Up';
+        authToggleText.textContent = login ? "Don't have an account?" : 'Already have an account?';
+        authToggleLink.textContent = login ? 'Sign Up' : 'Log In';
+        authError.textContent = '';
+        authEmail.value = '';
+        authPassword.value = '';
+      }
+
+      function closeModal() {
+        authModal.classList.add('hidden');
+      }
+
+      // Toggle between login/signup
+      authToggleLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        openModal(!isLoginMode);
+      });
+
+      authCloseBtn.addEventListener('click', closeModal);
+      authModal.addEventListener('click', (e) => {
+        if (e.target === authModal) closeModal();
+      });
+
+      loginBtn.addEventListener('click', () => openModal(true));
+      signupBtn.addEventListener('click', () => openModal(false));
+
+      authForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = authEmail.value.trim();
+        const password = authPassword.value.trim();
+        let success = false;
+        if (isLoginMode) {
+          success = await signIn(email, password);
+        } else {
+          success = await signUp(email, password);
         }
-
-        function clearUser() {
-            currentUser = null;
-            authToken = null;
-            localStorage.removeItem('wolf_user');
-            updateAuthUI();
+        if (success) {
+          // Reload content
+          loadTeams();
+          loadNews();
         }
+      });
 
-        function updateAuthUI() {
-            const loginBtn = document.getElementById('loginBtn');
-            const registerBtn = document.getElementById('registerBtn');
-            const logoutBtn = document.getElementById('logoutBtn');
+      logoutBtn.addEventListener('click', signOut);
 
-            if (currentUser) {
-                loginBtn.style.display = 'none';
-                registerBtn.style.display = 'none';
-                logoutBtn.style.display = 'inline-block';
-                // Update hero login button
-                const heroLogin = document.getElementById('heroLoginBtn');
-                if (heroLogin) heroLogin.textContent = `👋 ${currentUser.full_name}`;
-            } else {
-                loginBtn.style.display = 'inline-block';
-                registerBtn.style.display = 'inline-block';
-                logoutBtn.style.display = 'none';
-                const heroLogin = document.getElementById('heroLoginBtn');
-                if (heroLogin) heroLogin.textContent = 'Join Us';
-            }
-        }
+      // ----- Contact form (demo) -----
+      document.getElementById('contactForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('contactName').value;
+        const email = document.getElementById('contactEmail').value;
+        const msg = document.getElementById('contactMessage').value;
+        document.getElementById('contactStatus').textContent = 'Message sent (demo)! We\'ll get back soon.';
+        document.getElementById('contactStatus').classList.add('text-green-600');
+        // In production, you could insert into Supabase
+        // Reset form? optional
+      });
 
-        // ============================================================
-        // AUTH MODAL
-        // ============================================================
-        const authModal = document.getElementById('authModal');
-        const loginForm = document.getElementById('loginForm');
-        const registerForm = document.getElementById('registerForm');
-        const loginError = document.getElementById('loginError');
-        const regError = document.getElementById('regError');
-
-        function openAuthModal(mode = 'login') {
-            authModal.classList.remove('hidden');
-            if (mode === 'login') {
-                loginForm.style.display = 'block';
-                registerForm.style.display = 'none';
-                document.getElementById('authModalTitle').textContent = 'Welcome Back';
-                loginError.classList.add('hidden');
-            } else {
-                loginForm.style.display = 'none';
-                registerForm.style.display = 'block';
-                document.getElementById('authModalTitle').textContent = 'Join the Pack';
-                regError.classList.add('hidden');
-            }
-        }
-
-        function closeAuthModal() {
-            authModal.classList.add('hidden');
-        }
-
-        document.getElementById('authModalClose').addEventListener('click', closeAuthModal);
-        authModal.addEventListener('click', (e) => {
-            if (e.target === authModal) closeAuthModal();
+      // ----- Analytics chart (simple) -----
+      function drawChart() {
+        const canvas = document.getElementById('analyticsChart');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+        // Draw a simple line chart
+        const data = [20, 35, 40, 55, 70, 85, 90];
+        const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
+        ctx.beginPath();
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 3;
+        const padding = 30;
+        const xStep = (w - 2*padding) / (data.length - 1);
+        const maxVal = Math.max(...data) * 1.2;
+        data.forEach((val, i) => {
+          const x = padding + i * xStep;
+          const y = h - padding - (val / maxVal) * (h - 2*padding);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
         });
+        ctx.stroke();
 
-        document.getElementById('switchToRegister').addEventListener('click', () => openAuthModal('register'));
-        document.getElementById('switchToLogin').addEventListener('click', () => openAuthModal('login'));
-
-        document.getElementById('loginBtn').addEventListener('click', (e) => { e.preventDefault();
-            openAuthModal('login'); });
-        document.getElementById('registerBtn').addEventListener('click', (e) => { e.preventDefault();
-            openAuthModal('register'); });
-        document.getElementById('heroLoginBtn').addEventListener('click', (e) => { e.preventDefault();
-            openAuthModal('login'); });
-
-        document.getElementById('logoutBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            clearUser();
-            showToast('Logged out successfully', 'info');
+        // Labels
+        ctx.fillStyle = '#333';
+        ctx.font = '12px Montserrat';
+        ctx.textAlign = 'center';
+        data.forEach((val, i) => {
+          const x = padding + i * xStep;
+          const y = h - padding - (val / maxVal) * (h - 2*padding);
+          ctx.fillText(labels[i], x, h - padding + 20);
+          ctx.beginPath();
+          ctx.arc(x, y, 4, 0, 2*Math.PI);
+          ctx.fillStyle = '#fbbf24';
+          ctx.fill();
         });
+      }
 
-        // ─── Login Submit ──────────────────────────────────────────
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            loginError.classList.add('hidden');
+      // ----- Hash routing -----
+      function handleHash() {
+        const hash = window.location.hash.slice(1) || 'home';
+        const validPages = ['home','about','teams','news','analytics','contact','admin'];
+        if (validPages.includes(hash)) {
+          navigateTo(hash);
+        } else {
+          navigateTo('home');
+        }
+      }
 
-            try {
-                const data = await apiPost('/auth/login', { email, password });
-                saveUser(data.user, data.token);
-                closeAuthModal();
-                showToast(`Welcome back, ${data.user.full_name}!`, 'success');
-                await loadAllData();
-            } catch (err) {
-                loginError.textContent = err.message || 'Login failed';
-                loginError.classList.remove('hidden');
+      window.addEventListener('hashchange', handleHash);
+
+      // ----- Init on DOM ready -----
+      document.addEventListener('DOMContentLoaded', () => {
+        // Set initial page from hash or default
+        handleHash();
+        // Load teams and news
+        loadTeams();
+        loadNews();
+        drawChart();
+        // Check if user already logged in (Supabase session)
+        if (USE_SUPABASE && supabase) {
+          supabase.auth.getSession().then(({ data }) => {
+            if (data.session) {
+              updateUIForUser(data.session.user);
             }
+          });
+        }
+        // Resize Three on window resize
+        window.addEventListener('resize', () => {
+          if (currentPage === 'home') initThree();
         });
+      });
 
-        // ─── Register Submit ───────────────────────────────────────
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const full_name = document.getElementById('regName').value;
-            const email = document.getElementById('regEmail').value;
-            const password = document.getElementById('regPassword').value;
-            const role = document.getElementById('regRole').value;
-            regError.classList.add('hidden');
+    })();
+  </script>
 
-            if (password.length < 6) {
-                regError.textContent = 'Password must be at least 6 characters';
-                regError.classList.remove('hidden');
-                return;
-            }
-
-            try {
-                const data = await apiPost('/auth/register', { email, password, full_name, role });
-                saveUser(data.user, data.token);
-                closeAuthModal();
-                showToast(`Welcome to the pack, ${data.user.full_name}!`, 'success');
-                await loadAllData();
-            } catch (err) {
-                regError.textContent = err.message || 'Registration failed';
-                regError.classList.remove('hidden');
-            }
-        });
-
-        // ============================================================
-        // LOAD DATA FROM API
-        // ============================================================
-        async function loadAllData() {
-            await Promise.all([
-                loadTeams(),
-                loadPlayers(),
-                loadMatches(),
-                loadShopItems()
-            ]);
-        }
-
-        async function loadTeams() {
-            try {
-                const teams = await apiGet('/teams');
-                // Update roster with team info
-            } catch (err) {
-                console.error('Error loading teams:', err);
-            }
-        }
-
-        async function loadPlayers() {
-            const grid = document.getElementById('rosterGrid');
-            try {
-                const players = await apiGet('/players');
-                if (!players || players.length === 0) {
-                    grid.innerHTML =
-                        `<div class="text-center text-muted" style="grid-column:1/-1;padding:2rem;">No players in the roster yet.</div>`;
-                    return;
-                }
-                grid.innerHTML = players.map(p => `
-                    <div class="player-card reveal">
-                        <div class="player-avatar">${p.avatar_url ? `<img src="${p.avatar_url}" alt="${p.display_name}" />` : '🐺'}</div>
-                        <div class="player-name">${p.display_name}</div>
-                        <div class="player-role">${p.role || 'Player'} · ${p.game || 'BGMI'}</div>
-                        <div class="player-stats">
-                            <div class="ps-item"><div class="ps-number">${p.stats?.kda || '4.5'}</div><div class="ps-label">KDA</div></div>
-                            <div class="ps-item"><div class="ps-number">${p.stats?.winRate || '65%'}</div><div class="ps-label">Win Rate</div></div>
-                        </div>
-                    </div>
-                `).join('');
-                // Re-trigger reveal animations
-                setTimeout(() => {
-                    document.querySelectorAll('.player-card.reveal').forEach(el => el.classList.add('active'));
-                }, 100);
-            } catch (err) {
-                console.error('Error loading players:', err);
-                grid.innerHTML =
-                    `<div class="text-center text-muted" style="grid-column:1/-1;padding:2rem;">Error loading roster. Please try again.</div>`;
-            }
-        }
-
-        async function loadMatches() {
-            const container = document.getElementById('matchesContainer');
-            try {
-                const matches = await apiGet('/matches');
-                if (!matches || matches.length === 0) {
-                    container.innerHTML =
-                        `<div class="text-center text-muted" style="padding:2rem;">No matches scheduled yet.</div>`;
-                    return;
-                }
-                // Sort: upcoming first, then by date
-                const sorted = matches.sort((a, b) => {
-                    if (a.result === 'upcoming' && b.result !== 'upcoming') return -1;
-                    if (a.result !== 'upcoming' && b.result === 'upcoming') return 1;
-                    return new Date(a.match_date) - new Date(b.match_date);
-                });
-                container.innerHTML = sorted.slice(0, 6).map((m, i) => {
-                    const resultClass = m.result === 'win' ? 'win' : m.result === 'loss' ? 'loss' : 'upcoming';
-                    const resultLabel = m.result === 'win' ? 'WIN' : m.result === 'loss' ? 'LOSS' : 'Upcoming';
-                    const date = new Date(m.match_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric',
-                        year: 'numeric' });
-                    const time = m.time || 'TBD';
-                    return `
-                        <div class="match-card reveal" style="transition-delay:${i * 0.05}s;">
-                            <div class="match-teams">
-                                <span class="team-name our-team">${m.teams?.name || 'Divine Wolf'}</span>
-                                <span class="vs">VS <span class="score">${m.score || '—'}</span></span>
-                                <span class="team-name">${m.opponent}</span>
-                            </div>
-                            <div class="match-info">
-                                <div class="match-date">${date} · ${time} IST</div>
-                                <span class="match-result ${resultClass}">${resultLabel}</span>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-                setTimeout(() => {
-                    document.querySelectorAll('.match-card.reveal').forEach(el => el.classList.add('active'));
-                }, 100);
-            } catch (err) {
-                console.error('Error loading matches:', err);
-                container.innerHTML =
-                    `<div class="text-center text-muted" style="padding:2rem;">Error loading matches.</div>`;
-            }
-        }
-
-        async function loadShopItems() {
-            const grid = document.getElementById('shopGrid');
-            try {
-                const items = await apiGet('/shop/items');
-                if (!items || items.length === 0) {
-                    grid.innerHTML =
-                        `<div class="text-center text-muted" style="grid-column:1/-1;padding:2rem;">No shop items available yet.</div>`;
-                    return;
-                }
-                grid.innerHTML = items.map(item => `
-                    <div class="shop-item reveal">
-                        <div class="shop-image">${item.image_url ? `<img src="${item.image_url}" alt="${item.name}" style="width:100%;height:100%;object-fit:cover;" />` : '👕'}</div>
-                        <div class="shop-name">${item.name}</div>
-                        <div class="shop-price">₹${item.price}</div>
-                        <button class="btn btn-primary shop-btn" onclick="addToCart('${item.id}')">Add to Cart</button>
-                    </div>
-                `).join('');
-                setTimeout(() => {
-                    document.querySelectorAll('.shop-item.reveal').forEach(el => el.classList.add('active'));
-                }, 100);
-            } catch (err) {
-                console.error('Error loading shop items:', err);
-                grid.innerHTML =
-                    `<div class="text-center text-muted" style="grid-column:1/-1;padding:2rem;">Error loading shop.</div>`;
-            }
-        }
-
-        // ─── Shop Cart ─────────────────────────────────────────────
-        let cart = [];
-
-        function addToCart(itemId) {
-            if (!currentUser) {
-                showToast('Please login to add items to cart', 'error');
-                openAuthModal('login');
-                return;
-            }
-            cart.push(itemId);
-            showToast('Item added to cart!', 'success');
-        }
-
-        // ============================================================
-        // NAVIGATION & SCROLL
-        // ============================================================
-        // Smooth scroll for nav links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                const href = this.getAttribute('href');
-                if (href === '#') return;
-                e.preventDefault();
-                const target = document.querySelector(href);
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
-
-        // Navbar scroll effect
-        const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            navbar.classList.toggle('scrolled', window.scrollY > 50);
-        }, { passive: true });
-
-        // Hamburger menu
-        const hamburger = document.getElementById('hamburgerBtn');
-        const navLinks = document.getElementById('navLinks');
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            navLinks.classList.toggle('open');
-        });
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                hamburger.classList.remove('active');
-                navLinks.classList.remove('open');
-            });
-        });
-
-        // ============================================================
-        // REVEAL OBSERVER
-        // ============================================================
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const delay = entry.target.style.transitionDelay || '0s';
-                    setTimeout(() => {
-                        entry.target.classList.add('active');
-                    }, parseFloat(delay) * 1000 || 50);
-                    revealObserver.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-        document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => revealObserver.observe(
-            el));
-
-        // ============================================================
-        // GSAP ANIMATIONS
-        // ============================================================
-        if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-            gsap.registerPlugin(ScrollTrigger);
-            gsap.from('.hero-title .highlight, .hero-title .highlight-2', {
-                opacity: 0,
-                y: 30,
-                duration: 1,
-                stagger: 0.2,
-                ease: 'power2.out',
-                delay: 0.3
-            });
-            gsap.from('.player-card', {
-                scrollTrigger: { trigger: '.roster-grid', start: 'top 80%', toggleActions: 'play none none none' },
-                opacity: 0,
-                y: 30,
-                stagger: 0.1,
-                duration: 0.6,
-                ease: 'power2.out'
-            });
-            gsap.from('.achievement-card', {
-                scrollTrigger: { trigger: '.achievement-grid', start: 'top 80%', toggleActions: 'play none none none' },
-                opacity: 0,
-                y: 20,
-                stagger: 0.08,
-                duration: 0.5,
-                ease: 'power2.out'
-            });
-            gsap.from('.match-card', {
-                scrollTrigger: { trigger: '#schedule .space-y-3', start: 'top 80%',
-                toggleActions: 'play none none none' },
-                opacity: 0,
-                x: -20,
-                stagger: 0.1,
-                duration: 0.5,
-                ease: 'power2.out'
-            });
-        }
-
-        // ============================================================
-        // INIT
-        // ============================================================
-        document.addEventListener('DOMContentLoaded', async () => {
-            // Check stored session
-            const stored = getStoredUser();
-            if (stored) {
-                currentUser = stored.user;
-                authToken = stored.token;
-                updateAuthUI();
-                // Verify token is still valid
-                try {
-                    await apiGet('/auth/me');
-                } catch (err) {
-                    clearUser();
-                }
-            }
-            await loadAllData();
-            // Lucide icons
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-        });
-
-        // ============================================================
-        // EXPOSE FOR CONSOLE DEBUGGING
-        // ============================================================
-        window.__wolf = {
-            api: { get: apiGet, post: apiPost, put: apiPut, delete: apiDelete },
-            auth: { user: currentUser, token: authToken, login: saveUser, logout: clearUser },
-            cart,
-            loadAllData
-        };
-
-        console.log('🐺 Wolf Society Esports — Platform Loaded');
-        console.log('👤 Current user:', currentUser || 'Not logged in');
-        console.log('📡 API Base:', API_BASE);
-    </script>
 </body>
 </html>
