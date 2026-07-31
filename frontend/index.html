@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wolf Society Esports | Official Organization Portal</title>
+  <title>Wolf Society Esports | Official Portal</title>
   
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -13,586 +12,305 @@
       theme: {
         extend: {
           colors: {
-            darkBg: '#08080a',
-            cardBg: '#10121a',
-            borderDark: '#1c1f2e',
-            cyanNeon: '#00f2fe',
-            redNeon: '#ff2a5f',
-            purpleNeon: '#9d4edd'
+            darkBg: '#08080a', cardBg: '#10121a', borderDark: '#1c1f2e',
+            cyanNeon: '#00f2fe', redNeon: '#ff2a5f', purpleNeon: '#9d4edd'
           },
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            heading: ['Chakra Petch', 'sans-serif'],
-          }
+          fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Chakra Petch', 'sans-serif'] }
         }
       }
     }
   </script>
 
-  <!-- React & Babel CDNs -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-  <!-- Supabase JS Client CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,500;0,700;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
     body { background-color: #08080a; color: #e2e8f0; font-family: 'Inter', sans-serif; }
-    h1, h2, h3, h4, h5, .font-heading { font-family: 'Chakra Petch', sans-serif; }
+    h1, h2, h3, h4, .font-heading { font-family: 'Chakra Petch', sans-serif; }
     .glow-cyan { box-shadow: 0 0 25px rgba(0, 242, 254, 0.15); }
-    .glow-red { box-shadow: 0 0 25px rgba(255, 42, 95, 0.2); }
   </style>
 </head>
-<body class="min-h-screen flex flex-col selection:bg-cyanNeon selection:text-black">
+<body class="min-h-screen flex flex-col">
 
   <div id="root"></div>
 
   <script type="text/babel">
     const { useState, useEffect } = React;
 
-    // --- SUPABASE CONFIGURATION ---
     const SUPABASE_URL = "https://tdfkebgapncswtvbtaqy.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ";
+    const ORG_EMAIL = "wolfsocietygg@yahoo.com";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // --- DATA STORE ---
-    const ROSTER_DATA = [
-      { id: 1, ign: "ALPHA", realName: "Vikram Singh", role: "Jungler", hero: "Lancelot, Hayabusa, Ling", kda: "4.8", winRate: "78%", bio: "Shotcaller and primary objective hunter for Divine Wolf.", avatar: "https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=500&auto=format&fit=crop&q=80" },
-      { id: 2, ign: "SHADOW", realName: "Rahul Sharma", role: "Mid Lane", hero: "Kagura, Yve, Pharsa", kda: "5.2", winRate: "74%", bio: "High-burst tactical mid-laner with master-class zone control.", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=500&auto=format&fit=crop&q=80" },
-      { id: 3, ign: "SPECTRE", realName: "Arjun Verma", role: "Gold Lane", hero: "Claude, Beatrix, Brody", kda: "6.1", winRate: "81%", bio: "Late-game hyper-carry specialist known for clutch teamfight positioning.", avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=500&auto=format&fit=crop&q=80" },
-      { id: 4, ign: "TITAN", realName: "Karan Patel", role: "EXP Lane", hero: "Yu Zhong, Chou, Lapu-Lapu", kda: "3.9", winRate: "72%", bio: "Frontline initiator specializing in lane dominance and split-push pressure.", avatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=500&auto=format&fit=crop&q=80" },
-      { id: 5, ign: "AEGIS", realName: "Dev Oberoi", role: "Roamer", hero: "Khufra, Atlas, Lolita", kda: "4.1", winRate: "76%", bio: "Vision master and protection specialist with high-impact crowd control.", avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=500&auto=format&fit=crop&q=80" }
+    const DEFAULT_PLAYERS = [
+      { id: 1, in_game_name: "ALPHA", real_name: "Vikram Singh", role: "Jungler", signature_heroes: ["Lancelot", "Ling"], kda: "4.8", win_rate: "78%", bio: "Primary shotcaller and objective controller.", avatar_url: "https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=500&auto=format&fit=crop&q=80" },
+      { id: 2, in_game_name: "SHADOW", real_name: "Rahul Sharma", role: "Mid Lane", signature_heroes: ["Kagura", "Yve"], kda: "5.2", win_rate: "74%", bio: "Tactical zone manager and teamfight burst.", avatar_url: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=500&auto=format&fit=crop&q=80" },
+      { id: 3, in_game_name: "SPECTRE", real_name: "Arjun Verma", role: "Gold Lane", signature_heroes: ["Claude", "Beatrix"], kda: "6.1", win_rate: "81%", bio: "Late-game hyper-carry specialist.", avatar_url: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=500&auto=format&fit=crop&q=80" }
     ];
 
-    const MATCHES_DATA = [
-      { id: 1, tournament: "MOBA Pro League Season 5", opponent: "Apex Hunters", score: "3 - 1", result: "WIN", date: "July 28, 2026", stage: "Grand Finals" },
-      { id: 2, tournament: "Regional Masters Cup", opponent: "Viper Squad", score: "2 - 0", result: "WIN", date: "July 15, 2026", stage: "Semi-Finals" },
-      { id: 3, tournament: "Asia Invitational Scrims", opponent: "Zenith Esports", score: "1 - 2", result: "LOSS", date: "July 02, 2026", stage: "Group Stage" },
-      { id: 4, tournament: "Global 5v5 Championship", opponent: "Phantom Gaming", score: "VS", result: "UPCOMING", date: "August 12, 2026", stage: "Upper Bracket R1" }
+    const DEFAULT_MATCHES = [
+      { id: 1, tournament_name: "MOBA Pro League Season 5", stage: "Grand Finals", opponent_name: "Apex Hunters", score_team: 3, score_opponent: 1, result: "WIN", match_date: "2026-07-28" },
+      { id: 2, tournament_name: "Regional Masters Cup", stage: "Semi-Finals", opponent_name: "Viper Squad", score_team: 2, score_opponent: 0, result: "WIN", match_date: "2026-07-15" }
     ];
 
-    // --- NAVIGATION BAR ---
     function Navbar({ currentPage, setCurrentPage }) {
-      const [mobileOpen, setMobileOpen] = useState(false);
-
-      const navItems = [
-        { id: 'home', label: 'Home' },
-        { id: 'about', label: 'About Org' },
-        { id: 'divine-wolf', label: 'Divine Wolf (Team)' },
-        { id: 'matches', label: 'Matches & Schedule' },
-        { id: 'contact', label: 'Tryouts / Contact' }
-      ];
-
       return (
         <header class="sticky top-0 z-50 bg-darkBg/95 backdrop-blur-md border-b border-borderDark">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            
-            {/* Brand Logo */}
-            <div 
-              onClick={() => setCurrentPage('home')}
-              class="flex items-center gap-3 cursor-pointer group"
-            >
-              <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-cyanNeon via-blue-600 to-redNeon flex items-center justify-center text-black font-extrabold text-xl shadow-lg group-hover:scale-105 transition-transform">
-                WS
-              </div>
+          <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
+            <div onClick={() => setCurrentPage('home')} class="flex items-center gap-3 cursor-pointer">
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-cyanNeon to-redNeon flex items-center justify-center text-black font-extrabold text-xl">WS</div>
               <div>
-                <span class="font-heading font-bold text-xl tracking-wider text-white block group-hover:text-cyanNeon transition-colors">
-                  WOLF SOCIETY
-                </span>
-                <span class="text-[10px] uppercase tracking-widest text-cyanNeon font-semibold">Esports Organization</span>
+                <span class="font-heading font-bold text-xl text-white block">WOLF SOCIETY</span>
+                <span class="text-[10px] uppercase tracking-widest text-cyanNeon font-semibold">Esports Portal</span>
               </div>
             </div>
 
-            {/* Desktop Navigation */}
-            <nav class="hidden lg:flex items-center gap-8 text-xs font-bold tracking-widest uppercase">
-              {navItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => setCurrentPage(item.id)}
-                  class={`transition-all py-1 border-b-2 ${
-                    currentPage === item.id 
-                      ? 'text-cyanNeon border-cyanNeon' 
-                      : 'text-gray-400 border-transparent hover:text-white hover:border-gray-600'
-                  }`}
+            <nav class="hidden md:flex items-center gap-6 text-xs font-bold uppercase tracking-wider">
+              {['home', 'about', 'divine-wolf', 'matches', 'contact'].map(page => (
+                <button 
+                  key={page} 
+                  onClick={() => setCurrentPage(page)}
+                  class={`transition-all py-1 border-b-2 ${currentPage === page ? 'text-cyanNeon border-cyanNeon' : 'text-gray-400 border-transparent hover:text-white'}`}
                 >
-                  {item.label}
+                  {page.replace('-', ' ')}
                 </button>
               ))}
             </nav>
 
-            {/* Mobile Menu Button */}
-            <button 
-              onClick={() => setMobileOpen(!mobileOpen)}
-              class="lg:hidden text-gray-300 hover:text-white text-xl p-2"
+            <a 
+              href="admin.html" 
+              class="px-4 py-2 rounded bg-cardBg border border-cyanNeon/40 text-cyanNeon text-xs font-bold uppercase tracking-wider hover:bg-cyanNeon hover:text-black transition-all"
             >
-              <i class={`fa-solid ${mobileOpen ? 'fa-xmark' : 'fa-bars'}`}></i>
-            </button>
+              <i class="fa-solid fa-lock mr-1"></i> Admin Portal
+            </a>
           </div>
-
-          {/* Mobile Dropdown */}
-          {mobileOpen && (
-            <div class="lg:hidden bg-cardBg border-b border-borderDark px-4 py-4 space-y-3">
-              {navItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => { setCurrentPage(item.id); setMobileOpen(false); }}
-                  class={`block w-full text-left px-3 py-2 rounded text-sm font-bold uppercase tracking-wider ${
-                    currentPage === item.id ? 'bg-cyanNeon/10 text-cyanNeon' : 'text-gray-300 hover:bg-darkBg'
-                  }`}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-          )}
         </header>
       );
     }
 
-    // --- PAGE 1: HOME ---
     function HomePage({ setCurrentPage }) {
       return (
-        <div class="space-y-20 pb-20">
-          
-          {/* Hero Banner */}
-          <section class="relative py-28 border-b border-borderDark overflow-hidden bg-gradient-to-b from-darkBg via-cardBg/40 to-darkBg">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-              <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cyanNeon/30 bg-cyanNeon/10 text-cyanNeon text-xs font-bold uppercase tracking-widest mb-6">
-                <i class="fa-solid fa-trophy"></i> Premier MOBA Esports Club
-              </div>
-              <h1 class="font-heading text-5xl sm:text-7xl font-extrabold text-white tracking-tight uppercase mb-6">
-                Wolf Society <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyanNeon to-redNeon">Esports</span>
-              </h1>
-              <p class="max-w-2xl mx-auto text-gray-400 text-base sm:text-lg mb-8 leading-relaxed">
-                Dedicated exclusively to competitive 5v5 MOBA dominance. Home to flaghip champions <strong class="text-white">Divine Wolf</strong>.
-              </p>
-              <div class="flex flex-wrap justify-center gap-4">
-                <button 
-                  onClick={() => setCurrentPage('divine-wolf')}
-                  class="px-8 py-3.5 rounded bg-cyanNeon text-black font-bold uppercase tracking-wider text-xs hover:brightness-110 transition-all glow-cyan"
-                >
-                  Explore Roster
-                </button>
-                <button 
-                  onClick={() => setCurrentPage('about')}
-                  class="px-8 py-3.5 rounded bg-cardBg border border-borderDark text-white font-bold uppercase tracking-wider text-xs hover:border-cyanNeon/40 transition-all"
-                >
-                  About Organization
-                </button>
-              </div>
+        <div class="space-y-16 pb-16">
+          <section class="py-24 border-b border-borderDark bg-gradient-to-b from-darkBg via-cardBg/30 to-darkBg text-center px-4">
+            <div class="inline-block px-4 py-1.5 rounded-full border border-cyanNeon/30 bg-cyanNeon/10 text-cyanNeon text-xs font-bold uppercase mb-4">
+              5v5 MOBA Supremacy
             </div>
-          </section>
-
-          {/* Quick Stats Grid */}
-          <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
-              <div class="bg-cardBg border border-borderDark p-6 rounded-xl text-center">
-                <div class="font-heading text-4xl font-bold text-cyanNeon">78%</div>
-                <div class="text-xs text-gray-400 uppercase tracking-widest mt-1">Overall Win Rate</div>
-              </div>
-              <div class="bg-cardBg border border-borderDark p-6 rounded-xl text-center">
-                <div class="font-heading text-4xl font-bold text-redNeon">5v5</div>
-                <div class="text-xs text-gray-400 uppercase tracking-widest mt-1">Pure MOBA Focus</div>
-              </div>
-              <div class="bg-cardBg border border-borderDark p-6 rounded-xl text-center">
-                <div class="font-heading text-4xl font-bold text-white">12+</div>
-                <div class="text-xs text-gray-400 uppercase tracking-widest mt-1">Major Trophies</div>
-              </div>
-              <div class="bg-cardBg border border-borderDark p-6 rounded-xl text-center">
-                <div class="font-heading text-4xl font-bold text-purpleNeon">100K+</div>
-                <div class="text-xs text-gray-400 uppercase tracking-widest mt-1">Global Community</div>
-              </div>
-            </div>
-          </section>
-
-          {/* Featured Squad Spotlight */}
-          <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-gradient-to-r from-cardBg via-darkBg to-cardBg border border-borderDark rounded-2xl p-8 sm:p-12 flex flex-col lg:flex-row items-center justify-between gap-8">
-              <div class="space-y-4 max-w-xl">
-                <div class="text-redNeon font-bold text-xs uppercase tracking-widest">Flagship Roster</div>
-                <h2 class="font-heading text-4xl font-bold text-white uppercase">Divine Wolf Division</h2>
-                <p class="text-gray-400 text-sm leading-relaxed">
-                  Engineered specifically for high-tier MOBA tournaments. Divine Wolf represents the absolute pinnacle of strategic map control, teamfight synergy, and tactical execution under the Wolf Society banner.
-                </p>
-                <div class="pt-2">
-                  <button 
-                    onClick={() => setCurrentPage('divine-wolf')}
-                    class="px-6 py-3 rounded bg-redNeon/10 border border-redNeon/30 text-redNeon text-xs font-bold uppercase tracking-wider hover:bg-redNeon hover:text-white transition-all"
-                  >
-                    View Player Bios & Stats →
-                  </button>
-                </div>
-              </div>
-              <div class="w-full lg:w-96 h-64 rounded-xl overflow-hidden relative border border-borderDark">
-                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&auto=format&fit=crop&q=80" class="w-full h-full object-cover opacity-80" alt="Esports Gaming Setup" />
-                <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent"></div>
-                <div class="absolute bottom-4 left-4 font-heading text-xl font-bold text-white uppercase">MOBA Legends Division</div>
-              </div>
-            </div>
-          </section>
-
-        </div>
-      );
-    }
-
-    // --- PAGE 2: ABOUT ORGANISATION ---
-    function AboutPage() {
-      return (
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
-          
-          {/* Header */}
-          <div class="text-center max-w-3xl mx-auto">
-            <div class="text-cyanNeon font-bold text-xs uppercase tracking-widest mb-2">Who We Are</div>
-            <h1 class="font-heading text-4xl sm:text-5xl font-bold text-white uppercase mb-4">Wolf Society Esports</h1>
-            <p class="text-gray-400 text-sm leading-relaxed">
-              Founded with a single core mandate: to build standard-setting competitive gaming teams in the MOBA genre through scientific scouting, rigorous tactical coaching, and player-centric management.
+            <h1 class="font-heading text-5xl sm:text-7xl font-bold text-white uppercase mb-6">
+              Wolf Society <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyanNeon to-redNeon">Esports</span>
+            </h1>
+            <p class="max-w-2xl mx-auto text-gray-400 text-base mb-8">
+              Home of competitive MOBA title division <strong class="text-white">Divine Wolf</strong>. Built for tactical precision and championship dominance.
             </p>
-          </div>
-
-          {/* Org Pillars Grid */}
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="bg-cardBg border border-borderDark p-8 rounded-xl">
-              <div class="w-12 h-12 rounded-lg bg-cyanNeon/10 border border-cyanNeon/30 flex items-center justify-center text-cyanNeon text-xl mb-6">
-                <i class="fa-solid fa-bullseye"></i>
-              </div>
-              <h3 class="font-heading text-xl font-bold text-white uppercase mb-3">Pure MOBA Focus</h3>
-              <p class="text-xs text-gray-400 leading-relaxed">
-                Unlike multi-title organizations that spread resources thin, Wolf Society allocates 100% of its capital, analytics, and coaching infrastructure purely into 5v5 MOBA titles.
-              </p>
+            <div class="flex justify-center gap-4">
+              <button onClick={() => setCurrentPage('divine-wolf')} class="px-8 py-3 rounded bg-cyanNeon text-black font-bold uppercase text-xs glow-cyan">
+                View Divine Wolf Team
+              </button>
+              <button onClick={() => setCurrentPage('matches')} class="px-8 py-3 rounded bg-cardBg border border-borderDark text-white font-bold uppercase text-xs">
+                Matches & Schedule
+              </button>
             </div>
-
-            <div class="bg-cardBg border border-borderDark p-8 rounded-xl">
-              <div class="w-12 h-12 rounded-lg bg-redNeon/10 border border-redNeon/30 flex items-center justify-center text-redNeon text-xl mb-6">
-                <i class="fa-solid fa-chess"></i>
-              </div>
-              <h3 class="font-heading text-xl font-bold text-white uppercase mb-3">Tactical Discipline</h3>
-              <p class="text-xs text-gray-400 leading-relaxed">
-                Our athletes undergo structured bootcamps emphasizing micro-mechanics, draft theory, objective prioritization, and high-pressure team communication.
-              </p>
-            </div>
-
-            <div class="bg-cardBg border border-borderDark p-8 rounded-xl">
-              <div class="w-12 h-12 rounded-lg bg-purpleNeon/10 border border-purpleNeon/30 flex items-center justify-center text-purpleNeon text-xl mb-6">
-                <i class="fa-solid fa-users"></i>
-              </div>
-              <h3 class="font-heading text-xl font-bold text-white uppercase mb-3">Community Hub</h3>
-              <p class="text-xs text-gray-400 leading-relaxed">
-                We bridge the gap between casual fans and professional esports through regular scrim broadcasts, community tournaments, fan matches, and analytical breakdown videos.
-              </p>
-            </div>
-          </div>
-
-          {/* Organization Infrastructure */}
-          <div class="bg-cardBg border border-borderDark rounded-2xl p-8 sm:p-12">
-            <h2 class="font-heading text-2xl font-bold text-white uppercase mb-8">Organization Structure</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div class="border-l-2 border-cyanNeon pl-4">
-                <div class="text-xs text-cyanNeon font-bold uppercase">Executive Management</div>
-                <div class="text-white font-bold mt-1">Founder & CEO</div>
-                <div class="text-xs text-gray-500">Org Strategy & Partnerships</div>
-              </div>
-              <div class="border-l-2 border-redNeon pl-4">
-                <div class="text-xs text-redNeon font-bold uppercase">Esports Operations</div>
-                <div class="text-white font-bold mt-1">Head of Gaming</div>
-                <div class="text-xs text-gray-500">Roster Scouting & Contracts</div>
-              </div>
-              <div class="border-l-2 border-purpleNeon pl-4">
-                <div class="text-xs text-purpleNeon font-bold uppercase">Analytics Unit</div>
-                <div class="text-white font-bold mt-1">Lead Analyst</div>
-                <div class="text-xs text-gray-500">Meta Drafts & Opponent VODs</div>
-              </div>
-              <div class="border-l-2 border-gray-600 pl-4">
-                <div class="text-xs text-gray-400 font-bold uppercase">Media & Content</div>
-                <div class="text-white font-bold mt-1">Creative Director</div>
-                <div class="text-xs text-gray-500">Streams & Social Production</div>
-              </div>
-            </div>
-          </div>
-
+          </section>
         </div>
       );
     }
 
-    // --- PAGE 3: DIVINE WOLF TEAM ---
     function DivineWolfPage() {
+      const [players, setPlayers] = useState([]);
+      const [loading, setLoading] = useState(true);
+
+      useEffect(() => {
+        async function load() {
+          const { data, error } = await supabaseClient.from('players').select('*').eq('is_active', true);
+          setPlayers(data && data.length > 0 ? data : DEFAULT_PLAYERS);
+          setLoading(false);
+        }
+        load();
+      }, []);
+
       return (
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
-          
-          {/* Section Header */}
-          <div class="text-center max-w-3xl mx-auto">
-            <div class="text-redNeon font-bold text-xs uppercase tracking-widest mb-2">Flagship 5v5 Roster</div>
-            <h1 class="font-heading text-4xl sm:text-5xl font-bold text-white uppercase mb-4">Divine Wolf</h1>
-            <p class="text-gray-400 text-sm">
-              The official starting 5 lineup for Wolf Society Esports dominating regional and international MOBA competitions.
-            </p>
+        <div class="max-w-7xl mx-auto px-4 py-16 space-y-10">
+          <div class="text-center max-w-2xl mx-auto">
+            <span class="text-redNeon text-xs font-bold uppercase tracking-widest">Flagship Roster</span>
+            <h1 class="font-heading text-4xl font-bold text-white uppercase mt-1">Divine Wolf Team</h1>
+            <p class="text-gray-400 text-sm mt-2">Active starting lineup for MOBA 5v5 tournaments.</p>
           </div>
 
-          {/* Roster Cards Grid */}
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {ROSTER_DATA.map((player) => (
-              <div key={player.id} class="bg-cardBg border border-borderDark rounded-xl overflow-hidden hover:border-cyanNeon/50 transition-all group">
-                <div class="relative h-64 bg-slate-900 overflow-hidden">
-                  <img src={player.avatar} alt={player.ign} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  <div class="absolute inset-0 bg-gradient-to-t from-cardBg via-transparent to-transparent"></div>
-                  <div class="absolute top-3 right-3 bg-darkBg/90 border border-cyanNeon/30 text-cyanNeon text-[10px] font-bold px-3 py-1 rounded-full uppercase">
-                    {player.role}
-                  </div>
-                </div>
-                <div class="p-6 space-y-4">
-                  <div>
-                    <h3 class="font-heading text-2xl font-bold text-white group-hover:text-cyanNeon transition-colors">{player.ign}</h3>
-                    <div class="text-xs text-gray-400">{player.realName}</div>
-                  </div>
-                  <p class="text-xs text-gray-400 leading-relaxed">{player.bio}</p>
-                  
-                  <div class="pt-2 border-t border-borderDark grid grid-cols-2 gap-4">
-                    <div>
-                      <div class="text-[10px] text-gray-500 uppercase font-semibold">Career KDA</div>
-                      <div class="font-heading font-bold text-cyanNeon text-lg">{player.kda}</div>
+          {loading ? (
+            <div class="text-center py-12 text-gray-500 font-semibold animate-pulse">Loading Roster Data...</div>
+          ) : (
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {players.map(p => (
+                <div key={p.id} class="bg-cardBg border border-borderDark rounded-xl overflow-hidden hover:border-cyanNeon/50 transition-all">
+                  <img src={p.avatar_url || 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=500'} class="w-full h-56 object-cover" />
+                  <div class="p-5 space-y-3">
+                    <div class="flex justify-between items-start">
+                      <div>
+                        <h3 class="font-heading text-2xl font-bold text-white">{p.in_game_name}</h3>
+                        <div class="text-xs text-gray-400">{p.real_name}</div>
+                      </div>
+                      <span class="px-2.5 py-1 bg-cyanNeon/10 border border-cyanNeon/30 text-cyanNeon text-[10px] font-bold uppercase rounded">{p.role}</span>
                     </div>
-                    <div>
-                      <div class="text-[10px] text-gray-500 uppercase font-semibold">Win Rate</div>
-                      <div class="font-heading font-bold text-green-400 text-lg">{player.winRate}</div>
+                    <p class="text-xs text-gray-400">{p.bio}</p>
+                    <div class="pt-2 border-t border-borderDark flex justify-between text-xs">
+                      <div><span class="text-gray-500 block text-[10px]">KDA</span><strong class="text-cyanNeon">{p.kda || '4.5'}</strong></div>
+                      <div><span class="text-gray-500 block text-[10px]">WIN RATE</span><strong class="text-green-400">{p.win_rate || '75%'}</strong></div>
                     </div>
                   </div>
-
-                  <div>
-                    <div class="text-[10px] text-gray-500 uppercase font-semibold mb-1">Signature Heroes</div>
-                    <div class="text-xs font-semibold text-gray-300">{player.hero}</div>
-                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Coaching & Support Staff */}
-          <div class="bg-cardBg border border-borderDark rounded-xl p-8">
-            <h2 class="font-heading text-xl font-bold text-white uppercase mb-6">Technical & Coaching Staff</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div class="flex items-center gap-4 bg-darkBg p-4 rounded-lg border border-borderDark">
-                <div class="w-12 h-12 rounded-full bg-redNeon/20 border border-redNeon text-redNeon flex items-center justify-center font-bold">
-                  HC
-                </div>
-                <div>
-                  <div class="font-heading font-bold text-white">Coach "VANGUARD"</div>
-                  <div class="text-xs text-cyanNeon">Head Coach & Draft Strategist</div>
-                  <div class="text-[11px] text-gray-500 mt-0.5">Ex-Pro MOBA Champion</div>
-                </div>
-              </div>
-
-              <div class="flex items-center gap-4 bg-darkBg p-4 rounded-lg border border-borderDark">
-                <div class="w-12 h-12 rounded-full bg-cyanNeon/20 border border-cyanNeon text-cyanNeon flex items-center justify-center font-bold">
-                  AN
-                </div>
-                <div>
-                  <div class="font-heading font-bold text-white">Analyst "CYPHER"</div>
-                  <div class="text-xs text-cyanNeon">Data & Performance Analyst</div>
-                  <div class="text-[11px] text-gray-500 mt-0.5">Specialized in Enemy Scouting</div>
-                </div>
-              </div>
+              ))}
             </div>
-          </div>
-
+          )}
         </div>
       );
     }
 
-    // --- PAGE 4: MATCHES & SCHEDULE ---
     function MatchesPage() {
+      const [matches, setMatches] = useState([]);
+      const [loading, setLoading] = useState(true);
+
+      useEffect(() => {
+        async function load() {
+          const { data } = await supabaseClient.from('matches').select('*').order('match_date', { ascending: false });
+          setMatches(data && data.length > 0 ? data : DEFAULT_MATCHES);
+          setLoading(false);
+        }
+        load();
+      }, []);
+
       return (
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
-          
-          <div class="text-center max-w-3xl mx-auto">
-            <div class="text-cyanNeon font-bold text-xs uppercase tracking-widest mb-2">Competitive Arena</div>
-            <h1 class="font-heading text-4xl font-bold text-white uppercase mb-4">Matches & Tournament Schedule</h1>
-            <p class="text-gray-400 text-sm">
-              Live tracking of Divine Wolf's official fixtures, past tournament results, and VOD archives.
-            </p>
+        <div class="max-w-7xl mx-auto px-4 py-16 space-y-8">
+          <div class="text-center max-w-2xl mx-auto">
+            <span class="text-cyanNeon text-xs font-bold uppercase tracking-widest">Tournament Schedule</span>
+            <h1 class="font-heading text-4xl font-bold text-white uppercase mt-1">Matches & Results</h1>
           </div>
 
-          {/* Matches List */}
           <div class="space-y-4">
-            {MATCHES_DATA.map((match) => (
-              <div key={match.id} class="bg-cardBg border border-borderDark p-6 rounded-xl flex flex-col md:flex-row items-center justify-between gap-6 hover:border-cyanNeon/30 transition-all">
-                <div class="flex items-center gap-4">
-                  <div class={`px-3 py-1 rounded text-xs font-bold uppercase border ${
-                    match.result === 'WIN' 
-                      ? 'bg-green-500/10 text-green-400 border-green-500/30' 
-                      : match.result === 'LOSS'
-                      ? 'bg-redNeon/10 text-redNeon border-redNeon/30'
-                      : 'bg-cyanNeon/10 text-cyanNeon border-cyanNeon/30'
-                  }`}>
-                    {match.result}
-                  </div>
-                  <div>
-                    <div class="text-xs text-gray-400">{match.tournament} • <span class="text-gray-500">{match.stage}</span></div>
-                    <div class="font-heading font-bold text-lg text-white mt-0.5">
-                      Divine Wolf <span class="text-gray-500 font-normal">vs</span> {match.opponent}
-                    </div>
-                  </div>
+            {matches.map(m => (
+              <div key={m.id} class="bg-cardBg border border-borderDark p-5 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4">
+                <div>
+                  <span class="text-xs text-gray-400">{m.tournament_name} • {m.stage}</span>
+                  <div class="font-heading font-bold text-lg text-white">Divine Wolf vs {m.opponent_name}</div>
                 </div>
-
-                <div class="flex items-center gap-8">
-                  <div class="text-center">
-                    <div class="text-[10px] text-gray-500 uppercase">Match Score</div>
-                    <div class="font-heading font-bold text-xl text-cyanNeon">{match.score}</div>
-                  </div>
-                  <div class="text-right">
-                    <div class="text-[10px] text-gray-500 uppercase">Date</div>
-                    <div class="text-xs font-bold text-white">{match.date}</div>
-                  </div>
+                <div class="flex items-center gap-6">
+                  <span class={`px-3 py-1 rounded text-xs font-bold border ${m.result === 'WIN' ? 'bg-green-500/10 text-green-400 border-green-500/30' : 'bg-cyanNeon/10 text-cyanNeon border-cyanNeon/30'}`}>
+                    {m.result}
+                  </span>
+                  <div class="font-heading font-bold text-xl text-cyanNeon">{m.score_team} - {m.score_opponent}</div>
                 </div>
               </div>
             ))}
           </div>
-
         </div>
       );
     }
 
-    // --- PAGE 5: TRYOUTS & CONTACT ---
     function ContactPage() {
+      const [formData, setFormData] = useState({ ign: '', email: '', discord: '', role: 'Jungler', rank: '', message: '' });
       const [submitted, setSubmitted] = useState(false);
+      const [submitting, setSubmitting] = useState(false);
 
-      const handleSubmit = (e) => {
+      const handleSubmit = async (e) => {
         e.preventDefault();
+        setSubmitting(true);
+
+        // Store into Supabase Database
+        await supabaseClient.from('contacts').insert([formData]);
+
+        setSubmitting(false);
         setSubmitted(true);
       };
 
       return (
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
-          
-          <div class="text-center max-w-2xl mx-auto">
-            <div class="text-redNeon font-bold text-xs uppercase tracking-widest mb-2">Join The Pack</div>
-            <h1 class="font-heading text-4xl font-bold text-white uppercase mb-4">Player Tryouts & Contact</h1>
-            <p class="text-gray-400 text-sm">
-              Think you have what it takes to wear the Wolf Society jersey? Submit your application for Divine Wolf trial consideration or reach out for scrims and sponsorships.
-            </p>
+        <div class="max-w-4xl mx-auto px-4 py-16 space-y-8">
+          <div class="text-center space-y-2">
+            <span class="text-redNeon text-xs font-bold uppercase tracking-widest">Join The Pack</span>
+            <h1 class="font-heading text-4xl font-bold text-white uppercase">Player Tryouts & Contact</h1>
+            <p class="text-xs text-gray-400">Applications are reviewed directly by org management (<strong class="text-white">{ORG_EMAIL}</strong>).</p>
           </div>
 
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            
-            {/* Form */}
-            <div class="lg:col-span-7 bg-cardBg border border-borderDark p-8 rounded-xl">
-              {submitted ? (
-                <div class="text-center py-12 space-y-4">
-                  <div class="w-16 h-16 bg-green-500/10 border border-green-500 text-green-400 rounded-full flex items-center justify-center mx-auto text-2xl">
-                    <i class="fa-solid fa-check"></i>
-                  </div>
-                  <h3 class="font-heading text-2xl font-bold text-white">Application Received!</h3>
-                  <p class="text-xs text-gray-400">Our scouting management will review your rank, win rate, and VOD links. If selected, you will be contacted via Discord.</p>
+          <div class="bg-cardBg border border-borderDark p-8 rounded-xl">
+            {submitted ? (
+              <div class="text-center py-10 space-y-4">
+                <div class="w-16 h-16 bg-green-500/10 border border-green-500 text-green-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+                  <i class="fa-solid fa-paper-plane"></i>
                 </div>
-              ) : (
-                <form onSubmit={handleSubmit} class="space-y-4">
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label class="block text-xs font-bold text-gray-400 uppercase mb-1">In-Game IGN *</label>
-                      <input required type="text" placeholder="e.g. ALPHA" class="w-full bg-darkBg border border-borderDark rounded p-3 text-sm text-white focus:outline-none focus:border-cyanNeon" />
-                    </div>
-                    <div>
-                      <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Discord Tag *</label>
-                      <input required type="text" placeholder="username#0000" class="w-full bg-darkBg border border-borderDark rounded p-3 text-sm text-white focus:outline-none focus:border-cyanNeon" />
-                    </div>
-                  </div>
-
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Primary MOBA Role *</label>
-                      <select class="w-full bg-darkBg border border-borderDark rounded p-3 text-sm text-white focus:outline-none focus:border-cyanNeon">
-                        <option>Jungler</option>
-                        <option>Mid Lane</option>
-                        <option>Gold Lane</option>
-                        <option>EXP Lane</option>
-                        <option>Roamer</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Current Highest Rank *</label>
-                      <input required type="text" placeholder="e.g. Mythic Immortal / Challenger" class="w-full bg-darkBg border border-borderDark rounded p-3 text-sm text-white focus:outline-none focus:border-cyanNeon" />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Hero Pool & Tournament Experience</label>
-                    <textarea rows="4" placeholder="List signature heroes and past competitive history..." class="w-full bg-darkBg border border-borderDark rounded p-3 text-sm text-white focus:outline-none focus:border-cyanNeon"></textarea>
-                  </div>
-
-                  <button type="submit" class="w-full py-3.5 bg-redNeon text-white font-bold uppercase tracking-wider text-xs rounded hover:brightness-110 transition-all glow-red">
-                    Submit Scouting Application
-                  </button>
-                </form>
-              )}
-            </div>
-
-            {/* Direct Contact Info */}
-            <div class="lg:col-span-5 space-y-6">
-              <div class="bg-cardBg border border-borderDark p-6 rounded-xl space-y-4">
-                <h3 class="font-heading text-lg font-bold text-white uppercase">Direct Channels</h3>
-                
-                <div class="flex items-center gap-3 text-sm">
-                  <div class="w-8 h-8 rounded bg-cyanNeon/10 text-cyanNeon flex items-center justify-center">
-                    <i class="fa-solid fa-envelope"></i>
-                  </div>
-                  <div>
-                    <div class="text-[10px] text-gray-500 uppercase">Business & Scrims</div>
-                    <div class="text-white font-bold">contact@wolfsocietyesports.com</div>
-                  </div>
-                </div>
-
-                <div class="flex items-center gap-3 text-sm">
-                  <div class="w-8 h-8 rounded bg-purpleNeon/10 text-purpleNeon flex items-center justify-center">
-                    <i class="fa-brands fa-discord"></i>
-                  </div>
-                  <div>
-                    <div class="text-[10px] text-gray-500 uppercase">Community Discord</div>
-                    <div class="text-white font-bold">discord.gg/wolfsociety</div>
-                  </div>
+                <h3 class="font-heading text-2xl font-bold text-white">Application Successfully Submitted!</h3>
+                <div class="bg-darkBg border border-borderDark p-4 rounded text-left max-w-lg mx-auto text-xs text-gray-300 space-y-2">
+                  <p class="font-bold text-cyanNeon"><i class="fa-solid fa-robot mr-1"></i> Automatic Response Confirmation:</p>
+                  <p>Thank you <strong>{formData.ign}</strong> for submitting your details. A record of your inquiry ({formData.email}) has been sent to our scouting inbox at <strong>{ORG_EMAIL}</strong>.</p>
+                  <p class="text-gray-400">Our recruitment lead will review your rank and VODs, and will contact you shortly via Discord or email.</p>
                 </div>
               </div>
-            </div>
+            ) : (
+              <form onSubmit={handleSubmit} class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">In-Game IGN *</label>
+                    <input required type="text" value={formData.ign} onChange={e => setFormData({...formData, ign: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-3 text-sm text-white focus:outline-none focus:border-cyanNeon" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Your Email Address *</label>
+                    <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-3 text-sm text-white focus:outline-none focus:border-cyanNeon" />
+                  </div>
+                </div>
 
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Discord Tag *</label>
+                    <input required type="text" value={formData.discord} onChange={e => setFormData({...formData, discord: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-3 text-sm text-white focus:outline-none focus:border-cyanNeon" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Primary MOBA Role *</label>
+                    <select value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-3 text-sm text-white focus:outline-none focus:border-cyanNeon">
+                      {['Jungler', 'Mid Lane', 'Gold Lane', 'EXP Lane', 'Roamer'].map(r => <option key={r} value={r}>{r}</option>)}
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Highest Peak Rank & Achievements</label>
+                  <textarea rows="3" value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-3 text-sm text-white focus:outline-none focus:border-cyanNeon"></textarea>
+                </div>
+
+                <button disabled={submitting} type="submit" class="w-full py-3.5 bg-redNeon text-white font-bold uppercase text-xs rounded hover:brightness-110">
+                  {submitting ? 'Submitting Application...' : 'Submit Scouting Application'}
+                </button>
+              </form>
+            )}
           </div>
-
         </div>
       );
     }
 
-    // --- MAIN APP ENTRY POINT ---
     function App() {
       const [currentPage, setCurrentPage] = useState('home');
-
       return (
         <div class="min-h-screen flex flex-col">
           <Navbar currentPage={currentPage} setCurrentPage={setCurrentPage} />
-          
           <main class="flex-grow">
             {currentPage === 'home' && <HomePage setCurrentPage={setCurrentPage} />}
-            {currentPage === 'about' && <AboutPage />}
             {currentPage === 'divine-wolf' && <DivineWolfPage />}
             {currentPage === 'matches' && <MatchesPage />}
             {currentPage === 'contact' && <ContactPage />}
+            {currentPage === 'about' && (
+              <div class="max-w-4xl mx-auto px-4 py-16 text-center space-y-4">
+                <h1 class="font-heading text-4xl font-bold text-white uppercase">About Wolf Society Esports</h1>
+                <p class="text-gray-400 text-sm">Founded for 5v5 MOBA excellence. Flagship squad: Divine Wolf. Contact: {ORG_EMAIL}</p>
+              </div>
+            )}
           </main>
-
-          <footer class="border-t border-borderDark bg-darkBg py-8 text-center text-xs text-gray-500">
-            <div class="max-w-7xl mx-auto px-4">
-              <p>Wolf Society Esports © 2026 • Dedicated to MOBA Supremacy</p>
-            </div>
+          <footer class="border-t border-borderDark py-6 text-center text-xs text-gray-500">
+            Wolf Society Esports © 2026 • Official Email: {ORG_EMAIL}
           </footer>
         </div>
       );
     }
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
   </script>
 </body>
 </html>
