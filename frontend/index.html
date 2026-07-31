@@ -260,10 +260,10 @@
   <script>
     (function() {
       // ----- Supabase config (REPLACE WITH YOUR OWN) -----
-      const SUPABASE_URL = 'https://your-project.supabase.co';
-      const SUPABASE_ANON_KEY = 'your-anon-key';
+      const SUPABASE_URL = 'https://tdfkebgapncswtvbtaqy.supabase.co';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ';
       // If not set, fallback to mock mode (no real calls)
-      const USE_SUPABASE = SUPABASE_URL !== 'https://your-project.supabase.co';
+      const USE_SUPABASE = SUPABASE_URL !== 'https://tdfkebgapncswtvbtaqy.supabase.co';
       let supabase = null;
       if (USE_SUPABASE) {
         supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
