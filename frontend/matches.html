@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Match Center — Wolf Society Esports</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    tailwind.config = { darkMode: 'class', theme: { extend: { colors: { brand: { 500: '#6366f1' }, darkbg: '#090d16' } } } }
+  </script>
+  <style>.glass-card { background: rgba(17, 24, 39, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }</style>
+</head>
+<body class="bg-darkbg text-slate-100 font-sans">
+
+  <header class="sticky top-0 z-40 glass-card border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-cyan-500 flex items-center justify-center font-bold text-xl">🐺</div>
+        <h1 class="font-black text-xl text-white">WOLF SOCIETY</h1>
+      </a>
+      <nav class="hidden md:flex gap-8 text-sm font-medium text-slate-300">
+        <a href="index.html" class="hover:text-brand-500">Home</a>
+        <a href="roster.html" class="hover:text-brand-500">Roster</a>
+        <a href="matches.html" class="text-brand-500 font-bold">Match Center</a>
+        <a href="tryouts.html" class="hover:text-brand-500">Tryouts</a>
+        <a href="about.html" class="hover:text-brand-500">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto p-6 md:p-8">
+    <h1 class="text-3xl font-black text-white mb-2">TOURNAMENT MATCH CENTER</h1>
+    <p class="text-xs text-slate-400 mb-8">Follow live tournament schedules and historic scores.</p>
+
+    <div id="matches-list" class="space-y-4"></div>
+  </main>
+
+  <script>
+    const supabase = supabase.createClient("YOUR_SUPABASE_URL", "YOUR_SUPABASE_ANON_KEY");
+
+    async function loadMatches() {
+      const { data: matches } = await supabase.from('matches').select('*').order('scheduled_at', { ascending: false });
+      const container = document.getElementById('matches-list');
+
+      if (!matches || matches.length === 0) {
+        container.innerHTML = `<div class="text-center py-12 text-slate-500">No scheduled matches.</div>`;
+        return;
+      }
+
+      container.innerHTML = matches.map(m => `
+        <div class="glass-card p-6 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div class="flex items-center gap-4">
+            <span class="px-3 py-1 bg-slate-800 text-xs text-indigo-400 font-bold rounded-lg border border-slate-700">${m.tournament_name || 'Tournament'}</span>
+            <span class="text-xs ${m.status === 'LIVE' ? 'text-rose-500 font-bold animate-pulse' : 'text-slate-400'}">${m.status}</span>
+          </div>
+
+          <div class="flex items-center gap-8">
+            <div class="text-right">
+              <p class="font-black text-lg text-white">Wolf Society</p>
+            </div>
+            <div class="text-2xl font-black text-brand-500 bg-slate-900 px-4 py-2 rounded-xl border border-slate-800">
+              ${m.our_score} : ${m.opponent_score}
+            </div>
+            <div>
+              <p class="font-black text-lg text-slate-300">${m.opponent_name}</p>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', loadMatches);
+    supabase.channel('matches-sync').on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, loadMatches).subscribe();
+  </script>
+</body>
+</html>
