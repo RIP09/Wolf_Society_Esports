@@ -3,322 +3,103 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wolf Society Esports — Official Web Portal</title>
-
-  <!-- Tailwind CSS & FontAwesome -->
+  <title>Wolf Society Esports — Official Portal</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  
-  <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <script>
     tailwind.config = {
       darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: { 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' },
-            darkbg: '#090d16',
-            cardbg: '#111827',
-            bordercolor: '#1f2937'
-          }
-        }
-      }
+      theme: { extend: { colors: { brand: { 500: '#6366f1', 600: '#4f46e5' }, darkbg: '#090d16', cardbg: '#111827' } } }
     }
   </script>
   <style>
-    .glass-card {
-      background: rgba(17, 24, 39, 0.75);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    .pulse-live {
-      box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
-    }
+    .glass-card { background: rgba(17, 24, 39, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
   </style>
 </head>
-<body class="bg-darkbg text-slate-100 font-sans antialiased selection:bg-brand-500 selection:text-white">
+<body class="bg-darkbg text-slate-100 font-sans antialiased">
 
-  <!-- Realtime Announcement Banner -->
-  <div id="live-banner-container" class="bg-gradient-to-r from-brand-700 via-indigo-600 to-purple-700 py-2.5 px-4 text-center text-xs font-semibold tracking-wide flex items-center justify-center gap-3 shadow-lg">
-    <span class="bg-white/20 px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider">ANNOUNCEMENT</span>
-    <span id="live-banner-text">Loading latest announcements...</span>
+  <!-- Live Announcement Banner -->
+  <div class="bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-700 py-2.5 px-4 text-center text-xs font-semibold tracking-wide flex items-center justify-center gap-3">
+    <span class="bg-white/20 px-2 py-0.5 rounded text-[10px] font-bold">ANNOUNCEMENT</span>
+    <span id="banner-text">Loading updates...</span>
   </div>
 
-  <!-- Navigation Header -->
-  <header class="sticky top-0 z-40 glass-card border-b border-slate-800/80">
+  <!-- Shared Global Navigation Header -->
+  <header class="sticky top-0 z-40 glass-card border-b border-slate-800">
     <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-cyan-500 flex items-center justify-center font-bold text-xl shadow-lg shadow-brand-500/30">🐺</div>
+      <a href="index.html" class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-cyan-500 flex items-center justify-center font-bold text-xl shadow-lg">🐺</div>
         <div>
           <h1 class="font-black text-xl tracking-wider text-white">WOLF SOCIETY</h1>
-          <p class="text-[10px] text-indigo-400 font-mono tracking-widest uppercase">PRO ESPORTS ORG</p>
+          <p class="text-[10px] text-indigo-400 font-mono tracking-widest">ESPORTS ORG</p>
         </div>
-      </div>
+      </a>
 
+      <!-- Page Links -->
       <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
-        <a href="#matches" class="hover:text-brand-500 transition">Matches</a>
-        <a href="#roster" class="hover:text-brand-500 transition">Pro Roster</a>
-        <a href="#tryouts" class="hover:text-brand-500 transition">Tryouts</a>
+        <a href="index.html" class="text-brand-500 font-bold">Home</a>
+        <a href="roster.html" class="hover:text-brand-500 transition">Roster</a>
+        <a href="matches.html" class="hover:text-brand-500 transition">Match Center</a>
+        <a href="tryouts.html" class="hover:text-brand-500 transition">Tryouts</a>
+        <a href="about.html" class="hover:text-brand-500 transition">About</a>
       </nav>
 
-      <div class="flex items-center gap-3">
-        <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> CRM Sync Active
-        </div>
-        <a href="#tryouts" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition shadow-lg shadow-brand-600/30">Join Roster</a>
+      <div class="flex items-center gap-4">
+        <a href="tryouts.html" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold shadow-lg transition">Apply Now</a>
       </div>
     </div>
   </header>
 
   <!-- Hero Section -->
-  <section class="py-20 px-6 max-w-7xl mx-auto text-center relative">
-    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/80 border border-slate-700 text-xs font-medium text-slate-300 mb-6">
-      <i class="fa-solid fa-trophy text-amber-400"></i> Season 2026 Competitive Division
+  <section class="py-24 px-6 max-w-7xl mx-auto text-center">
+    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/80 border border-slate-700 text-xs text-slate-300 mb-6">
+      <i class="fa-solid fa-fire text-amber-400"></i> Season 2026 Competitive Roster Active
     </div>
-    <h1 class="text-4xl md:text-6xl font-black tracking-tight text-white max-w-4xl mx-auto leading-tight">
-      DOMINATING THE ARENA WITH UNMATCHED PRECISION
-    </h1>
-    <p class="mt-4 text-slate-400 text-base md:text-lg max-w-2xl mx-auto">
-      Official hub for Wolf Society match results, pro stats, real-time tournament tracking, and academy tryouts.
-    </p>
-  </section>
+    <h1 class="text-4xl md:text-6xl font-black text-white max-w-4xl mx-auto leading-tight">DOMINATING MOBILE LEGENDS & VALORANT ARENAS</h1>
+    <p class="mt-4 text-slate-400 max-w-2xl mx-auto text-sm md:text-base">Track live match stats, view pro player profiles, and follow our tournament journey in real-time.</p>
 
-  <!-- Live & Upcoming Matches Section -->
-  <section id="matches" class="py-12 px-6 max-w-7xl mx-auto">
-    <div class="flex justify-between items-end mb-8">
-      <div>
-        <h2 class="text-2xl font-bold text-white flex items-center gap-3">
-          <i class="fa-solid fa-gamepad text-brand-500"></i> Tournament Schedule
-        </h2>
-        <p class="text-xs text-slate-400 mt-1">Live scores updated instantly from the CRM panel.</p>
-      </div>
-    </div>
-
-    <div id="matches-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <!-- Injected dynamically via JS -->
+    <div class="mt-8 flex justify-center gap-4">
+      <a href="matches.html" class="px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 font-bold text-xs shadow-lg">View Live Schedule</a>
+      <a href="roster.html" class="px-6 py-3 rounded-xl glass-card hover:bg-slate-800 font-bold text-xs border border-slate-700">Explore Roster</a>
     </div>
   </section>
 
-  <!-- Pro Roster Showcase -->
-  <section id="roster" class="py-12 px-6 max-w-7xl mx-auto">
-    <div class="mb-8">
-      <h2 class="text-2xl font-bold text-white flex items-center gap-3">
-        <i class="fa-solid fa-users text-emerald-400"></i> Active Roster
-      </h2>
-      <p class="text-xs text-slate-400 mt-1">Meet our professional team players and performance stats.</p>
+  <!-- Quick Featured Roster Preview -->
+  <section class="py-12 px-6 max-w-7xl mx-auto">
+    <div class="flex justify-between items-center mb-8">
+      <h2 class="text-2xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-users text-emerald-400"></i> Pro Roster Preview</h2>
+      <a href="roster.html" class="text-xs text-brand-500 font-bold hover:underline">View All Players &rarr;</a>
     </div>
-
-    <div id="players-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      <!-- Injected dynamically via JS -->
-    </div>
+    <div id="home-roster-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
   </section>
 
-  <!-- Interactive Tryouts Form -->
-  <section id="tryouts" class="py-16 px-6 max-w-3xl mx-auto">
-    <div class="glass-card rounded-2xl p-8 border border-slate-800 shadow-2xl relative overflow-hidden">
-      <div class="absolute -top-24 -right-24 w-48 h-48 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
-      
-      <div class="text-center mb-8">
-        <h2 class="text-2xl font-bold text-white">Apply for Wolf Society Tryouts</h2>
-        <p class="text-xs text-slate-400 mt-1">Submissions directly enter the CRM Admin Queue for review.</p>
-      </div>
-
-      <form id="tryout-form" onsubmit="submitTryout(event)" class="space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">Full Name</label>
-            <input type="text" id="t-name" required placeholder="Alex Mercer" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none focus:border-brand-500" />
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">In-Game Name (IGN)</label>
-            <input type="text" id="t-ign" required placeholder="Vortex" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none focus:border-brand-500" />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">Discord Tag</label>
-            <input type="text" id="t-discord" required placeholder="Vortex#1234" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none focus:border-brand-500" />
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">Main Game</label>
-            <select id="t-game" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none focus:border-brand-500">
-              <option value="Mobile Legends">Mobile Legends</option>
-              <option value="Valorant">Valorant</option>
-              <option value="PUBG Mobile">PUBG Mobile</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">Preferred Role</label>
-            <input type="text" id="t-role" required placeholder="Jungler / Duelist" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none focus:border-brand-500" />
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Current Rank & Star/Point Count</label>
-          <input type="text" id="t-rank" required placeholder="Mythical Immortal 120 Stars" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none focus:border-brand-500" />
-        </div>
-
-        <button type="submit" id="btn-submit-tryout" class="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs transition shadow-lg shadow-brand-600/30 flex items-center justify-center gap-2">
-          <i class="fa-solid fa-paper-plane"></i> Submit Application to CRM
-        </button>
-      </form>
-      <div id="tryout-status" class="mt-4 text-center text-xs hidden"></div>
-    </div>
-  </section>
-
-  <!-- Script & Realtime Engine -->
   <script>
-    // Supabase Configuration
     const SUPABASE_URL = "YOUR_SUPABASE_URL";
     const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Initial Load
-    document.addEventListener('DOMContentLoaded', () => {
-      fetchSettings();
-      fetchMatches();
-      fetchPlayers();
-      setupRealtimeSubscriptions();
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Fetch Banner
+      const { data: set } = await supabase.from('settings').select('*');
+      if (set) {
+        const b = set.find(s => s.key === 'banner_announcement');
+        if (b) document.getElementById('banner-text').innerText = b.value;
+      }
+
+      // Fetch Roster Preview
+      const { data: players } = await supabase.from('players').select('*').limit(4);
+      const grid = document.getElementById('home-roster-grid');
+      if (players && players.length > 0) {
+        grid.innerHTML = players.map(p => `
+          <div class="glass-card p-4 rounded-xl text-center">
+            <img src="${p.avatar_url || 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=500'}" class="w-20 h-20 rounded-full mx-auto mb-3 object-cover border-2 border-brand-500" />
+            <h3 class="font-bold text-white">${p.ign}</h3>
+            <p class="text-xs text-slate-400">${p.role}</p>
+          </div>
+        `).join('');
+      }
     });
-
-    // 1. Fetch Banner Settings
-    async function fetchSettings() {
-      const { data } = await supabase.from('settings').select('*');
-      if (data) {
-        const banner = data.find(s => s.key === 'banner_announcement');
-        if (banner) document.getElementById('live-banner-text').innerText = banner.value;
-      }
-    }
-
-    // 2. Fetch Matches
-    async function fetchMatches() {
-      const grid = document.getElementById('matches-grid');
-      const { data: matches } = await supabase.from('matches').select('*').order('scheduled_at', { ascending: false });
-
-      if (!matches || matches.length === 0) {
-        grid.innerHTML = `<div class="col-span-2 text-center py-8 text-slate-500 text-xs">No active matches scheduled.</div>`;
-        return;
-      }
-
-      grid.innerHTML = matches.map(m => `
-        <div class="glass-card p-6 rounded-2xl border border-slate-800 flex flex-col justify-between relative">
-          <div class="flex justify-between items-center mb-4">
-            <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-500/10 px-2.5 py-1 rounded-md border border-indigo-500/20">${m.tournament_name || 'Tournament'}</span>
-            <span class="text-xs font-semibold ${
-              m.status === 'LIVE' ? 'text-rose-500 font-bold animate-pulse' :
-              m.status === 'FINISHED' ? 'text-slate-400' : 'text-amber-400'
-            }">
-              ${m.status === 'LIVE' ? '🔴 LIVE NOW' : m.status}
-            </span>
-          </div>
-
-          <div class="flex items-center justify-between py-4">
-            <!-- Our Team -->
-            <div class="text-center w-1/3">
-              <div class="w-12 h-12 rounded-xl bg-brand-600/20 border border-brand-500/40 mx-auto flex items-center justify-center font-bold text-xl mb-2">🐺</div>
-              <p class="font-bold text-sm text-white">Wolf Society</p>
-            </div>
-
-            <!-- Score -->
-            <div class="text-center">
-              <div class="text-2xl font-black text-white tracking-widest bg-slate-900 px-4 py-2 rounded-xl border border-slate-800">
-                ${m.our_score} : ${m.opponent_score}
-              </div>
-            </div>
-
-            <!-- Opponent -->
-            <div class="text-center w-1/3">
-              <div class="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 mx-auto flex items-center justify-center font-bold text-xl mb-2 text-slate-400">⚔️</div>
-              <p class="font-bold text-sm text-slate-300 truncate">${m.opponent_name}</p>
-            </div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    // 3. Fetch Players
-    async function fetchPlayers() {
-      const grid = document.getElementById('players-grid');
-      const { data: players } = await supabase.from('players').select('*').eq('is_active', true);
-
-      if (!players || players.length === 0) {
-        grid.innerHTML = `<div class="col-span-4 text-center py-8 text-slate-500 text-xs">No active roster players.</div>`;
-        return;
-      }
-
-      grid.innerHTML = players.map(p => `
-        <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-brand-500/40 transition">
-          <img src="${p.avatar_url || 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=500'}" alt="${p.ign}" class="w-full h-48 object-cover rounded-xl mb-4 border border-slate-800" />
-          <div class="flex justify-between items-start mb-2">
-            <div>
-              <h3 class="font-extrabold text-base text-white">${p.ign}</h3>
-              <p class="text-xs text-slate-400">${p.real_name || ''}</p>
-            </div>
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-brand-500/20 text-brand-300 border border-brand-500/30 uppercase">${p.role}</span>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-slate-800/80 text-center text-xs">
-            <div class="bg-slate-900/60 p-2 rounded-lg">
-              <p class="text-[10px] text-slate-400">KDA Ratio</p>
-              <p class="font-bold text-emerald-400">${p.kda}</p>
-            </div>
-            <div class="bg-slate-900/60 p-2 rounded-lg">
-              <p class="text-[10px] text-slate-400">Win Rate</p>
-              <p class="font-bold text-indigo-400">${p.win_rate}%</p>
-            </div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    // 4. Tryout Application Handler
-    async function submitTryout(e) {
-      e.preventDefault();
-      const btn = document.getElementById('btn-submit-tryout');
-      const status = document.getElementById('tryout-status');
-
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Submitting...`;
-
-      const payload = {
-        full_name: document.getElementById('t-name').value,
-        ign: document.getElementById('t-ign').value,
-        discord_tag: document.getElementById('t-discord').value,
-        game: document.getElementById('t-game').value,
-        role: document.getElementById('t-role').value,
-        rank: document.getElementById('t-rank').value,
-        status: 'PENDING'
-      };
-
-      const { error } = await supabase.from('tryouts').insert([payload]);
-
-      btn.disabled = false;
-      btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Submit Application to CRM`;
-
-      status.classList.remove('hidden');
-      if (!error) {
-        status.className = 'mt-4 text-center text-xs text-emerald-400 font-semibold';
-        status.innerText = '✅ Application submitted successfully! Our managers will review it in CRM.';
-        document.getElementById('tryout-form').reset();
-      } else {
-        status.className = 'mt-4 text-center text-xs text-rose-400 font-semibold';
-        status.innerText = '❌ Failed to submit application. Please try again.';
-      }
-    }
-
-    // 5. REALTIME LISTENERS (Instant updates without page refresh)
-    function setupRealtimeSubscriptions() {
-      supabase.channel('public-crm-sync')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'settings' }, () => fetchSettings())
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, () => fetchMatches())
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'players' }, () => fetchPlayers())
-        .subscribe((status) => {
-          console.log('Supabase Realtime Channel Status:', status);
-        });
-    }
   </script>
 </body>
 </html>
