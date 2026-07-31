@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wolf Society Esports | Admin Management</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            darkBg: '#0a0a0c',
+            cardBg: '#12131a',
+            borderDark: '#1f2230',
+            cyanNeon: '#00f2fe',
+            redNeon: '#ff2a5f',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- React & Babel CDNs -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Supabase JS Client CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body { background-color: #0a0a0c; color: #e2e8f0; font-family: 'Inter', sans-serif; }
+    h1, h2, h3, h4, .font-heading { font-family: 'Chakra Petch', sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col p-4 sm:p-8">
+
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // --- SUPABASE CONFIGURATION ---
+    const SUPABASE_URL = "https://tdfkebgapncswtvbtaqy.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ";
+
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const ROLES = ['Jungler', 'Mid Lane', 'Gold Lane', 'EXP Lane', 'Roamer', 'Substitute', 'Coach'];
+
+    function AdminApp() {
+      const [players, setPlayers] = useState([]);
+      const [loading, setLoading] = useState(true);
+      const [editingId, setEditingId] = useState(null);
+      const [message, setMessage] = useState(null);
+
+      // Form State
+      const [formData, setFormData] = useState({
+        in_game_name: '',
+        real_name: '',
+        role: 'Jungler',
+        team_name: 'Divine Wolf',
+        avatar_url: '',
+        signature_heroes: '',
+        is_active: true
+      });
+
+      // Fetch Players
+      const fetchPlayers = async () => {
+        setLoading(true);
+        const { data, error } = await supabaseClient
+          .from('players')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          showMessage('error', 'Error fetching players: ' + error.message);
+        } else {
+          setPlayers(data || []);
+        }
+        setLoading(false);
+      };
+
+      useEffect(() => {
+        fetchPlayers();
+      }, []);
+
+      const showMessage = (type, text) => {
+        setMessage({ type, text });
+        setTimeout(() => setMessage(null), 4000);
+      };
+
+      const handleInputChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setFormData(prev => ({
+          ...prev,
+          [name]: type === 'checkbox' ? checked : value
+        }));
+      };
+
+      const resetForm = () => {
+        setFormData({
+          in_game_name: '',
+          real_name: '',
+          role: 'Jungler',
+          team_name: 'Divine Wolf',
+          avatar_url: '',
+          signature_heroes: '',
+          is_active: true
+        });
+        setEditingId(null);
+      };
+
+      const handleEditClick = (player) => {
+        setEditingId(player.id);
+        setFormData({
+          in_game_name: player.in_game_name || '',
+          real_name: player.real_name || '',
+          role: player.role || 'Jungler',
+          team_name: player.team_name || 'Divine Wolf',
+          avatar_url: player.avatar_url || '',
+          signature_heroes: Array.isArray(player.signature_heroes) ? player.signature_heroes.join(', ') : '',
+          is_active: player.is_active ?? true
+        });
+      };
+
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        // Convert comma-separated string to Array
+        const heroesArray = formData.signature_heroes
+          .split(',')
+          .map(h => h.trim())
+          .filter(h => h.length > 0);
+
+        const payload = {
+          in_game_name: formData.in_game_name,
+          real_name: formData.real_name,
+          role: formData.role,
+          team_name: formData.team_name,
+          avatar_url: formData.avatar_url,
+          signature_heroes: heroesArray,
+          is_active: formData.is_active
+        };
+
+        if (editingId) {
+          // Update existing player
+          const { error } = await supabaseClient
+            .from('players')
+            .update(payload)
+            .eq('id', editingId);
+
+          if (error) {
+            showMessage('error', 'Failed to update: ' + error.message);
+          } else {
+            showMessage('success', 'Player updated successfully!');
+            resetForm();
+            fetchPlayers();
+          }
+        } else {
+          // Insert new player
+          const { error } = await supabaseClient
+            .from('players')
+            .insert([payload]);
+
+          if (error) {
+            showMessage('error', 'Failed to add player: ' + error.message);
+          } else {
+            showMessage('success', 'New player added to roster!');
+            resetForm();
+            fetchPlayers();
+          }
+        }
+      };
+
+      const handleDelete = async (id, ign) => {
+        if (!confirm(`Are you sure you want to remove ${ign}?`)) return;
+
+        const { error } = await supabaseClient
+          .from('players')
+          .delete()
+          .eq('id', id);
+
+        if (error) {
+          showMessage('error', 'Failed to delete: ' + error.message);
+        } else {
+          showMessage('success', `${ign} removed from database.`);
+          if (editingId === id) resetForm();
+          fetchPlayers();
+        }
+      };
+
+      return (
+        <div class="max-w-7xl mx-auto w-full space-y-8">
+          
+          {/* Header */}
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-borderDark pb-6">
+            <div>
+              <div class="text-cyanNeon font-bold text-xs uppercase tracking-widest">Database Portal</div>
+              <h1 class="font-heading text-3xl font-bold text-white uppercase">Wolf Society Player Admin</h1>
+            </div>
+            <a 
+              href="index.html" 
+              class="px-4 py-2 rounded bg-cardBg border border-borderDark text-xs font-bold text-gray-300 hover:text-cyanNeon hover:border-cyanNeon/40 transition-colors"
+            >
+              ← Back to Main Website
+            </a>
+          </div>
+
+          {/* Feedback Toast */}
+          {message && (
+            <div class={`p-4 rounded-lg font-semibold text-sm border ${
+              message.type === 'success' 
+                ? 'bg-green-500/10 border-green-500/30 text-green-400' 
+                : 'bg-redNeon/10 border-redNeon/30 text-redNeon'
+            }`}>
+              {message.text}
+            </div>
+          )}
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            {/* Form Column */}
+            <div class="lg:col-span-5 bg-cardBg border border-borderDark p-6 rounded-xl h-fit">
+              <h2 class="font-heading text-xl font-bold text-white uppercase mb-4">
+                {editingId ? 'Edit Player' : 'Add New Player'}
+              </h2>
+
+              <form onSubmit={handleSubmit} class="space-y-4">
+                <div>
+                  <label class="block text-xs font-bold text-gray-400 uppercase mb-1">In-Game Name (IGN) *</label>
+                  <input 
+                    type="text" 
+                    name="in_game_name"
+                    required
+                    value={formData.in_game_name}
+                    onChange={handleInputChange}
+                    placeholder="e.g. ALPHA"
+                    class="w-full bg-darkBg border border-borderDark rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyanNeon"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Real Name</label>
+                  <input 
+                    type="text" 
+                    name="real_name"
+                    value={formData.real_name}
+                    onChange={handleInputChange}
+                    placeholder="e.g. Vikram Singh"
+                    class="w-full bg-darkBg border border-borderDark rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyanNeon"
+                  />
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">MOBA Role *</label>
+                    <select 
+                      name="role"
+                      value={formData.role}
+                      onChange={handleInputChange}
+                      class="w-full bg-darkBg border border-borderDark rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyanNeon"
+                    >
+                      {ROLES.map(role => (
+                        <option key={role} value={role}>{role}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Team Name</label>
+                    <input 
+                      type="text" 
+                      name="team_name"
+                      value={formData.team_name}
+                      onChange={handleInputChange}
+                      class="w-full bg-darkBg border border-borderDark rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyanNeon"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Signature Heroes (comma-separated)</label>
+                  <input 
+                    type="text" 
+                    name="signature_heroes"
+                    value={formData.signature_heroes}
+                    onChange={handleInputChange}
+                    placeholder="Lancelot, Hayabusa, Ling"
+                    class="w-full bg-darkBg border border-borderDark rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyanNeon"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Avatar Image URL</label>
+                  <input 
+                    type="url" 
+                    name="avatar_url"
+                    value={formData.avatar_url}
+                    onChange={handleInputChange}
+                    placeholder="https://images.unsplash.com/..."
+                    class="w-full bg-darkBg border border-borderDark rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyanNeon"
+                  />
+                </div>
+
+                <div class="flex items-center gap-2 pt-2">
+                  <input 
+                    type="checkbox" 
+                    id="is_active"
+                    name="is_active"
+                    checked={formData.is_active}
+                    onChange={handleInputChange}
+                    class="rounded bg-darkBg border-borderDark text-cyanNeon focus:ring-0"
+                  />
+                  <label htmlFor="is_active" class="text-xs font-bold text-gray-300 uppercase">Active Roster Member</label>
+                </div>
+
+                <div class="flex items-center gap-3 pt-4">
+                  <button 
+                    type="submit"
+                    class="flex-1 bg-cyanNeon text-black font-bold uppercase tracking-wider py-2.5 rounded text-xs hover:brightness-110 transition-all"
+                  >
+                    {editingId ? 'Save Changes' : 'Add Player'}
+                  </button>
+                  {editingId && (
+                    <button 
+                      type="button"
+                      onClick={resetForm}
+                      class="bg-darkBg border border-borderDark text-gray-400 font-bold uppercase tracking-wider px-4 py-2.5 rounded text-xs hover:text-white"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
+              </form>
+            </div>
+
+            {/* Roster Table Column */}
+            <div class="lg:col-span-7 bg-cardBg border border-borderDark p-6 rounded-xl">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="font-heading text-xl font-bold text-white uppercase">Current Database Roster</h2>
+                <button 
+                  onClick={fetchPlayers} 
+                  class="text-xs text-cyanNeon hover:underline font-semibold"
+                >
+                  Refresh Data
+                </button>
+              </div>
+
+              {loading ? (
+                <div class="text-center py-12 text-gray-500 font-semibold animate-pulse">
+                  Querying Supabase database...
+                </div>
+              ) : players.length === 0 ? (
+                <div class="text-center py-12 text-gray-500">
+                  No players found in Supabase. Add your first player using the form!
+                </div>
+              ) : (
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left text-xs">
+                    <thead class="bg-darkBg text-gray-400 uppercase tracking-wider border-b border-borderDark">
+                      <tr>
+                        <th class="p-3">Player</th>
+                        <th class="p-3">Role</th>
+                        <th class="p-3">Heroes</th>
+                        <th class="p-3 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-borderDark">
+                      {players.map(player => (
+                        <tr key={player.id} class="hover:bg-darkBg/50 transition-colors">
+                          <td class="p-3 flex items-center gap-3">
+                            <img 
+                              src={player.avatar_url || 'https://via.placeholder.com/40'} 
+                              alt={player.in_game_name}
+                              class="w-8 h-8 rounded-full object-cover bg-slate-800"
+                            />
+                            <div>
+                              <div class="font-bold text-white">{player.in_game_name}</div>
+                              <div class="text-[10px] text-gray-400">{player.real_name || 'N/A'}</div>
+                            </div>
+                          </td>
+                          <td class="p-3 font-semibold text-cyanNeon">{player.role}</td>
+                          <td class="p-3 text-gray-400">
+                            {Array.isArray(player.signature_heroes) 
+                              ? player.signature_heroes.join(', ') 
+                              : 'None'}
+                          </td>
+                          <td class="p-3 text-right space-x-2">
+                            <button 
+                              onClick={() => handleEditClick(player)}
+                              class="px-2.5 py-1 rounded bg-blue-500/10 text-blue-400 border border-blue-500/30 hover:bg-blue-500/20 font-bold"
+                            >
+                              Edit
+                            </button>
+                            <button 
+                              onClick={() => handleDelete(player.id, player.in_game_name)}
+                              class="px-2.5 py-1 rounded bg-redNeon/10 text-redNeon border border-redNeon/30 hover:bg-redNeon/20 font-bold"
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<AdminApp />);
+  </script>
+</body>
+</html>
