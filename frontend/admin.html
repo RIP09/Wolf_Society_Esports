@@ -36,7 +36,7 @@
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useEffect } = React;
+    const { useState, useEffect, useCallback } = React;
 
     const SUPABASE_URL = "https://tdfkebgapncswtvbtaqy.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ";
@@ -49,97 +49,145 @@
       const [activeTab, setActiveTab] = useState('roster');
       const [msg, setMsg] = useState(null);
 
-      // Auth Forms State
+      // Auth States
       const [loginEmail, setLoginEmail] = useState('');
       const [loginPass, setLoginPass] = useState('');
       const [regFullName, setRegFullName] = useState('');
       const [regEmail, setRegEmail] = useState('');
       const [regPass, setRegPass] = useState('');
 
-      // Database Tables State
+      // Data Tables State
       const [players, setPlayers] = useState([]);
       const [matches, setMatches] = useState([]);
-      const [news, setNews] = useState([]);
       const [contacts, setContacts] = useState([]);
       const [requests, setRequests] = useState([]);
-      const [settings, setSettings] = useState({ org_name: 'Wolf Society Esports', org_email: 'wolfsocietygg@yahoo.com', banner_announcement: '' });
+      const [settings, setSettings] = useState({ org_name: 'Wolf Society Esports', org_email: 'wolfsocietygg@yahoo.com', banner_announcement: '', activepieces_webhook: '' });
 
       // Form Editor States
-      const [playerForm, setPlayerForm] = useState({ in_game_name: '', real_name: '', role: 'Jungler', kda: 4.5, win_rate: 75, matches_played: 100, gpm: 750, bio: '', avatar_url: '' });
       const [editingPlayerId, setEditingPlayerId] = useState(null);
-
+      const [playerForm, setPlayerForm] = useState({ in_game_name: '', real_name: '', role: 'Jungler', kda: 4.5, win_rate: 75.0, matches_played: 120, gpm: 780, bio: '', avatar_url: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=500' });
       const [matchForm, setMatchForm] = useState({ tournament_name: '', stage: 'Group Stage', opponent_name: '', score_team: 0, score_opponent: 0, result: 'WIN' });
 
       const notify = (type, text) => { setMsg({ type, text }); setTimeout(() => setMsg(null), 4000); };
 
-      const loadAllData = async () => {
-        const { data: p } = await supabaseClient.from('players').select('*').order('created_at', { ascending: false });
-        const { data: m } = await supabaseClient.from('matches').select('*').order('created_at', { ascending: false });
-        const { data: n } = await supabaseClient.from('news').select('*').order('created_at', { ascending: false });
-        const { data: c } = await supabaseClient.from('contacts').select('*').order('created_at', { ascending: false });
-        const { data: r } = await supabaseClient.from('admin_requests').select('*').order('created_at', { ascending: false });
-        const { data: s } = await supabaseClient.from('site_settings').select('*').single();
+      const loadAllData = useCallback(async () => {
+        try {
+          const { data: p, error: pErr } = await supabaseClient.from('players').select('*').order('created_at', { ascending: false });
+          const { data: m, error: mErr } = await supabaseClient.from('matches').select('*').order('created_at', { ascending: false });
+          const { data: c, error: cErr } = await supabaseClient.from('contacts').select('*').order('created_at', { ascending: false });
+          const { data: r, error: rErr } = await supabaseClient.from('admin_requests').select('*').order('created_at', { ascending: false });
+          const { data: s, error: sErr } = await supabaseClient.from('site_settings').select('*').single();
 
-        setPlayers(p || []);
-        setMatches(m || []);
-        setNews(n || []);
-        setContacts(c || []);
-        setRequests(r || []);
-        if (s) setSettings(s);
-      };
+          if (pErr) console.error("Player Fetch Error:", pErr);
+          if (mErr) console.error("Match Fetch Error:", mErr);
 
-      useEffect(() => { if (currentUser) loadAllData(); }, [currentUser]);
+          setPlayers(p || []);
+          setMatches(m || []);
+          setContacts(c || []);
+          setRequests(r || []);
+          if (s) setSettings(s);
+        } catch (err) {
+          console.error("Load Data Failure:", err);
+        }
+      }, []);
+
+      useEffect(() => {
+        if (currentUser) {
+          loadAllData();
+
+          // Live channel subscription for Admin CRM
+          const channel = supabaseClient.channel('admin_realtime')
+            .on('postgres_changes', { event: '*', schema: 'public' }, () => {
+              loadAllData();
+            })
+            .subscribe();
+
+          return () => { supabaseClient.removeChannel(channel); };
+        }
+      }, [currentUser, loadAllData]);
 
       // Authentication Handlers
       const handleLogin = async (e) => {
         e.preventDefault();
-        const { data, error } = await supabaseClient.from('admin_requests').select('*').eq('email', loginEmail.trim()).eq('password', loginPass).single();
-        if (error || !data) notify('error', 'Invalid admin credentials');
-        else if (data.status !== 'APPROVED') notify('error', `Pending approval by Super Admin (${ORG_EMAIL})`);
-        else { setCurrentUser(data); notify('success', `Logged in as ${data.full_name}`); }
+        try {
+          const { data, error } = await supabaseClient.from('admin_requests').select('*').eq('email', loginEmail.trim()).eq('password', loginPass).single();
+          if (error || !data) notify('error', 'Invalid admin credentials');
+          else if (data.status !== 'APPROVED') notify('error', `Pending approval by Super Admin (${ORG_EMAIL})`);
+          else { setCurrentUser(data); notify('success', `Logged in as ${data.full_name}`); }
+        } catch (err) {
+          notify('error', 'Login system error');
+        }
       };
 
       const handleRegister = async (e) => {
         e.preventDefault();
         const { error } = await supabaseClient.from('admin_requests').insert([{ email: regEmail.trim(), full_name: regFullName, password: regPass, status: 'PENDING' }]);
         if (error) notify('error', error.message);
-        else { notify('success', `Access request submitted! Request sent to ${ORG_EMAIL} for approval.`); setAuthMode('login'); }
+        else { notify('success', `Access request submitted! Approval sent to ${ORG_EMAIL}.`); setAuthMode('login'); }
       };
 
-      // Player CRUD
+      // Player CRUD Operations (Guaranteed Supabase Persistence)
       const savePlayer = async (e) => {
         e.preventDefault();
-        if (editingPlayerId) await supabaseClient.from('players').update(playerForm).eq('id', editingPlayerId);
-        else await supabaseClient.from('players').insert([playerForm]);
-        notify('success', 'Player saved!');
-        setPlayerForm({ in_game_name: '', real_name: '', role: 'Jungler', kda: 4.5, win_rate: 75, matches_played: 100, gpm: 750, bio: '', avatar_url: '' });
-        setEditingPlayerId(null);
-        loadAllData();
+        try {
+          const payload = {
+            ...playerForm,
+            kda: parseFloat(playerForm.kda) || 0,
+            win_rate: parseFloat(playerForm.win_rate) || 0,
+            matches_played: parseInt(playerForm.matches_played) || 0,
+            gpm: parseInt(playerForm.gpm) || 0
+          };
+
+          if (editingPlayerId) {
+            const { error } = await supabaseClient.from('players').update(payload).eq('id', editingPlayerId);
+            if (error) throw error;
+            notify('success', 'Player profile updated in database!');
+          } else {
+            const { error } = await supabaseClient.from('players').insert([payload]);
+            if (error) throw error;
+            notify('success', 'New player added to Divine Wolf roster!');
+          }
+
+          setPlayerForm({ in_game_name: '', real_name: '', role: 'Jungler', kda: 4.5, win_rate: 75.0, matches_played: 120, gpm: 780, bio: '', avatar_url: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=500' });
+          setEditingPlayerId(null);
+          loadAllData();
+        } catch (err) {
+          notify('error', 'Failed to save player: ' + err.message);
+        }
       };
 
-      const deletePlayer = async (id) => { if (confirm('Delete player?')) { await supabaseClient.from('players').delete().eq('id', id); loadAllData(); } };
+      const deletePlayer = async (id) => {
+        if (confirm('Delete player from database?')) {
+          const { error } = await supabaseClient.from('players').delete().eq('id', id);
+          if (error) notify('error', error.message);
+          else { notify('success', 'Player deleted'); loadAllData(); }
+        }
+      };
 
-      // Match CRUD
+      // Save Match Operation
       const saveMatch = async (e) => {
         e.preventDefault();
-        await supabaseClient.from('matches').insert([matchForm]);
-        notify('success', 'Match logged!');
-        setMatchForm({ tournament_name: '', stage: 'Group Stage', opponent_name: '', score_team: 0, score_opponent: 0, result: 'WIN' });
-        loadAllData();
+        try {
+          const { error } = await supabaseClient.from('matches').insert([matchForm]);
+          if (error) throw error;
+          notify('success', 'Match logged successfully!');
+          setMatchForm({ tournament_name: '', stage: 'Group Stage', opponent_name: '', score_team: 0, score_opponent: 0, result: 'WIN' });
+          loadAllData();
+        } catch (err) {
+          notify('error', 'Failed to log match: ' + err.message);
+        }
       };
 
-      // Admin Approvals
-      const setRequestStatus = async (id, status) => {
-        await supabaseClient.from('admin_requests').update({ status }).eq('id', id);
-        notify('success', `User status updated to ${status}`);
-        loadAllData();
-      };
-
-      // Update Site Announcement Banner
+      // Update Site Settings
       const updateSettings = async (e) => {
         e.preventDefault();
-        await supabaseClient.from('site_settings').update(settings).eq('id', 1);
-        notify('success', 'Site settings updated globally!');
+        try {
+          const { error } = await supabaseClient.from('site_settings').update(settings).eq('id', 1);
+          if (error) throw error;
+          notify('success', 'Global site settings updated!');
+        } catch (err) {
+          notify('error', err.message);
+        }
       };
 
       if (!currentUser) {
@@ -169,22 +217,20 @@
                 <div class="text-center pt-2"><button type="button" onClick={() => setAuthMode('login')} class="text-xs text-gray-400 hover:text-cyanNeon">Back To Login</button></div>
               </form>
             )}
-            <div class="border-t border-borderDark pt-4 text-center"><a href="index.html" class="text-xs text-gray-400 hover:text-white">← Public Website</a></div>
           </div>
         );
       }
 
       return (
         <div class="max-w-7xl mx-auto w-full space-y-6">
-          {/* Header */}
           <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-borderDark pb-6">
             <div>
-              <span class="text-cyanNeon font-bold text-xs uppercase tracking-widest">A-Z Esports CRM Dashboard</span>
-              <h1 class="font-heading text-3xl font-bold text-white uppercase">{settings.org_name} Management</h1>
+              <span class="text-cyanNeon font-bold text-xs uppercase tracking-widest">Esports CRM Management Hub</span>
+              <h1 class="font-heading text-3xl font-bold text-white uppercase">{settings.org_name}</h1>
             </div>
             <div class="flex gap-3">
-              <a href="index.html" class="px-3 py-2 bg-cardBg border border-borderDark rounded text-xs font-bold text-gray-300">Public Portal</a>
-              <a href="player.html" class="px-3 py-2 bg-cardBg border border-purpleNeon/40 text-purpleNeon rounded text-xs font-bold">Player Dashboard</a>
+              <a href="index.html" class="px-3 py-2 bg-cardBg border border-borderDark rounded text-xs font-bold text-gray-300">Public Website</a>
+              <a href="player.html" class="px-3 py-2 bg-cardBg border border-purpleNeon/40 text-purpleNeon rounded text-xs font-bold">Player Stats</a>
               <button onClick={() => setCurrentUser(null)} class="px-3 py-2 bg-redNeon/20 border border-redNeon/30 text-redNeon rounded text-xs font-bold">Log Out</button>
             </div>
           </div>
@@ -194,11 +240,10 @@
           {/* Navigation Tabs */}
           <div class="flex gap-2 border-b border-borderDark pb-2 overflow-x-auto text-xs font-bold uppercase">
             {[
-              { id: 'roster', label: 'Divine Wolf Roster' },
-              { id: 'matches', label: 'Matches & Schedule' },
-              { id: 'inbox', label: 'Tryouts Inbox (CRM)' },
-              { id: 'requests', label: 'Admin Access Queue' },
-              { id: 'settings', label: 'Site Settings' }
+              { id: 'roster', label: 'Roster Management' },
+              { id: 'matches', label: 'Match Center' },
+              { id: 'inbox', label: 'Tryouts Inbox' },
+              { id: 'settings', label: 'Site & Automation Settings' }
             ].map(t => (
               <button key={t.id} onClick={() => setActiveTab(t.id)} class={`px-4 py-2 rounded ${activeTab === t.id ? 'bg-cyanNeon text-black' : 'bg-cardBg text-gray-400'}`}>
                 {t.label}
@@ -206,43 +251,64 @@
             ))}
           </div>
 
-          {/* TAB 1: ROSTER & PLAYER ANALYTICS EDITOR */}
+          {/* TAB 1: ROSTER MANAGER */}
           {activeTab === 'roster' && (
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
               <div class="lg:col-span-5 bg-cardBg border border-borderDark p-6 rounded-xl space-y-4">
-                <h3 class="font-heading text-xl font-bold text-white uppercase">{editingPlayerId ? 'Edit Player' : 'Add Player'}</h3>
+                <h3 class="font-heading text-xl font-bold text-white uppercase">{editingPlayerId ? 'Edit Player' : 'Add Player to Roster'}</h3>
                 <form onSubmit={savePlayer} class="space-y-3">
-                  <input required placeholder="In-Game IGN" value={playerForm.in_game_name} onChange={e => setPlayerForm({...playerForm, in_game_name: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-2 text-xs text-white" />
-                  <input placeholder="Real Name" value={playerForm.real_name} onChange={e => setPlayerForm({...playerForm, real_name: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-2 text-xs text-white" />
-                  <select value={playerForm.role} onChange={e => setPlayerForm({...playerForm, role: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-2 text-xs text-white">
-                    {['Jungler', 'Mid Lane', 'Gold Lane', 'EXP Lane', 'Roamer'].map(r => <option key={r} value={r}>{r}</option>)}
-                  </select>
-                  <div class="grid grid-cols-3 gap-2">
-                    <input type="number" step="0.1" placeholder="KDA" value={playerForm.kda} onChange={e => setPlayerForm({...playerForm, kda: parseFloat(e.target.value) || 0})} class="bg-darkBg border border-borderDark rounded p-2 text-xs text-white" />
-                    <input type="number" placeholder="Win Rate %" value={playerForm.win_rate} onChange={e => setPlayerForm({...playerForm, win_rate: parseFloat(e.target.value) || 0})} class="bg-darkBg border border-borderDark rounded p-2 text-xs text-white" />
-                    <input type="number" placeholder="GPM" value={playerForm.gpm} onChange={e => setPlayerForm({...playerForm, gpm: parseInt(e.target.value) || 0})} class="bg-darkBg border border-borderDark rounded p-2 text-xs text-white" />
+                  <div>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">In-Game IGN *</label>
+                    <input required value={playerForm.in_game_name} onChange={e => setPlayerForm({...playerForm, in_game_name: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-2 text-xs text-white" />
                   </div>
-                  <input placeholder="Avatar URL" value={playerForm.avatar_url} onChange={e => setPlayerForm({...playerForm, avatar_url: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-2 text-xs text-white" />
-                  <textarea placeholder="Bio" value={playerForm.bio} onChange={e => setPlayerForm({...playerForm, bio: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-2 text-xs text-white"></textarea>
-                  <button type="submit" class="w-full py-2 bg-cyanNeon text-black font-bold uppercase text-xs rounded">Save Player Data</button>
+                  <div>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Real Name</label>
+                    <input value={playerForm.real_name || ''} onChange={e => setPlayerForm({...playerForm, real_name: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-2 text-xs text-white" />
+                  </div>
+                  <div>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Role *</label>
+                    <select value={playerForm.role} onChange={e => setPlayerForm({...playerForm, role: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-2 text-xs text-white">
+                      {['Jungler', 'Mid Lane', 'Gold Lane', 'EXP Lane', 'Roamer'].map(r => <option key={r} value={r}>{r}</option>)}
+                    </select>
+                  </div>
+                  <div class="grid grid-cols-3 gap-2">
+                    <div>
+                      <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">KDA</label>
+                      <input type="number" step="0.1" value={playerForm.kda} onChange={e => setPlayerForm({...playerForm, kda: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-2 text-xs text-white" />
+                    </div>
+                    <div>
+                      <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Win Rate %</label>
+                      <input type="number" step="0.1" value={playerForm.win_rate} onChange={e => setPlayerForm({...playerForm, win_rate: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-2 text-xs text-white" />
+                    </div>
+                    <div>
+                      <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">GPM</label>
+                      <input type="number" value={playerForm.gpm} onChange={e => setPlayerForm({...playerForm, gpm: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-2 text-xs text-white" />
+                    </div>
+                  </div>
+                  <div>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Avatar Image URL</label>
+                    <input value={playerForm.avatar_url} onChange={e => setPlayerForm({...playerForm, avatar_url: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-2 text-xs text-white" />
+                  </div>
+                  <button type="submit" class="w-full py-2.5 bg-cyanNeon text-black font-bold uppercase text-xs rounded">{editingPlayerId ? 'Update Player Profile' : 'Save To Database & Sync Live'}</button>
+                  {editingPlayerId && <button type="button" onClick={() => { setEditingPlayerId(null); setPlayerForm({ in_game_name: '', real_name: '', role: 'Jungler', kda: 4.5, win_rate: 75.0, matches_played: 120, gpm: 780, bio: '', avatar_url: '' }); }} class="w-full py-1.5 bg-gray-700 text-white font-bold uppercase text-xs rounded">Cancel Edit</button>}
                 </form>
               </div>
 
               <div class="lg:col-span-7 bg-cardBg border border-borderDark p-6 rounded-xl space-y-4">
-                <h3 class="font-heading text-xl font-bold text-white uppercase">Divine Wolf Roster Database</h3>
+                <h3 class="font-heading text-xl font-bold text-white uppercase">Divine Wolf Database Roster</h3>
                 <div class="space-y-3">
-                  {players.map(p => (
+                  {players.length === 0 ? <p class="text-xs text-gray-500">No players registered.</p> : players.map(p => (
                     <div key={p.id} class="bg-darkBg border border-borderDark p-3 rounded flex items-center justify-between text-xs">
                       <div class="flex items-center gap-3">
-                        <img src={p.avatar_url} class="w-8 h-8 rounded-full object-cover" />
+                        <img src={p.avatar_url} class="w-10 h-10 rounded-lg object-cover" />
                         <div>
                           <div class="font-bold text-white">{p.in_game_name} ({p.role})</div>
-                          <div class="text-gray-400 text-[10px]">KDA: {p.kda} • WR: {p.win_rate}%</div>
+                          <div class="text-gray-400 text-[10px]">KDA: {p.kda} • WR: {p.win_rate}% • GPM: {p.gpm}</div>
                         </div>
                       </div>
                       <div class="space-x-2">
-                        <button onClick={() => { setEditingPlayerId(p.id); setPlayerForm(p); }} class="px-2 py-1 bg-blue-500/20 text-blue-400 rounded">Edit</button>
-                        <button onClick={() => deletePlayer(p.id)} class="px-2 py-1 bg-redNeon/20 text-redNeon rounded">Delete</button>
+                        <button onClick={() => { setEditingPlayerId(p.id); setPlayerForm(p); }} class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded">Edit</button>
+                        <button onClick={() => deletePlayer(p.id)} class="px-3 py-1 bg-redNeon/20 text-redNeon rounded">Delete</button>
                       </div>
                     </div>
                   ))}
@@ -251,11 +317,11 @@
             </div>
           )}
 
-          {/* TAB 2: MATCHES */}
+          {/* TAB 2: MATCH CENTER */}
           {activeTab === 'matches' && (
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
               <div class="lg:col-span-5 bg-cardBg border border-borderDark p-6 rounded-xl space-y-4">
-                <h3 class="font-heading text-xl font-bold text-white uppercase">Log New Match</h3>
+                <h3 class="font-heading text-xl font-bold text-white uppercase">Log Match Result</h3>
                 <form onSubmit={saveMatch} class="space-y-3">
                   <input required placeholder="Tournament Name" value={matchForm.tournament_name} onChange={e => setMatchForm({...matchForm, tournament_name: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-2 text-xs text-white" />
                   <input placeholder="Stage (e.g. Grand Finals)" value={matchForm.stage} onChange={e => setMatchForm({...matchForm, stage: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-2 text-xs text-white" />
@@ -272,7 +338,7 @@
               </div>
 
               <div class="lg:col-span-7 bg-cardBg border border-borderDark p-6 rounded-xl space-y-4">
-                <h3 class="font-heading text-xl font-bold text-white uppercase">Logged Matches</h3>
+                <h3 class="font-heading text-xl font-bold text-white uppercase">Match History</h3>
                 <div class="space-y-3">
                   {matches.map(m => (
                     <div key={m.id} class="bg-darkBg border border-borderDark p-3 rounded flex justify-between text-xs">
@@ -292,7 +358,7 @@
             <div class="bg-cardBg border border-borderDark p-6 rounded-xl space-y-4">
               <h3 class="font-heading text-xl font-bold text-white uppercase">Tryouts Scouting Applications</h3>
               <div class="space-y-3">
-                {contacts.length === 0 ? <p class="text-xs text-gray-500">No tryouts submitted yet.</p> : contacts.map(c => (
+                {contacts.length === 0 ? <p class="text-xs text-gray-500">No applications received yet.</p> : contacts.map(c => (
                   <div key={c.id} class="bg-darkBg border border-borderDark p-4 rounded space-y-2 text-xs">
                     <div class="flex justify-between font-bold text-cyanNeon">
                       <span>{c.ign} ({c.role})</span>
@@ -306,31 +372,10 @@
             </div>
           )}
 
-          {/* TAB 4: ADMIN ACCESS QUEUE */}
-          {activeTab === 'requests' && (
-            <div class="bg-cardBg border border-borderDark p-6 rounded-xl space-y-4">
-              <h3 class="font-heading text-xl font-bold text-white uppercase">Admin Access Requests</h3>
-              <div class="space-y-3">
-                {requests.map(r => (
-                  <div key={r.id} class="bg-darkBg border border-borderDark p-4 rounded flex items-center justify-between text-xs">
-                    <div>
-                      <div class="font-bold text-white">{r.full_name} ({r.email})</div>
-                      <div class="text-gray-400 text-[10px]">Status: <strong class="text-cyanNeon">{r.status}</strong></div>
-                    </div>
-                    <div class="space-x-2">
-                      <button onClick={() => setRequestStatus(r.id, 'APPROVED')} class="px-3 py-1 bg-green-500/20 text-green-400 rounded">Approve</button>
-                      <button onClick={() => setRequestStatus(r.id, 'REJECTED')} class="px-3 py-1 bg-redNeon/20 text-redNeon rounded">Reject</button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* TAB 5: SITE SETTINGS */}
+          {/* TAB 4: SETTINGS & ACTIVEPIECES AUTOMATION */}
           {activeTab === 'settings' && (
             <div class="bg-cardBg border border-borderDark p-6 rounded-xl space-y-4 max-w-xl">
-              <h3 class="font-heading text-xl font-bold text-white uppercase">Global Site Settings</h3>
+              <h3 class="font-heading text-xl font-bold text-white uppercase">Site & Activepieces Settings</h3>
               <form onSubmit={updateSettings} class="space-y-3">
                 <div>
                   <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Organization Name</label>
@@ -341,10 +386,14 @@
                   <input value={settings.org_email} onChange={e => setSettings({...settings, org_email: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-2.5 text-xs text-white" />
                 </div>
                 <div>
-                  <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Top Live Banner Announcement</label>
+                  <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Top Announcement Banner</label>
                   <input value={settings.banner_announcement} onChange={e => setSettings({...settings, banner_announcement: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-2.5 text-xs text-white" />
                 </div>
-                <button type="submit" class="w-full py-2.5 bg-cyanNeon text-black font-bold uppercase text-xs rounded">Update Site Globally</button>
+                <div>
+                  <label class="block text-xs font-bold text-cyanNeon uppercase mb-1">Activepieces Webhook URL (Automation Trigger)</label>
+                  <input placeholder="https://cloud.activepieces.com/api/v1/webhooks/..." value={settings.activepieces_webhook || ''} onChange={e => setSettings({...settings, activepieces_webhook: e.target.value})} class="w-full bg-darkBg border border-borderDark rounded p-2.5 text-xs text-white" />
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-cyanNeon text-black font-bold uppercase text-xs rounded">Update Settings</button>
               </form>
             </div>
           )}
@@ -356,4 +405,3 @@
   </script>
 </body>
 </html>
-                        
