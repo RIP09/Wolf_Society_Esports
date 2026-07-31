@@ -1,1427 +1,335 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wolf Society Esports</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - new interesting set -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Russo+One&family=Orbitron:wght@400;600;700;900&family=Exo+2:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      /* ── Reset & Base ── */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      body {
-        background: #0a0a0c;
-        font-family: 'Exo 2', sans-serif;
-        color: #e0e0e0;
-      }
-      .font-display {
-        font-family: 'Russo One', sans-serif;
-      }
-      .font-tech {
-        font-family: 'Orbitron', monospace;
-      }
-
-      /* ── Neon Glows ── */
-      .glow-blue {
-        box-shadow: 0 0 20px rgba(0, 150, 255, 0.3), 0 0 60px rgba(0, 150, 255, 0.1);
-      }
-      .glow-green {
-        box-shadow: 0 0 20px rgba(0, 255, 150, 0.3), 0 0 60px rgba(0, 255, 150, 0.1);
-      }
-      .glow-pink {
-        box-shadow: 0 0 20px rgba(255, 0, 150, 0.3), 0 0 60px rgba(255, 0, 150, 0.1);
-      }
-      .neon-border-blue {
-        border: 1px solid rgba(0, 150, 255, 0.5);
-        box-shadow: 0 0 15px rgba(0, 150, 255, 0.15);
-      }
-      .neon-border-green {
-        border: 1px solid rgba(0, 255, 150, 0.5);
-        box-shadow: 0 0 15px rgba(0, 255, 150, 0.15);
-      }
-      .neon-border-pink {
-        border: 1px solid rgba(255, 0, 150, 0.5);
-        box-shadow: 0 0 15px rgba(255, 0, 150, 0.15);
-      }
-
-      /* ── Hover Animations ── */
-      .card-hover {
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-      .card-hover:hover {
-        transform: translateY(-6px) scale(1.01);
-      }
-      .hover-glow-blue:hover {
-        box-shadow: 0 0 30px rgba(0, 150, 255, 0.5), 0 0 80px rgba(0, 150, 255, 0.2);
-        border-color: rgba(0, 150, 255, 0.8);
-        transform: scale(1.02);
-        transition: all 0.3s ease;
-      }
-      .hover-glow-green:hover {
-        box-shadow: 0 0 30px rgba(0, 255, 150, 0.5), 0 0 80px rgba(0, 255, 150, 0.2);
-        border-color: rgba(0, 255, 150, 0.8);
-        transform: scale(1.02);
-        transition: all 0.3s ease;
-      }
-      .hover-glow-pink:hover {
-        box-shadow: 0 0 30px rgba(255, 0, 150, 0.5), 0 0 80px rgba(255, 0, 150, 0.2);
-        border-color: rgba(255, 0, 150, 0.8);
-        transform: scale(1.02);
-        transition: all 0.3s ease;
-      }
-
-      .bg-charcoal {
-        background: #0a0a0c;
-      }
-      .bg-card {
-        background: #14141a;
-      }
-      .bg-card-light {
-        background: #1a1a24;
-      }
-      .text-neon-blue {
-        color: #0096ff;
-      }
-      .text-neon-green {
-        color: #00ff96;
-      }
-      .text-neon-pink {
-        color: #ff0096;
-      }
-      .border-neon-blue {
-        border-color: rgba(0, 150, 255, 0.4);
-      }
-      .border-neon-green {
-        border-color: rgba(0, 255, 150, 0.4);
-      }
-      .border-neon-pink {
-        border-color: rgba(255, 0, 150, 0.4);
-      }
-      .gradient-text {
-        background: linear-gradient(135deg, #0096ff, #00ff96);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-      .gradient-text-pink {
-        background: linear-gradient(135deg, #ff0096, #ff6600);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-
-      /* ── Match Cards ── */
-      .match-card {
-        background: linear-gradient(145deg, #14141a, #0e0e12);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-      }
-      .match-card.live {
-        border-color: rgba(255, 0, 0, 0.6);
-        animation: pulse-border 1.5s ease-in-out infinite;
-      }
-      @keyframes pulse-border {
-        0%,
-        100% {
-          box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
-        }
-        50% {
-          box-shadow: 0 0 30px rgba(255, 0, 0, 0.5), 0 0 60px rgba(255, 0, 0, 0.1);
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wolf Society Esports | Home of Divine Wolf</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            darkBg: '#0a0a0c',
+            cardBg: '#12131a',
+            borderDark: '#1f2230',
+            cyanNeon: '#00f2fe',
+            redNeon: '#ff2a5f',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
         }
       }
-      .live-dot {
-        display: inline-block;
-        width: 10px;
-        height: 10px;
-        background: #ff0000;
-        border-radius: 50%;
-        animation: blink 1s ease-in-out infinite;
-      }
-      @keyframes blink {
-        0%,
-        100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.2;
-        }
-      }
+    }
+  </script>
 
-      /* ── Scrollbar ── */
-      ::-webkit-scrollbar {
-        width: 6px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #0a0a0c;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #0096ff;
-        border-radius: 10px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #00ff96;
-      }
+  <!-- React & Babel CDNs -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-      /* ── Nav Link Underline ── */
-      .nav-link {
-        position: relative;
-        transition: color 0.3s ease;
-      }
-      .nav-link::after {
-        content: '';
-        position: absolute;
-        bottom: -4px;
-        left: 0;
-        width: 0;
-        height: 2px;
-        background: linear-gradient(90deg, #0096ff, #00ff96);
-        transition: width 0.3s ease;
-      }
-      .nav-link:hover::after {
-        width: 100%;
-      }
-      .nav-link:hover {
-        color: #fff;
-      }
+  <!-- Supabase JS Client CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-      /* ── Loading Fallback ── */
-      #root-loading {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        font-family: 'Orbitron', monospace;
-        font-size: 1.5rem;
-        color: #0096ff;
-        background: #0a0a0c;
-        gap: 0.75rem;
-      }
-      #root-loading .spinner {
-        width: 40px;
-        height: 40px;
-        border: 4px solid rgba(0, 150, 255, 0.15);
-        border-top: 4px solid #0096ff;
-        border-radius: 50%;
-        animation: spin 0.9s linear infinite;
-      }
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Loading Screen -->
-    <div id="root-loading">
-      <div class="spinner"></div>
-      <span>🐺 Loading Wolf Society...</span>
-    </div>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-    <!-- React Root -->
-    <div id="root"></div>
+  <style>
+    body {
+      background-color: #0a0a0c;
+      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+    }
+    h1, h2, h3, h4, .font-heading {
+      font-family: 'Chakra Petch', sans-serif;
+    }
+    .neon-glow-cyan {
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.15);
+    }
+    .neon-glow-red {
+      box-shadow: 0 0 20px rgba(255, 42, 95, 0.2);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-cyanNeon selection:text-black">
 
-    <!-- ─── CDN SCRIPTS ──────────────────────────────────────────────── -->
-    <!-- React & ReactDOM (UMD) -->
-    <script
-      crossorigin
-      src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"
-    ></script>
-    <script
-      crossorigin
-      src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"
-    ></script>
-    <!-- Babel Standalone (to compile JSX in the browser) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <div id="root"></div>
 
-    <!-- ─── APPLICATION (JSX) ────────────────────────────────────────── -->
-    <script type="text/babel">
-      const { useState, useEffect, useRef } = React;
+  <script type="text/babel">
+    const { useState, useEffect } = React;
 
-      // ──────────────────────────────────────────────────────────────────────
-      // 1. DUMMY DATA
-      // ──────────────────────────────────────────────────────────────────────
-      const TEAMS = [
-        {
-          id: 1,
-          name: 'Wolf Alpha',
-          game: 'Valorant',
-          tag: 'WOLF',
-          logo: '🐺',
-          players: [
-            { handle: 'ShadowStrike', role: 'Captain / Duelist', avatar: '🔥' },
-            { handle: 'NeonViper', role: 'Flex', avatar: '⚡' },
-            { handle: 'CrimsonFury', role: 'Sentinel', avatar: '🛡️' },
-            { handle: 'PhantomX', role: 'Controller', avatar: '🌑' },
-            { handle: 'ZenMaster', role: 'Initiator', avatar: '🌀' },
-          ],
-          record: '12-3',
-          rank: '#3 Global',
-        },
-        {
-          id: 2,
-          name: 'Wolf Omega',
-          game: 'League of Legends',
-          tag: 'OMEGA',
-          logo: '🐺',
-          players: [
-            { handle: 'FrostBite', role: 'Top', avatar: '❄️' },
-            { handle: 'JungleKing', role: 'Jungle', avatar: '👑' },
-            { handle: 'MidOracle', role: 'Mid', avatar: '🔮' },
-            { handle: 'ArcShot', role: 'ADC', avatar: '🎯' },
-            { handle: 'SoulWeaver', role: 'Support', avatar: '💫' },
-          ],
-          record: '9-6',
-          rank: '#7 Global',
-        },
-        {
-          id: 3,
-          name: 'Wolf Sigma',
-          game: 'Call of Duty',
-          tag: 'SIGMA',
-          logo: '🐺',
-          players: [
-            { handle: 'RapidFire', role: 'AR', avatar: '🔫' },
-            { handle: 'SniperGhost', role: 'Sniper', avatar: '👻' },
-            { handle: 'RunAndGun', role: 'SMG', avatar: '💨' },
-            { handle: 'TacticalV', role: 'Flex', avatar: '🧠' },
-          ],
-          record: '15-2',
-          rank: '#1 Regional',
-        },
-      ];
+    // --- SUPABASE CONFIGURATION ---
+    const SUPABASE_URL = "https://tdfkebgapncswtvbtaqy.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ";
+    const RENDER_BACKEND_URL = "https://wolf-society-esports.onrender.com";
 
-      const MATCHES = [
-        {
-          id: 1,
-          team1: 'Wolf Alpha',
-          team2: 'Fury Esports',
-          team1Score: '13',
-          team2Score: '8',
-          status: 'live',
-          time: 'LIVE',
-          game: 'Valorant',
-          tournament: 'VCT Challengers',
-        },
-        {
-          id: 2,
-          team1: 'Wolf Omega',
-          team2: 'Dark Legion',
-          team1Score: '-',
-          team2Score: '-',
-          status: 'upcoming',
-          time: '2h 15m',
-          game: 'League of Legends',
-          tournament: 'LCS Pro League',
-        },
-        {
-          id: 3,
-          team1: 'Wolf Sigma',
-          team2: 'Apex Predators',
-          team1Score: '250',
-          team2Score: '210',
-          status: 'finished',
-          time: 'Finished',
-          game: 'Call of Duty',
-          tournament: 'CDL Major',
-        },
-        {
-          id: 4,
-          team1: 'Wolf Alpha',
-          team2: 'Xenon Knights',
-          team1Score: '-',
-          team2Score: '-',
-          status: 'upcoming',
-          time: '5h 45m',
-          game: 'Valorant',
-          tournament: 'VCT Challengers',
-        },
-      ];
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-      const NEWS = [
-        {
-          id: 1,
-          title: 'Wolf Alpha Clinches VCT Spot',
-          excerpt:
-            'Dominant performance secures qualification for the international stage.',
-          date: 'July 28, 2026',
-          category: 'Competitive',
-          image: '🏆',
-        },
-        {
-          id: 2,
-          title: 'New Omega Roster Revealed',
-          excerpt:
-            'Wolf Society unveils revamped League of Legends lineup for Summer Split.',
-          date: 'July 25, 2026',
-          category: 'Roster',
-          image: '📢',
-        },
-        {
-          id: 3,
-          title: 'Sigma Takes CDL Major Title',
-          excerpt:
-            'Flawless run through the bracket secures first major championship.',
-          date: 'July 20, 2026',
-          category: 'Victory',
-          image: '👑',
-        },
-      ];
+    // Fallback Mock Roster (shown if Supabase table is empty or loading)
+    const MOCK_PLAYERS = [
+      { id: 1, in_game_name: "ALPHA", real_name: "Vikram Singh", role: "Jungler", signature_heroes: ["Lancelot", "Hayabusa", "Ling"], avatar_url: "https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=400&auto=format&fit=crop&q=80" },
+      { id: 2, in_game_name: "SHADOW", real_name: "Rahul Sharma", role: "Mid Lane", signature_heroes: ["Kagura", "Yve", "Pharsa"], avatar_url: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&auto=format&fit=crop&q=80" },
+      { id: 3, in_game_name: "SPECTRE", real_name: "Arjun Verma", role: "Gold Lane", signature_heroes: ["Claude", "Beatrix", "Brody"], avatar_url: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400&auto=format&fit=crop&q=80" },
+      { id: 4, in_game_name: "TITAN", real_name: "Karan Patel", role: "EXP Lane", signature_heroes: ["Yu Zhong", "Chou", "Lapu-Lapu"], avatar_url: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=400&auto=format&fit=crop&q=80" },
+      { id: 5, in_game_name: "AEGIS", real_name: "Dev Oberoi", role: "Roamer", signature_heroes: ["Khufra", "Atlas", "Lolita"], avatar_url: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&auto=format&fit=crop&q=80" },
+    ];
 
-      const SPONSORS = [
-        { name: 'HyperX', logo: '🎧' },
-        { name: 'Razer', logo: '🐍' },
-        { name: 'Logitech G', logo: '🖱️' },
-        { name: 'Intel', logo: '💻' },
-        { name: 'Red Bull', logo: '🥤' },
-        { name: 'NVIDIA', logo: '🎮' },
-      ];
-
-      // ──────────────────────────────────────────────────────────────────────
-      // 2. CUSTOM ROUTER
-      // ──────────────────────────────────────────────────────────────────────
-      const RouterContext = React.createContext();
-
-      const Router = ({ children }) => {
-        const [currentPath, setCurrentPath] = useState(window.location.pathname);
-
-        useEffect(() => {
-          const onPopState = () => {
-            setCurrentPath(window.location.pathname);
-          };
-          window.addEventListener('popstate', onPopState);
-          return () => window.removeEventListener('popstate', onPopState);
-        }, []);
-
-        const navigate = (to) => {
-          window.history.pushState(null, '', to);
-          setCurrentPath(to);
-        };
-
-        return (
-          <RouterContext.Provider value={{ currentPath, navigate }}>
-            {children}
-          </RouterContext.Provider>
-        );
-      };
-
-      const useRouter = () => React.useContext(RouterContext);
-
-      const Link = ({ to, children, className, onClick }) => {
-        const { navigate } = useRouter();
-        const handleClick = (e) => {
-          e.preventDefault();
-          if (onClick) onClick(e);
-          navigate(to);
-        };
-        return (
-          <a href={to} onClick={handleClick} className={className}>
-            {children}
-          </a>
-        );
-      };
-
-      const Route = ({ path, component: Component }) => {
-        const { currentPath } = useRouter();
-        if (currentPath === path) {
-          return <Component />;
-        }
-        return null;
-      };
-
-      // ──────────────────────────────────────────────────────────────────────
-      // 3. SHARED COMPONENTS
-      // ──────────────────────────────────────────────────────────────────────
-
-      // ── Navbar ──
-      const Navbar = () => {
-        const [isOpen, setIsOpen] = useState(false);
-        const links = [
-          { to: '/', label: 'Home' },
-          { to: '/about', label: 'About' },
-          { to: '/teams', label: 'Teams' },
-          { to: '/matches', label: 'Matches' },
-          { to: '/news', label: 'News' },
-          { to: '/stream', label: 'Stream' },
-          { to: '/contact', label: 'Contact' },
-        ];
-        return (
-          <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0c]/95 backdrop-blur-md border-b border-white/5 px-4 md:px-8">
-            <div className="max-w-7xl mx-auto flex items-center justify-between h-16">
-              <Link
-                to="/"
-                className="flex items-center gap-2 font-tech text-xl font-bold"
-              >
-                <span className="text-neon-blue">WOLF</span>
-                <span className="text-white">SOCIETY</span>
-                <span className="text-neon-green text-sm font-normal ml-1">
-                  🐺
-                </span>
-              </Link>
-
-              {/* Desktop Nav */}
-              <div className="hidden md:flex items-center gap-6 text-sm font-medium uppercase tracking-wider">
-                {links.map((link) => (
-                  <Link
-                    key={link.to}
-                    to={link.to}
-                    className="nav-link text-gray-400 hover:text-white transition-colors font-tech"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-                <Link
-                  to="/admin"
-                  className="px-4 py-1.5 rounded-full bg-gradient-to-r from-blue-600 to-green-500 text-white text-xs font-bold uppercase tracking-wider hover:scale-105 transition-transform font-tech"
-                >
-                  Admin
-                </Link>
+    // --- NAVIGATION COMPONENT ---
+    function Navbar() {
+      return (
+        <header class="sticky top-0 z-50 bg-darkBg/90 backdrop-blur-md border-b border-borderDark">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-cyanNeon to-redNeon flex items-center justify-center text-black font-bold text-xl tracking-tighter shadow-lg">
+                WS
               </div>
-
-              {/* Mobile Toggle */}
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="md:hidden text-gray-400 hover:text-white focus:outline-none"
-              >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  {isOpen ? (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  ) : (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  )}
-                </svg>
-              </button>
-            </div>
-
-            {/* Mobile Nav */}
-            {isOpen && (
-              <div className="md:hidden py-4 border-t border-white/5 flex flex-col gap-3 text-sm uppercase tracking-wider">
-                {links.map((link) => (
-                  <Link
-                    key={link.to}
-                    to={link.to}
-                    className="text-gray-400 hover:text-white transition-colors px-2 py-1 font-tech"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-                <Link
-                  to="/admin"
-                  className="px-4 py-1.5 rounded-full bg-gradient-to-r from-blue-600 to-green-500 text-white text-xs font-bold uppercase tracking-wider hover:scale-105 transition-transform inline-block w-fit font-tech"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Admin
-                </Link>
-              </div>
-            )}
-          </nav>
-        );
-      };
-
-      // ── Footer ──
-      const Footer = () => (
-        <footer className="bg-[#0a0a0c] border-t border-white/5 py-12 px-4 mt-12">
-          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <div className="font-display text-xl font-bold mb-4">
-                <span className="text-neon-blue">WOLF</span>
-                <span className="text-white">SOCIETY</span>
-              </div>
-              <p className="text-gray-500 text-sm leading-relaxed">
-                Elite competitive gaming. Born from passion, forged in battle.
-              </p>
-              <div className="flex gap-4 mt-4">
-                <span className="text-gray-600 hover:text-neon-blue cursor-pointer transition-colors">
-                  🐦
-                </span>
-                <span className="text-gray-600 hover:text-neon-pink cursor-pointer transition-colors">
-                  📺
-                </span>
-                <span className="text-gray-600 hover:text-neon-green cursor-pointer transition-colors">
-                  🎮
-                </span>
-                <span className="text-gray-600 hover:text-neon-blue cursor-pointer transition-colors">
-                  💬
-                </span>
+              <div>
+                <span class="font-heading font-bold text-xl tracking-wider text-white block">WOLF SOCIETY</span>
+                <span class="text-[10px] uppercase tracking-widest text-cyanNeon font-semibold">MOBA Legends 5v5</span>
               </div>
             </div>
-            <div>
-              <h4 className="text-white font-semibold mb-3 uppercase text-xs tracking-wider font-tech">
-                Organization
-              </h4>
-              <ul className="space-y-2 text-sm text-gray-500">
-                <li>
-                  <Link to="/about" className="hover:text-white transition-colors">
-                    About Us
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/teams" className="hover:text-white transition-colors">
-                    Teams
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/news" className="hover:text-white transition-colors">
-                    News
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/contact" className="hover:text-white transition-colors">
-                    Contact
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-white font-semibold mb-3 uppercase text-xs tracking-wider font-tech">
-                Community
-              </h4>
-              <ul className="space-y-2 text-sm text-gray-500">
-                <li className="hover:text-white transition-colors cursor-pointer">
-                  Discord
-                </li>
-                <li className="hover:text-white transition-colors cursor-pointer">
-                  Twitch
-                </li>
-                <li className="hover:text-white transition-colors cursor-pointer">
-                  YouTube
-                </li>
-                <li className="hover:text-white transition-colors cursor-pointer">
-                  Twitter
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-white font-semibold mb-3 uppercase text-xs tracking-wider font-tech">
-                Partners
-              </h4>
-              <div className="flex flex-wrap gap-3">
-                {SPONSORS.slice(0, 4).map((s, i) => (
-                  <span
-                    key={i}
-                    className="text-2xl bg-[#1a1a24] p-2 rounded-lg border border-white/5"
-                    title={s.name}
-                  >
-                    {s.logo}
-                  </span>
-                ))}
-              </div>
+
+            <nav class="hidden md:flex gap-8 text-sm font-semibold tracking-wide uppercase">
+              <a href="#hero" class="text-white hover:text-cyanNeon transition-colors">Home</a>
+              <a href="#roster" class="text-gray-400 hover:text-cyanNeon transition-colors">Roster</a>
+              <a href="#matches" class="text-gray-400 hover:text-cyanNeon transition-colors">Matches</a>
+              <a href="#news" class="text-gray-400 hover:text-cyanNeon transition-colors">News</a>
+            </nav>
+
+            <div class="flex items-center gap-3">
+              <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-redNeon/10 border border-redNeon/30 text-redNeon text-xs font-semibold">
+                <span class="w-2 h-2 rounded-full bg-redNeon animate-pulse"></span>
+                DIVINE WOLF ACTIVE
+              </span>
             </div>
           </div>
-          <div className="max-w-7xl mx-auto mt-8 pt-8 border-t border-white/5 text-center text-xs text-gray-600">
-            © 2026 Wolf Society Esports. All rights reserved.
+        </header>
+      );
+    }
+
+    // --- HERO SECTION ---
+    function Hero() {
+      return (
+        <section id="hero" class="relative py-24 overflow-hidden border-b border-borderDark bg-gradient-to-b from-darkBg via-cardBg/50 to-darkBg">
+          <div class="absolute inset-0 bg-[radial-gradient(#1f2230_1px,transparent_1px)] [background-size:24px_24px] opacity-30"></div>
+          
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <div class="inline-block mb-4 px-4 py-1.5 rounded-full border border-cyanNeon/30 bg-cyanNeon/10 text-cyanNeon text-xs font-bold uppercase tracking-widest">
+              MOBA Esports Organization
+            </div>
+            <h1 class="font-heading text-5xl sm:text-7xl font-bold tracking-tight text-white mb-6 uppercase">
+              Dominating The <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyanNeon to-blue-500">5v5 Arena</span>
+            </h1>
+            <p class="max-w-2xl mx-auto text-gray-400 text-lg mb-8">
+              Official home of <strong class="text-white">Divine Wolf</strong> — Wolf Society's flagship professional MOBA team engineered for tactical supremacy and competitive dominance.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+              <a href="#roster" class="px-8 py-3.5 rounded-md bg-gradient-to-r from-cyanNeon to-blue-600 text-black font-bold uppercase tracking-wider text-sm hover:brightness-110 transition-all neon-glow-cyan">
+                Meet Divine Wolf
+              </a>
+              <a href="#matches" class="px-8 py-3.5 rounded-md bg-cardBg border border-borderDark text-white font-bold uppercase tracking-wider text-sm hover:border-cyanNeon/50 transition-all">
+                Match Schedule
+              </a>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    // --- PLAYERS ROSTER SECTION (Dynamic Supabase Integration) ---
+    function Roster() {
+      const [players, setPlayers] = useState([]);
+      const [loading, setLoading] = useState(true);
+      const [isLiveDatabase, setIsLiveDatabase] = useState(false);
+
+      useEffect(() => {
+        async function fetchRoster() {
+          try {
+            // Query Supabase 'players' table
+            const { data, error } = await supabaseClient
+              .from('players')
+              .select('*')
+              .eq('team_name', 'Divine Wolf')
+              .order('created_at', { ascending: true });
+
+            if (error) throw error;
+
+            if (data && data.length > 0) {
+              setPlayers(data);
+              setIsLiveDatabase(true);
+            } else {
+              // Fallback to mock data if empty
+              setPlayers(MOCK_PLAYERS);
+            }
+          } catch (err) {
+            console.warn("Could not fetch from Supabase table or table is empty yet. Using default mock roster:", err.message);
+            setPlayers(MOCK_PLAYERS);
+          } finally {
+            setLoading(false);
+          }
+        }
+
+        fetchRoster();
+      }, []);
+
+      return (
+        <section id="roster" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+            <div>
+              <div class="text-cyanNeon font-bold text-xs uppercase tracking-widest mb-1">Active Roster</div>
+              <h2 class="font-heading text-4xl font-bold text-white uppercase">Divine Wolf Roster</h2>
+            </div>
+            <div class="mt-4 md:mt-0 text-xs text-gray-500 flex items-center gap-2">
+              <span class={`w-2 h-2 rounded-full ${isLiveDatabase ? 'bg-green-500' : 'bg-amber-500'}`}></span>
+              {isLiveDatabase ? 'Connected to Supabase Live DB' : 'Showing Default Template Roster'}
+            </div>
+          </div>
+
+          {loading ? (
+            <div class="text-center py-16 text-gray-500 font-semibold animate-pulse">
+              Loading Divine Wolf Warriors...
+            </div>
+          ) : (
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {players.map((player) => (
+                <div 
+                  key={player.id} 
+                  class="group bg-cardBg border border-borderDark hover:border-cyanNeon/50 rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-1 neon-glow-cyan"
+                >
+                  <div class="relative h-64 bg-slate-900 overflow-hidden">
+                    <img 
+                      src={player.avatar_url || "https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=400&auto=format&fit=crop&q=80"} 
+                      alt={player.in_game_name}
+                      class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500" 
+                    />
+                    <div class="absolute inset-0 bg-gradient-to-t from-cardBg via-transparent to-transparent"></div>
+                    
+                    <div class="absolute top-3 right-3 bg-darkBg/80 backdrop-blur-md border border-cyanNeon/30 text-cyanNeon text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                      {player.role}
+                    </div>
+                  </div>
+
+                  <div class="p-6">
+                    <h3 class="font-heading text-2xl font-bold text-white group-hover:text-cyanNeon transition-colors tracking-wide">
+                      {player.in_game_name}
+                    </h3>
+                    <p class="text-xs text-gray-400 mb-4">{player.real_name || "Professional Athlete"}</p>
+
+                    <div>
+                      <div class="text-[10px] text-gray-500 uppercase tracking-wider font-semibold mb-2">Signature Heroes</div>
+                      <div class="flex flex-wrap gap-1.5">
+                        {player.signature_heroes && player.signature_heroes.map((hero, idx) => (
+                          <span key={idx} class="text-[11px] bg-darkBg border border-borderDark px-2 py-0.5 rounded text-gray-300">
+                            {hero}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      );
+    }
+
+    // --- MATCHES & NEWS SECTION ---
+    function MatchesAndNews() {
+      return (
+        <div class="bg-cardBg/30 border-t border-borderDark py-20">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12">
+            
+            {/* Matches Column */}
+            <div id="matches">
+              <div class="text-cyanNeon font-bold text-xs uppercase tracking-widest mb-1">Tournament Track</div>
+              <h2 class="font-heading text-3xl font-bold text-white uppercase mb-6">Recent Matches</h2>
+
+              <div class="space-y-4">
+                <div class="bg-cardBg border border-borderDark p-4 rounded-xl flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <span class="px-2.5 py-1 rounded bg-green-500/10 text-green-400 border border-green-500/20 font-bold text-xs">WIN</span>
+                    <div>
+                      <div class="font-heading font-bold text-white">Divine Wolf vs Nexus Gaming</div>
+                      <div class="text-xs text-gray-400">MOBA Championship Season 4</div>
+                    </div>
+                  </div>
+                  <div class="font-heading font-bold text-lg text-cyanNeon">2 - 0</div>
+                </div>
+
+                <div class="bg-cardBg border border-borderDark p-4 rounded-xl flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <span class="px-2.5 py-1 rounded bg-green-500/10 text-green-400 border border-green-500/20 font-bold text-xs">WIN</span>
+                    <div>
+                      <div class="font-heading font-bold text-white">Divine Wolf vs Titan Esports</div>
+                      <div class="text-xs text-gray-400">Regional MOBA Qualifier</div>
+                    </div>
+                  </div>
+                  <div class="font-heading font-bold text-lg text-cyanNeon">2 - 1</div>
+                </div>
+              </div>
+            </div>
+
+            {/* News Column */}
+            <div id="news">
+              <div class="text-redNeon font-bold text-xs uppercase tracking-widest mb-1">Announcements</div>
+              <h2 class="font-heading text-3xl font-bold text-white uppercase mb-6">Latest Headlines</h2>
+
+              <div class="space-y-4">
+                <article class="bg-cardBg border border-borderDark p-5 rounded-xl hover:border-redNeon/40 transition-colors">
+                  <span class="text-[10px] text-redNeon font-semibold tracking-widest uppercase">Official Announcement</span>
+                  <h3 class="font-heading font-bold text-white text-lg mt-1 mb-2">Divine Wolf Qualifies for Grand Finals</h3>
+                  <p class="text-xs text-gray-400">The 5v5 MOBA squad secures an undefeated streak through the upper bracket rounds.</p>
+                </article>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      );
+    }
+
+    // --- FOOTER COMPONENT ---
+    function Footer() {
+      return (
+        <footer class="mt-auto border-t border-borderDark bg-darkBg py-10">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <p class="text-sm font-semibold text-white">Wolf Society Esports © 2026</p>
+              <p class="text-xs text-gray-500 mt-0.5">Dedicated to MOBA Legends 5v5 | Flagship Team: Divine Wolf</p>
+            </div>
+            <div class="flex items-center gap-4 text-xs text-gray-400">
+              <span>Backend API: <code class="text-cyanNeon">wolf-society-esports.onrender.com</code></span>
+            </div>
           </div>
         </footer>
       );
+    }
 
-      // ── Match Card ──
-      const MatchCard = ({ match, detailed = false }) => {
-        const isLive = match.status === 'live';
-        const isUpcoming = match.status === 'upcoming';
-        const isFinished = match.status === 'finished';
-
-        let statusColor = 'text-gray-500';
-        let statusBadge = 'Upcoming';
-        let borderClass = 'border-white/5';
-        if (isLive) {
-          statusColor = 'text-red-400';
-          statusBadge = '🔴 LIVE';
-          borderClass = 'border-red-600/30';
-        } else if (isUpcoming) {
-          statusColor = 'text-neon-blue';
-          statusBadge = `⏱️ ${match.time}`;
-        } else {
-          statusColor = 'text-gray-400';
-          statusBadge = '✓ Finished';
-        }
-
-        return (
-          <div
-            className={`match-card rounded-xl p-5 ${isLive ? 'live' : ''} ${borderClass} card-hover transition-all`}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs text-gray-500 uppercase tracking-wider font-tech">
-                {match.tournament}
-              </span>
-              <span className={`text-xs font-bold ${statusColor} font-tech`}>
-                {statusBadge}
-              </span>
-            </div>
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex-1 text-center">
-                <p className="text-white font-bold text-lg font-display">{match.team1}</p>
-                <p className="text-2xl font-bold text-neon-blue font-tech">
-                  {match.team1Score}
-                </p>
-              </div>
-              <div className="text-center">
-                <span className="text-xs text-gray-600 font-bold uppercase tracking-wider font-tech">
-                  VS
-                </span>
-                {isLive && <span className="block live-dot mx-auto mt-1" />}
-              </div>
-              <div className="flex-1 text-center">
-                <p className="text-white font-bold text-lg font-display">{match.team2}</p>
-                <p className="text-2xl font-bold text-neon-pink font-tech">
-                  {match.team2Score}
-                </p>
-              </div>
-            </div>
-            <div className="mt-3 flex items-center justify-between text-xs text-gray-500 border-t border-white/5 pt-3">
-              <span className="font-tech">{match.game}</span>
-              {isLive && (
-                <span className="text-red-400 font-bold animate-pulse font-tech">
-                  ● LIVE
-                </span>
-              )}
-              {isUpcoming && (
-                <span className="text-neon-blue font-tech">Starts in {match.time}</span>
-              )}
-              {isFinished && <span className="text-gray-500 font-tech">Final</span>}
-              {detailed && <span className="text-gray-600 font-tech">Match ID: #{match.id}</span>}
-            </div>
-          </div>
-        );
-      };
-
-      // ── News Card ──
-      const NewsCard = ({ item, detailed = false }) => (
-        <div
-          className={`bg-[#14141a] rounded-2xl border border-white/5 overflow-hidden card-hover transition-all ${detailed ? 'hover-glow-blue' : 'hover-glow-green'}`}
-        >
-          <div className="p-6">
-            <div className="flex items-center gap-3 mb-3">
-              <span className="text-3xl">{item.image}</span>
-              <span className="text-xs text-gray-500 uppercase tracking-wider font-tech">
-                {item.category}
-              </span>
-              <span className="text-xs text-gray-600 ml-auto font-tech">{item.date}</span>
-            </div>
-            <h3 className="text-white font-bold text-xl font-display mb-2">{item.title}</h3>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              {item.excerpt}
-            </p>
-            {detailed && (
-              <button className="mt-4 text-neon-blue text-sm font-medium hover:text-neon-green transition-colors font-tech">
-                Read More →
-              </button>
-            )}
-          </div>
-        </div>
-      );
-
-      // ──────────────────────────────────────────────────────────────────────
-      // 4. PAGES
-      // ──────────────────────────────────────────────────────────────────────
-
-      // ── Home ──
-      const Home = () => {
-        const [liveMatches] = useState(MATCHES.filter((m) => m.status === 'live'));
-        const [featuredNews] = useState(NEWS.slice(0, 2));
-
-        return (
-          <div className="pt-16">
-            {/* Hero */}
-            <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-[#0a0a0c]">
-              <div className="absolute inset-0 bg-gradient-to-b from-[#0096ff]/5 via-transparent to-[#00ff96]/5" />
-              <div className="absolute inset-0 opacity-30">
-                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl" />
-                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-green-500/20 rounded-full blur-3xl" />
-              </div>
-              <div className="relative z-10 text-center px-4 max-w-4xl">
-                <div className="inline-block px-4 py-1.5 rounded-full border border-neon-blue/30 bg-blue-600/10 text-neon-blue text-xs font-bold uppercase tracking-wider mb-6 font-tech">
-                  🐺 Season 2026
-                </div>
-                <h1 className="font-display text-5xl md:text-7xl font-black leading-tight">
-                  <span className="text-white">RISE OF THE</span>
-                  <br />
-                  <span className="gradient-text">WOLF</span>
-                </h1>
-                <p className="text-gray-400 text-lg md:text-xl mt-6 max-w-2xl mx-auto leading-relaxed">
-                  Where legends are forged and champions are crowned. Wolf Society
-                  dominates the competitive scene with unrivaled skill and passion.
-                </p>
-                <div className="flex flex-wrap justify-center gap-4 mt-8">
-                  <Link
-                    to="/teams"
-                    className="px-8 py-3 rounded-full bg-gradient-to-r from-blue-600 to-green-500 text-white font-bold uppercase tracking-wider text-sm hover:scale-105 transition-transform shadow-lg shadow-blue-600/20 font-tech"
-                  >
-                    Meet the Pack
-                  </Link>
-                  <Link
-                    to="/stream"
-                    className="px-8 py-3 rounded-full border border-white/20 text-white font-bold uppercase tracking-wider text-sm hover:bg-white/5 transition-colors font-tech"
-                  >
-                    Watch Live
-                  </Link>
-                </div>
-                <div className="flex justify-center gap-8 mt-12 text-sm text-gray-500 font-tech">
-                  <div>
-                    <span className="text-neon-green font-bold">12-3</span> Alpha
-                    Record
-                  </div>
-                  <div>
-                    <span className="text-neon-blue font-bold">#3</span> Global Rank
-                  </div>
-                  <div>
-                    <span className="text-neon-pink font-bold">🏆</span> 2 Majors
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* Live Matches */}
-            {liveMatches.length > 0 && (
-              <section className="max-w-7xl mx-auto px-4 py-16">
-                <div className="flex items-center gap-3 mb-8">
-                  <span className="live-dot" />
-                  <h2 className="font-display text-2xl font-bold text-white">
-                    LIVE MATCHES
-                  </h2>
-                  <span className="text-sm text-gray-500 ml-2 font-tech">
-                    Watch the action unfold
-                  </span>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {liveMatches.map((match) => (
-                    <MatchCard key={match.id} match={match} />
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Upcoming Matches Preview */}
-            <section className="max-w-7xl mx-auto px-4 py-16 border-t border-white/5">
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="font-display text-2xl font-bold text-white">
-                  UPCOMING BATTLES
-                </h2>
-                <Link
-                  to="/matches"
-                  className="text-neon-blue hover:text-neon-green transition-colors text-sm uppercase tracking-wider font-tech"
-                >
-                  View All →
-                </Link>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {MATCHES.filter((m) => m.status === 'upcoming')
-                  .slice(0, 3)
-                  .map((match) => (
-                    <MatchCard key={match.id} match={match} />
-                  ))}
-              </div>
-            </section>
-
-            {/* Featured News */}
-            <section className="max-w-7xl mx-auto px-4 py-16 border-t border-white/5">
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="font-display text-2xl font-bold text-white">
-                  LATEST NEWS
-                </h2>
-                <Link
-                  to="/news"
-                  className="text-neon-blue hover:text-neon-green transition-colors text-sm uppercase tracking-wider font-tech"
-                >
-                  All News →
-                </Link>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {featuredNews.map((item) => (
-                  <NewsCard key={item.id} item={item} />
-                ))}
-              </div>
-            </section>
-
-            {/* Sponsors */}
-            <section className="max-w-7xl mx-auto px-4 py-16 border-t border-white/5">
-              <h2 className="font-display text-2xl font-bold text-white text-center mb-8">
-                OUR PARTNERS
-              </h2>
-              <div className="overflow-hidden">
-                <div className="flex gap-12 items-center justify-around py-4">
-                  {SPONSORS.concat(SPONSORS).map((s, i) => (
-                    <div key={i} className="flex flex-col items-center gap-1 min-w-[80px]">
-                      <span className="text-4xl">{s.logo}</span>
-                      <span className="text-xs text-gray-500 font-medium font-tech">
-                        {s.name}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
-          </div>
-        );
-      };
-
-      // ── About ──
-      const About = () => (
-        <div className="pt-16 max-w-4xl mx-auto px-4 py-16">
-          <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-6">
-            ABOUT <span className="gradient-text">WOLF SOCIETY</span>
-          </h1>
-          <div className="prose prose-invert prose-lg max-w-none">
-            <p className="text-gray-300 leading-relaxed text-lg">
-              Wolf Society Esports is a premier competitive gaming organization
-              founded in 2020 with a singular vision: to dominate the global
-              esports scene while building a community that champions excellence,
-              integrity, and passion.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
-              <div className="bg-[#14141a] p-6 rounded-xl border border-white/5 hover-glow-blue card-hover">
-                <div className="text-4xl mb-3">🎯</div>
-                <h3 className="text-white font-bold text-lg font-display">Mission</h3>
-                <p className="text-gray-400 text-sm">
-                  To compete at the highest level and inspire the next generation of
-                  gamers.
-                </p>
-              </div>
-              <div className="bg-[#14141a] p-6 rounded-xl border border-white/5 hover-glow-green card-hover">
-                <div className="text-4xl mb-3">👥</div>
-                <h3 className="text-white font-bold text-lg font-display">Community</h3>
-                <p className="text-gray-400 text-sm">
-                  Building a global family of fans, players, and creators united by
-                  competitive spirit.
-                </p>
-              </div>
-              <div className="bg-[#14141a] p-6 rounded-xl border border-white/5 hover-glow-pink card-hover">
-                <div className="text-4xl mb-3">🏅</div>
-                <h3 className="text-white font-bold text-lg font-display">Excellence</h3>
-                <p className="text-gray-400 text-sm">
-                  Relentless pursuit of victory through discipline, teamwork, and
-                  innovation.
-                </p>
-              </div>
-            </div>
-            <p className="text-gray-300 leading-relaxed">
-              With multiple championship titles across Valorant, League of Legends,
-              and Call of Duty, Wolf Society continues to push the boundaries of
-              competitive gaming. Our players are not just athletes — they are
-              entertainers, educators, and icons of the digital age.
-            </p>
-          </div>
-        </div>
-      );
-
-      // ── Teams ──
-      const Teams = () => (
-        <div className="pt-16 max-w-7xl mx-auto px-4 py-16">
-          <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
-            OUR <span className="gradient-text">PACK</span>
-          </h1>
-          <p className="text-gray-400 mb-12 text-lg">
-            Meet the wolves dominating the competitive scene.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {TEAMS.map((team) => (
-              <div
-                key={team.id}
-                className="bg-[#14141a] rounded-2xl border border-white/5 overflow-hidden hover-glow-blue card-hover transition-all"
-              >
-                <div className="p-6 border-b border-white/5 bg-gradient-to-b from-blue-600/5 to-transparent">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl">{team.logo}</span>
-                      <div>
-                        <h3 className="text-white font-bold text-xl font-display">
-                          {team.name}
-                        </h3>
-                        <span className="text-xs text-gray-500 uppercase tracking-wider font-tech">
-                          {team.game}
-                        </span>
-                      </div>
-                    </div>
-                    <span className="text-xs font-bold text-neon-green font-tech">
-                      {team.record}
-                    </span>
-                  </div>
-                  <div className="mt-2 flex items-center gap-2 text-xs text-gray-500 font-tech">
-                    <span>#{team.tag}</span>
-                    <span>•</span>
-                    <span className="text-neon-blue">{team.rank}</span>
-                  </div>
-                </div>
-                <div className="p-4 space-y-2">
-                  {team.players.map((p, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center justify-between text-sm bg-[#0e0e12] px-3 py-2 rounded-lg border border-white/5"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span>{p.avatar}</span>
-                        <span className="text-white font-medium">{p.handle}</span>
-                      </div>
-                      <span className="text-xs text-gray-500 font-tech">{p.role}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-
-      // ── Matches Page ──
-      const Matches = () => (
-        <div className="pt-16 max-w-7xl mx-auto px-4 py-16">
-          <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
-            SCHEDULE & <span className="gradient-text">RESULTS</span>
-          </h1>
-          <p className="text-gray-400 mb-12 text-lg">
-            Stay up to date with all Wolf Society fixtures.
-          </p>
-          <div className="space-y-4">
-            {MATCHES.map((match) => (
-              <MatchCard key={match.id} match={match} detailed />
-            ))}
-          </div>
-        </div>
-      );
-
-      // ── News Page ──
-      const NewsPage = () => (
-        <div className="pt-16 max-w-7xl mx-auto px-4 py-16">
-          <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
-            LATEST <span className="gradient-text">NEWS</span>
-          </h1>
-          <p className="text-gray-400 mb-12 text-lg">
-            Stories, updates, and announcements from the pack.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {NEWS.map((item) => (
-              <NewsCard key={item.id} item={item} detailed />
-            ))}
-          </div>
-        </div>
-      );
-
-      // ── Stream ──
-      const Stream = () => (
-        <div className="pt-16 max-w-7xl mx-auto px-4 py-16">
-          <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
-            LIVE <span className="gradient-text">STREAM</span>
-          </h1>
-          <p className="text-gray-400 mb-8 text-lg">
-            Watch Wolf Society in action — live on Twitch.
-          </p>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <div className="aspect-video bg-[#14141a] rounded-2xl border border-white/5 flex items-center justify-center overflow-hidden relative">
-                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-blue-600/5 to-transparent">
-                  <div className="text-center">
-                    <div className="text-6xl mb-4">📺</div>
-                    <p className="text-gray-500 text-lg font-tech">Twitch Stream Embed</p>
-                    <p className="text-gray-600 text-sm font-tech">
-                      Live: Wolf Society Official
-                    </p>
-                    <span className="inline-block mt-3 px-4 py-1.5 rounded-full bg-red-600/20 text-red-400 text-xs font-bold uppercase tracking-wider border border-red-600/30 font-tech">
-                      <span className="live-dot inline-block mr-2 align-middle" />
-                      LIVE
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div className="mt-4 flex items-center gap-4 text-sm text-gray-400 font-tech">
-                <span className="flex items-center gap-1">
-                  <span className="text-red-500">●</span> 1.2k viewers
-                </span>
-                <span>•</span>
-                <span>Wolf Society Official</span>
-                <span>•</span>
-                <span className="text-neon-blue">Valorant Scrims</span>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <div className="bg-[#14141a] rounded-2xl border border-white/5 p-6">
-                <h3 className="text-white font-bold text-lg font-display mb-4">Chat</h3>
-                <div className="space-y-3 text-sm">
-                  <div className="flex gap-2">
-                    <span className="text-neon-blue font-tech">@ShadowFan</span>
-                    <span className="text-gray-400">Let's go Wolves! 🐺</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <span className="text-neon-pink font-tech">@Viper</span>
-                    <span className="text-gray-400">Insane clutch!</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <span className="text-neon-green font-tech">@Omega</span>
-                    <span className="text-gray-400">GGWP</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <span className="text-gray-500 font-tech">@guest</span>
-                    <span className="text-gray-400">First time watching, hype!</span>
-                  </div>
-                </div>
-                <div className="mt-4 flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Join the chat..."
-                    className="flex-1 bg-[#0a0a0c] border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-neon-blue font-tech"
-                  />
-                  <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-green-500 rounded-lg text-white text-sm font-bold font-tech">
-                    Send
-                  </button>
-                </div>
-              </div>
-              <div className="bg-[#14141a] rounded-2xl border border-white/5 p-4 flex items-center gap-3">
-                <span className="text-2xl">💬</span>
-                <div>
-                  <p className="text-white font-medium text-sm font-display">
-                    Discord Community
-                  </p>
-                  <p className="text-xs text-gray-500 font-tech">12.4k members online</p>
-                </div>
-                <button className="ml-auto px-4 py-1.5 rounded-full bg-[#5865F2] text-white text-xs font-bold font-tech">
-                  Join
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-
-      // ── Contact ──
-      const Contact = () => (
-        <div className="pt-16 max-w-4xl mx-auto px-4 py-16">
-          <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
-            GET IN <span className="gradient-text">TOUCH</span>
-          </h1>
-          <p className="text-gray-400 mb-8 text-lg">
-            Have a question, partnership inquiry, or want to join the pack? Reach
-            out.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-[#14141a] rounded-2xl border border-white/5 p-6 space-y-4">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">📧</span>
-                <div>
-                  <p className="text-white font-medium font-display">Email</p>
-                  <p className="text-sm text-gray-500 font-tech">contact@wolfsociety.gg</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">🐦</span>
-                <div>
-                  <p className="text-white font-medium font-display">Twitter</p>
-                  <p className="text-sm text-gray-500 font-tech">@WolfSocietyGG</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">💬</span>
-                <div>
-                  <p className="text-white font-medium font-display">Discord</p>
-                  <p className="text-sm text-gray-500 font-tech">discord.gg/wolfsociety</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">📍</span>
-                <div>
-                  <p className="text-white font-medium font-display">Location</p>
-                  <p className="text-sm text-gray-500 font-tech">Los Angeles, CA</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-[#14141a] rounded-2xl border border-white/5 p-6">
-              <form className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1 font-tech">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full bg-[#0a0a0c] border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-neon-blue font-tech"
-                    placeholder="Your name"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1 font-tech">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    className="w-full bg-[#0a0a0c] border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-neon-blue font-tech"
-                    placeholder="you@example.com"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1 font-tech">
-                    Message
-                  </label>
-                  <textarea
-                    rows="4"
-                    className="w-full bg-[#0a0a0c] border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-neon-blue font-tech"
-                    placeholder="Your message..."
-                  />
-                </div>
-                <button className="w-full py-3 rounded-lg bg-gradient-to-r from-blue-600 to-green-500 text-white font-bold uppercase tracking-wider text-sm hover:scale-[1.02] transition-transform shadow-lg shadow-blue-600/20 font-tech">
-                  Send Message
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      );
-
-      // ── Admin Dashboard ──
-      const Admin = () => {
-        const [activeTab, setActiveTab] = useState('roster');
-        const tabs = [
-          { id: 'roster', label: 'Roster' },
-          { id: 'matches', label: 'Matches' },
-          { id: 'news', label: 'News' },
-          { id: 'sponsors', label: 'Sponsors' },
-        ];
-        return (
-          <div className="pt-16 max-w-7xl mx-auto px-4 py-16">
-            <div className="flex items-center justify-between mb-8">
-              <h1 className="font-display text-3xl md:text-4xl font-bold text-white">
-                ADMIN <span className="gradient-text">DASHBOARD</span>
-              </h1>
-              <span className="text-xs bg-green-600/20 text-green-400 px-3 py-1 rounded-full border border-green-600/30 font-tech">
-                Secure
-              </span>
-            </div>
-
-            {/* Tabs */}
-            <div className="flex gap-2 border-b border-white/5 mb-8 overflow-x-auto">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`px-6 py-3 text-sm font-medium uppercase tracking-wider transition-colors font-tech ${
-                    activeTab === tab.id
-                      ? 'text-white border-b-2 border-neon-blue'
-                      : 'text-gray-500 hover:text-gray-300'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Tab Content */}
-            <div className="bg-[#14141a] rounded-2xl border border-white/5 p-6">
-              {activeTab === 'roster' && (
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-white font-bold text-lg font-display">Manage Players</h3>
-                    <button className="px-4 py-1.5 rounded-lg bg-neon-blue/20 text-neon-blue text-xs font-bold border border-neon-blue/30 hover:bg-neon-blue/30 transition-colors font-tech">
-                      + Add Player
-                    </button>
-                  </div>
-                  <div className="space-y-2">
-                    {TEAMS.flatMap((t) => t.players).map((p, i) => (
-                      <div
-                        key={i}
-                        className="flex items-center justify-between bg-[#0e0e12] px-4 py-3 rounded-lg border border-white/5"
-                      >
-                        <div className="flex items-center gap-3">
-                          <span>{p.avatar}</span>
-                          <span className="text-white font-medium">{p.handle}</span>
-                          <span className="text-xs text-gray-500 font-tech">{p.role}</span>
-                        </div>
-                        <div className="flex gap-2">
-                          <button className="text-xs text-gray-500 hover:text-white transition-colors font-tech">
-                            ✏️
-                          </button>
-                          <button className="text-xs text-gray-500 hover:text-red-500 transition-colors font-tech">
-                            🗑️
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {activeTab === 'matches' && (
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-white font-bold text-lg font-display">Match Schedule</h3>
-                    <button className="px-4 py-1.5 rounded-lg bg-neon-green/20 text-neon-green text-xs font-bold border border-neon-green/30 hover:bg-neon-green/30 transition-colors font-tech">
-                      + New Match
-                    </button>
-                  </div>
-                  <div className="space-y-2">
-                    {MATCHES.map((m) => (
-                      <div
-                        key={m.id}
-                        className="flex items-center justify-between bg-[#0e0e12] px-4 py-3 rounded-lg border border-white/5"
-                      >
-                        <div>
-                          <span className="text-white font-medium font-display">
-                            {m.team1} vs {m.team2}
-                          </span>
-                          <span className="text-xs text-gray-500 ml-3 font-tech">
-                            {m.game} • {m.tournament}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <span
-                            className={`text-xs font-bold font-tech ${
-                              m.status === 'live'
-                                ? 'text-red-400'
-                                : m.status === 'upcoming'
-                                ? 'text-neon-blue'
-                                : 'text-gray-500'
-                            }`}
-                          >
-                            {m.status.toUpperCase()}
-                          </span>
-                          <button className="text-xs text-gray-500 hover:text-white transition-colors font-tech">
-                            ✏️
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {activeTab === 'news' && (
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-white font-bold text-lg font-display">News Articles</h3>
-                    <button className="px-4 py-1.5 rounded-lg bg-neon-pink/20 text-neon-pink text-xs font-bold border border-neon-pink/30 hover:bg-neon-pink/30 transition-colors font-tech">
-                      + Write Article
-                    </button>
-                  </div>
-                  <div className="space-y-2">
-                    {NEWS.map((n) => (
-                      <div
-                        key={n.id}
-                        className="flex items-center justify-between bg-[#0e0e12] px-4 py-3 rounded-lg border border-white/5"
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="text-2xl">{n.image}</span>
-                          <div>
-                            <p className="text-white font-medium text-sm font-display">
-                              {n.title}
-                            </p>
-                            <p className="text-xs text-gray-500 font-tech">
-                              {n.date} • {n.category}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
-                          <button className="text-xs text-gray-500 hover:text-white transition-colors font-tech">
-                            ✏️
-                          </button>
-                          <button className="text-xs text-gray-500 hover:text-red-500 transition-colors font-tech">
-                            🗑️
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {activeTab === 'sponsors' && (
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-white font-bold text-lg font-display">Sponsors</h3>
-                    <button className="px-4 py-1.5 rounded-lg bg-blue-600/20 text-blue-400 text-xs font-bold border border-blue-600/30 hover:bg-blue-600/30 transition-colors font-tech">
-                      + Add Sponsor
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {SPONSORS.map((s, i) => (
-                      <div
-                        key={i}
-                        className="bg-[#0e0e12] p-4 rounded-lg border border-white/5 text-center"
-                      >
-                        <span className="text-3xl block mb-1">{s.logo}</span>
-                        <p className="text-white text-sm font-medium font-display">{s.name}</p>
-                        <button className="mt-2 text-xs text-gray-500 hover:text-red-500 transition-colors font-tech">
-                          Remove
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-              <div className="bg-[#14141a] p-4 rounded-xl border border-white/5 text-center">
-                <p className="text-2xl font-bold text-neon-blue font-tech">3</p>
-                <p className="text-xs text-gray-500 font-tech">Active Teams</p>
-              </div>
-              <div className="bg-[#14141a] p-4 rounded-xl border border-white/5 text-center">
-                <p className="text-2xl font-bold text-neon-green font-tech">14</p>
-                <p className="text-xs text-gray-500 font-tech">Total Players</p>
-              </div>
-              <div className="bg-[#14141a] p-4 rounded-xl border border-white/5 text-center">
-                <p className="text-2xl font-bold text-neon-pink font-tech">4</p>
-                <p className="text-xs text-gray-500 font-tech">Upcoming Matches</p>
-              </div>
-              <div className="bg-[#14141a] p-4 rounded-xl border border-white/5 text-center">
-                <p className="text-2xl font-bold text-white font-tech">6</p>
-                <p className="text-xs text-gray-500 font-tech">Sponsors</p>
-              </div>
-            </div>
-          </div>
-        );
-      };
-
-      // ──────────────────────────────────────────────────────────────────────
-      // 5. APP
-      // ──────────────────────────────────────────────────────────────────────
-      const App = () => (
-        <Router>
+    // --- MAIN APP COMPONENT ---
+    function App() {
+      return (
+        <div class="min-h-screen flex flex-col">
           <Navbar />
-          <Route path="/" component={Home} />
-          <Route path="/about" component={About} />
-          <Route path="/teams" component={Teams} />
-          <Route path="/matches" component={Matches} />
-          <Route path="/news" component={NewsPage} />
-          <Route path="/stream" component={Stream} />
-          <Route path="/contact" component={Contact} />
-          <Route path="/admin" component={Admin} />
+          <main class="flex-grow">
+            <Hero />
+            <Roster />
+            <MatchesAndNews />
+          </main>
           <Footer />
-        </Router>
+        </div>
       );
+    }
 
-      // ──────────────────────────────────────────────────────────────────────
-      // 6. MOUNT
-      // ──────────────────────────────────────────────────────────────────────
-      const rootElement = document.getElementById('root');
-      const loadingElement = document.getElementById('root-loading');
-
-      if (rootElement) {
-        if (loadingElement) loadingElement.style.display = 'none';
-        const root = ReactDOM.createRoot(rootElement);
-        root.render(<App />);
-      }
-    </script>
-  </body>
+    // Render React App
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
 </html>
