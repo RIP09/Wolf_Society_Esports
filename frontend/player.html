@@ -36,7 +36,7 @@
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useEffect } = React;
+    const { useState, useEffect, useCallback } = React;
 
     const SUPABASE_URL = "https://tdfkebgapncswtvbtaqy.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ";
@@ -46,47 +46,63 @@
       const [players, setPlayers] = useState([]);
       const [selectedPlayer, setSelectedPlayer] = useState(null);
 
-      useEffect(() => {
-        async function load() {
+      const loadData = useCallback(async () => {
+        try {
           const { data } = await supabaseClient.from('players').select('*');
           if (data && data.length > 0) {
             setPlayers(data);
-            
-            // Auto select via URL query string or first player
             const params = new URLSearchParams(window.location.search);
             const pid = params.get('id');
             const found = data.find(p => p.id === pid);
             setSelectedPlayer(found || data[0]);
           }
+        } catch (e) {
+          console.error("Player Dashboard Load Error:", e);
         }
-        load();
       }, []);
 
+      useEffect(() => {
+        loadData();
+
+        // Realtime Subscription
+        const channel = supabaseClient.channel('player_realtime')
+          .on('postgres_changes', { event: '*', schema: 'public' }, () => {
+            loadData();
+          })
+          .subscribe();
+
+        return () => { supabaseClient.removeChannel(channel); };
+      }, [loadData]);
+
       if (!selectedPlayer) {
-        return <div class="text-center my-auto text-gray-500 font-bold animate-pulse">Loading Player Telemetry Data...</div>;
+        return (
+          <div class="text-center my-auto space-y-3">
+            <div class="font-heading text-xl text-cyanNeon font-bold animate-pulse">Loading Telemetry Stats...</div>
+            <p class="text-xs text-gray-500">If no players appear, please add players inside admin.html first.</p>
+            <a href="admin.html" class="inline-block px-4 py-2 bg-cyanNeon text-black text-xs font-bold rounded uppercase">Go to Admin CRM</a>
+          </div>
+        );
       }
 
       return (
         <div class="max-w-7xl mx-auto w-full space-y-8">
-          {/* Header */}
           <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-borderDark pb-6">
             <div>
               <span class="text-purpleNeon font-bold text-xs uppercase tracking-widest">Telemetry & Analytics Portal</span>
               <h1 class="font-heading text-3xl font-bold text-white uppercase">Player Performance Hub</h1>
             </div>
             <div class="flex gap-3">
-              <a href="index.html" class="px-4 py-2 bg-cardBg border border-borderDark rounded text-xs font-bold text-gray-300">← Back To Public Website</a>
+              <a href="index.html" class="px-4 py-2 bg-cardBg border border-borderDark rounded text-xs font-bold text-gray-300">← Public Website</a>
               <a href="admin.html" class="px-4 py-2 bg-cyanNeon text-black rounded text-xs font-bold">Admin Portal</a>
             </div>
           </div>
 
-          {/* Player Selector Bar */}
           <div class="flex gap-3 overflow-x-auto pb-2">
             {players.map(p => (
               <button
                 key={p.id}
                 onClick={() => setSelectedPlayer(p)}
-                class={`flex items-center gap-2 px-4 py-2 rounded-lg border text-xs font-bold ${selectedPlayer.id === p.id ? 'bg-purpleNeon/20 border-purpleNeon text-white' : 'bg-cardBg border-borderDark text-gray-400 hover:text-white'}`}
+                class={`flex items-center gap-2 px-4 py-2 rounded-lg border text-xs font-bold ${selectedPlayer.id === p.id ? 'bg-purpleNeon/20 border-purpleNeon text-white' : 'bg-cardBg border-borderDark text-gray-400'}`}
               >
                 <img src={p.avatar_url} class="w-6 h-6 rounded-full object-cover" />
                 <span>{p.in_game_name}</span>
@@ -94,9 +110,7 @@
             ))}
           </div>
 
-          {/* Main Selected Player Analytics Layout */}
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* Left Player Profile Card */}
             <div class="lg:col-span-4 bg-cardBg border border-borderDark p-6 rounded-xl space-y-6">
               <img src={selectedPlayer.avatar_url} class="w-full h-64 object-cover rounded-xl border border-borderDark" />
               <div>
@@ -109,13 +123,11 @@
 
               <div class="bg-darkBg p-4 rounded-lg border border-borderDark text-xs text-gray-300 space-y-1">
                 <span class="font-bold text-cyanNeon block uppercase">Player Bio</span>
-                <p>{selectedPlayer.bio || 'Professional MOBA squad competitor.'}</p>
+                <p>{selectedPlayer.bio || 'Competitor'}</p>
               </div>
             </div>
 
-            {/* Right Telemetry Analytics Cards */}
             <div class="lg:col-span-8 space-y-6">
-              {/* Stat Overview Cards */}
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div class="bg-cardBg border border-borderDark p-5 rounded-xl text-center space-y-1">
                   <span class="text-[10px] text-gray-500 font-bold uppercase">KDA Ratio</span>
@@ -132,43 +144,6 @@
                 <div class="bg-cardBg border border-borderDark p-5 rounded-xl text-center space-y-1">
                   <span class="text-[10px] text-gray-500 font-bold uppercase">Matches Played</span>
                   <div class="font-heading text-3xl font-bold text-white">{selectedPlayer.matches_played || 100}</div>
-                </div>
-              </div>
-
-              {/* Performance Visualization Meters */}
-              <div class="bg-cardBg border border-borderDark p-6 rounded-xl space-y-6">
-                <h3 class="font-heading text-xl font-bold text-white uppercase">Performance Metrics Breakdown</h3>
-
-                <div class="space-y-4">
-                  <div>
-                    <div class="flex justify-between text-xs font-bold mb-1">
-                      <span class="text-gray-400 uppercase">Teamfight Participation Rate</span>
-                      <span class="text-cyanNeon">78.5%</span>
-                    </div>
-                    <div class="w-full bg-darkBg rounded-full h-2.5 overflow-hidden border border-borderDark">
-                      <div class="bg-cyanNeon h-2.5 rounded-full" style={{ width: '78.5%' }}></div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div class="flex justify-between text-xs font-bold mb-1">
-                      <span class="text-gray-400 uppercase">Objective Secure Rate (Lord/Turtle)</span>
-                      <span class="text-purpleNeon">82.0%</span>
-                    </div>
-                    <div class="w-full bg-darkBg rounded-full h-2.5 overflow-hidden border border-borderDark">
-                      <div class="bg-purpleNeon h-2.5 rounded-full" style={{ width: '82%' }}></div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div class="flex justify-between text-xs font-bold mb-1">
-                      <span class="text-gray-400 uppercase">Damage Share %</span>
-                      <span class="text-redNeon">28.4%</span>
-                    </div>
-                    <div class="w-full bg-darkBg rounded-full h-2.5 overflow-hidden border border-borderDark">
-                      <div class="bg-redNeon h-2.5 rounded-full" style={{ width: '28.4%' }}></div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
