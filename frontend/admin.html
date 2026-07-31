@@ -333,6 +333,32 @@
       const filtered = currentData.filter(item => JSON.stringify(item).toLowerCase().includes(term));
       renderTableUI(activeTab, filtered);
     }
+
+     // Add this inside admin.html <script> section
+function setupAdminRealtimeSync() {
+  supabase.channel('admin-crm-sync')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'tryouts' }, (payload) => {
+      console.log('New Tryout Application Received!', payload);
+      // Auto refresh table if active tab is tryouts
+      if (activeTab === 'tryouts') fetchTableData('tryouts');
+      
+      // Optional Notification
+      if (payload.eventType === 'INSERT') {
+        alert(`🔔 New Tryout Application received from IGN: ${payload.new.ign}`);
+      }
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'admin_users' }, () => {
+      if (activeTab === 'admin_users') fetchTableData('admin_users');
+    })
+    .subscribe();
+}
+
+// Call on startup
+document.addEventListener('DOMContentLoaded', () => {
+  setupAdminRealtimeSync();
+});
+
+    
   </script>
 </body>
 </html>
