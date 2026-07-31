@@ -1,1543 +1,1059 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Wolf Society Esports — Professional gaming team competing at the highest level. Join the pack." />
-    <meta name="theme-color" content="#0a0a0f" />
     <title>Wolf Society Esports</title>
-
-    <!-- ===== Google Fonts ===== -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-
-    <!-- ===== Tailwind CSS ===== -->
-    <script src="https://cdn.tailwindcss.com">
-    </script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'wolf-dark': '#0a0a0f',
-                        'wolf-card': '#12121a',
-                        'wolf-border': '#1e1e2e',
-                        'neon-blue': '#00d4ff',
-                        'neon-purple': '#a855f7',
-                        'neon-orange': '#f97316',
-                        'neon-pink': '#ec4899',
-                    },
-                    fontFamily: {
-                        'cursive': ['"Great Vibes"', 'cursive'],
-                        'heading': ['Montserrat', 'sans-serif'],
-                        'body': ['Poppins', 'sans-serif'],
-                    },
-                    animation: {
-                        'glow': 'glow 2s ease-in-out infinite alternate',
-                        'float': 'float 6s ease-in-out infinite',
-                        'slide-up': 'slideUp 0.8s ease-out forwards',
-                        'pulse-slow': 'pulseSlow 3s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        glow: {
-                            '0%': { textShadow: '0 0 10px #00d4ff, 0 0 20px #00d4ff, 0 0 40px #00d4ff' },
-                            '100%': { textShadow: '0 0 20px #a855f7, 0 0 40px #a855f7, 0 0 80px #a855f7' },
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%': { transform: 'translateY(-20px)' },
-                        },
-                        slideUp: {
-                            '0%': { opacity: '0', transform: 'translateY(40px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        pulseSlow: {
-                            '0%, 100%': { opacity: '1' },
-                            '50%': { opacity: '0.5' },
-                        },
-                    },
-                }
-            }
-        }
-    </script>
-
-    <!-- ===== Font Awesome ===== -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
-    <!-- ===== Custom CSS ===== -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        /* ── Reset & Base ── */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: #0a0a0c;
+        font-family: 'Rajdhani', sans-serif;
+        color: #e0e0e0;
+      }
+      .font-display {
+        font-family: 'Orbitron', monospace;
+      }
+      .glow-blue {
+        box-shadow: 0 0 20px rgba(0, 150, 255, 0.3), 0 0 60px rgba(0, 150, 255, 0.1);
+      }
+      .glow-green {
+        box-shadow: 0 0 20px rgba(0, 255, 150, 0.3), 0 0 60px rgba(0, 255, 150, 0.1);
+      }
+      .glow-pink {
+        box-shadow: 0 0 20px rgba(255, 0, 150, 0.3), 0 0 60px rgba(255, 0, 150, 0.1);
+      }
+      .neon-border-blue {
+        border: 1px solid rgba(0, 150, 255, 0.5);
+        box-shadow: 0 0 15px rgba(0, 150, 255, 0.15);
+      }
+      .neon-border-green {
+        border: 1px solid rgba(0, 255, 150, 0.5);
+        box-shadow: 0 0 15px rgba(0, 255, 150, 0.15);
+      }
+      .neon-border-pink {
+        border: 1px solid rgba(255, 0, 150, 0.5);
+        box-shadow: 0 0 15px rgba(255, 0, 150, 0.15);
+      }
+      .hover-glow-blue:hover {
+        box-shadow: 0 0 30px rgba(0, 150, 255, 0.5), 0 0 80px rgba(0, 150, 255, 0.2);
+        border-color: rgba(0, 150, 255, 0.8);
+        transform: scale(1.02);
+        transition: all 0.3s ease;
+      }
+      .hover-glow-green:hover {
+        box-shadow: 0 0 30px rgba(0, 255, 150, 0.5), 0 0 80px rgba(0, 255, 150, 0.2);
+        border-color: rgba(0, 255, 150, 0.8);
+        transform: scale(1.02);
+        transition: all 0.3s ease;
+      }
+      .hover-glow-pink:hover {
+        box-shadow: 0 0 30px rgba(255, 0, 150, 0.5), 0 0 80px rgba(255, 0, 150, 0.2);
+        border-color: rgba(255, 0, 150, 0.8);
+        transform: scale(1.02);
+        transition: all 0.3s ease;
+      }
+      .card-hover {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .card-hover:hover {
+        transform: translateY(-6px) scale(1.01);
+      }
+      .bg-charcoal {
+        background: #0a0a0c;
+      }
+      .bg-card {
+        background: #14141a;
+      }
+      .bg-card-light {
+        background: #1a1a24;
+      }
+      .text-neon-blue {
+        color: #0096ff;
+      }
+      .text-neon-green {
+        color: #00ff96;
+      }
+      .text-neon-pink {
+        color: #ff0096;
+      }
+      .border-neon-blue {
+        border-color: rgba(0, 150, 255, 0.4);
+      }
+      .border-neon-green {
+        border-color: rgba(0, 255, 150, 0.4);
+      }
+      .border-neon-pink {
+        border-color: rgba(255, 0, 150, 0.4);
+      }
+      .gradient-text {
+        background: linear-gradient(135deg, #0096ff, #00ff96);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .gradient-text-pink {
+        background: linear-gradient(135deg, #ff0096, #ff6600);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .match-card {
+        background: linear-gradient(145deg, #14141a, #0e0e12);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .match-card.live {
+        border-color: rgba(255, 0, 0, 0.6);
+        animation: pulse-border 1.5s ease-in-out infinite;
+      }
+      @keyframes pulse-border {
+        0%,
+        100% {
+          box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
         }
-
-        html {
-            scroll-behavior: smooth;
+        50% {
+          box-shadow: 0 0 30px rgba(255, 0, 0, 0.5), 0 0 60px rgba(255, 0, 0, 0.1);
         }
-
-        body {
-            background: #0a0a0f;
-            color: #e4e4e7;
-            font-family: 'Poppins', sans-serif;
-            overflow-x: hidden;
+      }
+      .live-dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        background: #ff0000;
+        border-radius: 50%;
+        animation: blink 1s ease-in-out infinite;
+      }
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
         }
-
-        /* ── Scrollbar ── */
-        ::-webkit-scrollbar {
-            width: 8px;
+        50% {
+          opacity: 0.2;
         }
-        ::-webkit-scrollbar-track {
-            background: #0a0a0f;
+      }
+      .sponsor-carousel {
+        display: flex;
+        gap: 2rem;
+        animation: scroll 20s linear infinite;
+      }
+      @keyframes scroll {
+        0% {
+          transform: translateX(0);
         }
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #00d4ff, #a855f7);
-            border-radius: 4px;
+        100% {
+          transform: translateX(-50%);
         }
-
-        /* ── Glassmorphism ── */
-        .glass {
-            background: rgba(18, 18, 26, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .glass-card {
-            background: rgba(18, 18, 26, 0.6);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        .glass-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(0, 212, 255, 0.3);
-            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.08);
-        }
-
-        /* ── Neon Glow Utilities ── */
-        .neon-text-blue {
-            color: #00d4ff;
-            text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
-        }
-        .neon-text-purple {
-            color: #a855f7;
-            text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
-        }
-        .neon-text-orange {
-            color: #f97316;
-            text-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
-        }
-
-        .neon-border {
-            border: 1px solid rgba(0, 212, 255, 0.2);
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.05);
-        }
-
-        .neon-btn {
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            background: linear-gradient(135deg, #00d4ff, #a855f7);
-            border: none;
-            color: #fff;
-            font-weight: 600;
-            padding: 0.75rem 2rem;
-            border-radius: 50px;
-            cursor: pointer;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .neon-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 40px rgba(0, 212, 255, 0.3);
-        }
-
-        .neon-btn-outline {
-            background: transparent;
-            border: 2px solid #00d4ff;
-            color: #00d4ff;
-            padding: 0.75rem 2rem;
-            border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: 'Poppins', sans-serif;
-            transition: all 0.3s ease;
-        }
-
-        .neon-btn-outline:hover {
-            background: #00d4ff;
-            color: #0a0a0f;
-            box-shadow: 0 0 40px rgba(0, 212, 255, 0.3);
-            transform: scale(1.05);
-        }
-
-        /* ── Three.js Canvas ── */
-        #three-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        /* ── Hero Overlay ── */
-        .hero-overlay {
-            position: relative;
-            z-index: 1;
-        }
-
-        /* ── Marquee / Ticker ── */
-        .marquee-track {
-            display: flex;
-            animation: marqueeScroll 30s linear infinite;
-            width: max-content;
-        }
-
-        .marquee-track:hover {
-            animation-play-state: paused;
-        }
-
-        @keyframes marqueeScroll {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(-50%);
-            }
-        }
-
-        /* ── Team Card Image Overlay ── */
-        .team-card-img {
-            position: relative;
-            overflow: hidden;
-            border-radius: 12px 12px 0 0;
-        }
-
-        .team-card-img img {
-            width: 100%;
-            height: 240px;
-            object-fit: cover;
-            transition: transform 0.6s ease;
-        }
-
-        .glass-card:hover .team-card-img img {
-            transform: scale(1.06);
-        }
-
-        .team-card-img .overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 1.5rem 1rem 0.75rem;
-            background: linear-gradient(transparent, rgba(10, 10, 15, 0.9));
-        }
-
-        /* ── Stat Bar ── */
-        .stat-bar {
-            height: 4px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 4px;
-        }
-
-        .stat-bar-fill {
-            height: 100%;
-            border-radius: 4px;
-            background: linear-gradient(90deg, #00d4ff, #a855f7);
-            transition: width 1.2s ease;
-        }
-
-        /* ── Mobile Menu ── */
-        #mobile-menu {
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            transform: translateX(100%);
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        #mobile-menu.open {
-            transform: translateX(0);
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* ── Analytics Chart ── */
-        .chart-bar {
-            transition: height 1s ease;
-            height: 0;
-        }
-
-        .chart-bar.animate {
-            height: var(--target-height);
-        }
-
-        /* ── Accessibility ── */
-        a:focus-visible,
-        button:focus-visible {
-            outline: 3px solid #00d4ff;
-            outline-offset: 2px;
-        }
-
-        /* ── Responsive Tweaks ── */
-        @media (max-width: 640px) {
-            .hero-title {
-                font-size: 2.5rem !important;
-            }
-            .hero-sub {
-                font-size: 1rem !important;
-            }
-            .team-card-img img {
-                height: 180px;
-            }
-        }
-
-        @media (min-width: 641px) and (max-width: 1024px) {
-            .hero-title {
-                font-size: 3.5rem !important;
-            }
-        }
-
-        /* ── Loading shimmer ── */
-        .shimmer {
-            background: linear-gradient(90deg, rgba(255, 255, 255, 0.02) 25%, rgba(255, 255, 255, 0.06) 50%, rgba(255, 255, 255, 0.02) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            0% {
-                background-position: -200% 0;
-            }
-            100% {
-                background-position: 200% 0;
-            }
-        }
-
-        /* ── Cursor glow (desktop) ── */
-        @media (hover: hover) {
-            .cursor-glow {
-                position: fixed;
-                width: 300px;
-                height: 300px;
-                border-radius: 50%;
-                background: radial-gradient(circle, rgba(0, 212, 255, 0.06), transparent 70%);
-                pointer-events: none;
-                z-index: 0;
-                transform: translate(-50%, -50%);
-                transition: opacity 0.3s ease;
-            }
-        }
-
-        /* ── Hero section min-height ── */
-        .hero-min {
-            min-height: 100vh;
-            min-height: 100dvh;
-        }
-
-        /* ── Footer link hover ── */
-        .footer-link {
-            position: relative;
-            color: #a1a1aa;
-            transition: color 0.3s ease;
-        }
-
-        .footer-link::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #00d4ff, #a855f7);
-            transition: width 0.3s ease;
-        }
-
-        .footer-link:hover {
-            color: #fff;
-        }
-        .footer-link:hover::after {
-            width: 100%;
-        }
-
-        /* ── Social Icon Hover ── */
-        .social-icon {
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            color: #a1a1aa;
-            font-size: 1.1rem;
-        }
-
-        .social-icon:hover {
-            transform: translateY(-4px) scale(1.05);
-            color: #fff;
-            border-color: rgba(0, 212, 255, 0.3);
-            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.15);
-        }
-
-        .social-icon:hover .fa-twitter {
-            color: #1da1f2;
-        }
-        .social-icon:hover .fa-youtube {
-            color: #ff0000;
-        }
-        .social-icon:hover .fa-twitch {
-            color: #9146ff;
-        }
-        .social-icon:hover .fa-discord {
-            color: #5865f2;
-        }
-        .social-icon:hover .fa-instagram {
-            color: #e4405f;
-        }
-
-        /* ── Newsletter input ── */
-        .newsletter-input {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 50px;
-            padding: 0.75rem 1.5rem;
-            color: #fff;
-            font-family: 'Poppins', sans-serif;
-            transition: all 0.3s ease;
-            width: 100%;
-        }
-
-        .newsletter-input:focus {
-            outline: none;
-            border-color: #00d4ff;
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.08);
-            background: rgba(255, 255, 255, 0.06);
-        }
-
-        .newsletter-input::placeholder {
-            color: #5a5a6e;
-        }
+      }
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0a0a0c;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #0096ff;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #00ff96;
+      }
+      .nav-link {
+        position: relative;
+        transition: color 0.3s ease;
+      }
+      .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #0096ff, #00ff96);
+        transition: width 0.3s ease;
+      }
+      .nav-link:hover::after {
+        width: 100%;
+      }
+      .nav-link:hover {
+        color: #fff;
+      }
     </style>
-</head>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@18.2.0",
+          "react-dom/client": "https://esm.sh/react-dom@18.2.0",
+          "react-router-dom": "https://esm.sh/react-router-dom@6.20.0"
+        }
+      }
+    </script>
+    <script type="module">
+      import React, { useState, useEffect, useRef } from 'react';
+      import ReactDOM from 'react-dom/client';
+      import {
+        BrowserRouter,
+        Routes,
+        Route,
+        Link,
+        useParams,
+        useNavigate
+      } from 'react-router-dom';
 
-<body>
+      // ─── DATA ──────────────────────────────────────────────────────────────
+      const TEAMS = [{
+        id: 1,
+        name: 'Wolf Alpha',
+        game: 'Valorant',
+        tag: 'WOLF',
+        logo: '🐺',
+        players: [
+          { handle: 'ShadowStrike', role: 'Captain / Duelist', avatar: '🔥' },
+          { handle: 'NeonViper', role: 'Flex', avatar: '⚡' },
+          { handle: 'CrimsonFury', role: 'Sentinel', avatar: '🛡️' },
+          { handle: 'PhantomX', role: 'Controller', avatar: '🌑' },
+          { handle: 'ZenMaster', role: 'Initiator', avatar: '🌀' },
+        ],
+        record: '12-3',
+        rank: '#3 Global'
+      }, {
+        id: 2,
+        name: 'Wolf Omega',
+        game: 'League of Legends',
+        tag: 'OMEGA',
+        logo: '🐺',
+        players: [
+          { handle: 'FrostBite', role: 'Top', avatar: '❄️' },
+          { handle: 'JungleKing', role: 'Jungle', avatar: '👑' },
+          { handle: 'MidOracle', role: 'Mid', avatar: '🔮' },
+          { handle: 'ArcShot', role: 'ADC', avatar: '🎯' },
+          { handle: 'SoulWeaver', role: 'Support', avatar: '💫' },
+        ],
+        record: '9-6',
+        rank: '#7 Global'
+      }, {
+        id: 3,
+        name: 'Wolf Sigma',
+        game: 'Call of Duty',
+        tag: 'SIGMA',
+        logo: '🐺',
+        players: [
+          { handle: 'RapidFire', role: 'AR', avatar: '🔫' },
+          { handle: 'SniperGhost', role: 'Sniper', avatar: '👻' },
+          { handle: 'RunAndGun', role: 'SMG', avatar: '💨' },
+          { handle: 'TacticalV', role: 'Flex', avatar: '🧠' },
+        ],
+        record: '15-2',
+        rank: '#1 Regional'
+      }];
 
-    <!-- ===== CURSOR GLOW (desktop only) ===== -->
-    <div class="cursor-glow hidden md:block" id="cursorGlow" aria-hidden="true"></div>
+      const MATCHES = [{
+        id: 1,
+        team1: 'Wolf Alpha',
+        team2: 'Fury Esports',
+        team1Score: '13',
+        team2Score: '8',
+        status: 'live',
+        time: 'LIVE',
+        game: 'Valorant',
+        tournament: 'VCT Challengers'
+      }, {
+        id: 2,
+        team1: 'Wolf Omega',
+        team2: 'Dark Legion',
+        team1Score: '-',
+        team2Score: '-',
+        status: 'upcoming',
+        time: '2h 15m',
+        game: 'League of Legends',
+        tournament: 'LCS Pro League'
+      }, {
+        id: 3,
+        team1: 'Wolf Sigma',
+        team2: 'Apex Predators',
+        team1Score: '250',
+        team2Score: '210',
+        status: 'finished',
+        time: 'Finished',
+        game: 'Call of Duty',
+        tournament: 'CDL Major'
+      }, {
+        id: 4,
+        team1: 'Wolf Alpha',
+        team2: 'Xenon Knights',
+        team1Score: '-',
+        team2Score: '-',
+        status: 'upcoming',
+        time: '5h 45m',
+        game: 'Valorant',
+        tournament: 'VCT Challengers'
+      }];
 
-    <!-- ===== THREE.JS CANVAS BACKGROUND ===== -->
-    <div id="three-canvas" aria-hidden="true"></div>
+      const NEWS = [{
+        id: 1,
+        title: 'Wolf Alpha Clinches VCT Spot',
+        excerpt: 'Dominant performance secures qualification for the international stage.',
+        date: 'July 28, 2026',
+        category: 'Competitive',
+        image: '🏆'
+      }, {
+        id: 2,
+        title: 'New Omega Roster Revealed',
+        excerpt: 'Wolf Society unveils revamped League of Legends lineup for Summer Split.',
+        date: 'July 25, 2026',
+        category: 'Roster',
+        image: '📢'
+      }, {
+        id: 3,
+        title: 'Sigma Takes CDL Major Title',
+        excerpt: 'Flawless run through the bracket secures first major championship.',
+        date: 'July 20, 2026',
+        category: 'Victory',
+        image: '👑'
+      }];
 
-    <!-- ============================================================ -->
-    <!-- ===== HEADER ===== -->
-    <!-- ============================================================ -->
-    <header class="fixed top-0 left-0 right-0 z-50 glass" role="banner" aria-label="Main navigation">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16 lg:h-20">
+      const SPONSORS = [
+        { name: 'HyperX', logo: '🎧' },
+        { name: 'Razer', logo: '🐍' },
+        { name: 'Logitech G', logo: '🖱️' },
+        { name: 'Intel', logo: '💻' },
+        { name: 'Red Bull', logo: '🥤' },
+        { name: 'NVIDIA', logo: '🎮' },
+      ];
 
-                <!-- Logo -->
-                <a href="#" class="flex items-center gap-2 group" aria-label="Wolf Society Esports Home">
-                    <svg class="w-9 h-9 text-neon-blue transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" fill="currentColor" opacity="0.3"/>
-                    </svg>
-                    <span class="font-cursive text-2xl lg:text-3xl text-white tracking-wide">
-                        Wolf<span class="text-neon-blue">Society</span>
-                    </span>
-                </a>
+      // ─── COMPONENTS ────────────────────────────────────────────────────────
 
-                <!-- Desktop Nav -->
-                <nav class="hidden lg:flex items-center gap-8" aria-label="Primary navigation">
-                    <a href="#about" class="text-sm font-medium text-zinc-300 hover:text-white transition-colors relative group">
-                        About
-                        <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-neon-blue to-neon-purple transition-all group-hover:w-full"></span>
-                    </a>
-                    <a href="#teams" class="text-sm font-medium text-zinc-300 hover:text-white transition-colors relative group">
-                        Teams
-                        <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-neon-blue to-neon-purple transition-all group-hover:w-full"></span>
-                    </a>
-                    <a href="#news" class="text-sm font-medium text-zinc-300 hover:text-white transition-colors relative group">
-                        News
-                        <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-neon-blue to-neon-purple transition-all group-hover:w-full"></span>
-                    </a>
-                    <a href="#analytics" class="text-sm font-medium text-zinc-300 hover:text-white transition-colors relative group">
-                        Analytics
-                        <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-neon-blue to-neon-purple transition-all group-hover:w-full"></span>
-                    </a>
-                </nav>
+      // Navbar
+      const Navbar = () => {
+        const [isOpen, setIsOpen] = useState(false);
+        const links = [
+          { to: '/', label: 'Home' },
+          { to: '/about', label: 'About' },
+          { to: '/teams', label: 'Teams' },
+          { to: '/matches', label: 'Matches' },
+          { to: '/news', label: 'News' },
+          { to: '/stream', label: 'Stream' },
+          { to: '/contact', label: 'Contact' },
+        ];
+        return (
+          <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0c]/95 backdrop-blur-md border-b border-white/5 px-4 md:px-8">
+            <div className="max-w-7xl mx-auto flex items-center justify-between h-16">
+              <Link to="/" className="flex items-center gap-2 font-display text-xl font-bold">
+                <span className="text-neon-blue">WOLF</span>
+                <span className="text-white">SOCIETY</span>
+                <span className="text-neon-green text-sm font-normal ml-1">🐺</span>
+              </Link>
 
-                <!-- Desktop CTA -->
-                <div class="hidden lg:flex items-center gap-4">
-                    <button class="neon-btn-outline text-sm py-2 px-5" aria-label="Login to your account">
-                        <i class="fas fa-user-circle mr-2"></i> Login
-                    </button>
-                    <button class="neon-btn text-sm py-2 px-5" aria-label="Join the pack">
-                        Join the Pack
-                    </button>
+              {/* Desktop Nav */}
+              <div className="hidden md:flex items-center gap-6 text-sm font-medium uppercase tracking-wider">
+                {links.map((link) => (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    className="nav-link text-gray-400 hover:text-white transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                <Link
+                  to="/admin"
+                  className="px-4 py-1.5 rounded-full bg-gradient-to-r from-blue-600 to-green-500 text-white text-xs font-bold uppercase tracking-wider hover:scale-105 transition-transform"
+                >
+                  Admin
+                </Link>
+              </div>
+
+              {/* Mobile Toggle */}
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="md:hidden text-gray-400 hover:text-white focus:outline-none"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {isOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+            </div>
+
+            {/* Mobile Nav */}
+            {isOpen && (
+              <div className="md:hidden py-4 border-t border-white/5 flex flex-col gap-3 text-sm uppercase tracking-wider">
+                {links.map((link) => (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    className="text-gray-400 hover:text-white transition-colors px-2 py-1"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                <Link
+                  to="/admin"
+                  className="px-4 py-1.5 rounded-full bg-gradient-to-r from-blue-600 to-green-500 text-white text-xs font-bold uppercase tracking-wider hover:scale-105 transition-transform inline-block w-fit"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Admin
+                </Link>
+              </div>
+            )}
+          </nav>
+        );
+      };
+
+      // Footer
+      const Footer = () => (
+        <footer className="bg-[#0a0a0c] border-t border-white/5 py-12 px-4 mt-12">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <div className="font-display text-xl font-bold mb-4">
+                <span className="text-neon-blue">WOLF</span>
+                <span className="text-white">SOCIETY</span>
+              </div>
+              <p className="text-gray-500 text-sm leading-relaxed">
+                Elite competitive gaming. Born from passion, forged in battle.
+              </p>
+              <div className="flex gap-4 mt-4">
+                <span className="text-gray-600 hover:text-neon-blue cursor-pointer transition-colors">🐦</span>
+                <span className="text-gray-600 hover:text-neon-pink cursor-pointer transition-colors">📺</span>
+                <span className="text-gray-600 hover:text-neon-green cursor-pointer transition-colors">🎮</span>
+                <span className="text-gray-600 hover:text-neon-blue cursor-pointer transition-colors">💬</span>
+              </div>
+            </div>
+            <div>
+              <h4 className="text-white font-semibold mb-3 uppercase text-xs tracking-wider">Organization</h4>
+              <ul className="space-y-2 text-sm text-gray-500">
+                <li><Link to="/about" className="hover:text-white transition-colors">About Us</Link></li>
+                <li><Link to="/teams" className="hover:text-white transition-colors">Teams</Link></li>
+                <li><Link to="/news" className="hover:text-white transition-colors">News</Link></li>
+                <li><Link to="/contact" className="hover:text-white transition-colors">Contact</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-white font-semibold mb-3 uppercase text-xs tracking-wider">Community</h4>
+              <ul className="space-y-2 text-sm text-gray-500">
+                <li className="hover:text-white transition-colors cursor-pointer">Discord</li>
+                <li className="hover:text-white transition-colors cursor-pointer">Twitch</li>
+                <li className="hover:text-white transition-colors cursor-pointer">YouTube</li>
+                <li className="hover:text-white transition-colors cursor-pointer">Twitter</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-white font-semibold mb-3 uppercase text-xs tracking-wider">Partners</h4>
+              <div className="flex flex-wrap gap-3">
+                {SPONSORS.slice(0, 4).map((s, i) => (
+                  <span key={i} className="text-2xl bg-[#1a1a24] p-2 rounded-lg border border-white/5" title={s.name}>
+                    {s.logo}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="max-w-7xl mx-auto mt-8 pt-8 border-t border-white/5 text-center text-xs text-gray-600">
+            © 2026 Wolf Society Esports. All rights reserved.
+          </div>
+        </footer>
+      );
+
+      // ─── PAGES ─────────────────────────────────────────────────────────────
+
+      // Home
+      const Home = () => {
+        const [liveMatches, setLiveMatches] = useState(MATCHES.filter(m => m.status === 'live'));
+        const [featuredNews, setFeaturedNews] = useState(NEWS.slice(0, 2));
+        const [sponsorIndex, setSponsorIndex] = useState(0);
+
+        useEffect(() => {
+          const interval = setInterval(() => {
+            setSponsorIndex((prev) => (prev + 1) % SPONSORS.length);
+          }, 3000);
+          return () => clearInterval(interval);
+        }, []);
+
+        return (
+          <div className="pt-16">
+            {/* Hero */}
+            <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-[#0a0a0c]">
+              <div className="absolute inset-0 bg-gradient-to-b from-[#0096ff]/5 via-transparent to-[#00ff96]/5" />
+              <div className="absolute inset-0 opacity-30">
+                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl" />
+                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-green-500/20 rounded-full blur-3xl" />
+              </div>
+              <div className="relative z-10 text-center px-4 max-w-4xl">
+                <div className="inline-block px-4 py-1.5 rounded-full border border-neon-blue/30 bg-blue-600/10 text-neon-blue text-xs font-bold uppercase tracking-wider mb-6">
+                  🐺 Season 2026
                 </div>
-
-                <!-- Mobile Hamburger -->
-                <button id="menuToggle" class="lg:hidden text-white text-2xl p-2 hover:text-neon-blue transition-colors" aria-expanded="false" aria-controls="mobile-menu" aria-label="Toggle navigation menu">
-                    <i class="fas fa-bars" id="hamburgerIcon"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="lg:hidden glass border-t border-white/5" role="navigation" aria-label="Mobile navigation">
-            <div class="px-4 py-6 space-y-4">
-                <a href="#about" class="block text-base font-medium text-zinc-300 hover:text-white transition-colors py-2 border-b border-white/5">About</a>
-                <a href="#teams" class="block text-base font-medium text-zinc-300 hover:text-white transition-colors py-2 border-b border-white/5">Teams</a>
-                <a href="#news" class="block text-base font-medium text-zinc-300 hover:text-white transition-colors py-2 border-b border-white/5">News</a>
-                <a href="#analytics" class="block text-base font-medium text-zinc-300 hover:text-white transition-colors py-2 border-b border-white/5">Analytics</a>
-                <div class="pt-4 flex flex-col gap-3">
-                    <button class="neon-btn-outline w-full text-sm py-2.5" aria-label="Login to your account">
-                        <i class="fas fa-user-circle mr-2"></i> Login
-                    </button>
-                    <button class="neon-btn w-full text-sm py-2.5" aria-label="Join the pack">
-                        Join the Pack
-                    </button>
+                <h1 className="font-display text-5xl md:text-7xl font-black leading-tight">
+                  <span className="text-white">RISE OF THE</span><br />
+                  <span className="gradient-text">WOLF</span>
+                </h1>
+                <p className="text-gray-400 text-lg md:text-xl mt-6 max-w-2xl mx-auto leading-relaxed">
+                  Where legends are forged and champions are crowned. Wolf Society
+                  dominates the competitive scene with unrivaled skill and passion.
+                </p>
+                <div className="flex flex-wrap justify-center gap-4 mt-8">
+                  <Link
+                    to="/teams"
+                    className="px-8 py-3 rounded-full bg-gradient-to-r from-blue-600 to-green-500 text-white font-bold uppercase tracking-wider text-sm hover:scale-105 transition-transform shadow-lg shadow-blue-600/20"
+                  >
+                    Meet the Pack
+                  </Link>
+                  <Link
+                    to="/stream"
+                    className="px-8 py-3 rounded-full border border-white/20 text-white font-bold uppercase tracking-wider text-sm hover:bg-white/5 transition-colors"
+                  >
+                    Watch Live
+                  </Link>
                 </div>
-            </div>
-        </div>
-    </header>
+                <div className="flex justify-center gap-8 mt-12 text-sm text-gray-500">
+                  <div><span className="text-neon-green font-bold">12-3</span> Alpha Record</div>
+                  <div><span className="text-neon-blue font-bold">#3</span> Global Rank</div>
+                  <div><span className="text-neon-pink font-bold">🏆</span> 2 Majors</div>
+                </div>
+              </div>
+            </section>
 
-    <!-- ============================================================ -->
-    <!-- ===== HERO SECTION ===== -->
-    <!-- ============================================================ -->
-    <section id="hero" class="hero-min flex items-center justify-center px-4 hero-overlay relative" aria-label="Hero banner">
-        <div class="max-w-6xl mx-auto text-center relative z-10 py-20 lg:py-0">
-            <!-- Badge -->
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-neon-blue/20 bg-neon-blue/5 text-neon-blue text-xs font-semibold tracking-wider uppercase mb-6 animate-pulse-slow">
-                <span class="w-2 h-2 rounded-full bg-neon-blue animate-pulse"></span>
-                #1 Rising Esports Organization
-            </div>
+            {/* Live Matches */}
+            {liveMatches.length > 0 && (
+              <section className="max-w-7xl mx-auto px-4 py-16">
+                <div className="flex items-center gap-3 mb-8">
+                  <span className="live-dot" />
+                  <h2 className="font-display text-2xl font-bold text-white">LIVE MATCHES</h2>
+                  <span className="text-sm text-gray-500 ml-2">Watch the action unfold</span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {liveMatches.map((match) => (
+                    <MatchCard key={match.id} match={match} />
+                  ))}
+                </div>
+              </section>
+            )}
 
-            <!-- Main Title -->
-            <h1 class="font-heading font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[1.1] tracking-tight">
-                <span class="text-white">Unleash the</span><br />
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-neon-blue via-neon-purple to-neon-pink animate-glow">
-                    Wolf Within
-                </span>
-            </h1>
+            {/* Upcoming Matches Preview */}
+            <section className="max-w-7xl mx-auto px-4 py-16 border-t border-white/5">
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="font-display text-2xl font-bold text-white">UPCOMING BATTLES</h2>
+                <Link to="/matches" className="text-neon-blue hover:text-neon-green transition-colors text-sm uppercase tracking-wider">
+                  View All →
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {MATCHES.filter(m => m.status === 'upcoming').slice(0, 3).map((match) => (
+                  <MatchCard key={match.id} match={match} />
+                ))}
+              </div>
+            </section>
 
-            <!-- Subtitle -->
-            <p class="font-body text-base sm:text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mt-6 leading-relaxed hero-sub">
-                Where legends are forged and champions rise. Join the pack and dominate the competition across
-                <span class="text-white font-semibold">Valorant</span>,
-                <span class="text-white font-semibold">CS2</span>, and
-                <span class="text-white font-semibold">League of Legends</span>.
+            {/* Featured News */}
+            <section className="max-w-7xl mx-auto px-4 py-16 border-t border-white/5">
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="font-display text-2xl font-bold text-white">LATEST NEWS</h2>
+                <Link to="/news" className="text-neon-blue hover:text-neon-green transition-colors text-sm uppercase tracking-wider">
+                  All News →
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {featuredNews.map((item) => (
+                  <NewsCard key={item.id} item={item} />
+                ))}
+              </div>
+            </section>
+
+            {/* Sponsors */}
+            <section className="max-w-7xl mx-auto px-4 py-16 border-t border-white/5">
+              <h2 className="font-display text-2xl font-bold text-white text-center mb-8">OUR PARTNERS</h2>
+              <div className="overflow-hidden">
+                <div className="flex gap-12 items-center justify-around py-4">
+                  {SPONSORS.concat(SPONSORS).map((s, i) => (
+                    <div key={i} className="flex flex-col items-center gap-1 min-w-[80px]">
+                      <span className="text-4xl">{s.logo}</span>
+                      <span className="text-xs text-gray-500 font-medium">{s.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          </div>
+        );
+      };
+
+      // About
+      const About = () => (
+        <div className="pt-16 max-w-4xl mx-auto px-4 py-16">
+          <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-6">
+            ABOUT <span className="gradient-text">WOLF SOCIETY</span>
+          </h1>
+          <div className="prose prose-invert prose-lg max-w-none">
+            <p className="text-gray-300 leading-relaxed text-lg">
+              Wolf Society Esports is a premier competitive gaming organization
+              founded in 2020 with a singular vision: to dominate the global
+              esports scene while building a community that champions excellence,
+              integrity, and passion.
             </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
+              <div className="bg-[#14141a] p-6 rounded-xl border border-white/5 hover-glow-blue card-hover">
+                <div className="text-4xl mb-3">🎯</div>
+                <h3 className="text-white font-bold text-lg">Mission</h3>
+                <p className="text-gray-400 text-sm">To compete at the highest level and inspire the next generation of gamers.</p>
+              </div>
+              <div className="bg-[#14141a] p-6 rounded-xl border border-white/5 hover-glow-green card-hover">
+                <div className="text-4xl mb-3">👥</div>
+                <h3 className="text-white font-bold text-lg">Community</h3>
+                <p className="text-gray-400 text-sm">Building a global family of fans, players, and creators united by competitive spirit.</p>
+              </div>
+              <div className="bg-[#14141a] p-6 rounded-xl border border-white/5 hover-glow-pink card-hover">
+                <div className="text-4xl mb-3">🏅</div>
+                <h3 className="text-white font-bold text-lg">Excellence</h3>
+                <p className="text-gray-400 text-sm">Relentless pursuit of victory through discipline, teamwork, and innovation.</p>
+              </div>
+            </div>
+            <p className="text-gray-300 leading-relaxed">
+              With multiple championship titles across Valorant, League of Legends,
+              and Call of Duty, Wolf Society continues to push the boundaries of
+              competitive gaming. Our players are not just athletes — they are
+              entertainers, educators, and icons of the digital age.
+            </p>
+          </div>
+        </div>
+      );
 
-            <!-- CTA Buttons -->
-            <div class="flex flex-wrap items-center justify-center gap-4 mt-10">
-                <button class="neon-btn text-base py-3 px-8" aria-label="Explore our teams and roster">
-                    <i class="fas fa-rocket mr-2"></i> Explore Teams
+      // Teams
+      const Teams = () => (
+        <div className="pt-16 max-w-7xl mx-auto px-4 py-16">
+          <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
+            OUR <span className="gradient-text">PACK</span>
+          </h1>
+          <p className="text-gray-400 mb-12 text-lg">Meet the wolves dominating the competitive scene.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {TEAMS.map((team) => (
+              <div key={team.id} className="bg-[#14141a] rounded-2xl border border-white/5 overflow-hidden hover-glow-blue card-hover transition-all">
+                <div className="p-6 border-b border-white/5 bg-gradient-to-b from-blue-600/5 to-transparent">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">{team.logo}</span>
+                      <div>
+                        <h3 className="text-white font-bold text-xl">{team.name}</h3>
+                        <span className="text-xs text-gray-500 uppercase tracking-wider">{team.game}</span>
+                      </div>
+                    </div>
+                    <span className="text-xs font-bold text-neon-green">{team.record}</span>
+                  </div>
+                  <div className="mt-2 flex items-center gap-2 text-xs text-gray-500">
+                    <span>#{team.tag}</span>
+                    <span>•</span>
+                    <span className="text-neon-blue">{team.rank}</span>
+                  </div>
+                </div>
+                <div className="p-4 space-y-2">
+                  {team.players.map((p, i) => (
+                    <div key={i} className="flex items-center justify-between text-sm bg-[#0e0e12] px-3 py-2 rounded-lg border border-white/5">
+                      <div className="flex items-center gap-2">
+                        <span>{p.avatar}</span>
+                        <span className="text-white font-medium">{p.handle}</span>
+                      </div>
+                      <span className="text-xs text-gray-500">{p.role}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+
+      // Matches
+      const Matches = () => (
+        <div className="pt-16 max-w-7xl mx-auto px-4 py-16">
+          <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
+            SCHEDULE & <span className="gradient-text">RESULTS</span>
+          </h1>
+          <p className="text-gray-400 mb-12 text-lg">Stay up to date with all Wolf Society fixtures.</p>
+          <div className="space-y-4">
+            {MATCHES.map((match) => (
+              <MatchCard key={match.id} match={match} detailed />
+            ))}
+          </div>
+        </div>
+      );
+
+      // News
+      const NewsPage = () => (
+        <div className="pt-16 max-w-7xl mx-auto px-4 py-16">
+          <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
+            LATEST <span className="gradient-text">NEWS</span>
+          </h1>
+          <p className="text-gray-400 mb-12 text-lg">Stories, updates, and announcements from the pack.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {NEWS.map((item) => (
+              <NewsCard key={item.id} item={item} detailed />
+            ))}
+          </div>
+        </div>
+      );
+
+      // Stream
+      const Stream = () => (
+        <div className="pt-16 max-w-7xl mx-auto px-4 py-16">
+          <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
+            LIVE <span className="gradient-text">STREAM</span>
+          </h1>
+          <p className="text-gray-400 mb-8 text-lg">Watch Wolf Society in action — live on Twitch.</p>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <div className="aspect-video bg-[#14141a] rounded-2xl border border-white/5 flex items-center justify-center overflow-hidden relative">
+                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-blue-600/5 to-transparent">
+                  <div className="text-center">
+                    <div className="text-6xl mb-4">📺</div>
+                    <p className="text-gray-500 text-lg">Twitch Stream Embed</p>
+                    <p className="text-gray-600 text-sm">Live: Wolf Society Official</p>
+                    <span className="inline-block mt-3 px-4 py-1.5 rounded-full bg-red-600/20 text-red-400 text-xs font-bold uppercase tracking-wider border border-red-600/30">
+                      <span className="live-dot inline-block mr-2 align-middle" />
+                      LIVE
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 flex items-center gap-4 text-sm text-gray-400">
+                <span className="flex items-center gap-1"><span className="text-red-500">●</span> 1.2k viewers</span>
+                <span>•</span>
+                <span>Wolf Society Official</span>
+                <span>•</span>
+                <span className="text-neon-blue">Valorant Scrims</span>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div className="bg-[#14141a] rounded-2xl border border-white/5 p-6">
+                <h3 className="text-white font-bold text-lg mb-4">Chat</h3>
+                <div className="space-y-3 text-sm">
+                  <div className="flex gap-2"><span className="text-neon-blue">@ShadowFan</span><span className="text-gray-400">Let's go Wolves! 🐺</span></div>
+                  <div className="flex gap-2"><span className="text-neon-pink">@Viper</span><span className="text-gray-400">Insane clutch!</span></div>
+                  <div className="flex gap-2"><span className="text-neon-green">@Omega</span><span className="text-gray-400">GGWP</span></div>
+                  <div className="flex gap-2"><span className="text-gray-500">@guest</span><span className="text-gray-400">First time watching, hype!</span></div>
+                </div>
+                <div className="mt-4 flex gap-2">
+                  <input type="text" placeholder="Join the chat..." className="flex-1 bg-[#0a0a0c] border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-neon-blue" />
+                  <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-green-500 rounded-lg text-white text-sm font-bold">Send</button>
+                </div>
+              </div>
+              <div className="bg-[#14141a] rounded-2xl border border-white/5 p-4 flex items-center gap-3">
+                <span className="text-2xl">💬</span>
+                <div>
+                  <p className="text-white font-medium text-sm">Discord Community</p>
+                  <p className="text-xs text-gray-500">12.4k members online</p>
+                </div>
+                <button className="ml-auto px-4 py-1.5 rounded-full bg-[#5865F2] text-white text-xs font-bold">Join</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
+      // Contact
+      const Contact = () => (
+        <div className="pt-16 max-w-4xl mx-auto px-4 py-16">
+          <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
+            GET IN <span className="gradient-text">TOUCH</span>
+          </h1>
+          <p className="text-gray-400 mb-8 text-lg">Have a question, partnership inquiry, or want to join the pack? Reach out.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="bg-[#14141a] rounded-2xl border border-white/5 p-6 space-y-4">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">📧</span>
+                <div><p className="text-white font-medium">Email</p><p className="text-sm text-gray-500">wolfsocietygg@yahoo.com</p></div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">🐦</span>
+                <div><p className="text-white font-medium">Twitter</p><p className="text-sm text-gray-500">@WolfSocietyGG</p></div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">💬</span>
+                <div><p className="text-white font-medium">Discord</p><p className="text-sm text-gray-500">discord.gg/wolfsociety</p></div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">📍</span>
+                <div><p className="text-white font-medium">Location</p><p className="text-sm text-gray-500">Los Angeles, CA</p></div>
+              </div>
+            </div>
+            <div className="bg-[#14141a] rounded-2xl border border-white/5 p-6">
+              <form className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Name</label>
+                  <input type="text" className="w-full bg-[#0a0a0c] border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-neon-blue" placeholder="Your name" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Email</label>
+                  <input type="email" className="w-full bg-[#0a0a0c] border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-neon-blue" placeholder="you@example.com" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Message</label>
+                  <textarea rows="4" className="w-full bg-[#0a0a0c] border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-neon-blue" placeholder="Your message..." />
+                </div>
+                <button className="w-full py-3 rounded-lg bg-gradient-to-r from-blue-600 to-green-500 text-white font-bold uppercase tracking-wider text-sm hover:scale-[1.02] transition-transform shadow-lg shadow-blue-600/20">
+                  Send Message
                 </button>
-                <button class="neon-btn-outline text-base py-3 px-8" aria-label="Watch our latest matches">
-                    <i class="fas fa-play-circle mr-2"></i> Watch Matches
+              </form>
+            </div>
+          </div>
+        </div>
+      );
+
+      // Admin Dashboard (simplified)
+      const Admin = () => {
+        const [activeTab, setActiveTab] = useState('roster');
+        const tabs = [
+          { id: 'roster', label: 'Roster' },
+          { id: 'matches', label: 'Matches' },
+          { id: 'news', label: 'News' },
+          { id: 'sponsors', label: 'Sponsors' },
+        ];
+        return (
+          <div className="pt-16 max-w-7xl mx-auto px-4 py-16">
+            <div className="flex items-center justify-between mb-8">
+              <h1 className="font-display text-3xl md:text-4xl font-bold text-white">
+                ADMIN <span className="gradient-text">DASHBOARD</span>
+              </h1>
+              <span className="text-xs bg-green-600/20 text-green-400 px-3 py-1 rounded-full border border-green-600/30">Secure</span>
+            </div>
+
+            {/* Tabs */}
+            <div className="flex gap-2 border-b border-white/5 mb-8 overflow-x-auto">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`px-6 py-3 text-sm font-medium uppercase tracking-wider transition-colors ${activeTab === tab.id ? 'text-white border-b-2 border-neon-blue' : 'text-gray-500 hover:text-gray-300'}`}
+                >
+                  {tab.label}
                 </button>
+              ))}
             </div>
 
-            <!-- Stats -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10 mt-16 max-w-3xl mx-auto">
-                <div class="text-center">
-                    <div class="text-3xl md:text-4xl font-heading font-black text-neon-blue" data-count="12">0</div>
-                    <div class="text-xs text-zinc-500 uppercase tracking-wider mt-1">Pro Players</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-3xl md:text-4xl font-heading font-black text-neon-purple" data-count="47">0</div>
-                    <div class="text-xs text-zinc-500 uppercase tracking-wider mt-1">Tournaments Won</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-3xl md:text-4xl font-heading font-black text-neon-orange" data-count="128">0</div>
-                    <div class="text-xs text-zinc-500 uppercase tracking-wider mt-1">Matches Played</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-3xl md:text-4xl font-heading font-black text-neon-pink" data-count="2.4">0</div>
-                    <div class="text-xs text-zinc-500 uppercase tracking-wider mt-1">Million Fans</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Scroll indicator -->
-        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-zinc-600 animate-bounce z-10">
-            <span class="text-[10px] uppercase tracking-widest text-zinc-500">Scroll</span>
-            <i class="fas fa-chevron-down text-sm"></i>
-        </div>
-    </section>
-
-    <!-- ============================================================ -->
-    <!-- ===== ABOUT SECTION ===== -->
-    <!-- ============================================================ -->
-    <section id="about" class="py-20 md:py-28 px-4 relative" aria-label="About Wolf Society">
-        <div class="max-w-7xl mx-auto">
-            <!-- Section header -->
-            <div class="text-center mb-16" data-animate="fade-up">
-                <span class="text-neon-blue text-sm font-semibold tracking-widest uppercase">About Us</span>
-                <h2 class="font-heading font-bold text-3xl md:text-5xl text-white mt-2">
-                    Built by Gamers, <span class="text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-neon-purple">for Gamers</span>
-                </h2>
-                <p class="text-zinc-400 max-w-2xl mx-auto mt-4 text-base md:text-lg">
-                    Wolf Society isn't just a team — it's a movement. We combine raw talent, cutting-edge strategy,
-                    and an unbreakable spirit to redefine competitive gaming.
-                </p>
-            </div>
-
-            <!-- Grid -->
-            <div class="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
-                <!-- Image / visual -->
-                <div class="relative" data-animate="fade-right">
-                    <div class="rounded-2xl overflow-hidden border border-white/5 glass-card p-2">
-                        <img
-                        src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&q=80"
-                        alt="Wolf Society esports team celebrating victory"
-                        class="w-full h-72 md:h-96 object-cover rounded-xl"
-                        loading="lazy"
-                        />
-                    </div>
-                    <!-- floating badge -->
-                    <div class="absolute -bottom-4 -right-4 glass px-5 py-3 rounded-xl border border-neon-blue/20 hidden sm:flex items-center gap-3">
-                        <span class="w-3 h-3 rounded-full bg-green-400 animate-pulse"></span>
-                        <span class="text-sm font-medium text-white">Live <span class="text-zinc-400 font-normal">· 2.4k watching</span></span>
-                    </div>
-                </div>
-
-                <!-- Text -->
-                <div data-animate="fade-left">
-                    <div class="space-y-6">
-                        <div class="flex items-center gap-3">
-                            <span class="w-10 h-10 rounded-full bg-neon-blue/10 flex items-center justify-center text-neon-blue">
-                                <i class="fas fa-trophy"></i>
-                            </span>
-                            <span class="text-sm font-semibold text-zinc-300">Est. 2024</span>
-                        </div>
-                        <h3 class="font-heading text-2xl md:text-3xl font-bold text-white">
-                            The Pack That <span class="text-neon-blue">Never Sleeps</span>
-                        </h3>
-                        <p class="text-zinc-400 leading-relaxed">
-                            From our state-of-the-art training facility to our global network of talent scouts,
-                            Wolf Society is committed to pushing the boundaries of esports excellence.
-                            We compete at the highest level while fostering a community that shares our passion.
-                        </p>
-                        <p class="text-zinc-400 leading-relaxed">
-                            Our roster features some of the most promising young talents alongside seasoned veterans,
-                            creating a perfect blend of raw energy and experience.
-                        </p>
-                        <div class="flex flex-wrap gap-4 pt-2">
-                            <div class="flex items-center gap-2 text-sm text-zinc-300">
-                                <i class="fas fa-check-circle text-neon-blue"></i>
-                                <span>World-class coaching</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-sm text-zinc-300">
-                                <i class="fas fa-check-circle text-neon-purple"></i>
-                                <span>24/7 practice facility</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-sm text-zinc-300">
-                                <i class="fas fa-check-circle text-neon-orange"></i>
-                                <span>Global fan community</span>
-                            </div>
-                        </div>
-                        <button class="neon-btn text-sm py-2.5 px-6 mt-2" aria-label="Read our full story">
-                            Read Full Story <i class="fas fa-arrow-right ml-2"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================ -->
-    <!-- ===== TEAMS SECTION ===== -->
-    <!-- ============================================================ -->
-    <section id="teams" class="py-20 md:py-28 px-4 relative" aria-label="Our teams and players">
-        <div class="max-w-7xl mx-auto">
-            <!-- Section header -->
-            <div class="text-center mb-16" data-animate="fade-up">
-                <span class="text-neon-purple text-sm font-semibold tracking-widest uppercase">Our Roster</span>
-                <h2 class="font-heading font-bold text-3xl md:text-5xl text-white mt-2">
-                    Meet the <span class="text-transparent bg-clip-text bg-gradient-to-r from-neon-purple to-neon-pink">Pack</span>
-                </h2>
-                <p class="text-zinc-400 max-w-2xl mx-auto mt-4 text-base md:text-lg">
-                    Elite players across multiple titles, united by one goal: victory.
-                </p>
-            </div>
-
-            <!-- Team Cards -->
-            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" id="teamGrid">
-                <!-- Card 1 -->
-                <div class="glass-card rounded-xl overflow-hidden group" data-animate="fade-up" data-delay="0">
-                    <div class="team-card-img">
-                        <img
-                        src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&q=80"
-                        alt="Phantom — Valorant IGL"
-                        loading="lazy"
-                        />
-                        <div class="overlay">
-                            <span class="text-xs font-semibold text-neon-blue uppercase tracking-wider">Valorant</span>
-                        </div>
-                    </div>
-                    <div class="p-5">
-                        <h3 class="font-heading font-bold text-lg text-white">Phantom</h3>
-                        <p class="text-sm text-zinc-400">In-Game Leader</p>
-                        <div class="mt-3 space-y-1.5">
-                            <div class="flex justify-between text-xs text-zinc-500">
-                                <span>K/D</span>
-                                <span class="text-white font-semibold">1.42</span>
-                            </div>
-                            <div class="stat-bar"><div class="stat-bar-fill" style="width:82%"></div></div>
-                            <div class="flex justify-between text-xs text-zinc-500">
-                                <span>HS %</span>
-                                <span class="text-white font-semibold">68%</span>
-                            </div>
-                            <div class="stat-bar"><div class="stat-bar-fill" style="width:68%"></div></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 2 -->
-                <div class="glass-card rounded-xl overflow-hidden group" data-animate="fade-up" data-delay="100">
-                    <div class="team-card-img">
-                        <img
-                        src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=400&q=80"
-                        alt="Raven — CS2 AWPer"
-                        loading="lazy"
-                        />
-                        <div class="overlay">
-                            <span class="text-xs font-semibold text-neon-orange uppercase tracking-wider">CS2</span>
-                        </div>
-                    </div>
-                    <div class="p-5">
-                        <h3 class="font-heading font-bold text-lg text-white">Raven</h3>
-                        <p class="text-sm text-zinc-400">Primary AWP</p>
-                        <div class="mt-3 space-y-1.5">
-                            <div class="flex justify-between text-xs text-zinc-500">
-                                <span>K/D</span>
-                                <span class="text-white font-semibold">1.38</span>
-                            </div>
-                            <div class="stat-bar"><div class="stat-bar-fill" style="width:78%"></div></div>
-                            <div class="flex justify-between text-xs text-zinc-500">
-                                <span>HS %</span>
-                                <span class="text-white font-semibold">72%</span>
-                            </div>
-                            <div class="stat-bar"><div class="stat-bar-fill" style="width:72%"></div></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 3 -->
-                <div class="glass-card rounded-xl overflow-hidden group" data-animate="fade-up" data-delay="200">
-                    <div class="team-card-img">
-                        <img
-                        src="https://images.unsplash.com/photo-1511882150382-421056c89033?w=400&q=80"
-                        alt="Frost — League of Legends Mid"
-                        loading="lazy"
-                        />
-                        <div class="overlay">
-                            <span class="text-xs font-semibold text-neon-pink uppercase tracking-wider">LoL</span>
-                        </div>
-                    </div>
-                    <div class="p-5">
-                        <h3 class="font-heading font-bold text-lg text-white">Frost</h3>
-                        <p class="text-sm text-zinc-400">Mid Lane</p>
-                        <div class="mt-3 space-y-1.5">
-                            <div class="flex justify-between text-xs text-zinc-500">
-                                <span>KDA</span>
-                                <span class="text-white font-semibold">4.8</span>
-                            </div>
-                            <div class="stat-bar"><div class="stat-bar-fill" style="width:88%"></div></div>
-                            <div class="flex justify-between text-xs text-zinc-500">
-                                <span>CS/min</span>
-                                <span class="text-white font-semibold">9.2</span>
-                            </div>
-                            <div class="stat-bar"><div class="stat-bar-fill" style="width:92%"></div></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 4 -->
-                <div class="glass-card rounded-xl overflow-hidden group" data-animate="fade-up" data-delay="300">
-                    <div class="team-card-img">
-                        <img
-                        src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=400&q=80"
-                        alt="Shadow — Valorant Duelist"
-                        loading="lazy"
-                        />
-                        <div class="overlay">
-                            <span class="text-xs font-semibold text-neon-blue uppercase tracking-wider">Valorant</span>
-                        </div>
-                    </div>
-                    <div class="p-5">
-                        <h3 class="font-heading font-bold text-lg text-white">Shadow</h3>
-                        <p class="text-sm text-zinc-400">Duelist</p>
-                        <div class="mt-3 space-y-1.5">
-                            <div class="flex justify-between text-xs text-zinc-500">
-                                <span>K/D</span>
-                                <span class="text-white font-semibold">1.51</span>
-                            </div>
-                            <div class="stat-bar"><div class="stat-bar-fill" style="width:85%"></div></div>
-                            <div class="flex justify-between text-xs text-zinc-500">
-                                <span>ACS</span>
-                                <span class="text-white font-semibold">284</span>
-                            </div>
-                            <div class="stat-bar"><div class="stat-bar-fill" style="width:74%"></div></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- View All -->
-            <div class="text-center mt-12">
-                <button class="neon-btn-outline text-sm py-2.5 px-8" aria-label="View full roster">
-                    View Full Roster <i class="fas fa-arrow-right ml-2"></i>
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================ -->
-    <!-- ===== NEWS & EVENTS with MARQUEE ===== -->
-    <!-- ============================================================ -->
-    <section id="news" class="py-20 md:py-28 px-4 relative" aria-label="News and events">
-        <div class="max-w-7xl mx-auto">
-            <!-- Section header -->
-            <div class="text-center mb-12" data-animate="fade-up">
-                <span class="text-neon-orange text-sm font-semibold tracking-widest uppercase">Latest Updates</span>
-                <h2 class="font-heading font-bold text-3xl md:text-5xl text-white mt-2">
-                    News &amp; <span class="text-transparent bg-clip-text bg-gradient-to-r from-neon-orange to-neon-pink">Events</span>
-                </h2>
-            </div>
-
-            <!-- Marquee Ticker -->
-            <div class="overflow-hidden border-y border-white/5 py-3 mb-12" role="marquee" aria-label="Breaking news ticker">
-                <div class="marquee-track flex items-center gap-8 text-sm font-medium">
-                    <span class="text-neon-blue"><i class="fas fa-circle text-[6px] align-middle mr-2"></i> BREAKING</span>
-                    <span>Wolf Society qualifies for Valorant Champions 2026</span>
-                    <span class="text-zinc-600">•</span>
-                    <span class="text-neon-purple"><i class="fas fa-circle text-[6px] align-middle mr-2"></i> NEW SIGNING</span>
-                    <span>Shadow joins the main roster as Duelist</span>
-                    <span class="text-zinc-600">•</span>
-                    <span class="text-neon-orange"><i class="fas fa-circle text-[6px] align-middle mr-2"></i> EVENT</span>
-                    <span>Fan Meet &amp; Greet — July 15th, 2026</span>
-                    <span class="text-zinc-600">•</span>
-                    <span class="text-neon-pink"><i class="fas fa-circle text-[6px] align-middle mr-2"></i> MERCH</span>
-                    <span>Limited edition Wolf Society jerseys available now</span>
-                    <span class="text-zinc-600">•</span>
-                    <!-- Duplicate for seamless loop -->
-                    <span class="text-neon-blue"><i class="fas fa-circle text-[6px] align-middle mr-2"></i> BREAKING</span>
-                    <span>Wolf Society qualifies for Valorant Champions 2026</span>
-                    <span class="text-zinc-600">•</span>
-                    <span class="text-neon-purple"><i class="fas fa-circle text-[6px] align-middle mr-2"></i> NEW SIGNING</span>
-                    <span>Shadow joins the main roster as Duelist</span>
-                    <span class="text-zinc-600">•</span>
-                    <span class="text-neon-orange"><i class="fas fa-circle text-[6px] align-middle mr-2"></i> EVENT</span>
-                    <span>Fan Meet &amp; Greet — July 15th, 2026</span>
-                    <span class="text-zinc-600">•</span>
-                    <span class="text-neon-pink"><i class="fas fa-circle text-[6px] align-middle mr-2"></i> MERCH</span>
-                    <span>Limited edition Wolf Society jerseys available now</span>
-                    <span class="text-zinc-600">•</span>
-                </div>
-            </div>
-
-            <!-- News Grid -->
-            <div class="grid md:grid-cols-3 gap-6">
-                <div class="glass-card rounded-xl overflow-hidden group" data-animate="fade-up" data-delay="0">
-                    <div class="h-48 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&q=80" alt="Valorant tournament victory" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
-                    </div>
-                    <div class="p-5">
-                        <div class="flex items-center gap-2 text-xs text-zinc-500 mb-2">
-                            <span class="text-neon-blue font-semibold">Tournament</span>
-                            <span>•</span>
-                            <span>3 days ago</span>
-                        </div>
-                        <h3 class="font-heading font-bold text-lg text-white group-hover:text-neon-blue transition-colors">
-                            Wolf Society Takes 1st Place at Valorant Challengers
-                        </h3>
-                        <p class="text-zinc-400 text-sm mt-2 line-clamp-2">
-                            Dominant performance from Phantom and Shadow secures the championship title.
-                        </p>
-                        <a href="#" class="inline-block mt-3 text-sm font-semibold text-neon-blue hover:text-neon-purple transition-colors">
-                            Read More <i class="fas fa-arrow-right ml-1"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="glass-card rounded-xl overflow-hidden group" data-animate="fade-up" data-delay="100">
-                    <div class="h-48 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1511882150382-421056c89033?w=600&q=80" alt="New player signing announcement" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
-                    </div>
-                    <div class="p-5">
-                        <div class="flex items-center gap-2 text-xs text-zinc-500 mb-2">
-                            <span class="text-neon-purple font-semibold">Transfer</span>
-                            <span>•</span>
-                            <span>1 week ago</span>
-                        </div>
-                        <h3 class="font-heading font-bold text-lg text-white group-hover:text-neon-blue transition-colors">
-                            Frost Joins Wolf Society LoL Roster
-                        </h3>
-                        <p class="text-zinc-400 text-sm mt-2 line-clamp-2">
-                            The prodigy mid-laner from Korea signs a 3-year deal with the pack.
-                        </p>
-                        <a href="#" class="inline-block mt-3 text-sm font-semibold text-neon-blue hover:text-neon-purple transition-colors">
-                            Read More <i class="fas fa-arrow-right ml-1"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="glass-card rounded-xl overflow-hidden group" data-animate="fade-up" data-delay="200">
-                    <div class="h-48 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=600&q=80" alt="Community meet and greet event" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
-                    </div>
-                    <div class="p-5">
-                        <div class="flex items-center gap-2 text-xs text-zinc-500 mb-2">
-                            <span class="text-neon-orange font-semibold">Community</span>
-                            <span>•</span>
-                            <span>2 weeks ago</span>
-                        </div>
-                        <h3 class="font-heading font-bold text-lg text-white group-hover:text-neon-blue transition-colors">
-                            Wolf Society Fan Fest 2026 — Tickets Now Live
-                        </h3>
-                        <p class="text-zinc-400 text-sm mt-2 line-clamp-2">
-                            Join us for a weekend of matches, meet &amp; greets, and exclusive merch drops.
-                        </p>
-                        <a href="#" class="inline-block mt-3 text-sm font-semibold text-neon-blue hover:text-neon-purple transition-colors">
-                            Read More <i class="fas fa-arrow-right ml-1"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================ -->
-    <!-- ===== ANALYTICS DASHBOARD ===== -->
-    <!-- ============================================================ -->
-    <section id="analytics" class="py-20 md:py-28 px-4 relative" aria-label="Analytics dashboard">
-        <div class="max-w-7xl mx-auto">
-            <!-- Section header -->
-            <div class="text-center mb-16" data-animate="fade-up">
-                <span class="text-neon-pink text-sm font-semibold tracking-widest uppercase">Performance</span>
-                <h2 class="font-heading font-bold text-3xl md:text-5xl text-white mt-2">
-                    Analytics <span class="text-transparent bg-clip-text bg-gradient-to-r from-neon-pink to-neon-orange">Dashboard</span>
-                </h2>
-                <p class="text-zinc-400 max-w-2xl mx-auto mt-4 text-base md:text-lg">
-                    Real-time performance metrics from our recent tournaments.
-                </p>
-            </div>
-
-            <!-- Charts Grid -->
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Chart 1: Win Rate -->
-                <div class="glass-card rounded-xl p-6" data-animate="fade-up" data-delay="0">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-sm font-medium text-zinc-400">Win Rate</span>
-                        <span class="text-2xl font-heading font-black text-neon-blue" id="winRate">0%</span>
-                    </div>
-                    <div class="h-2 bg-white/5 rounded-full overflow-hidden">
-                        <div class="h-full bg-gradient-to-r from-neon-blue to-neon-purple rounded-full transition-all duration-1000" style="width:0%" id="winRateBar"></div>
-                    </div>
-                    <div class="flex justify-between text-xs text-zinc-500 mt-2">
-                        <span>Last 50 matches</span>
-                        <span class="text-neon-blue">+12%</span>
-                    </div>
-                </div>
-
-                <!-- Chart 2: Avg K/D -->
-                <div class="glass-card rounded-xl p-6" data-animate="fade-up" data-delay="100">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-sm font-medium text-zinc-400">Avg K/D</span>
-                        <span class="text-2xl font-heading font-black text-neon-purple" id="avgKD">0.00</span>
-                    </div>
-                    <div class="h-2 bg-white/5 rounded-full overflow-hidden">
-                        <div class="h-full bg-gradient-to-r from-neon-purple to-neon-pink rounded-full transition-all duration-1000" style="width:0%" id="kdBar"></div>
-                    </div>
-                    <div class="flex justify-between text-xs text-zinc-500 mt-2">
-                        <span>Team average</span>
-                        <span class="text-neon-purple">+0.21</span>
-                    </div>
-                </div>
-
-                <!-- Chart 3: Headshot % -->
-                <div class="glass-card rounded-xl p-6" data-animate="fade-up" data-delay="200">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-sm font-medium text-zinc-400">HS %</span>
-                        <span class="text-2xl font-heading font-black text-neon-orange" id="hsPercent">0%</span>
-                    </div>
-                    <div class="h-2 bg-white/5 rounded-full overflow-hidden">
-                        <div class="h-full bg-gradient-to-r from-neon-orange to-neon-pink rounded-full transition-all duration-1000" style="width:0%" id="hsBar"></div>
-                    </div>
-                    <div class="flex justify-between text-xs text-zinc-500 mt-2">
-                        <span>Precision rating</span>
-                        <span class="text-neon-orange">+8%</span>
-                    </div>
-                </div>
-
-                <!-- Chart 4: Matches Played -->
-                <div class="glass-card rounded-xl p-6" data-animate="fade-up" data-delay="300">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-sm font-medium text-zinc-400">Matches</span>
-                        <span class="text-2xl font-heading font-black text-neon-pink" id="matchesPlayed">0</span>
-                    </div>
-                    <div class="h-2 bg-white/5 rounded-full overflow-hidden">
-                        <div class="h-full bg-gradient-to-r from-neon-pink to-neon-orange rounded-full transition-all duration-1000" style="width:0%" id="matchesBar"></div>
-                    </div>
-                    <div class="flex justify-between text-xs text-zinc-500 mt-2">
-                        <span>This season</span>
-                        <span class="text-neon-pink">+24</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Detailed chart bar -->
-            <div class="mt-10 glass-card rounded-xl p-6 md:p-8" data-animate="fade-up" data-delay="400">
-                <h4 class="font-heading font-bold text-white text-lg mb-6">Monthly Performance <span class="text-zinc-500 text-sm font-normal ml-2">(Tournament K/D)</span></h4>
-                <div class="flex items-end gap-3 h-48" id="monthlyChart">
-                    <div class="flex-1 flex flex-col items-center gap-2">
-                        <div class="w-full chart-bar rounded-t-md bg-gradient-to-t from-neon-blue/30 to-neon-blue" style="--target-height:60%;height:0%" data-target="60"></div>
-                        <span class="text-xs text-zinc-500">Jan</span>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center gap-2">
-                        <div class="w-full chart-bar rounded-t-md bg-gradient-to-t from-neon-purple/30 to-neon-purple" style="--target-height:75%;height:0%" data-target="75"></div>
-                        <span class="text-xs text-zinc-500">Feb</span>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center gap-2">
-                        <div class="w-full chart-bar rounded-t-md bg-gradient-to-t from-neon-pink/30 to-neon-pink" style="--target-height:55%;height:0%" data-target="55"></div>
-                        <span class="text-xs text-zinc-500">Mar</span>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center gap-2">
-                        <div class="w-full chart-bar rounded-t-md bg-gradient-to-t from-neon-orange/30 to-neon-orange" style="--target-height:82%;height:0%" data-target="82"></div>
-                        <span class="text-xs text-zinc-500">Apr</span>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center gap-2">
-                        <div class="w-full chart-bar rounded-t-md bg-gradient-to-t from-neon-blue/30 to-neon-blue" style="--target-height:68%;height:0%" data-target="68"></div>
-                        <span class="text-xs text-zinc-500">May</span>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center gap-2">
-                        <div class="w-full chart-bar rounded-t-md bg-gradient-to-t from-neon-purple/30 to-neon-purple" style="--target-height:90%;height:0%" data-target="90"></div>
-                        <span class="text-xs text-zinc-500">Jun</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================ -->
-    <!-- ===== FOOTER ===== -->
-    <!-- ============================================================ -->
-    <footer class="border-t border-white/5 pt-16 pb-8 px-4 relative" role="contentinfo">
-        <div class="max-w-7xl mx-auto">
-            <div class="grid md:grid-cols-4 gap-10 pb-12 border-b border-white/5">
-                <!-- Brand -->
+            {/* Tab Content */}
+            <div className="bg-[#14141a] rounded-2xl border border-white/5 p-6">
+              {activeTab === 'roster' && (
                 <div>
-                    <a href="#" class="flex items-center gap-2 mb-4">
-                        <svg class="w-8 h-8 text-neon-blue" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" fill="currentColor" opacity="0.3"/>
-                        </svg>
-                        <span class="font-cursive text-2xl text-white">Wolf<span class="text-neon-blue">Society</span></span>
-                    </a>
-                    <p class="text-sm text-zinc-500 max-w-xs leading-relaxed">
-                        Forging champions, building community. The future of esports starts here.
-                    </p>
-                    <div class="flex gap-3 mt-5">
-                        <a href="#" class="social-icon" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social-icon" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-                        <a href="#" class="social-icon" aria-label="Twitch"><i class="fab fa-twitch"></i></a>
-                        <a href="#" class="social-icon" aria-label="Discord"><i class="fab fa-discord"></i></a>
-                        <a href="#" class="social-icon" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    </div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-white font-bold text-lg">Manage Players</h3>
+                    <button className="px-4 py-1.5 rounded-lg bg-neon-blue/20 text-neon-blue text-xs font-bold border border-neon-blue/30 hover:bg-neon-blue/30 transition-colors">+ Add Player</button>
+                  </div>
+                  <div className="space-y-2">
+                    {TEAMS.flatMap(t => t.players).map((p, i) => (
+                      <div key={i} className="flex items-center justify-between bg-[#0e0e12] px-4 py-3 rounded-lg border border-white/5">
+                        <div className="flex items-center gap-3">
+                          <span>{p.avatar}</span>
+                          <span className="text-white font-medium">{p.handle}</span>
+                          <span className="text-xs text-gray-500">{p.role}</span>
+                        </div>
+                        <div className="flex gap-2">
+                          <button className="text-xs text-gray-500 hover:text-white transition-colors">✏️</button>
+                          <button className="text-xs text-gray-500 hover:text-red-500 transition-colors">🗑️</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-
-                <!-- Quick Links -->
+              )}
+              {activeTab === 'matches' && (
                 <div>
-                    <h4 class="font-heading font-semibold text-white text-sm uppercase tracking-wider mb-4">Quick Links</h4>
-                    <ul class="space-y-2.5 text-sm">
-                        <li><a href="#" class="footer-link">About Us</a></li>
-                        <li><a href="#" class="footer-link">Our Teams</a></li>
-                        <li><a href="#" class="footer-link">Schedule</a></li>
-                        <li><a href="#" class="footer-link">Shop</a></li>
-                    </ul>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-white font-bold text-lg">Match Schedule</h3>
+                    <button className="px-4 py-1.5 rounded-lg bg-neon-green/20 text-neon-green text-xs font-bold border border-neon-green/30 hover:bg-neon-green/30 transition-colors">+ New Match</button>
+                  </div>
+                  <div className="space-y-2">
+                    {MATCHES.map((m) => (
+                      <div key={m.id} className="flex items-center justify-between bg-[#0e0e12] px-4 py-3 rounded-lg border border-white/5">
+                        <div>
+                          <span className="text-white font-medium">{m.team1} vs {m.team2}</span>
+                          <span className="text-xs text-gray-500 ml-3">{m.game} • {m.tournament}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className={`text-xs font-bold ${m.status === 'live' ? 'text-red-400' : m.status === 'upcoming' ? 'text-neon-blue' : 'text-gray-500'}`}>
+                            {m.status.toUpperCase()}
+                          </span>
+                          <button className="text-xs text-gray-500 hover:text-white transition-colors">✏️</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-
-                <!-- Support -->
+              )}
+              {activeTab === 'news' && (
                 <div>
-                    <h4 class="font-heading font-semibold text-white text-sm uppercase tracking-wider mb-4">Support</h4>
-                    <ul class="space-y-2.5 text-sm">
-                        <li><a href="#" class="footer-link">Contact Us</a></li>
-                        <li><a href="#" class="footer-link">FAQ</a></li>
-                        <li><a href="#" class="footer-link">Privacy Policy</a></li>
-                        <li><a href="#" class="footer-link">Terms of Service</a></li>
-                    </ul>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-white font-bold text-lg">News Articles</h3>
+                    <button className="px-4 py-1.5 rounded-lg bg-neon-pink/20 text-neon-pink text-xs font-bold border border-neon-pink/30 hover:bg-neon-pink/30 transition-colors">+ Write Article</button>
+                  </div>
+                  <div className="space-y-2">
+                    {NEWS.map((n) => (
+                      <div key={n.id} className="flex items-center justify-between bg-[#0e0e12] px-4 py-3 rounded-lg border border-white/5">
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">{n.image}</span>
+                          <div>
+                            <p className="text-white font-medium text-sm">{n.title}</p>
+                            <p className="text-xs text-gray-500">{n.date} • {n.category}</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <button className="text-xs text-gray-500 hover:text-white transition-colors">✏️</button>
+                          <button className="text-xs text-gray-500 hover:text-red-500 transition-colors">🗑️</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-
-                <!-- Newsletter -->
+              )}
+              {activeTab === 'sponsors' && (
                 <div>
-                    <h4 class="font-heading font-semibold text-white text-sm uppercase tracking-wider mb-4">Subscribe</h4>
-                    <p class="text-sm text-zinc-500 mb-3">Get the latest news and updates.</p>
-                    <form id="newsletterForm" class="flex flex-col gap-3" aria-label="Newsletter subscription">
-                        <input type="email" placeholder="Enter your email" class="newsletter-input text-sm" required aria-label="Email address" />
-                        <button type="submit" class="neon-btn text-sm py-2.5 w-full">
-                            <i class="fas fa-paper-plane mr-2"></i> Subscribe
-                        </button>
-                    </form>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-white font-bold text-lg">Sponsors</h3>
+                    <button className="px-4 py-1.5 rounded-lg bg-blue-600/20 text-blue-400 text-xs font-bold border border-blue-600/30 hover:bg-blue-600/30 transition-colors">+ Add Sponsor</button>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {SPONSORS.map((s, i) => (
+                      <div key={i} className="bg-[#0e0e12] p-4 rounded-lg border border-white/5 text-center">
+                        <span className="text-3xl block mb-1">{s.logo}</span>
+                        <p className="text-white text-sm font-medium">{s.name}</p>
+                        <button className="mt-2 text-xs text-gray-500 hover:text-red-500 transition-colors">Remove</button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
+              )}
             </div>
 
-            <!-- Bottom -->
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 text-xs text-zinc-600">
-                <span>&copy; 2026 Wolf Society Esports. All rights reserved.</span>
-                <span>Built with <i class="fas fa-heart text-neon-pink"></i> for the pack</span>
+            {/* Quick Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+              <div className="bg-[#14141a] p-4 rounded-xl border border-white/5 text-center">
+                <p className="text-2xl font-bold text-neon-blue">3</p>
+                <p className="text-xs text-gray-500">Active Teams</p>
+              </div>
+              <div className="bg-[#14141a] p-4 rounded-xl border border-white/5 text-center">
+                <p className="text-2xl font-bold text-neon-green">14</p>
+                <p className="text-xs text-gray-500">Total Players</p>
+              </div>
+              <div className="bg-[#14141a] p-4 rounded-xl border border-white/5 text-center">
+                <p className="text-2xl font-bold text-neon-pink">4</p>
+                <p className="text-xs text-gray-500">Upcoming Matches</p>
+              </div>
+              <div className="bg-[#14141a] p-4 rounded-xl border border-white/5 text-center">
+                <p className="text-2xl font-bold text-white">6</p>
+                <p className="text-xs text-gray-500">Sponsors</p>
+              </div>
             </div>
+          </div>
+        );
+      };
+
+      // ─── CARD COMPONENTS ──────────────────────────────────────────────────
+
+      const MatchCard = ({ match, detailed = false }) => {
+        const isLive = match.status === 'live';
+        const isUpcoming = match.status === 'upcoming';
+        const isFinished = match.status === 'finished';
+
+        let statusColor = 'text-gray-500';
+        let statusBadge = 'Upcoming';
+        let borderClass = 'border-white/5';
+        if (isLive) {
+          statusColor = 'text-red-400';
+          statusBadge = '🔴 LIVE';
+          borderClass = 'border-red-600/30';
+        } else if (isUpcoming) {
+          statusColor = 'text-neon-blue';
+          statusBadge = `⏱️ ${match.time}`;
+        } else {
+          statusColor = 'text-gray-400';
+          statusBadge = '✓ Finished';
+        }
+
+        return (
+          <div className={`match-card rounded-xl p-5 ${isLive ? 'live' : ''} ${borderClass} card-hover transition-all`}>
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs text-gray-500 uppercase tracking-wider">{match.tournament}</span>
+              <span className={`text-xs font-bold ${statusColor}`}>{statusBadge}</span>
+            </div>
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex-1 text-center">
+                <p className="text-white font-bold text-lg">{match.team1}</p>
+                <p className="text-2xl font-bold text-neon-blue">{match.team1Score}</p>
+              </div>
+              <div className="text-center">
+                <span className="text-xs text-gray-600 font-bold uppercase tracking-wider">VS</span>
+                {isLive && <span className="block live-dot mx-auto mt-1" />}
+              </div>
+              <div className="flex-1 text-center">
+                <p className="text-white font-bold text-lg">{match.team2}</p>
+                <p className="text-2xl font-bold text-neon-pink">{match.team2Score}</p>
+              </div>
+            </div>
+            <div className="mt-3 flex items-center justify-between text-xs text-gray-500 border-t border-white/5 pt-3">
+              <span>{match.game}</span>
+              {isLive && <span className="text-red-400 font-bold animate-pulse">● LIVE</span>}
+              {isUpcoming && <span className="text-neon-blue">Starts in {match.time}</span>}
+              {isFinished && <span className="text-gray-500">Final</span>}
+              {detailed && <span className="text-gray-600">Match ID: #{match.id}</span>}
+            </div>
+          </div>
+        );
+      };
+
+      const NewsCard = ({ item, detailed = false }) => (
+        <div className={`bg-[#14141a] rounded-2xl border border-white/5 overflow-hidden card-hover transition-all ${detailed ? 'hover-glow-blue' : 'hover-glow-green'}`}>
+          <div className="p-6">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="text-3xl">{item.image}</span>
+              <span className="text-xs text-gray-500 uppercase tracking-wider">{item.category}</span>
+              <span className="text-xs text-gray-600 ml-auto">{item.date}</span>
+            </div>
+            <h3 className="text-white font-bold text-xl mb-2">{item.title}</h3>
+            <p className="text-gray-400 text-sm leading-relaxed">{item.excerpt}</p>
+            {detailed && (
+              <button className="mt-4 text-neon-blue text-sm font-medium hover:text-neon-green transition-colors">
+                Read More →
+              </button>
+            )}
+          </div>
         </div>
-    </footer>
+      );
 
-    <!-- ============================================================ -->
-    <!-- ===== SCRIPTS ===== -->
-    <!-- ============================================================ -->
+      // ─── APP ───────────────────────────────────────────────────────────────
 
-    <!-- Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+      const App = () => (
+        <BrowserRouter>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/teams" element={<Teams />} />
+            <Route path="/matches" element={<Matches />} />
+            <Route path="/news" element={<NewsPage />} />
+            <Route path="/stream" element={<Stream />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/admin" element={<Admin />} />
+          </Routes>
+          <Footer />
+        </BrowserRouter>
+      );
+
+      // ─── RENDER ────────────────────────────────────────────────────────────
+
+      ReactDOM.createRoot(document.getElementById('root')).render(<App />);
     </script>
-
-    <!-- GSAP -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js">
-    </script>
-
-    <!-- ===== Custom JS ===== -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-            // ── Register GSAP ScrollTrigger ──
-            gsap.registerPlugin(ScrollTrigger);
-
-            // ── Cursor Glow ──
-            const cursor = document.getElementById('cursorGlow');
-            if (cursor && window.innerWidth >= 768) {
-                document.addEventListener('mousemove', (e) => {
-                    cursor.style.left = e.clientX + 'px';
-                    cursor.style.top = e.clientY + 'px';
-                });
-            }
-
-            // ── Mobile Menu ──
-            const menuToggle = document.getElementById('menuToggle');
-            const mobileMenu = document.getElementById('mobile-menu');
-            const hamburgerIcon = document.getElementById('hamburgerIcon');
-            let menuOpen = false;
-
-            menuToggle.addEventListener('click', () => {
-                menuOpen = !menuOpen;
-                mobileMenu.classList.toggle('open');
-                menuToggle.setAttribute('aria-expanded', menuOpen);
-                hamburgerIcon.className = menuOpen ? 'fas fa-times' : 'fas fa-bars';
-            });
-
-            // Close mobile menu on link click
-            mobileMenu.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', () => {
-                    mobileMenu.classList.remove('open');
-                    menuOpen = false;
-                    menuToggle.setAttribute('aria-expanded', 'false');
-                    hamburgerIcon.className = 'fas fa-bars';
-                });
-            });
-
-            // ── GSAP Animations ──
-            // Hero title
-            gsap.from('.hero-title', {
-                duration: 1.2,
-                y: 60,
-                opacity: 0,
-                ease: 'power4.out',
-                delay: 0.2
-            });
-
-            gsap.from('.hero-sub', {
-                duration: 1,
-                y: 40,
-                opacity: 0,
-                ease: 'power4.out',
-                delay: 0.5
-            });
-
-            gsap.from('.hero-overlay .neon-btn, .hero-overlay .neon-btn-outline', {
-                duration: 0.8,
-                y: 30,
-                opacity: 0,
-                ease: 'power4.out',
-                delay: 0.8,
-                stagger: 0.15
-            });
-
-            gsap.from('.hero-overlay .grid > div', {
-                duration: 0.8,
-                y: 30,
-                opacity: 0,
-                ease: 'power4.out',
-                delay: 1.1,
-                stagger: 0.1
-            });
-
-            // Scroll-triggered fade-ups
-            document.querySelectorAll('[data-animate="fade-up"]').forEach(el => {
-                gsap.from(el, {
-                    scrollTrigger: {
-                        trigger: el,
-                        start: 'top 85%',
-                        toggleActions: 'play none none reverse'
-                    },
-                    duration: 0.9,
-                    y: 50,
-                    opacity: 0,
-                    ease: 'power3.out',
-                    delay: parseInt(el.dataset.delay || 0) / 1000 || 0
-                });
-            });
-
-            document.querySelectorAll('[data-animate="fade-right"]').forEach(el => {
-                gsap.from(el, {
-                    scrollTrigger: {
-                        trigger: el,
-                        start: 'top 85%',
-                        toggleActions: 'play none none reverse'
-                    },
-                    duration: 0.9,
-                    x: -60,
-                    opacity: 0,
-                    ease: 'power3.out'
-                });
-            });
-
-            document.querySelectorAll('[data-animate="fade-left"]').forEach(el => {
-                gsap.from(el, {
-                    scrollTrigger: {
-                        trigger: el,
-                        start: 'top 85%',
-                        toggleActions: 'play none none reverse'
-                    },
-                    duration: 0.9,
-                    x: 60,
-                    opacity: 0,
-                    ease: 'power3.out'
-                });
-            });
-
-            // ── Team Cards hover / stat bars already in CSS ──
-
-            // ── Counter Animation ──
-            const counters = document.querySelectorAll('[data-count]');
-            const counterObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const el = entry.target;
-                        const target = parseFloat(el.dataset.count);
-                        const isFloat = target % 1 !== 0;
-                        let current = 0;
-                        const increment = target / 60;
-                        const timer = setInterval(() => {
-                            current += increment;
-                            if (current >= target) {
-                                current = target;
-                                clearInterval(timer);
-                            }
-                            el.textContent = isFloat ? current.toFixed(1) : Math.floor(current);
-                        }, 20);
-                        counterObserver.unobserve(el);
-                    }
-                });
-            }, { threshold: 0.5 });
-
-            counters.forEach(c => counterObserver.observe(c));
-
-            // ── Analytics Charts ──
-            const chartObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        // Win Rate
-                        const winRate = 68;
-                        document.getElementById('winRate').textContent = winRate + '%';
-                        document.getElementById('winRateBar').style.width = winRate + '%';
-
-                        // Avg KD
-                        const kd = 1.42;
-                        document.getElementById('avgKD').textContent = kd.toFixed(2);
-                        document.getElementById('kdBar').style.width = (kd / 2.0 * 100) + '%';
-
-                        // HS %
-                        const hs = 64;
-                        document.getElementById('hsPercent').textContent = hs + '%';
-                        document.getElementById('hsBar').style.width = hs + '%';
-
-                        // Matches
-                        const matches = 47;
-                        document.getElementById('matchesPlayed').textContent = matches;
-                        document.getElementById('matchesBar').style.width = (matches / 60 * 100) + '%';
-
-                        // Monthly chart bars
-                        document.querySelectorAll('#monthlyChart .chart-bar').forEach(bar => {
-                            const target = parseInt(bar.dataset.target);
-                            setTimeout(() => {
-                                bar.style.height = target + '%';
-                                bar.classList.add('animate');
-                            }, 300);
-                        });
-
-                        chartObserver.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.3 });
-
-            const analyticsSection = document.getElementById('analytics');
-            if (analyticsSection) chartObserver.observe(analyticsSection);
-
-            // ── Newsletter ──
-            document.getElementById('newsletterForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const input = this.querySelector('input[type="email"]');
-                if (input.value.trim()) {
-                    const btn = this.querySelector('button');
-                    const orig = btn.innerHTML;
-                    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Subscribing...';
-                    btn.disabled = true;
-                    // Simulate
-                    setTimeout(() => {
-                        btn.innerHTML = '<i class="fas fa-check mr-2"></i> Subscribed!';
-                        btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
-                        setTimeout(() => {
-                            btn.innerHTML = orig;
-                            btn.style.background = '';
-                            btn.disabled = false;
-                            input.value = '';
-                        }, 2500);
-                    }, 1200);
-                }
-            });
-
-            // ── Three.js Background ──
-            (function initThree() {
-                const container = document.getElementById('three-canvas');
-                if (!container) return;
-
-                const scene = new THREE.Scene();
-                scene.background = null;
-
-                const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-                camera.position.z = 30;
-
-                const renderer = new THREE.WebGLRenderer({
-                    alpha: true,
-                    antialias: true,
-                });
-                renderer.setSize(window.innerWidth, window.innerHeight);
-                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-                container.appendChild(renderer.domElement);
-
-                // ── Particles ──
-                const particlesGeo = new THREE.BufferGeometry();
-                const particleCount = 600;
-                const positions = new Float32Array(particleCount * 3);
-                const colors = new Float32Array(particleCount * 3);
-
-                const colorPalette = [
-                    [0.0, 0.83, 1.0], // neon blue
-                    [0.66, 0.33, 0.97], // neon purple
-                    [0.97, 0.45, 0.09], // neon orange
-                    [0.93, 0.28, 0.60], // neon pink
-                ];
-
-                for (let i = 0; i < particleCount; i++) {
-                    positions[i * 3] = (Math.random() - 0.5) * 60;
-                    positions[i * 3 + 1] = (Math.random() - 0.5) * 40;
-                    positions[i * 3 + 2] = (Math.random() - 0.5) * 30 - 10;
-
-                    const c = colorPalette[Math.floor(Math.random() * colorPalette.length)];
-                    colors[i * 3] = c[0];
-                    colors[i * 3 + 1] = c[1];
-                    colors[i * 3 + 2] = c[2];
-                }
-
-                particlesGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-                particlesGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-                const particleTexture = (() => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = 32;
-                    canvas.height = 32;
-                    const ctx = canvas.getContext('2d');
-                    const gradient = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
-                    gradient.addColorStop(0, 'rgba(255,255,255,1)');
-                    gradient.addColorStop(0.3, 'rgba(255,255,255,0.8)');
-                    gradient.addColorStop(1, 'rgba(255,255,255,0)');
-                    ctx.fillStyle = gradient;
-                    ctx.fillRect(0, 0, 32, 32);
-                    return new THREE.CanvasTexture(canvas);
-                })();
-
-                const particlesMat = new THREE.PointsMaterial({
-                    size: 0.35,
-                    map: particleTexture,
-                    blending: THREE.AdditiveBlending,
-                    depthWrite: false,
-                    vertexColors: true,
-                    transparent: true,
-                    opacity: 0.7,
-                });
-
-                const particleSystem = new THREE.Points(particlesGeo, particlesMat);
-                scene.add(particleSystem);
-
-                // ── Lines connecting nearby particles ──
-                const linesGeo = new THREE.BufferGeometry();
-                const linePositions = [];
-                const lineColors = [];
-
-                // We'll compute lines dynamically in the animation loop
-                let lineMesh = null;
-
-                function buildLines() {
-                    const pos = particleSystem.geometry.attributes.position.array;
-                    const col = particleSystem.geometry.attributes.color.array;
-                    const pairs = [];
-                    const maxDist = 6.0;
-                    const maxPairs = 120;
-
-                    for (let i = 0; i < particleCount && pairs.length < maxPairs * 2; i++) {
-                        for (let j = i + 1; j < particleCount && pairs.length < maxPairs * 2; j++) {
-                            const dx = pos[i * 3] - pos[j * 3];
-                            const dy = pos[i * 3 + 1] - pos[j * 3 + 1];
-                            const dz = pos[i * 3 + 2] - pos[j * 3 + 2];
-                            const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                            if (dist < maxDist && dist > 0.5) {
-                                pairs.push(i, j);
-                            }
-                        }
-                    }
-
-                    const count = pairs.length;
-                    const positions2 = new Float32Array(count * 3);
-                    const colors2 = new Float32Array(count * 3);
-
-                    for (let k = 0; k < count; k++) {
-                        const idx = pairs[k];
-                        positions2[k * 3] = pos[idx * 3];
-                        positions2[k * 3 + 1] = pos[idx * 3 + 1];
-                        positions2[k * 3 + 2] = pos[idx * 3 + 2];
-                        colors2[k * 3] = col[idx * 3];
-                        colors2[k * 3 + 1] = col[idx * 3 + 1];
-                        colors2[k * 3 + 2] = col[idx * 3 + 2];
-                    }
-
-                    const geo = new THREE.BufferGeometry();
-                    geo.setAttribute('position', new THREE.BufferAttribute(positions2, 3));
-                    geo.setAttribute('color', new THREE.BufferAttribute(colors2, 3));
-
-                    const mat = new THREE.LineBasicMaterial({
-                        vertexColors: true,
-                        transparent: true,
-                        opacity: 0.15,
-                        blending: THREE.AdditiveBlending,
-                        depthWrite: false,
-                    });
-
-                    if (lineMesh) {
-                        scene.remove(lineMesh);
-                        lineMesh.geometry.dispose();
-                        lineMesh.material.dispose();
-                    }
-
-                    lineMesh = new THREE.LineSegments(geo, mat);
-                    scene.add(lineMesh);
-                }
-
-                buildLines();
-
-                // ── Mouse tracking for parallax ──
-                let mouseX = 0,
-                    mouseY = 0;
-                let targetX = 0,
-                    targetY = 0;
-
-                document.addEventListener('mousemove', (e) => {
-                    mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-                    mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
-                });
-
-                // ── Resize ──
-                function onResize() {
-                    const w = window.innerWidth;
-                    const h = window.innerHeight;
-                    camera.aspect = w / h;
-                    camera.updateProjectionMatrix();
-                    renderer.setSize(w, h);
-                }
-                window.addEventListener('resize', onResize);
-
-                // ── Animation Loop ──
-                let time = 0;
-
-                function animate() {
-                    requestAnimationFrame(animate);
-                    time += 0.002;
-
-                    // Smooth mouse follow
-                    targetX += (mouseX - targetX) * 0.04;
-                    targetY += (mouseY - targetY) * 0.04;
-
-                    // Rotate particles
-                    particleSystem.rotation.x += 0.0002;
-                    particleSystem.rotation.y += 0.0004;
-                    particleSystem.rotation.z += 0.0001;
-
-                    // Parallax offset
-                    particleSystem.position.x = targetX * 0.5;
-                    particleSystem.position.y = targetY * 0.3;
-
-                    // Rebuild lines occasionally (every ~60 frames)
-                    if (Math.floor(time * 60) % 30 === 0) {
-                        buildLines();
-                    }
-
-                    if (lineMesh) {
-                        lineMesh.rotation.x = particleSystem.rotation.x;
-                        lineMesh.rotation.y = particleSystem.rotation.y;
-                        lineMesh.rotation.z = particleSystem.rotation.z;
-                        lineMesh.position.x = particleSystem.position.x;
-                        lineMesh.position.y = particleSystem.position.y;
-                    }
-
-                    renderer.render(scene, camera);
-                }
-
-                animate();
-
-                // ── Cleanup ──
-                window.addEventListener('beforeunload', () => {
-                    renderer.dispose();
-                    if (lineMesh) {
-                        lineMesh.geometry.dispose();
-                        lineMesh.material.dispose();
-                    }
-                    particleSystem.geometry.dispose();
-                    particleSystem.material.dispose();
-                });
-            })();
-
-        }); // end DOMContentLoaded
-    </script>
-
-</body>
+  </body>
 </html>
