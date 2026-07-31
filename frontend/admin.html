@@ -1,364 +1,455 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="dark h-full bg-slate-950">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wolf Society CRM — Master Admin Panel</title>
+  <title>Admin Dashboard & Inbox</title>
   
-  <!-- Tailwind CSS & FontAwesome -->
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  
-  <!-- Supabase JS Client -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
           colors: {
-            brand: { 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' },
-            darkbg: '#0f172a',
-            cardbg: '#1e293b',
-            bordercolor: '#334155'
+            brand: {
+              500: '#6366f1',
+              600: '#4f46e5',
+            }
           }
         }
       }
     }
   </script>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Supabase JS Client (v2) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
-    .glass-panel {
-      background: rgba(30, 41, 59, 0.75);
+    .glass-card {
+      background: rgba(15, 23, 42, 0.75);
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
     }
   </style>
 </head>
-<body class="bg-darkbg text-slate-100 font-sans min-h-screen flex flex-col md:flex-row">
+<body class="h-full text-slate-100 flex flex-col md:flex-row min-h-screen">
 
-  <!-- Sidebar Navigation -->
-  <aside class="w-full md:w-64 glass-panel border-r border-slate-800 p-5 flex flex-col justify-between">
-    <div>
-      <!-- Brand Logo -->
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="w-full md:w-64 bg-slate-900 border-r border-slate-800/80 flex flex-col justify-between shrink-0">
+    <div class="p-6">
       <div class="flex items-center gap-3 mb-8">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-cyan-500 flex items-center justify-center font-bold text-xl shadow-lg shadow-brand-500/30">
-          🐺
+        <div class="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center text-white font-black shadow-lg shadow-brand-500/30">
+          <i class="fa-solid fa-shield-halved"></i>
         </div>
         <div>
-          <h1 class="font-extrabold text-lg tracking-wide text-white leading-tight">WOLF CRM</h1>
-          <p class="text-xs text-slate-400">Esports Admin Suite</p>
+          <h1 class="font-black text-sm text-white tracking-wide uppercase">Admin Hub</h1>
+          <p class="text-[10px] text-slate-400 font-mono">v2.0 &bull; Supabase Live</p>
         </div>
       </div>
 
-      <!-- Navigation Tabs (A to Z Database Tables) -->
-      <nav class="space-y-1.5" id="nav-menu">
-        <button onclick="switchTab('admin_users')" id="nav-admin_users" class="nav-btn w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium transition text-slate-300 hover:bg-slate-800/60 hover:text-white">
-          <span class="flex items-center gap-3"><i class="fa-solid fa-user-shield text-indigo-400"></i> Admin Queue</span>
-          <span id="badge-pending" class="px-2 py-0.5 text-xs rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 hidden">0</span>
+      <!-- Nav Links -->
+      <nav class="space-y-1.5" id="nav-container">
+        <button onclick="switchTab('dashboard')" id="nav-btn-dashboard" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl text-xs font-semibold transition bg-brand-600 text-white shadow-lg shadow-brand-600/20">
+          <span class="flex items-center gap-3">
+            <i class="fa-solid fa-chart-line w-4"></i> Dashboard
+          </span>
         </button>
 
-        <button onclick="switchTab('matches')" id="nav-matches" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition text-slate-300 hover:bg-slate-800/60 hover:text-white">
-          <i class="fa-solid fa-gamepad text-cyan-400"></i> Matches & Tournaments
+        <button onclick="switchTab('inquiries')" id="nav-btn-inquiries" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 text-xs font-semibold transition">
+          <span class="flex items-center gap-3">
+            <i class="fa-solid fa-inbox text-indigo-400 w-4"></i> Inquiries
+          </span>
+          <span id="unread-count-badge" class="px-2 py-0.5 rounded-full bg-rose-500 text-white font-bold text-[10px] hidden">0</span>
         </button>
 
-        <button onclick="switchTab('players')" id="nav-players" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition text-slate-300 hover:bg-slate-800/60 hover:text-white">
-          <i class="fa-solid fa-users text-emerald-400"></i> Players Roster
-        </button>
-
-        <button onclick="switchTab('teams')" id="nav-teams" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition text-slate-300 hover:bg-slate-800/60 hover:text-white">
-          <i class="fa-solid fa-sitemap text-purple-400"></i> Teams & Games
-        </button>
-
-        <button onclick="switchTab('tryouts')" id="nav-tryouts" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition text-slate-300 hover:bg-slate-800/60 hover:text-white">
-          <i class="fa-solid fa-clipboard-check text-rose-400"></i> Tryout Applications
-        </button>
-
-        <button onclick="switchTab('settings')" id="nav-settings" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition text-slate-300 hover:bg-slate-800/60 hover:text-white">
-          <i class="fa-solid fa-gear text-slate-400"></i> System Settings
+        <button onclick="switchTab('settings')" id="nav-btn-settings" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 text-xs font-semibold transition">
+          <span class="flex items-center gap-3">
+            <i class="fa-solid fa-gear w-4"></i> Settings & API
+          </span>
         </button>
       </nav>
     </div>
 
-    <!-- Active User Footer -->
-    <div class="pt-6 border-t border-slate-800 mt-6 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center font-bold text-xs">AD</div>
-        <div class="text-xs">
-          <p class="font-semibold text-slate-200">Super Admin</p>
-          <p class="text-emerald-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Online</p>
-        </div>
+    <!-- Status Indicator -->
+    <div class="p-4 m-4 rounded-xl bg-slate-950 border border-slate-800/80 flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2">
+        <span id="connection-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+        <span id="connection-text" class="text-slate-400 font-mono text-[11px]">Connecting...</span>
       </div>
-      <button class="text-slate-400 hover:text-rose-400 transition" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button>
     </div>
   </aside>
 
-  <!-- Main Content Workspace -->
-  <main class="flex-1 p-6 md:p-8 overflow-y-auto">
-    <!-- Top KPI Overview Bar -->
-    <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+  <!-- MAIN CONTENT AREA -->
+  <main class="flex-1 bg-slate-950 p-6 md:p-10 overflow-y-auto">
+
+    <!-- TAB 1: DASHBOARD OVERVIEW -->
+    <section id="tab-dashboard" class="tab-content space-y-6">
       <div>
-        <h2 id="page-title" class="text-2xl font-bold tracking-tight text-white">Admin Queue Management</h2>
-        <p class="text-xs text-slate-400 mt-1">Review pending registration requests and authorize admin access.</p>
+        <h2 class="text-2xl font-black text-white">System Overview</h2>
+        <p class="text-xs text-slate-400 mt-1">Real-time status and operational summary.</p>
       </div>
 
-      <div class="flex items-center gap-3">
-        <button onclick="refreshCurrentTable()" class="px-4 py-2 text-sm rounded-lg glass-panel text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-2">
-          <i class="fa-solid fa-rotate-right"></i> Refresh
-        </button>
-        <button id="btn-add-record" onclick="openAddModal()" class="px-4 py-2 text-sm rounded-lg bg-brand-600 hover:bg-brand-500 text-white font-medium transition shadow-lg shadow-brand-600/30 flex items-center gap-2">
-          <i class="fa-solid fa-plus"></i> Add Record
-        </button>
-      </div>
-    </header>
-
-    <!-- Table Container -->
-    <section class="glass-panel rounded-2xl overflow-hidden border border-slate-800">
-      <!-- Search & Filter Controls -->
-      <div class="p-4 border-b border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
-        <div class="relative w-full sm:w-72">
-          <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-          <input type="text" id="table-search" placeholder="Search records..." onkeyup="filterTable()" class="w-full pl-9 pr-4 py-2 rounded-lg bg-slate-900/60 border border-slate-700 text-xs text-white focus:outline-none focus:border-brand-500" />
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="glass-card p-5 rounded-2xl border border-slate-800">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-semibold mb-2">
+            <span>Total Inquiries</span>
+            <i class="fa-solid fa-envelope text-indigo-400"></i>
+          </div>
+          <p id="stat-total-inquiries" class="text-2xl font-black text-white">0</p>
         </div>
-        <div class="text-xs text-slate-400" id="record-count">Showing 0 entries</div>
-      </div>
 
-      <!-- Dynamic Data Table -->
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm text-slate-300">
-          <thead id="table-head" class="bg-slate-900/80 text-xs uppercase tracking-wider text-slate-400 font-semibold border-b border-slate-800">
-            <!-- Rendered via JS -->
-          </thead>
-          <tbody id="table-body" class="divide-y divide-slate-800/60">
-            <!-- Data rows injected dynamically -->
-          </tbody>
-        </table>
+        <div class="glass-card p-5 rounded-2xl border border-slate-800">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-semibold mb-2">
+            <span>Unread Messages</span>
+            <i class="fa-solid fa-bell text-rose-400"></i>
+          </div>
+          <p id="stat-unread-inquiries" class="text-2xl font-black text-rose-400">0</p>
+        </div>
+
+        <div class="glass-card p-5 rounded-2xl border border-slate-800">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-semibold mb-2">
+            <span>Supabase Sync</span>
+            <i class="fa-solid fa-database text-emerald-400"></i>
+          </div>
+          <p id="stat-sync-status" class="text-sm font-bold text-emerald-400 mt-1">Active</p>
+        </div>
       </div>
     </section>
+
+    <!-- TAB 2: INQUIRIES / INBOX TAB -->
+    <section id="tab-inquiries" class="tab-content hidden space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-black text-white flex items-center gap-2">
+            <i class="fa-solid fa-envelope-open-text text-brand-500"></i> Business Inquiries
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">Manage sponsor leads, media requests, and general contact form entries.</p>
+        </div>
+        
+        <!-- Filter Bar -->
+        <div class="flex items-center gap-2">
+          <select id="inquiry-filter" onchange="loadInquiries()" class="px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 focus:outline-none focus:border-brand-500">
+            <option value="ALL">All Messages</option>
+            <option value="UNREAD" selected>Unread Only</option>
+            <option value="READ">Read Only</option>
+          </select>
+          <button onclick="loadInquiries()" class="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-slate-300 transition" title="Refresh">
+            <i class="fa-solid fa-rotate-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Messages List Container -->
+      <div class="glass-card rounded-2xl border border-slate-800 overflow-hidden">
+        <div id="inquiries-list" class="divide-y divide-slate-800/60">
+          <div class="p-12 text-center text-xs text-slate-500 flex flex-col items-center gap-2">
+            <i class="fa-solid fa-spinner fa-spin text-lg text-brand-500"></i>
+            Loading inbox from Supabase...
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: SETTINGS TAB -->
+    <section id="tab-settings" class="tab-content hidden space-y-6">
+      <div>
+        <h2 class="text-2xl font-black text-white">Database Credentials</h2>
+        <p class="text-xs text-slate-400 mt-1">Configure your Supabase Project connection variables.</p>
+      </div>
+
+      <div class="glass-card p-6 rounded-2xl border border-slate-800 max-w-xl space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Supabase Project URL</label>
+          <input id="cfg-url" type="text" placeholder="https://xyz.supabase.co" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-brand-500 font-mono" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Supabase Anon Key</label>
+          <input id="cfg-key" type="password" placeholder="eyJhbGciOi..." class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-brand-500 font-mono" />
+        </div>
+        <button onclick="saveCredentials()" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition shadow-lg shadow-brand-600/30">
+          Save Credentials & Reconnect
+        </button>
+      </div>
+    </section>
+
   </main>
 
-  <!-- Add/Edit Record Modal -->
-  <div id="modal-form" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl p-6 shadow-2xl">
-      <div class="flex justify-between items-center mb-6">
-        <h3 id="modal-title" class="text-lg font-bold text-white">Add New Record</h3>
-        <button onclick="closeModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+  <!-- INQUIRY DETAIL MODAL -->
+  <div id="inquiry-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="glass-card max-w-lg w-full rounded-2xl p-6 border border-slate-800 shadow-2xl relative">
+      <button onclick="closeInquiryModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-sm">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <span id="modal-type" class="px-2.5 py-1 rounded-md bg-brand-500/20 text-brand-300 font-bold text-[10px] uppercase tracking-wider">TYPE</span>
+      
+      <h3 id="modal-name" class="text-lg font-black text-white mt-3">Sender Name</h3>
+      <p id="modal-email" class="text-xs text-slate-400 font-mono mt-0.5">email@domain.com</p>
+      <p id="modal-date" class="text-[10px] text-slate-500 mt-1">Date</p>
+      
+      <div class="mt-4 pt-4 border-t border-slate-800">
+        <p id="modal-message" class="text-xs text-slate-200 leading-relaxed whitespace-pre-wrap">Message body...</p>
       </div>
-      <form id="dynamic-form" class="space-y-4" onsubmit="handleFormSubmit(event)">
-        <!-- Form fields injected dynamically based on current tab -->
-        <div id="form-fields" class="space-y-4"></div>
-        
-        <div class="flex justify-end gap-3 pt-4 border-t border-slate-800">
-          <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs">Cancel</button>
-          <button type="submit" class="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs shadow-lg shadow-brand-600/30">Save Changes</button>
-        </div>
-      </form>
+
+      <div class="mt-6 flex justify-end gap-3">
+        <button onclick="closeInquiryModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300">Close</button>
+      </div>
     </div>
   </div>
 
+  <!-- JAVASCRIPT CONTROLLER -->
   <script>
-    // 1. Initialize Supabase
-    const SUPABASE_URL = "YOUR_SUPABASE_URL";
-    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // --- 1. CONFIGURATION & STATE ---
+    let DEFAULT_URL = "YOUR_SUPABASE_URL";
+    let DEFAULT_KEY = "YOUR_SUPABASE_ANON_KEY";
 
-    let activeTab = 'admin_users';
-    let currentData = [];
+    let SUPABASE_URL = localStorage.getItem('sb_url') || DEFAULT_URL;
+    let SUPABASE_KEY = localStorage.getItem('sb_key') || DEFAULT_KEY;
+    
+    let supabaseClient = null;
+    let currentInquiries = [];
 
-    // Mock initial state for Admin Queue demo
-    const mockAdminQueue = [
-      { id: '1', email: 'alex@wolfsociety.gg', role: 'Editor', status: 'PENDING', requested_at: '2026-07-30' },
-      { id: '2', email: 'sarah@wolfsociety.gg', role: 'Match Manager', status: 'APPROVED', requested_at: '2026-07-28' },
-      { id: '3', email: 'unknown@guest.com', role: 'Viewer', status: 'REJECTED', requested_at: '2026-07-25' }
-    ];
+    // Global binding so inline handlers work without failing
+    window.switchTab = switchTab;
+    window.loadInquiries = loadInquiries;
+    window.viewInquiry = viewInquiry;
+    window.closeInquiryModal = closeInquiryModal;
+    window.toggleInquiryStatus = toggleInquiryStatus;
+    window.deleteInquiry = deleteInquiry;
+    window.saveCredentials = saveCredentials;
 
-    // Initialize Page
+    // --- 2. INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', () => {
-      switchTab('admin_users');
+      // Pre-fill credentials tab
+      const urlInput = document.getElementById('cfg-url');
+      const keyInput = document.getElementById('cfg-key');
+      if (urlInput) urlInput.value = SUPABASE_URL !== 'YOUR_SUPABASE_URL' ? SUPABASE_URL : '';
+      if (keyInput) keyInput.value = SUPABASE_KEY !== 'YOUR_SUPABASE_ANON_KEY' ? SUPABASE_KEY : '';
+
+      initSupabase();
     });
 
-    // 2. Tab Navigation Switcher
-    function switchTab(tab) {
-      activeTab = tab;
-      
-      // Highlight active nav item
-      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-brand-600', 'text-white', 'shadow-lg'));
-      const activeBtn = document.getElementById(`nav-${tab}`);
-      if (activeBtn) activeBtn.classList.add('bg-brand-600', 'text-white', 'shadow-lg');
+    function initSupabase() {
+      const dot = document.getElementById('connection-dot');
+      const txt = document.getElementById('connection-text');
 
-      // Update titles
-      const titles = {
-        admin_users: 'Admin Queue & User Access',
-        matches: 'Matches & Tournament Schedule',
-        players: 'Players & Roster Roster Stats',
-        teams: 'Teams & Game Divisions',
-        tryouts: 'Tryout Applications Queue',
-        settings: 'Global CRM System Settings'
-      };
-      document.getElementById('page-title').innerText = titles[tab] || 'Database View';
+      if (!window.supabase || typeof window.supabase.createClient !== 'function') {
+        if (txt) txt.innerText = "SDK Failed";
+        if (dot) dot.className = "w-2 h-2 rounded-full bg-rose-500";
+        console.error("Supabase SDK not loaded.");
+        return;
+      }
 
-      fetchTableData(tab);
-    }
-
-    // 3. Fetch & Render Table Data
-    async function fetchTableData(tableName) {
-      const thead = document.getElementById('table-head');
-      const tbody = document.getElementById('table-body');
-      
-      tbody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-slate-500"><i class="fa-solid fa-spinner fa-spin text-xl mb-2"></i><p class="text-xs">Loading ${tableName}...</p></td></tr>`;
-
-      let data = [];
+      if (!SUPABASE_URL || SUPABASE_URL === "YOUR_SUPABASE_URL" || !SUPABASE_KEY || SUPABASE_KEY === "YOUR_SUPABASE_ANON_KEY") {
+        if (txt) txt.innerText = "Config Required";
+        if (dot) dot.className = "w-2 h-2 rounded-full bg-amber-500";
+        document.getElementById('inquiries-list').innerHTML = `
+          <div class="p-8 text-center text-xs text-amber-400">
+            <i class="fa-solid fa-triangle-exclamation mr-1.5"></i>
+            Please set your Supabase URL & Anon Key in the <b>Settings & API</b> tab.
+          </div>`;
+        return;
+      }
 
       try {
-        const { data: dbData, error } = await supabase.from(tableName).select('*');
-        if (!error && dbData && dbData.length > 0) {
-          data = dbData;
-        } else if (tableName === 'admin_users') {
-          data = mockAdminQueue; // Fallback mock for demo
-        }
-      } catch (err) {
-        if (tableName === 'admin_users') data = mockAdminQueue;
-      }
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        if (txt) txt.innerText = "Connected";
+        if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-500";
+        document.getElementById('stat-sync-status').innerText = "Online";
 
-      currentData = data;
-      renderTableUI(tableName, data);
+        // Initial Data Fetch
+        loadInquiries();
+
+        // Setup Realtime Sync
+        supabaseClient.channel('admin-inquiries-sync')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'inquiries' }, () => {
+            loadInquiries();
+          })
+          .subscribe();
+
+      } catch (err) {
+        if (txt) txt.innerText = "Connection Error";
+        if (dot) dot.className = "w-2 h-2 rounded-full bg-rose-500";
+        console.error("Supabase Init Error:", err);
+      }
     }
 
-    // 4. Render Table Header & Rows
-    function renderTableUI(tableName, data) {
-      const thead = document.getElementById('table-head');
-      const tbody = document.getElementById('table-body');
-      document.getElementById('record-count').innerText = `Showing ${data.length} entries`;
+    // --- 3. TAB SWITCHING LOGIC ---
+    function switchTab(tabId) {
+      // Hide all contents
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      
+      // Reset navigation button active states
+      document.querySelectorAll('.nav-link').forEach(btn => {
+        btn.className = "nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 text-xs font-semibold transition";
+      });
 
-      if (tableName === 'admin_users') {
-        thead.innerHTML = `
-          <tr>
-            <th class="p-4">User / Email</th>
-            <th class="p-4">Requested Role</th>
-            <th class="p-4">Status</th>
-            <th class="p-4">Date</th>
-            <th class="p-4 text-right">Actions / Approval</th>
-          </tr>
-        `;
+      // Show selected content
+      const targetTab = document.getElementById(`tab-${tabId}`);
+      if (targetTab) targetTab.classList.remove('hidden');
 
-        if (data.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-slate-500 text-xs">No pending admin registrations found.</td></tr>`;
-          return;
-        }
+      // Highlight active nav link
+      const activeNav = document.getElementById(`nav-btn-${tabId}`);
+      if (activeNav) {
+        activeNav.className = "nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl text-xs font-semibold transition bg-brand-600 text-white shadow-lg shadow-brand-600/20";
+      }
 
-        tbody.innerHTML = data.map(item => `
-          <tr class="hover:bg-slate-800/40 transition">
-            <td class="p-4 font-semibold text-white">${item.email}</td>
-            <td class="p-4 text-xs text-indigo-300 font-mono">${item.role}</td>
-            <td class="p-4">
-              <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${
-                item.status === 'APPROVED' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
-                item.status === 'PENDING' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' :
-                'bg-rose-500/20 text-rose-400 border border-rose-500/30'
-              }">
+      // Refresh data if switching to inbox
+      if (tabId === 'inquiries' && supabaseClient) {
+        loadInquiries();
+      }
+    }
+
+    // --- 4. INQUIRIES MANAGEMENT ---
+    async function loadInquiries() {
+      const container = document.getElementById('inquiries-list');
+      if (!supabaseClient) return;
+
+      const filter = document.getElementById('inquiry-filter')?.value || 'ALL';
+
+      let query = supabaseClient.from('inquiries').select('*').order('created_at', { ascending: false });
+      if (filter !== 'ALL') {
+        query = query.eq('status', filter);
+      }
+
+      const { data: inquiries, error } = await query;
+
+      if (error) {
+        container.innerHTML = `<div class="p-8 text-center text-xs text-rose-400">Error loading inquiries: ${escapeHtml(error.message)}</div>`;
+        return;
+      }
+
+      // Update statistics
+      updateStats(inquiries || []);
+
+      if (!inquiries || inquiries.length === 0) {
+        container.innerHTML = `<div class="p-8 text-center text-xs text-slate-500">No messages found in inbox.</div>`;
+        return;
+      }
+
+      currentInquiries = inquiries;
+
+      container.innerHTML = inquiries.map(item => `
+        <div class="p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-900/40 transition ${item.status === 'UNREAD' ? 'bg-indigo-950/20 border-l-4 border-l-brand-500' : ''}">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1 flex-wrap">
+              <span class="font-bold text-sm text-white truncate">${escapeHtml(item.name)}</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${item.status === 'UNREAD' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : 'bg-slate-800 text-slate-400'}">
                 ${item.status}
               </span>
-            </td>
-            <td class="p-4 text-xs text-slate-400">${item.requested_at || 'N/A'}</td>
-            <td class="p-4 text-right space-x-2">
-              ${item.status === 'PENDING' ? `
-                <button onclick="updateAdminStatus('${item.id}', 'APPROVED')" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md text-xs font-semibold transition">Approve</button>
-                <button onclick="updateAdminStatus('${item.id}', 'REJECTED')" class="px-3 py-1 bg-rose-600 hover:bg-rose-500 text-white rounded-md text-xs font-semibold transition">Reject</button>
-              ` : `
-                <button onclick="deleteRecord('${item.id}')" class="text-slate-400 hover:text-rose-400 text-xs transition"><i class="fa-solid fa-trash"></i></button>
-              `}
-            </td>
-          </tr>
-        `).join('');
-      } else {
-        // Generic fallback auto-renderer for any standard database table
-        if (data.length === 0) {
-          thead.innerHTML = `<tr><th class="p-4">Records</th></tr>`;
-          tbody.innerHTML = `<tr><td class="text-center py-8 text-slate-500 text-xs">No data in table '${tableName}'. Click 'Add Record' to create one.</td></tr>`;
-          return;
-        }
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                ${escapeHtml(item.type || 'General')}
+              </span>
+            </div>
+            <p class="text-xs text-slate-400 truncate max-w-xl">${escapeHtml(item.message)}</p>
+            <span class="text-[10px] text-slate-500 font-mono mt-1 block">${new Date(item.created_at).toLocaleString()} &bull; ${escapeHtml(item.email)}</span>
+          </div>
 
-        const keys = Object.keys(data[0]).slice(0, 5);
-        thead.innerHTML = `<tr>${keys.map(k => `<th class="p-4">${k}</th>`).join('')}<th class="p-4 text-right">Actions</th></tr>`;
-
-        tbody.innerHTML = data.map(row => `
-          <tr class="hover:bg-slate-800/40 transition">
-            ${keys.map(k => `<td class="p-4 text-xs text-slate-300 max-w-xs truncate">${row[k]}</td>`).join('')}
-            <td class="p-4 text-right space-x-2">
-              <button onclick="deleteRecord('${row.id}')" class="text-slate-400 hover:text-rose-400 transition"><i class="fa-solid fa-trash"></i></button>
-            </td>
-          </tr>
-        `).join('');
-      }
-    }
-
-    // 5. Admin Queue Approval Handlers
-    async function updateAdminStatus(id, newStatus) {
-      const user = mockAdminQueue.find(u => u.id === id);
-      if (user) user.status = newStatus;
-      
-      // Supabase update sync
-      await supabase.from('admin_users').update({ status: newStatus }).eq('id', id);
-      
-      fetchTableData(activeTab);
-    }
-
-    // Modal Control Functions
-    function openAddModal() {
-      document.getElementById('modal-form').classList.remove('hidden');
-      document.getElementById('form-fields').innerHTML = `
-        <div>
-          <label class="block text-xs font-medium text-slate-400 mb-1">Entry Title / Email</label>
-          <input type="text" id="input-title" required class="w-full p-2.5 rounded-lg bg-slate-800 border border-slate-700 text-xs text-white focus:outline-none focus:border-brand-500" />
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="viewInquiry('${item.id}')" class="px-3 py-1.5 rounded-lg bg-brand-600/20 text-brand-300 hover:bg-brand-600 hover:text-white text-xs font-bold transition">
+              <i class="fa-solid fa-eye mr-1"></i> Read
+            </button>
+            <button onclick="toggleInquiryStatus('${item.id}', '${item.status === 'UNREAD' ? 'READ' : 'UNREAD'}')" class="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-slate-300" title="Toggle Read/Unread">
+              <i class="fa-solid ${item.status === 'UNREAD' ? 'fa-check text-emerald-400' : 'fa-envelope text-indigo-400'}"></i>
+            </button>
+            <button onclick="deleteInquiry('${item.id}')" class="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-xs text-rose-400 transition" title="Delete Inquiry">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
         </div>
-      `;
+      `).join('');
     }
 
-    function closeModal() {
-      document.getElementById('modal-form').classList.add('hidden');
-    }
+    // Update Counts & Badges
+    async function updateStats(inquiries) {
+      if (!supabaseClient) return;
 
-    async function handleFormSubmit(e) {
-      e.preventDefault();
-      closeModal();
-      fetchTableData(activeTab);
-    }
+      const { count: unreadCount } = await supabaseClient
+        .from('inquiries')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'UNREAD');
 
-    function refreshCurrentTable() {
-      fetchTableData(activeTab);
-    }
+      const { count: totalCount } = await supabaseClient
+        .from('inquiries')
+        .select('*', { count: 'exact', head: true });
 
-    function filterTable() {
-      const term = document.getElementById('table-search').value.toLowerCase();
-      const filtered = currentData.filter(item => JSON.stringify(item).toLowerCase().includes(term));
-      renderTableUI(activeTab, filtered);
-    }
+      document.getElementById('stat-total-inquiries').innerText = totalCount || 0;
+      document.getElementById('stat-unread-inquiries').innerText = unreadCount || 0;
 
-     // Add this inside admin.html <script> section
-function setupAdminRealtimeSync() {
-  supabase.channel('admin-crm-sync')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'tryouts' }, (payload) => {
-      console.log('New Tryout Application Received!', payload);
-      // Auto refresh table if active tab is tryouts
-      if (activeTab === 'tryouts') fetchTableData('tryouts');
-      
-      // Optional Notification
-      if (payload.eventType === 'INSERT') {
-        alert(`🔔 New Tryout Application received from IGN: ${payload.new.ign}`);
+      const badge = document.getElementById('unread-count-badge');
+      if (badge) {
+        if (unreadCount > 0) {
+          badge.innerText = unreadCount;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
       }
-    })
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'admin_users' }, () => {
-      if (activeTab === 'admin_users') fetchTableData('admin_users');
-    })
-    .subscribe();
-}
+    }
 
-// Call on startup
-document.addEventListener('DOMContentLoaded', () => {
-  setupAdminRealtimeSync();
-});
+    // Modal Actions
+    async function viewInquiry(id) {
+      const item = currentInquiries.find(i => i.id === id);
+      if (!item) return;
 
-    
+      document.getElementById('modal-name').innerText = item.name;
+      document.getElementById('modal-email').innerText = item.email;
+      document.getElementById('modal-type').innerText = item.type || 'General';
+      document.getElementById('modal-date').innerText = new Date(item.created_at).toLocaleString();
+      document.getElementById('modal-message').innerText = item.message;
+
+      document.getElementById('inquiry-modal').classList.remove('hidden');
+
+      if (item.status === 'UNREAD') {
+        await toggleInquiryStatus(id, 'READ');
+      }
+    }
+
+    function closeInquiryModal() {
+      document.getElementById('inquiry-modal').classList.add('hidden');
+    }
+
+    async function toggleInquiryStatus(id, newStatus) {
+      if (!supabaseClient) return;
+      await supabaseClient.from('inquiries').update({ status: newStatus }).eq('id', id);
+      loadInquiries();
+    }
+
+    async function deleteInquiry(id) {
+      if (!confirm("Are you sure you want to delete this inquiry?")) return;
+      if (!supabaseClient) return;
+      await supabaseClient.from('inquiries').delete().eq('id', id);
+      loadInquiries();
+    }
+
+    // Save Credentials via UI
+    function saveCredentials() {
+      const url = document.getElementById('cfg-url').value.trim();
+      const key = document.getElementById('cfg-key').value.trim();
+
+      if (!url || !key) {
+        alert("Please provide both URL and Key.");
+        return;
+      }
+
+      localStorage.setItem('sb_url', url);
+      localStorage.setItem('sb_key', key);
+      SUPABASE_URL = url;
+      SUPABASE_KEY = key;
+
+      alert("Credentials saved! Attempting to reconnect...");
+      initSupabase();
+      switchTab('inquiries');
+    }
+
+    // Utility: XSS Escaper
+    function escapeHtml(str) {
+      return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
   </script>
 </body>
 </html>
