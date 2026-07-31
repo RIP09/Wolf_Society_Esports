@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard & Inbox</title>
-  
+  <title>CRM Admin Hub - Wolf Society</title>
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -14,8 +14,11 @@
         extend: {
           colors: {
             brand: {
-              500: '#6366f1',
-              600: '#4f46e5',
+              50 = '#eef2ff',
+              100 = '#e0e7ff',
+              500 = '#6366f1',
+              600 = '#4f46e5',
+              700 = '#4338ca',
             }
           }
         }
@@ -26,209 +29,391 @@
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
-  <!-- Supabase JS Client (v2) -->
+  <!-- Supabase JS Client v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    .glass-card {
+    .glass-panel {
       background: rgba(15, 23, 42, 0.75);
       backdrop-filter: blur(12px);
+      border: 1px solid rgba(51, 65, 85, 0.5);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(51, 65, 85, 0.8);
+      border-radius: 4px;
     }
   </style>
 </head>
-<body class="h-full text-slate-100 flex flex-col md:flex-row min-h-screen">
+<body class="h-full text-slate-100 flex flex-col md:flex-row font-sans overflow-hidden bg-slate-950">
 
   <!-- SIDEBAR NAVIGATION -->
-  <aside class="w-full md:w-64 bg-slate-900 border-r border-slate-800/80 flex flex-col justify-between shrink-0">
-    <div class="p-6">
-      <div class="flex items-center gap-3 mb-8">
-        <div class="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center text-white font-black shadow-lg shadow-brand-500/30">
-          <i class="fa-solid fa-shield-halved"></i>
-        </div>
-        <div>
-          <h1 class="font-black text-sm text-white tracking-wide uppercase">Admin Hub</h1>
-          <p class="text-[10px] text-slate-400 font-mono">v2.0 &bull; Supabase Live</p>
+  <aside class="w-full md:w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between shrink-0 z-20">
+    <div>
+      <!-- Brand Header -->
+      <div class="p-5 border-b border-slate-800/80 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center text-white font-black shadow-lg shadow-brand-500/20">
+            <i class="fa-solid fa-crown text-base"></i>
+          </div>
+          <div>
+            <h1 class="font-black text-sm text-white tracking-wide uppercase">Wolf Society</h1>
+            <p class="text-[10px] text-indigo-400 font-mono">CRM Portal v3.0</p>
+          </div>
         </div>
       </div>
 
-      <!-- Nav Links -->
-      <nav class="space-y-1.5" id="nav-container">
-        <button onclick="switchTab('dashboard')" id="nav-btn-dashboard" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl text-xs font-semibold transition bg-brand-600 text-white shadow-lg shadow-brand-600/20">
+      <!-- Nav Items -->
+      <nav class="p-4 space-y-1" id="nav-container">
+        <button onclick="window.switchTab('dashboard')" id="nav-btn-dashboard" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl text-xs font-bold transition bg-brand-600 text-white shadow-lg shadow-brand-600/20">
           <span class="flex items-center gap-3">
-            <i class="fa-solid fa-chart-line w-4"></i> Dashboard
+            <i class="fa-solid fa-chart-pie w-4 text-center"></i> Overview
           </span>
         </button>
 
-        <button onclick="switchTab('inquiries')" id="nav-btn-inquiries" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 text-xs font-semibold transition">
+        <button onclick="window.switchTab('inquiries')" id="nav-btn-inquiries" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 text-xs font-bold transition">
           <span class="flex items-center gap-3">
-            <i class="fa-solid fa-inbox text-indigo-400 w-4"></i> Inquiries
+            <i class="fa-solid fa-inbox text-indigo-400 w-4 text-center"></i> Inquiries Inbox
           </span>
-          <span id="unread-count-badge" class="px-2 py-0.5 rounded-full bg-rose-500 text-white font-bold text-[10px] hidden">0</span>
+          <span id="unread-count-badge" class="px-2 py-0.5 rounded-full bg-rose-500 text-white font-black text-[10px] hidden">0</span>
         </button>
 
-        <button onclick="switchTab('settings')" id="nav-btn-settings" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 text-xs font-semibold transition">
+        <button onclick="window.switchTab('contacts')" id="nav-btn-contacts" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 text-xs font-bold transition">
           <span class="flex items-center gap-3">
-            <i class="fa-solid fa-gear w-4"></i> Settings & API
+            <i class="fa-solid fa-address-book text-emerald-400 w-4 text-center"></i> CRM Leads
+          </span>
+          <span id="total-contacts-count" class="text-[10px] text-slate-500 font-mono">0</span>
+        </button>
+
+        <button onclick="window.switchTab('analytics')" id="nav-btn-analytics" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 text-xs font-bold transition">
+          <span class="flex items-center gap-3">
+            <i class="fa-solid fa-chart-line text-amber-400 w-4 text-center"></i> Analytics
+          </span>
+        </button>
+
+        <button onclick="window.switchTab('settings')" id="nav-btn-settings" class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 text-xs font-bold transition">
+          <span class="flex items-center gap-3">
+            <i class="fa-solid fa-sliders text-slate-400 w-4 text-center"></i> System Config
           </span>
         </button>
       </nav>
     </div>
 
-    <!-- Status Indicator -->
+    <!-- Live Supabase Status Pill -->
     <div class="p-4 m-4 rounded-xl bg-slate-950 border border-slate-800/80 flex items-center justify-between text-xs">
       <div class="flex items-center gap-2">
-        <span id="connection-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+        <span id="connection-dot" class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
         <span id="connection-text" class="text-slate-400 font-mono text-[11px]">Connecting...</span>
       </div>
+      <i class="fa-solid fa-database text-slate-600 text-xs"></i>
     </div>
   </aside>
 
-  <!-- MAIN CONTENT AREA -->
-  <main class="flex-1 bg-slate-950 p-6 md:p-10 overflow-y-auto">
-
-    <!-- TAB 1: DASHBOARD OVERVIEW -->
-    <section id="tab-dashboard" class="tab-content space-y-6">
-      <div>
-        <h2 class="text-2xl font-black text-white">System Overview</h2>
-        <p class="text-xs text-slate-400 mt-1">Real-time status and operational summary.</p>
+  <!-- MAIN WRAPPER -->
+  <div class="flex-1 flex flex-col h-full overflow-hidden">
+    
+    <!-- TOPBAR -->
+    <header class="h-16 bg-slate-900/60 border-b border-slate-800/80 px-6 flex items-center justify-between shrink-0 z-10 backdrop-blur-md">
+      <!-- Search Input -->
+      <div class="relative w-72">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+        <input id="global-search" type="text" onkeyup="window.handleGlobalSearch(event)" placeholder="Search inquiries or leads..." class="w-full pl-9 pr-4 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-brand-500 transition" />
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="glass-card p-5 rounded-2xl border border-slate-800">
-          <div class="flex items-center justify-between text-slate-400 text-xs font-semibold mb-2">
-            <span>Total Inquiries</span>
-            <i class="fa-solid fa-envelope text-indigo-400"></i>
-          </div>
-          <p id="stat-total-inquiries" class="text-2xl font-black text-white">0</p>
-        </div>
-
-        <div class="glass-card p-5 rounded-2xl border border-slate-800">
-          <div class="flex items-center justify-between text-slate-400 text-xs font-semibold mb-2">
-            <span>Unread Messages</span>
-            <i class="fa-solid fa-bell text-rose-400"></i>
-          </div>
-          <p id="stat-unread-inquiries" class="text-2xl font-black text-rose-400">0</p>
-        </div>
-
-        <div class="glass-card p-5 rounded-2xl border border-slate-800">
-          <div class="flex items-center justify-between text-slate-400 text-xs font-semibold mb-2">
-            <span>Supabase Sync</span>
-            <i class="fa-solid fa-database text-emerald-400"></i>
-          </div>
-          <p id="stat-sync-status" class="text-sm font-bold text-emerald-400 mt-1">Active</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 2: INQUIRIES / INBOX TAB -->
-    <section id="tab-inquiries" class="tab-content hidden space-y-6">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h2 class="text-2xl font-black text-white flex items-center gap-2">
-            <i class="fa-solid fa-envelope-open-text text-brand-500"></i> Business Inquiries
-          </h2>
-          <p class="text-xs text-slate-400 mt-1">Manage sponsor leads, media requests, and general contact form entries.</p>
-        </div>
-        
-        <!-- Filter Bar -->
-        <div class="flex items-center gap-2">
-          <select id="inquiry-filter" onchange="loadInquiries()" class="px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 focus:outline-none focus:border-brand-500">
-            <option value="ALL">All Messages</option>
-            <option value="UNREAD" selected>Unread Only</option>
-            <option value="READ">Read Only</option>
-          </select>
-          <button onclick="loadInquiries()" class="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-slate-300 transition" title="Refresh">
-            <i class="fa-solid fa-rotate-right"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Messages List Container -->
-      <div class="glass-card rounded-2xl border border-slate-800 overflow-hidden">
-        <div id="inquiries-list" class="divide-y divide-slate-800/60">
-          <div class="p-12 text-center text-xs text-slate-500 flex flex-col items-center gap-2">
-            <i class="fa-solid fa-spinner fa-spin text-lg text-brand-500"></i>
-            Loading inbox from Supabase...
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 3: SETTINGS TAB -->
-    <section id="tab-settings" class="tab-content hidden space-y-6">
-      <div>
-        <h2 class="text-2xl font-black text-white">Database Credentials</h2>
-        <p class="text-xs text-slate-400 mt-1">Configure your Supabase Project connection variables.</p>
-      </div>
-
-      <div class="glass-card p-6 rounded-2xl border border-slate-800 max-w-xl space-y-4">
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">Supabase Project URL</label>
-          <input id="cfg-url" type="text" placeholder="https://xyz.supabase.co" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-brand-500 font-mono" />
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">Supabase Anon Key</label>
-          <input id="cfg-key" type="password" placeholder="eyJhbGciOi..." class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-brand-500 font-mono" />
-        </div>
-        <button onclick="saveCredentials()" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition shadow-lg shadow-brand-600/30">
-          Save Credentials & Reconnect
+      <!-- Header Actions -->
+      <div class="flex items-center gap-3">
+        <button onclick="window.exportCSV()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition flex items-center gap-2 border border-slate-700/50">
+          <i class="fa-solid fa-file-csv text-emerald-400"></i> Export CSV
         </button>
+        <button onclick="window.switchTab('inquiries')" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 relative">
+          <i class="fa-solid fa-bell text-xs"></i>
+          <span id="header-unread-dot" class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-rose-500 rounded-full hidden"></span>
+        </button>
+        <div class="h-6 w-px bg-slate-800"></div>
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-brand-600/30 border border-brand-500/40 flex items-center justify-center text-brand-300 font-bold text-xs">
+            AD
+          </div>
+          <span class="text-xs font-bold text-slate-300 hidden sm:inline">Admin User</span>
+        </div>
       </div>
-    </section>
+    </header>
 
-  </main>
+    <!-- CONTENT BODY (SCROLLABLE) -->
+    <main class="flex-1 p-6 md:p-8 overflow-y-auto custom-scrollbar">
 
-  <!-- INQUIRY DETAIL MODAL -->
+      <!-- TAB 1: OVERVIEW DASHBOARD -->
+      <section id="tab-dashboard" class="tab-content space-y-6">
+        <div>
+          <h2 class="text-2xl font-black text-white">Executive Dashboard</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Real-time stats from your Supabase database.</p>
+        </div>
+
+        <!-- Metric Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="glass-panel p-5 rounded-2xl">
+            <div class="flex items-center justify-between text-slate-400 text-xs font-bold mb-3">
+              <span>TOTAL INQUIRIES</span>
+              <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400"><i class="fa-solid fa-inbox"></i></div>
+            </div>
+            <p id="dash-total" class="text-3xl font-black text-white">0</p>
+            <span class="text-[10px] text-slate-500 font-mono mt-1 block">Lifetime submissions</span>
+          </div>
+
+          <div class="glass-panel p-5 rounded-2xl">
+            <div class="flex items-center justify-between text-slate-400 text-xs font-bold mb-3">
+              <span>UNREAD MESSAGES</span>
+              <div class="p-2 rounded-lg bg-rose-500/10 text-rose-400"><i class="fa-solid fa-envelope"></i></div>
+            </div>
+            <p id="dash-unread" class="text-3xl font-black text-rose-400">0</p>
+            <span class="text-[10px] text-rose-400/80 font-mono mt-1 block">Requires immediate response</span>
+          </div>
+
+          <div class="glass-panel p-5 rounded-2xl">
+            <div class="flex items-center justify-between text-slate-400 text-xs font-bold mb-3">
+              <span>PROCESSED / READ</span>
+              <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400"><i class="fa-solid fa-circle-check"></i></div>
+            </div>
+            <p id="dash-read" class="text-3xl font-black text-emerald-400">0</p>
+            <span class="text-[10px] text-slate-500 font-mono mt-1 block">Reviewed by team</span>
+          </div>
+
+          <div class="glass-panel p-5 rounded-2xl">
+            <div class="flex items-center justify-between text-slate-400 text-xs font-bold mb-3">
+              <span>UNIQUE LEADS</span>
+              <div class="p-2 rounded-lg bg-amber-500/10 text-amber-400"><i class="fa-solid fa-users"></i></div>
+            </div>
+            <p id="dash-contacts" class="text-3xl font-black text-amber-400">0</p>
+            <span class="text-[10px] text-slate-500 font-mono mt-1 block">Deduplicated email contacts</span>
+          </div>
+        </div>
+
+        <!-- Recent Inquiries Preview Table -->
+        <div class="glass-panel rounded-2xl overflow-hidden">
+          <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+            <h3 class="font-bold text-sm text-white flex items-center gap-2">
+              <i class="fa-solid fa-clock-rotate-left text-brand-500"></i> Recent Inquiries
+            </h3>
+            <button onclick="window.switchTab('inquiries')" class="text-xs font-bold text-brand-400 hover:text-brand-300">View All Inbox &rarr;</button>
+          </div>
+          <div id="dash-recent-list" class="divide-y divide-slate-800/60">
+            <div class="p-8 text-center text-xs text-slate-500">Loading recent activity...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: INQUIRIES INBOX CRM -->
+      <section id="tab-inquiries" class="tab-content hidden space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-2xl font-black text-white flex items-center gap-2.5">
+              <i class="fa-solid fa-inbox text-brand-500"></i> Inquiries Management
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5">Filter, read, process, and delete incoming form entries.</p>
+          </div>
+
+          <!-- Controls Bar -->
+          <div class="flex items-center gap-2 flex-wrap">
+            <div class="relative">
+              <input id="inquiry-search-input" type="text" oninput="window.renderInquiries()" placeholder="Filter current view..." class="pl-3 pr-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-brand-500" />
+            </div>
+            <select id="inquiry-filter-status" onchange="window.loadInquiries()" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 focus:outline-none">
+              <option value="ALL">All Statuses</option>
+              <option value="UNREAD" selected>Unread Only</option>
+              <option value="READ">Read Only</option>
+              <option value="ARCHIVED">Archived</option>
+            </select>
+            <button onclick="window.loadInquiries()" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-slate-300 transition" title="Reload Database">
+              <i class="fa-solid fa-rotate-right"></i>
+            </button>
+            <button onclick="window.markAllAsRead()" class="px-3 py-1.5 rounded-xl bg-indigo-600/20 text-indigo-300 hover:bg-indigo-600 hover:text-white border border-indigo-500/30 text-xs font-bold transition">
+              Mark All Read
+            </button>
+          </div>
+        </div>
+
+        <!-- Inquiries Table Card -->
+        <div class="glass-panel rounded-2xl overflow-hidden">
+          <div id="inquiries-container" class="divide-y divide-slate-800/60">
+            <div class="p-12 text-center text-xs text-slate-500 flex flex-col items-center gap-3">
+              <i class="fa-solid fa-circle-notch fa-spin text-xl text-brand-500"></i>
+              <span>Syncing with Supabase table `inquiries`...</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: CONTACTS / LEADS -->
+      <section id="tab-contacts" class="tab-content hidden space-y-6">
+        <div>
+          <h2 class="text-2xl font-black text-white">CRM Leads Directory</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Automatically aggregated contacts built from submitted inquiries.</p>
+        </div>
+
+        <div class="glass-panel rounded-2xl p-6">
+          <div id="contacts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="p-8 text-center text-xs text-slate-500 col-span-full">Processing leads directory...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: ANALYTICS -->
+      <section id="tab-analytics" class="tab-content hidden space-y-6">
+        <div>
+          <h2 class="text-2xl font-black text-white">Analytics & Metrics</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Categorical breakdown of incoming business inquiries.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="glass-panel p-6 rounded-2xl space-y-4">
+            <h3 class="font-bold text-sm text-white flex items-center gap-2">
+              <i class="fa-solid fa-layer-group text-brand-500"></i> Inquiries by Category
+            </h3>
+            <div id="analytics-categories" class="space-y-3">
+              <div class="text-xs text-slate-500">Calculating category distribution...</div>
+            </div>
+          </div>
+
+          <div class="glass-panel p-6 rounded-2xl space-y-4">
+            <h3 class="font-bold text-sm text-white flex items-center gap-2">
+              <i class="fa-solid fa-bolt text-amber-400"></i> Processing Health
+            </h3>
+            <div class="space-y-4">
+              <div>
+                <div class="flex justify-between text-xs font-bold mb-1">
+                  <span class="text-slate-300">Read / Resolved Ratio</span>
+                  <span id="read-percent-txt" class="text-emerald-400">0%</span>
+                </div>
+                <div class="w-full bg-slate-900 rounded-full h-2.5 overflow-hidden">
+                  <div id="read-percent-bar" class="bg-emerald-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                <span class="text-xs font-bold text-slate-300">Live WebSockets Status</span>
+                <p class="text-[11px] text-slate-400">Supabase postgres_changes channel is actively listening for new row inserts from about.html.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: SETTINGS -->
+      <section id="tab-settings" class="tab-content hidden space-y-6">
+        <div>
+          <h2 class="text-2xl font-black text-white">Database Credentials</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Active configuration for Supabase client connection.</p>
+        </div>
+
+        <div class="glass-panel p-6 rounded-2xl max-w-xl space-y-5">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Supabase Project URL</label>
+            <input id="cfg-url" type="text" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 font-mono focus:outline-none" readonly />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Supabase Anon Public Key</label>
+            <textarea id="cfg-key" rows="3" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 font-mono focus:outline-none resize-none" readonly></textarea>
+          </div>
+
+          <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
+            <span class="text-xs text-slate-400">Connection Status: <strong id="cfg-status" class="text-emerald-400">Active</strong></span>
+            <button onclick="window.testConnection()" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition">
+              Test Database Ping
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- INQUIRY DETAIL & REPLY MODAL -->
   <div id="inquiry-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-    <div class="glass-card max-w-lg w-full rounded-2xl p-6 border border-slate-800 shadow-2xl relative">
-      <button onclick="closeInquiryModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-sm">
+    <div class="glass-panel max-w-2xl w-full rounded-2xl p-6 shadow-2xl relative space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+      
+      <!-- Close Button -->
+      <button onclick="window.closeModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-base">
         <i class="fa-solid fa-xmark"></i>
       </button>
 
-      <span id="modal-type" class="px-2.5 py-1 rounded-md bg-brand-500/20 text-brand-300 font-bold text-[10px] uppercase tracking-wider">TYPE</span>
-      
-      <h3 id="modal-name" class="text-lg font-black text-white mt-3">Sender Name</h3>
-      <p id="modal-email" class="text-xs text-slate-400 font-mono mt-0.5">email@domain.com</p>
-      <p id="modal-date" class="text-[10px] text-slate-500 mt-1">Date</p>
-      
-      <div class="mt-4 pt-4 border-t border-slate-800">
-        <p id="modal-message" class="text-xs text-slate-200 leading-relaxed whitespace-pre-wrap">Message body...</p>
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between pr-8">
+        <div>
+          <span id="modal-type" class="px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-brand-500/20 text-brand-300 border border-brand-500/30">TYPE</span>
+          <h3 id="modal-name" class="text-xl font-black text-white mt-2">Sender Name</h3>
+          <p id="modal-email" class="text-xs text-slate-400 font-mono">email@domain.com</p>
+        </div>
       </div>
 
-      <div class="mt-6 flex justify-end gap-3">
-        <button onclick="closeInquiryModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300">Close</button>
+      <div class="text-[11px] text-slate-500 font-mono border-b border-slate-800 pb-3" id="modal-date">
+        Submitted at...
+      </div>
+
+      <!-- Message Content -->
+      <div class="p-4 rounded-xl bg-slate-950 border border-slate-800/80">
+        <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Inquiry Message Body</h4>
+        <p id="modal-message" class="text-xs text-slate-200 leading-relaxed whitespace-pre-wrap">Message body here...</p>
+      </div>
+
+      <!-- Quick Action Controls -->
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+        <div class="flex items-center gap-2">
+          <label class="text-xs text-slate-400 font-bold">Status:</label>
+          <select id="modal-status-select" onchange="window.updateModalStatus()" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 focus:outline-none">
+            <option value="UNREAD">UNREAD</option>
+            <option value="READ">READ</option>
+            <option value="ARCHIVED">ARCHIVED</option>
+          </select>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <a id="modal-reply-btn" href="#" target="_blank" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition flex items-center gap-1.5">
+            <i class="fa-solid fa-reply"></i> Reply via Email
+          </a>
+          <button onclick="window.closeModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition">
+            Close
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- JAVASCRIPT CONTROLLER -->
+  <!-- JAVASCRIPT CRM CONTROLLER -->
   <script>
-    // --- 1. CONFIGURATION & STATE ---
-    let DEFAULT_URL = "https://tdfkebgapncswtvbtaqy.supabase.co";
-    let DEFAULT_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ";
+    // --- SUPABASE CONFIGURATION ---
+    const SUPABASE_URL = "https://tdfkebgapncswtvbtaqy.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ";
 
-    let SUPABASE_URL = localStorage.getItem('sb_url') || DEFAULT_URL;
-    let SUPABASE_KEY = localStorage.getItem('sb_key') || DEFAULT_KEY;
-    
     let supabaseClient = null;
-    let currentInquiries = [];
+    let allInquiries = [];
+    let activeModalId = null;
 
-    // Global binding so inline handlers work without failing
+    // --- GLOBAL SCOPE BINDINGS ---
     window.switchTab = switchTab;
     window.loadInquiries = loadInquiries;
+    window.renderInquiries = renderInquiries;
     window.viewInquiry = viewInquiry;
-    window.closeInquiryModal = closeInquiryModal;
-    window.toggleInquiryStatus = toggleInquiryStatus;
+    window.closeModal = closeModal;
+    window.updateStatus = updateStatus;
+    window.updateModalStatus = updateModalStatus;
     window.deleteInquiry = deleteInquiry;
-    window.saveCredentials = saveCredentials;
+    window.markAllAsRead = markAllAsRead;
+    window.exportCSV = exportCSV;
+    window.handleGlobalSearch = handleGlobalSearch;
+    window.testConnection = testConnection;
 
-    // --- 2. INITIALIZATION ---
+    // --- INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', () => {
-      // Pre-fill credentials tab
-      const urlInput = document.getElementById('cfg-url');
-      const keyInput = document.getElementById('cfg-key');
-      if (urlInput) urlInput.value = SUPABASE_URL !== 'https://tdfkebgapncswtvbtaqy.supabase.co' ? SUPABASE_URL : '';
-      if (keyInput) keyInput.value = SUPABASE_KEY !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ' ? SUPABASE_KEY : '';
+      // Pre-fill settings
+      document.getElementById('cfg-url').value = SUPABASE_URL;
+      document.getElementById('cfg-key').value = SUPABASE_ANON_KEY;
 
       initSupabase();
     });
@@ -238,125 +423,111 @@
       const txt = document.getElementById('connection-text');
 
       if (!window.supabase || typeof window.supabase.createClient !== 'function') {
-        if (txt) txt.innerText = "SDK Failed";
-        if (dot) dot.className = "w-2 h-2 rounded-full bg-rose-500";
-        console.error("Supabase SDK not loaded.");
-        return;
-      }
-
-      if (!SUPABASE_URL || SUPABASE_URL === "https://tdfkebgapncswtvbtaqy.supabase.co" || !SUPABASE_KEY || SUPABASE_KEY === "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ") {
-        if (txt) txt.innerText = "Config Required";
-        if (dot) dot.className = "w-2 h-2 rounded-full bg-amber-500";
-        document.getElementById('inquiries-list').innerHTML = `
-          <div class="p-8 text-center text-xs text-amber-400">
-            <i class="fa-solid fa-triangle-exclamation mr-1.5"></i>
-            Please set your Supabase URL & Anon Key in the <b>Settings & API</b> tab.
-          </div>`;
+        if (txt) txt.innerText = "SDK Error";
+        if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-rose-500";
         return;
       }
 
       try {
-        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        if (txt) txt.innerText = "Connected";
-        if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-500";
-        document.getElementById('stat-sync-status').innerText = "Online";
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        if (txt) txt.innerText = "Live Realtime";
+        if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
 
-        // Initial Data Fetch
+        // Fetch Initial Data
         loadInquiries();
 
-        // Setup Realtime Sync
-        supabaseClient.channel('admin-inquiries-sync')
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'inquiries' }, () => {
+        // Subscribe to Supabase WebSockets Realtime Channel
+        supabaseClient
+          .channel('public:inquiries')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'inquiries' }, (payload) => {
+            console.log('⚡ Realtime event received:', payload);
             loadInquiries();
           })
           .subscribe();
 
       } catch (err) {
-        if (txt) txt.innerText = "Connection Error";
-        if (dot) dot.className = "w-2 h-2 rounded-full bg-rose-500";
-        console.error("Supabase Init Error:", err);
+        console.error("Supabase Client Init Error:", err);
+        if (txt) txt.innerText = "Connection Failed";
+        if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-rose-500";
       }
     }
 
-    // --- 3. TAB SWITCHING LOGIC ---
-    function switchTab(tabId) {
-      // Hide all contents
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      
-      // Reset navigation button active states
-      document.querySelectorAll('.nav-link').forEach(btn => {
-        btn.className = "nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 text-xs font-semibold transition";
-      });
-
-      // Show selected content
-      const targetTab = document.getElementById(`tab-${tabId}`);
-      if (targetTab) targetTab.classList.remove('hidden');
-
-      // Highlight active nav link
-      const activeNav = document.getElementById(`nav-btn-${tabId}`);
-      if (activeNav) {
-        activeNav.className = "nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl text-xs font-semibold transition bg-brand-600 text-white shadow-lg shadow-brand-600/20";
-      }
-
-      // Refresh data if switching to inbox
-      if (tabId === 'inquiries' && supabaseClient) {
-        loadInquiries();
-      }
-    }
-
-    // --- 4. INQUIRIES MANAGEMENT ---
+    // --- FETCH DATA FROM SUPABASE ---
     async function loadInquiries() {
-      const container = document.getElementById('inquiries-list');
       if (!supabaseClient) return;
 
-      const filter = document.getElementById('inquiry-filter')?.value || 'ALL';
-
-      let query = supabaseClient.from('inquiries').select('*').order('created_at', { ascending: false });
-      if (filter !== 'ALL') {
-        query = query.eq('status', filter);
-      }
-
-      const { data: inquiries, error } = await query;
+      const { data, error } = await supabaseClient
+        .from('inquiries')
+        .select('*')
+        .order('created_at', { ascending: false });
 
       if (error) {
-        container.innerHTML = `<div class="p-8 text-center text-xs text-rose-400">Error loading inquiries: ${escapeHtml(error.message)}</div>`;
+        console.error('Error fetching inquiries:', error);
+        document.getElementById('inquiries-container').innerHTML = `
+          <div class="p-8 text-center text-xs text-rose-400">
+            <i class="fa-solid fa-triangle-exclamation mr-2"></i> Failed to fetch data: ${escapeHtml(error.message)}
+          </div>`;
         return;
       }
 
-      // Update statistics
-      updateStats(inquiries || []);
+      allInquiries = data || [];
+      
+      // Update UI components
+      updateDashboardStats();
+      renderInquiries();
+      renderContacts();
+      renderAnalytics();
+    }
 
-      if (!inquiries || inquiries.length === 0) {
-        container.innerHTML = `<div class="p-8 text-center text-xs text-slate-500">No messages found in inbox.</div>`;
+    // --- RENDER INBOX TAB ---
+    function renderInquiries() {
+      const container = document.getElementById('inquiries-container');
+      const statusFilter = document.getElementById('inquiry-filter-status')?.value || 'ALL';
+      const searchFilter = document.getElementById('inquiry-search-input')?.value.toLowerCase().trim() || '';
+
+      let filtered = allInquiries.filter(item => {
+        const matchesStatus = (statusFilter === 'ALL') || (item.status === statusFilter);
+        const matchesSearch = !searchFilter || 
+          item.name.toLowerCase().includes(searchFilter) || 
+          item.email.toLowerCase().includes(searchFilter) || 
+          item.message.toLowerCase().includes(searchFilter) ||
+          (item.type && item.type.toLowerCase().includes(searchFilter));
+        return matchesStatus && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="p-12 text-center text-xs text-slate-500">No matching inquiries found.</div>`;
         return;
       }
 
-      currentInquiries = inquiries;
-
-      container.innerHTML = inquiries.map(item => `
-        <div class="p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-900/40 transition ${item.status === 'UNREAD' ? 'bg-indigo-950/20 border-l-4 border-l-brand-500' : ''}">
+      container.innerHTML = filtered.map(item => `
+        <div class="p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-900/50 transition ${item.status === 'UNREAD' ? 'bg-indigo-950/20 border-l-4 border-l-brand-500' : ''}">
           <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-1 flex-wrap">
+            <div class="flex items-center gap-2 mb-1.5 flex-wrap">
               <span class="font-bold text-sm text-white truncate">${escapeHtml(item.name)}</span>
-              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${item.status === 'UNREAD' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : 'bg-slate-800 text-slate-400'}">
+              <span class="px-2 py-0.5 rounded text-[10px] font-black ${getStatusBadgeClass(item.status)}">
                 ${item.status}
               </span>
-              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
                 ${escapeHtml(item.type || 'General')}
               </span>
             </div>
-            <p class="text-xs text-slate-400 truncate max-w-xl">${escapeHtml(item.message)}</p>
-            <span class="text-[10px] text-slate-500 font-mono mt-1 block">${new Date(item.created_at).toLocaleString()} &bull; ${escapeHtml(item.email)}</span>
+            <p class="text-xs text-slate-300 truncate max-w-2xl">${escapeHtml(item.message)}</p>
+            <div class="text-[10px] text-slate-500 font-mono mt-1 flex items-center gap-2">
+              <span><i class="fa-solid fa-clock mr-1"></i>${new Date(item.created_at).toLocaleString()}</span>
+              <span>&bull;</span>
+              <span><i class="fa-solid fa-envelope mr-1"></i>${escapeHtml(item.email)}</span>
+            </div>
           </div>
 
           <div class="flex items-center gap-2 shrink-0">
-            <button onclick="viewInquiry('${item.id}')" class="px-3 py-1.5 rounded-lg bg-brand-600/20 text-brand-300 hover:bg-brand-600 hover:text-white text-xs font-bold transition">
-              <i class="fa-solid fa-eye mr-1"></i> Read
+            <button onclick="window.viewInquiry('${item.id}')" class="px-3.5 py-1.5 rounded-xl bg-brand-600/20 text-brand-300 hover:bg-brand-600 hover:text-white text-xs font-bold transition flex items-center gap-1.5 border border-brand-500/30">
+              <i class="fa-solid fa-eye"></i> View
             </button>
-            <button onclick="toggleInquiryStatus('${item.id}', '${item.status === 'UNREAD' ? 'READ' : 'UNREAD'}')" class="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-slate-300" title="Toggle Read/Unread">
+            <button onclick="window.updateStatus('${item.id}', '${item.status === 'UNREAD' ? 'READ' : 'UNREAD'}')" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-slate-300" title="Toggle Status">
               <i class="fa-solid ${item.status === 'UNREAD' ? 'fa-check text-emerald-400' : 'fa-envelope text-indigo-400'}"></i>
             </button>
-            <button onclick="deleteInquiry('${item.id}')" class="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-xs text-rose-400 transition" title="Delete Inquiry">
+            <button onclick="window.deleteInquiry('${item.id}')" class="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-xs text-rose-400" title="Delete Entry">
               <i class="fa-solid fa-trash"></i>
             </button>
           </div>
@@ -364,89 +535,308 @@
       `).join('');
     }
 
-    // Update Counts & Badges
-    async function updateStats(inquiries) {
-      if (!supabaseClient) return;
+    // --- DASHBOARD STATS ---
+    function updateDashboardStats() {
+      const total = allInquiries.length;
+      const unread = allInquiries.filter(i => i.status === 'UNREAD').length;
+      const read = allInquiries.filter(i => i.status === 'READ').length;
 
-      const { count: unreadCount } = await supabaseClient
-        .from('inquiries')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'UNREAD');
+      // Unique leads by email
+      const uniqueEmails = new Set(allInquiries.map(i => i.email.toLowerCase().trim()));
 
-      const { count: totalCount } = await supabaseClient
-        .from('inquiries')
-        .select('*', { count: 'exact', head: true });
+      document.getElementById('dash-total').innerText = total;
+      document.getElementById('dash-unread').innerText = unread;
+      document.getElementById('dash-read').innerText = read;
+      document.getElementById('dash-contacts').innerText = uniqueEmails.size;
 
-      document.getElementById('stat-total-inquiries').innerText = totalCount || 0;
-      document.getElementById('stat-unread-inquiries').innerText = unreadCount || 0;
-
+      // Unread badge logic
       const badge = document.getElementById('unread-count-badge');
-      if (badge) {
-        if (unreadCount > 0) {
-          badge.innerText = unreadCount;
-          badge.classList.remove('hidden');
-        } else {
-          badge.classList.add('hidden');
-        }
+      const dot = document.getElementById('header-unread-dot');
+      if (unread > 0) {
+        badge.innerText = unread;
+        badge.classList.remove('hidden');
+        dot?.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+        dot?.classList.add('hidden');
       }
-    }
 
-    // Modal Actions
-    async function viewInquiry(id) {
-      const item = currentInquiries.find(i => i.id === id);
-      if (!item) return;
+      // Recent Activity Preview
+      const recentContainer = document.getElementById('dash-recent-list');
+      const recentItems = allInquiries.slice(0, 5);
 
-      document.getElementById('modal-name').innerText = item.name;
-      document.getElementById('modal-email').innerText = item.email;
-      document.getElementById('modal-type').innerText = item.type || 'General';
-      document.getElementById('modal-date').innerText = new Date(item.created_at).toLocaleString();
-      document.getElementById('modal-message').innerText = item.message;
-
-      document.getElementById('inquiry-modal').classList.remove('hidden');
-
-      if (item.status === 'UNREAD') {
-        await toggleInquiryStatus(id, 'READ');
-      }
-    }
-
-    function closeInquiryModal() {
-      document.getElementById('inquiry-modal').classList.add('hidden');
-    }
-
-    async function toggleInquiryStatus(id, newStatus) {
-      if (!supabaseClient) return;
-      await supabaseClient.from('inquiries').update({ status: newStatus }).eq('id', id);
-      loadInquiries();
-    }
-
-    async function deleteInquiry(id) {
-      if (!confirm("Are you sure you want to delete this inquiry?")) return;
-      if (!supabaseClient) return;
-      await supabaseClient.from('inquiries').delete().eq('id', id);
-      loadInquiries();
-    }
-
-    // Save Credentials via UI
-    function saveCredentials() {
-      const url = document.getElementById('cfg-url').value.trim();
-      const key = document.getElementById('cfg-key').value.trim();
-
-      if (!url || !key) {
-        alert("Please provide both URL and Key.");
+      if (recentItems.length === 0) {
+        recentContainer.innerHTML = `<div class="p-6 text-center text-xs text-slate-500">No recent submissions found.</div>`;
         return;
       }
 
-      localStorage.setItem('sb_url', url);
-      localStorage.setItem('sb_key', key);
-      SUPABASE_URL = url;
-      SUPABASE_KEY = key;
-
-      alert("Credentials saved! Attempting to reconnect...");
-      initSupabase();
-      switchTab('inquiries');
+      recentContainer.innerHTML = recentItems.map(item => `
+        <div class="p-4 flex items-center justify-between hover:bg-slate-900/40">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-xs">
+              ${escapeHtml(item.name.charAt(0).toUpperCase())}
+            </div>
+            <div>
+              <p class="text-xs font-bold text-white">${escapeHtml(item.name)}</p>
+              <p class="text-[10px] text-slate-400">${escapeHtml(item.type || 'General')} &bull; ${new Date(item.created_at).toLocaleDateString()}</p>
+            </div>
+          </div>
+          <button onclick="window.viewInquiry('${item.id}')" class="text-xs text-brand-400 hover:underline font-bold">Inspect</button>
+        </div>
+      `).join('');
     }
 
-    // Utility: XSS Escaper
+    // --- RENDER CRM LEADS DIRECTORY ---
+    function renderContacts() {
+      const grid = document.getElementById('contacts-grid');
+      const contactMap = {};
+
+      allInquiries.forEach(item => {
+        const key = item.email.toLowerCase().trim();
+        if (!contactMap[key]) {
+          contactMap[key] = {
+            name: item.name,
+            email: item.email,
+            count: 1,
+            lastDate: new Date(item.created_at),
+            types: new Set([item.type || 'General'])
+          };
+        } else {
+          contactMap[key].count++;
+          contactMap[key].types.add(item.type || 'General');
+          const d = new Date(item.created_at);
+          if (d > contactMap[key].lastDate) contactMap[key].lastDate = d;
+        }
+      });
+
+      const contacts = Object.values(contactMap);
+      document.getElementById('total-contacts-count').innerText = contacts.length;
+
+      if (contacts.length === 0) {
+        grid.innerHTML = `<div class="p-8 text-center text-xs text-slate-500 col-span-full">No leads discovered yet.</div>`;
+        return;
+      }
+
+      grid.innerHTML = contacts.map(c => `
+        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 flex flex-col justify-between space-y-3">
+          <div class="flex items-start justify-between">
+            <div>
+              <h4 class="font-bold text-sm text-white">${escapeHtml(c.name)}</h4>
+              <p class="text-xs text-slate-400 font-mono">${escapeHtml(c.email)}</p>
+            </div>
+            <span class="px-2 py-0.5 rounded bg-brand-500/10 text-brand-300 font-bold text-[10px] border border-brand-500/20">
+              ${c.count} Inquiry${c.count > 1 ? 'ies' : ''}
+            </span>
+          </div>
+
+          <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-500 font-mono">
+            <span>Last: ${c.lastDate.toLocaleDateString()}</span>
+            <a href="mailto:${escapeHtml(c.email)}" class="text-brand-400 hover:underline font-bold">Email Lead &rarr;</a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // --- RENDER ANALYTICS ---
+    function renderAnalytics() {
+      const container = document.getElementById('analytics-categories');
+      const counts = {};
+      let total = allInquiries.length;
+
+      allInquiries.forEach(i => {
+        const t = i.type || 'General';
+        counts[t] = (counts[t] || 0) + 1;
+      });
+
+      if (total === 0) {
+        container.innerHTML = `<div class="text-xs text-slate-500">No data available.</div>`;
+        return;
+      }
+
+      container.innerHTML = Object.entries(counts).map(([cat, cnt]) => {
+        const pct = Math.round((cnt / total) * 100);
+        return `
+          <div>
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span class="text-slate-300">${escapeHtml(cat)}</span>
+              <span class="text-slate-400">${cnt} (${pct}%)</span>
+            </div>
+            <div class="w-full bg-slate-950 rounded-full h-2 border border-slate-800 overflow-hidden">
+              <div class="bg-brand-500 h-2 rounded-full" style="width: ${pct}%"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Processing ratio
+      const readCnt = allInquiries.filter(i => i.status === 'READ').length;
+      const readPct = total > 0 ? Math.round((readCnt / total) * 100) : 0;
+      document.getElementById('read-percent-txt').innerText = `${readPct}%`;
+      document.getElementById('read-percent-bar').style.width = `${readPct}%`;
+    }
+
+    // --- MODAL & ACTIONS ---
+    function viewInquiry(id) {
+      const item = allInquiries.find(i => i.id === id);
+      if (!item) return;
+
+      activeModalId = id;
+      document.getElementById('modal-name').innerText = item.name;
+      document.getElementById('modal-email').innerText = item.email;
+      document.getElementById('modal-type').innerText = item.type || 'General';
+      document.getElementById('modal-date').innerText = `Submitted on: ${new Date(item.created_at).toLocaleString()}`;
+      document.getElementById('modal-message').innerText = item.message;
+      document.getElementById('modal-status-select').value = item.status;
+
+      // Email Reply Link Pre-fill
+      const subject = encodeURIComponent(`Re: Inquiry regarding ${item.type || 'Wolf Society'}`);
+      const body = encodeURIComponent(`Hi ${item.name},\n\nThank you for reaching out to Wolf Society.\n\nBest regards,\nManagement Team`);
+      document.getElementById('modal-reply-btn').href = `mailto:${item.email}?subject=${subject}&body=${body}`;
+
+      document.getElementById('inquiry-modal').classList.remove('hidden');
+
+      // Auto mark as READ if UNREAD
+      if (item.status === 'UNREAD') {
+        updateStatus(id, 'READ', false);
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('inquiry-modal').classList.add('hidden');
+      activeModalId = null;
+    }
+
+    async function updateStatus(id, newStatus, reload = true) {
+      if (!supabaseClient) return;
+      const { error } = await supabaseClient
+        .from('inquiries')
+        .update({ status: newStatus })
+        .eq('id', id);
+
+      if (error) console.error("Error updating status:", error);
+      if (reload) loadInquiries();
+    }
+
+    async function updateModalStatus() {
+      if (!activeModalId) return;
+      const newStatus = document.getElementById('modal-status-select').value;
+      await updateStatus(activeModalId, newStatus, true);
+    }
+
+    async function deleteInquiry(id) {
+      if (!confirm("Are you sure you want to permanently delete this inquiry?")) return;
+      if (!supabaseClient) return;
+
+      const { error } = await supabaseClient
+        .from('inquiries')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        alert("Failed to delete inquiry: " + error.message);
+      } else {
+        loadInquiries();
+      }
+    }
+
+    async function markAllAsRead() {
+      if (!supabaseClient) return;
+      const unreadIds = allInquiries.filter(i => i.status === 'UNREAD').map(i => i.id);
+      if (unreadIds.length === 0) return;
+
+      await supabaseClient
+        .from('inquiries')
+        .update({ status: 'READ' })
+        .in('id', unreadIds);
+
+      loadInquiries();
+    }
+
+    // --- CSV EXPORT GENERATOR ---
+    function exportCSV() {
+      if (allInquiries.length === 0) {
+        alert("No inquiries available to export.");
+        return;
+      }
+
+      const headers = ["ID", "Name", "Email", "Type", "Status", "Message", "Created At"];
+      const rows = allInquiries.map(i => [
+        `"${i.id}"`,
+        `"${i.name.replace(/"/g, '""')}"`,
+        `"${i.email.replace(/"/g, '""')}"`,
+        `"${(i.type || 'General').replace(/"/g, '""')}"`,
+        `"${i.status}"`,
+        `"${i.message.replace(/"/g, '""')}"`,
+        `"${i.created_at}"`
+      ]);
+
+      const csvContent = "data:text/csv;charset=utf-8," 
+        + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `inquiries_export_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // --- SEARCH & TAB NAVIGATION ---
+    function handleGlobalSearch(e) {
+      const q = e.target.value.toLowerCase().trim();
+      if (!q) return;
+      
+      switchTab('inquiries');
+      const searchInput = document.getElementById('inquiry-search-input');
+      if (searchInput) {
+        searchInput.value = q;
+        renderInquiries();
+      }
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-link').forEach(btn => {
+        btn.className = "nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 text-xs font-bold transition";
+      });
+
+      const targetTab = document.getElementById(`tab-${tabId}`);
+      if (targetTab) targetTab.classList.remove('hidden');
+
+      const activeNav = document.getElementById(`nav-btn-${tabId}`);
+      if (activeNav) {
+        activeNav.className = "nav-link w-full flex items-center justify-between px-4 py-3 rounded-xl text-xs font-bold transition bg-brand-600 text-white shadow-lg shadow-brand-600/20";
+      }
+    }
+
+    async function testConnection() {
+      if (!supabaseClient) return;
+      const statusEl = document.getElementById('cfg-status');
+      statusEl.innerText = "Testing...";
+      statusEl.className = "text-amber-400";
+
+      const { count, error } = await supabaseClient.from('inquiries').select('*', { count: 'exact', head: true });
+
+      if (error) {
+        statusEl.innerText = "Error: " + error.message;
+        statusEl.className = "text-rose-400";
+      } else {
+        statusEl.innerText = `Connected (${count || 0} rows found)`;
+        statusEl.className = "text-emerald-400";
+      }
+    }
+
+    // --- UTILS ---
+    function getStatusBadgeClass(status) {
+      switch (status) {
+        case 'UNREAD': return 'bg-rose-500/20 text-rose-300 border border-rose-500/30';
+        case 'READ': return 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+        case 'ARCHIVED': return 'bg-slate-800 text-slate-400 border border-slate-700';
+        default: return 'bg-slate-800 text-slate-300';
+      }
+    }
+
     function escapeHtml(str) {
       return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
