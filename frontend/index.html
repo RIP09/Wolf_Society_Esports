@@ -100,6 +100,180 @@
         `).join('');
       }
     });
+
+    <!-- Supabase Client JS (v2) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  // --- SUPABASE CONFIGURATION ---
+  const SUPABASE_URL = "https://tdfkebgapncswtvbtaqy.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ";
+
+  let supabaseClient = null;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // 1. Initialize Supabase
+    if (window.supabase && typeof window.supabase.createClient === 'function') {
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      
+      // Initial Data Fetch
+      loadSiteSettings();
+      loadPublishedNews();
+      loadUpcomingSchedule();
+
+      // 2. Setup Realtime WebSockets for Instant Live Sync
+      supabaseClient.channel('public-site-sync')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, () => loadSiteSettings())
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'news_announcements' }, () => loadPublishedNews())
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'matches_schedule' }, () => loadUpcomingSchedule())
+        .subscribe();
+    }
+  });
+
+  // --- 1. FETCH & RENDER SITE SETTINGS ---
+  async function loadSiteSettings() {
+    if (!supabaseClient) return;
+
+    const { data: settings, error } = await supabaseClient
+      .from('site_settings')
+      .select('*');
+
+    if (error || !settings) return;
+
+    settings.forEach(item => {
+      // Updates element with ID "hero-title"
+      const heroTitleEl = document.getElementById('hero-title');
+      if (heroTitleEl && item.key === 'hero_banner_title') {
+        heroTitleEl.innerText = item.value;
+      }
+
+      // Updates element with ID "hero-subtitle"
+      const heroSubtitleEl = document.getElementById('hero-subtitle');
+      if (heroSubtitleEl && item.key === 'hero_banner_subtitle') {
+        heroSubtitleEl.innerText = item.value;
+      }
+
+      // Updates element with ID "site-ticker"
+      const tickerEl = document.getElementById('site-ticker');
+      if (tickerEl && item.key === 'announcement_ticker') {
+        tickerEl.innerText = item.value;
+      }
+    });
+  }
+
+  // --- 2. FETCH & RENDER PUBLISHED NEWS & ANNOUNCEMENTS ---
+  async function loadPublishedNews() {
+    if (!supabaseClient) return;
+
+    const { data: news, error } = await supabaseClient
+      .from('news_announcements')
+      .select('*')
+      .eq('status', 'PUBLISHED')
+      .order('created_at', { ascending: false })
+      .limit(6);
+
+    const newsContainer = document.getElementById('news-container');
+    if (!newsContainer) return;
+
+    if (error || !news || news.length === 0) {
+      newsContainer.innerHTML = `
+        <div class="col-span-full text-center py-8 text-slate-500 text-xs font-mono">
+          No announcements published yet.
+        </div>`;
+      return;
+    }
+
+    newsContainer.innerHTML = news.map(item => `
+      <article class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 hover:border-indigo-500/50 transition duration-300 flex flex-col justify-between shadow-lg">
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+              ${escapeHtml(item.category)}
+            </span>
+            <span class="text-[10px] text-slate-500 font-mono">
+              ${new Date(item.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+            </span>
+          </div>
+          <h3 class="text-base font-bold text-white leading-snug hover:text-indigo-400 transition">
+            ${escapeHtml(item.title)}
+          </h3>
+          <p class="text-xs text-slate-400 leading-relaxed line-clamp-3">
+            ${escapeHtml(item.content)}
+          </p>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  // --- 3. FETCH & RENDER MATCHES & SCHEDULE ---
+  async function loadUpcomingSchedule() {
+    if (!supabaseClient) return;
+
+    const { data: matches, error } = await supabaseClient
+      .from('matches_schedule')
+      .select('*')
+      .order('match_date', { ascending: true })
+      .limit(6);
+
+    const scheduleContainer = document.getElementById('schedule-container');
+    if (!scheduleContainer) return;
+
+    if (error || !matches || matches.length === 0) {
+      scheduleContainer.innerHTML = `
+        <div class="col-span-full text-center py-8 text-slate-500 text-xs font-mono">
+          No match fixtures scheduled.
+        </div>`;
+      return;
+    }
+
+    scheduleContainer.innerHTML = matches.map(match => {
+      const matchTime = new Date(match.match_date);
+      const isLive = match.status === 'LIVE';
+
+      return `
+        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between gap-4 hover:border-slate-700 transition">
+          <div class="flex items-center justify-between text-xs font-bold border-b border-slate-800/80 pb-3">
+            <span class="text-indigo-400 font-mono uppercase">${escapeHtml(match.game)}</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-black ${isLive ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30 animate-pulse' : 'bg-slate-800 text-slate-400'}">
+              ${match.status}
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between py-2 px-2">
+            <div class="text-center font-black text-sm text-white">Wolf Society</div>
+            <div class="text-xs font-mono text-slate-500 font-bold px-2">VS</div>
+            <div class="text-center font-black text-sm text-slate-300">${escapeHtml(match.opponent)}</div>
+          </div>
+
+          <div class="flex items-center justify-between text-[11px] text-slate-400 font-mono pt-2 border-t border-slate-800/80">
+            <span><i class="fa-regular fa-calendar mr-1"></i>${matchTime.toLocaleDateString()}</span>
+            <span><i class="fa-regular fa-clock mr-1"></i>${matchTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // --- UTILITY: XSS PREVENTION ---
+  function escapeHtml(str) {
+    return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+<!-- Hero Banner Elements -->
+<h1 id="hero-title">WOLF SOCIETY ESPORTS</h1>
+<p id="hero-subtitle">Dominating competitive gaming across all titles.</p>
+<div id="site-ticker">🔥 Player registrations are now OPEN!</div>
+
+<!-- News Grid Container -->
+<div id="news-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <!-- Dynamic News Items Inject Here -->
+</div>
+
+<!-- Matches & Schedule Container -->
+<div id="schedule-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  <!-- Dynamic Schedule Fixtures Inject Here -->
+</div>
+  
+    
   </script>
 </body>
 </html>
