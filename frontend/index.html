@@ -1,279 +1,619 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wolf Society Esports — Official Portal</title>
+  <title>Wolf Society Esports · Rise Together, Hunt Together, Win Together</title>
+
+  <!-- Tailwind CSS (via CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: { extend: { colors: { brand: { 500: '#6366f1', 600: '#4f46e5' }, darkbg: '#090d16', cardbg: '#111827' } } }
-    }
-  </script>
+  <!-- AOS (Scroll animations) -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <!-- Google Font (Inter) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
   <style>
-    .glass-card { background: rgba(17, 24, 39, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
+    /* Custom styles */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0a;
+      color: #e5e7eb;
+      overflow-x: hidden;
+    }
+    /* Gradient text */
+    .gradient-text {
+      background: linear-gradient(135deg, #00f0ff, #ff2d55);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    /* Hero particle canvas */
+    #particles-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 10;
+    }
+    /* Glassmorphism cards */
+    .glass {
+      background: rgba(26, 26, 26, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    /* Smooth scrolling */
+    html { scroll-behavior: smooth; }
+    /* Section padding */
+    .section-pad { padding: 5rem 0; }
+    /* Navbar active link */
+    .nav-link.active {
+      color: #00f0ff;
+      border-bottom: 2px solid #00f0ff;
+    }
+    /* Hide sections by default */
+    .page-section { display: none; }
+    .page-section.active { display: block; }
+    /* Typing cursor */
+    .type-cursor {
+      display: inline-block;
+      width: 3px;
+      background: #00f0ff;
+      animation: blink 0.7s step-end infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    /* Button hover glow */
+    .btn-glow:hover {
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+    }
+    /* Match live pulse */
+    .live-pulse {
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.4; }
+      100% { opacity: 1; }
+    }
+    /* Footer social icons */
+    .social-icon {
+      transition: transform 0.3s, color 0.3s;
+    }
+    .social-icon:hover {
+      transform: scale(1.2);
+      color: #00f0ff;
+    }
   </style>
 </head>
-<body class="bg-darkbg text-slate-100 font-sans antialiased">
+<body>
 
-  <!-- Live Announcement Banner -->
-  <div class="bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-700 py-2.5 px-4 text-center text-xs font-semibold tracking-wide flex items-center justify-center gap-3">
-    <span class="bg-white/20 px-2 py-0.5 rounded text-[10px] font-bold">ANNOUNCEMENT</span>
-    <span id="banner-text">Loading updates...</span>
+  <!-- ========== NAVBAR ========== -->
+  <nav class="fixed top-0 left-0 w-full bg-[#0a0a0a]/90 backdrop-blur-md border-b border-[#2a2a2a] z-50 px-4 py-3 flex justify-between items-center">
+    <div class="flex items-center space-x-2">
+      <span class="text-2xl font-bold gradient-text">Wolf Society</span>
+      <span class="text-xs text-gray-500 hidden sm:inline">Esports</span>
+    </div>
+    <div class="hidden md:flex space-x-6 text-sm font-medium">
+      <a href="#" class="nav-link active" data-page="home">Home</a>
+      <a href="#" class="nav-link" data-page="about">About</a>
+      <a href="#" class="nav-link" data-page="team">Team</a>
+      <a href="#" class="nav-link" data-page="matches">Matches</a>
+      <a href="#" class="nav-link" data-page="news">News</a>
+      <a href="#" class="nav-link" data-page="gallery">Gallery</a>
+      <a href="#" class="nav-link" data-page="shop">Shop</a>
+      <a href="#" class="nav-link" data-page="contact">Contact</a>
+    </div>
+    <div class="flex items-center space-x-3">
+      <a href="./admin/index.html" class="text-gray-400 hover:text-white transition" title="Admin Panel">
+        <i class="fas fa-user-cog"></i>
+      </a>
+      <button id="mobile-menu-btn" class="md:hidden text-gray-300 text-xl">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu (hidden by default) -->
+  <div id="mobile-menu" class="md:hidden fixed top-16 left-0 w-full bg-[#0a0a0a]/95 backdrop-blur-md border-b border-[#2a2a2a] p-4 hidden flex-col space-y-3 text-sm font-medium z-40">
+    <a href="#" class="nav-link-mobile active" data-page="home">Home</a>
+    <a href="#" class="nav-link-mobile" data-page="about">About</a>
+    <a href="#" class="nav-link-mobile" data-page="team">Team</a>
+    <a href="#" class="nav-link-mobile" data-page="matches">Matches</a>
+    <a href="#" class="nav-link-mobile" data-page="news">News</a>
+    <a href="#" class="nav-link-mobile" data-page="gallery">Gallery</a>
+    <a href="#" class="nav-link-mobile" data-page="shop">Shop</a>
+    <a href="#" class="nav-link-mobile" data-page="contact">Contact</a>
   </div>
 
-  <!-- Shared Global Navigation Header -->
-  <header class="sticky top-0 z-40 glass-card border-b border-slate-800">
-    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-      <a href="index.html" class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-cyan-500 flex items-center justify-center font-bold text-xl shadow-lg">🐺</div>
-        <div>
-          <h1 class="font-black text-xl tracking-wider text-white">WOLF SOCIETY</h1>
-          <p class="text-[10px] text-indigo-400 font-mono tracking-widest">ESPORTS ORG</p>
-        </div>
-      </a>
+  <!-- ========== MAIN CONTENT ========== -->
+  <main class="pt-16">
 
-      <!-- Page Links -->
-      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
-        <a href="index.html" class="text-brand-500 font-bold">Home</a>
-        <a href="roster.html" class="hover:text-brand-500 transition">Roster</a>
-        <a href="matches.html" class="hover:text-brand-500 transition">Match Center</a>
-        <a href="tryouts.html" class="hover:text-brand-500 transition">Tryouts</a>
-        <a href="about.html" class="hover:text-brand-500 transition">About</a>
-      </nav>
-
-      <div class="flex items-center gap-4">
-        <a href="tryouts.html" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold shadow-lg transition">Apply Now</a>
-      </div>
-    </div>
-  </header>
-
-  <!-- Hero Section -->
-  <section class="py-24 px-6 max-w-7xl mx-auto text-center">
-    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/80 border border-slate-700 text-xs text-slate-300 mb-6">
-      <i class="fa-solid fa-fire text-amber-400"></i> Season 2026 Competitive Roster Active
-    </div>
-    <h1 class="text-4xl md:text-6xl font-black text-white max-w-4xl mx-auto leading-tight">DOMINATING MOBILE LEGENDS & VALORANT ARENAS</h1>
-    <p class="mt-4 text-slate-400 max-w-2xl mx-auto text-sm md:text-base">Track live match stats, view pro player profiles, and follow our tournament journey in real-time.</p>
-
-    <div class="mt-8 flex justify-center gap-4">
-      <a href="matches.html" class="px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 font-bold text-xs shadow-lg">View Live Schedule</a>
-      <a href="roster.html" class="px-6 py-3 rounded-xl glass-card hover:bg-slate-800 font-bold text-xs border border-slate-700">Explore Roster</a>
-    </div>
-  </section>
-
-  <!-- Quick Featured Roster Preview -->
-  <section class="py-12 px-6 max-w-7xl mx-auto">
-    <div class="flex justify-between items-center mb-8">
-      <h2 class="text-2xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-users text-emerald-400"></i> Pro Roster Preview</h2>
-      <a href="roster.html" class="text-xs text-brand-500 font-bold hover:underline">View All Players &rarr;</a>
-    </div>
-    <div id="home-roster-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
-  </section>
-
-  <script>
-    const SUPABASE_URL = "YOUR_SUPABASE_URL";
-    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    document.addEventListener('DOMContentLoaded', async () => {
-      // Fetch Banner
-      const { data: set } = await supabase.from('settings').select('*');
-      if (set) {
-        const b = set.find(s => s.key === 'banner_announcement');
-        if (b) document.getElementById('banner-text').innerText = b.value;
-      }
-
-      // Fetch Roster Preview
-      const { data: players } = await supabase.from('players').select('*').limit(4);
-      const grid = document.getElementById('home-roster-grid');
-      if (players && players.length > 0) {
-        grid.innerHTML = players.map(p => `
-          <div class="glass-card p-4 rounded-xl text-center">
-            <img src="${p.avatar_url || 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=500'}" class="w-20 h-20 rounded-full mx-auto mb-3 object-cover border-2 border-brand-500" />
-            <h3 class="font-bold text-white">${p.ign}</h3>
-            <p class="text-xs text-slate-400">${p.role}</p>
-          </div>
-        `).join('');
-      }
-    });
-
-    <!-- Supabase Client JS (v2) -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-  // --- SUPABASE CONFIGURATION ---
-  const SUPABASE_URL = "https://tdfkebgapncswtvbtaqy.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ";
-
-  let supabaseClient = null;
-
-  document.addEventListener('DOMContentLoaded', () => {
-    // 1. Initialize Supabase
-    if (window.supabase && typeof window.supabase.createClient === 'function') {
-      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      
-      // Initial Data Fetch
-      loadSiteSettings();
-      loadPublishedNews();
-      loadUpcomingSchedule();
-
-      // 2. Setup Realtime WebSockets for Instant Live Sync
-      supabaseClient.channel('public-site-sync')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, () => loadSiteSettings())
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'news_announcements' }, () => loadPublishedNews())
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'matches_schedule' }, () => loadUpcomingSchedule())
-        .subscribe();
-    }
-  });
-
-  // --- 1. FETCH & RENDER SITE SETTINGS ---
-  async function loadSiteSettings() {
-    if (!supabaseClient) return;
-
-    const { data: settings, error } = await supabaseClient
-      .from('site_settings')
-      .select('*');
-
-    if (error || !settings) return;
-
-    settings.forEach(item => {
-      // Updates element with ID "hero-title"
-      const heroTitleEl = document.getElementById('hero-title');
-      if (heroTitleEl && item.key === 'hero_banner_title') {
-        heroTitleEl.innerText = item.value;
-      }
-
-      // Updates element with ID "hero-subtitle"
-      const heroSubtitleEl = document.getElementById('hero-subtitle');
-      if (heroSubtitleEl && item.key === 'hero_banner_subtitle') {
-        heroSubtitleEl.innerText = item.value;
-      }
-
-      // Updates element with ID "site-ticker"
-      const tickerEl = document.getElementById('site-ticker');
-      if (tickerEl && item.key === 'announcement_ticker') {
-        tickerEl.innerText = item.value;
-      }
-    });
-  }
-
-  // --- 2. FETCH & RENDER PUBLISHED NEWS & ANNOUNCEMENTS ---
-  async function loadPublishedNews() {
-    if (!supabaseClient) return;
-
-    const { data: news, error } = await supabaseClient
-      .from('news_announcements')
-      .select('*')
-      .eq('status', 'PUBLISHED')
-      .order('created_at', { ascending: false })
-      .limit(6);
-
-    const newsContainer = document.getElementById('news-container');
-    if (!newsContainer) return;
-
-    if (error || !news || news.length === 0) {
-      newsContainer.innerHTML = `
-        <div class="col-span-full text-center py-8 text-slate-500 text-xs font-mono">
-          No announcements published yet.
-        </div>`;
-      return;
-    }
-
-    newsContainer.innerHTML = news.map(item => `
-      <article class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 hover:border-indigo-500/50 transition duration-300 flex flex-col justify-between shadow-lg">
-        <div class="space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-              ${escapeHtml(item.category)}
-            </span>
-            <span class="text-[10px] text-slate-500 font-mono">
-              ${new Date(item.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-            </span>
-          </div>
-          <h3 class="text-base font-bold text-white leading-snug hover:text-indigo-400 transition">
-            ${escapeHtml(item.title)}
-          </h3>
-          <p class="text-xs text-slate-400 leading-relaxed line-clamp-3">
-            ${escapeHtml(item.content)}
+    <!-- ===== HOME PAGE ===== -->
+    <section id="page-home" class="page-section active">
+      <!-- Hero -->
+      <div class="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <canvas id="particles-canvas"></canvas>
+        <div class="hero-content text-center px-4">
+          <h1 class="text-5xl md:text-7xl font-extrabold leading-tight">
+            <span class="gradient-text">Rise Together.</span><br />
+            <span class="gradient-text">Hunt Together.</span><br />
+            <span class="gradient-text">Win Together.</span>
+          </h1>
+          <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">
+            Professional esports organization from India – competing in <span class="text-[#00f0ff]">MOBA Legends 5v5</span>.
           </p>
+          <div class="mt-8 flex flex-wrap justify-center gap-4">
+            <a href="#page-team" class="btn-glow px-8 py-3 bg-gradient-to-r from-[#00f0ff] to-[#ff2d55] text-black font-bold rounded-lg transition hover:opacity-90">Meet the Pack</a>
+            <a href="#page-matches" class="px-8 py-3 border border-[#00f0ff] text-[#00f0ff] font-bold rounded-lg hover:bg-[#00f0ff] hover:text-black transition">View Matches</a>
+          </div>
         </div>
-      </article>
-    `).join('');
-  }
+      </div>
 
-  // --- 3. FETCH & RENDER MATCHES & SCHEDULE ---
-  async function loadUpcomingSchedule() {
-    if (!supabaseClient) return;
+      <!-- Latest News -->
+      <section class="max-w-7xl mx-auto px-4 section-pad" data-aos="fade-up">
+        <h2 class="text-3xl font-bold mb-8">Latest News</h2>
+        <div id="home-news" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- loaded by JS -->
+        </div>
+      </section>
 
-    const { data: matches, error } = await supabaseClient
-      .from('matches_schedule')
-      .select('*')
-      .order('match_date', { ascending: true })
-      .limit(6);
+      <!-- Upcoming Matches -->
+      <section class="max-w-7xl mx-auto px-4 section-pad bg-[#1a1a1a] rounded-3xl" data-aos="fade-up">
+        <h2 class="text-3xl font-bold mb-8">Upcoming Matches</h2>
+        <div id="home-matches" class="space-y-4">
+          <!-- loaded by JS -->
+        </div>
+      </section>
 
-    const scheduleContainer = document.getElementById('schedule-container');
-    if (!scheduleContainer) return;
+      <!-- Featured Players -->
+      <section class="max-w-7xl mx-auto px-4 section-pad" data-aos="fade-up">
+        <h2 class="text-3xl font-bold mb-8">Featured Players</h2>
+        <div id="home-players" class="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <!-- loaded by JS -->
+        </div>
+      </section>
 
-    if (error || !matches || matches.length === 0) {
-      scheduleContainer.innerHTML = `
-        <div class="col-span-full text-center py-8 text-slate-500 text-xs font-mono">
-          No match fixtures scheduled.
-        </div>`;
-      return;
+      <!-- Sponsors -->
+      <section class="max-w-7xl mx-auto px-4 section-pad" data-aos="fade-up">
+        <h2 class="text-3xl font-bold mb-8">Our Sponsors</h2>
+        <div id="home-sponsors" class="flex flex-wrap justify-center gap-8">
+          <!-- loaded by JS -->
+        </div>
+      </section>
+
+      <!-- Merchandise Preview -->
+      <section class="max-w-7xl mx-auto px-4 section-pad" data-aos="fade-up">
+        <h2 class="text-3xl font-bold mb-8">Merchandise</h2>
+        <div id="home-merch" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- loaded by JS -->
+        </div>
+      </section>
+    </section>
+
+    <!-- ===== ABOUT PAGE ===== -->
+    <section id="page-about" class="page-section section-pad max-w-4xl mx-auto px-4">
+      <h1 class="text-4xl font-bold mb-6">About Wolf Society</h1>
+      <div class="space-y-6 text-gray-300 leading-relaxed">
+        <p><strong>Founded in 2026</strong>, Wolf Society Esports is a premier Indian esports organization dedicated to excellence in competitive gaming. We began with a single game – <span class="text-[#00f0ff]">MOBA Legends 5v5</span> – and a vision to build a community that thrives on teamwork, discipline, and passion.</p>
+        <p><strong>Our Mission:</strong> To nurture talent, create unforgettable moments, and represent India on the global stage. We believe in rising together, hunting together, and winning together.</p>
+        <p><strong>Management:</strong> Our leadership team brings years of experience in esports, business, and community building. We are committed to transparency, growth, and innovation.</p>
+        <p><strong>Achievements:</strong> We have already secured top‑8 finishes in national qualifiers and are aiming for international glory.</p>
+      </div>
+    </section>
+
+    <!-- ===== TEAM PAGE ===== -->
+    <section id="page-team" class="page-section section-pad max-w-7xl mx-auto px-4">
+      <h1 class="text-4xl font-bold mb-8">Our Roster</h1>
+      <div id="team-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- loaded by JS -->
+      </div>
+    </section>
+
+    <!-- ===== MATCHES PAGE ===== -->
+    <section id="page-matches" class="page-section section-pad max-w-7xl mx-auto px-4">
+      <h1 class="text-4xl font-bold mb-8">Matches</h1>
+      <div class="flex flex-wrap gap-3 mb-6">
+        <button class="match-tab px-4 py-2 rounded bg-[#00f0ff] text-black font-bold" data-status="scheduled">Upcoming</button>
+        <button class="match-tab px-4 py-2 rounded bg-[#2a2a2a] text-gray-300" data-status="live">Live</button>
+        <button class="match-tab px-4 py-2 rounded bg-[#2a2a2a] text-gray-300" data-status="completed">Completed</button>
+      </div>
+      <div id="matches-list" class="space-y-4">
+        <!-- loaded by JS -->
+      </div>
+    </section>
+
+    <!-- ===== NEWS PAGE ===== -->
+    <section id="page-news" class="page-section section-pad max-w-7xl mx-auto px-4">
+      <h1 class="text-4xl font-bold mb-8">News</h1>
+      <div id="news-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- loaded by JS -->
+      </div>
+    </section>
+
+    <!-- ===== GALLERY PAGE ===== -->
+    <section id="page-gallery" class="page-section section-pad max-w-7xl mx-auto px-4">
+      <h1 class="text-4xl font-bold mb-8">Gallery</h1>
+      <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <!-- loaded by JS (if you have gallery table) -->
+        <p class="col-span-full text-gray-400">Gallery coming soon – upload images via admin panel.</p>
+      </div>
+    </section>
+
+    <!-- ===== SHOP PAGE ===== -->
+    <section id="page-shop" class="page-section section-pad max-w-7xl mx-auto px-4">
+      <h1 class="text-4xl font-bold mb-8">Merchandise</h1>
+      <div id="shop-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- loaded by JS -->
+      </div>
+    </section>
+
+    <!-- ===== CONTACT PAGE ===== -->
+    <section id="page-contact" class="page-section section-pad max-w-3xl mx-auto px-4">
+      <h1 class="text-4xl font-bold mb-6">Contact Us</h1>
+      <form id="contact-form" class="space-y-4">
+        <input type="text" name="name" placeholder="Your Name" required class="w-full px-4 py-3 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white focus:ring-2 focus:ring-[#00f0ff] outline-none" />
+        <input type="email" name="email" placeholder="Email" required class="w-full px-4 py-3 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white focus:ring-2 focus:ring-[#00f0ff] outline-none" />
+        <input type="text" name="subject" placeholder="Subject" class="w-full px-4 py-3 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white focus:ring-2 focus:ring-[#00f0ff] outline-none" />
+        <textarea name="message" placeholder="Message" rows="5" required class="w-full px-4 py-3 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white focus:ring-2 focus:ring-[#00f0ff] outline-none"></textarea>
+        <button type="submit" class="px-6 py-3 bg-gradient-to-r from-[#00f0ff] to-[#ff2d55] text-black font-bold rounded-lg hover:opacity-90 transition">Send Message</button>
+      </form>
+      <div id="contact-response" class="mt-4"></div>
+      <div class="mt-8 flex flex-wrap gap-6 text-gray-400">
+        <a href="#" class="social-icon"><i class="fab fa-discord text-2xl"></i></a>
+        <a href="#" class="social-icon"><i class="fab fa-instagram text-2xl"></i></a>
+        <a href="#" class="social-icon"><i class="fab fa-twitter text-2xl"></i></a>
+        <a href="#" class="social-icon"><i class="fab fa-youtube text-2xl"></i></a>
+      </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="bg-[#1a1a1a] border-t border-[#2a2a2a] py-8 px-4 text-center text-gray-400 text-sm">
+      <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center">
+        <div class="flex items-center space-x-4">
+          <span class="text-xl font-bold gradient-text">Wolf Society</span>
+          <span>© 2026 All rights reserved.</span>
+        </div>
+        <div class="flex space-x-4 mt-4 md:mt-0">
+          <a href="./legal.html" class="hover:text-white transition">Privacy</a>
+          <a href="./legal.html" class="hover:text-white transition">Terms</a>
+          <a href="./faq.html" class="hover:text-white transition">FAQ</a>
+        </div>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- ========== SCRIPTS ========== -->
+  <!-- Supabase -->
+  <script type="importmap">
+    {
+      "imports": {
+        "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
+      }
+    }
+  </script>
+  <script type="module">
+    // ---- Imports ----
+    import { createClient } from '@supabase/supabase-js';
+    import AOS from 'https://unpkg.com/aos@2.3.1/dist/aos.esm.js';
+
+    // ---- Supabase init ----
+    const SUPABASE_URL = 'https://tdfkebgapncswtvbtaqy.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ---- AOS init ----
+    AOS.init({ duration: 800, once: true });
+
+    // ---- Particle background (canvas) ----
+    (function initParticles() {
+      const canvas = document.getElementById('particles-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let width, height;
+      let particles = [];
+
+      function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      const count = 100;
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: (Math.random() - 0.5) * 0.5,
+          r: Math.random() * 2 + 1,
+          color: `hsla(${Math.random() * 60 + 180}, 80%, 60%, ${Math.random() * 0.5 + 0.2})`
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, width, height);
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.x < 0 || p.x > width) p.vx *= -1;
+          if (p.y < 0 || p.y > height) p.vy *= -1;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.fill();
+        });
+        // Draw lines between nearby particles
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 150) {
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.strokeStyle = `rgba(0, 240, 255, ${0.2 * (1 - dist / 150)})`;
+              ctx.lineWidth = 0.5;
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    // ---- Navigation (page switching) ----
+    const pageSections = document.querySelectorAll('.page-section');
+    const navLinks = document.querySelectorAll('.nav-link, .nav-link-mobile');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+
+    function showPage(pageId) {
+      // Hide all sections
+      pageSections.forEach(s => s.classList.remove('active'));
+      // Show target
+      const target = document.getElementById(`page-${pageId}`);
+      if (target) target.classList.add('active');
+      // Update nav links
+      navLinks.forEach(link => {
+        link.classList.toggle('active', link.dataset.page === pageId);
+      });
+      // Close mobile menu
+      mobileMenu.classList.add('hidden');
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    scheduleContainer.innerHTML = matches.map(match => {
-      const matchTime = new Date(match.match_date);
-      const isLive = match.status === 'LIVE';
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const page = link.dataset.page;
+        if (page) showPage(page);
+      });
+    });
 
-      return `
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between gap-4 hover:border-slate-700 transition">
-          <div class="flex items-center justify-between text-xs font-bold border-b border-slate-800/80 pb-3">
-            <span class="text-indigo-400 font-mono uppercase">${escapeHtml(match.game)}</span>
-            <span class="px-2 py-0.5 rounded text-[10px] font-black ${isLive ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30 animate-pulse' : 'bg-slate-800 text-slate-400'}">
-              ${match.status}
-            </span>
-          </div>
+    mobileBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
 
-          <div class="flex items-center justify-between py-2 px-2">
-            <div class="text-center font-black text-sm text-white">Wolf Society</div>
-            <div class="text-xs font-mono text-slate-500 font-bold px-2">VS</div>
-            <div class="text-center font-black text-sm text-slate-300">${escapeHtml(match.opponent)}</div>
-          </div>
+    // ---- Load dynamic data functions ----
+    async function fetchPlayers() {
+      const { data, error } = await supabase.from('players').select('*').eq('is_active', true).order('ign');
+      if (error) console.error(error);
+      return data || [];
+    }
 
-          <div class="flex items-center justify-between text-[11px] text-slate-400 font-mono pt-2 border-t border-slate-800/80">
-            <span><i class="fa-regular fa-calendar mr-1"></i>${matchTime.toLocaleDateString()}</span>
-            <span><i class="fa-regular fa-clock mr-1"></i>${matchTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+    async function fetchNews(limit = 6) {
+      const { data, error } = await supabase.from('news').select('*').eq('is_published', true).order('published_at', { ascending: false }).limit(limit);
+      if (error) console.error(error);
+      return data || [];
+    }
+
+    async function fetchMatches(status = null) {
+      let query = supabase.from('matches').select('*, tournament: tournament_id(name), mvp: mvp_id(ign)');
+      if (status) query = query.eq('status', status);
+      const { data, error } = await query.order('scheduled_at', { ascending: true });
+      if (error) console.error(error);
+      return data || [];
+    }
+
+    async function fetchSponsors() {
+      const { data, error } = await supabase.from('sponsors').select('*').order('display_order');
+      if (error) console.error(error);
+      return data || [];
+    }
+
+    async function fetchMerchandise() {
+      const { data, error } = await supabase.from('merchandise').select('*').eq('is_available', true);
+      if (error) console.error(error);
+      return data || [];
+    }
+
+    // ---- Render functions ----
+    function renderNews(containerId, articles, limit = null) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      const list = limit ? articles.slice(0, limit) : articles;
+      container.innerHTML = list.map(article => `
+        <div class="bg-[#1a1a1a] rounded-xl border border-[#2a2a2a] overflow-hidden">
+          <img src="${article.image_url || 'https://via.placeholder.com/400x200'}" alt="${article.title}" class="w-full h-48 object-cover" />
+          <div class="p-4">
+            <h3 class="text-xl font-bold">${article.title}</h3>
+            <p class="text-gray-400 text-sm">${new Date(article.published_at).toLocaleDateString()}</p>
+            <p class="mt-2 text-gray-300 line-clamp-2">${article.content ? article.content.replace(/<[^>]+>/g, '').slice(0, 100) + '...' : ''}</p>
+            <a href="#" class="inline-block mt-2 text-[#00f0ff] hover:underline">Read more</a>
           </div>
         </div>
-      `;
-    }).join('');
-  }
+      `).join('');
+    }
 
-  // --- UTILITY: XSS PREVENTION ---
-  function escapeHtml(str) {
-    return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
-<!-- Hero Banner Elements -->
-<h1 id="hero-title">WOLF SOCIETY ESPORTS</h1>
-<p id="hero-subtitle">Dominating competitive gaming across all titles.</p>
-<div id="site-ticker">🔥 Player registrations are now OPEN!</div>
+    function renderPlayers(containerId, players, limit = null) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      const list = limit ? players.slice(0, limit) : players;
+      container.innerHTML = list.map(p => `
+        <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#2a2a2a] text-center">
+          <img src="${p.photo_url || 'https://via.placeholder.com/150'}" alt="${p.ign}" class="w-24 h-24 rounded-full mx-auto object-cover" />
+          <h3 class="text-lg font-bold mt-2">${p.ign}</h3>
+          <p class="text-gray-400 text-sm">${p.role || ''}</p>
+        </div>
+      `).join('');
+    }
 
-<!-- News Grid Container -->
-<div id="news-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  <!-- Dynamic News Items Inject Here -->
-</div>
+    function renderMatches(containerId, matches) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      if (matches.length === 0) {
+        container.innerHTML = '<p class="text-gray-400">No matches in this category.</p>';
+        return;
+      }
+      container.innerHTML = matches.map(m => `
+        <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#2a2a2a] flex flex-wrap justify-between items-center">
+          <div>
+            <span class="font-bold text-lg">vs ${m.opponent}</span>
+            <span class="text-gray-400 ml-2">${m.tournament?.name || ''}</span>
+          </div>
+          <div class="text-center">
+            ${m.status === 'live' ? '<span class="text-red-500 live-pulse inline-block mr-2">🔴 LIVE</span>' : ''}
+            <span class="text-2xl font-bold">${m.team_score} - ${m.opponent_score}</span>
+          </div>
+          <div class="text-right">
+            <div class="text-gray-400">${m.scheduled_at ? new Date(m.scheduled_at).toLocaleString() : 'TBD'}</div>
+            ${m.result ? `<span class="text-sm px-2 py-1 rounded ${m.result === 'win' ? 'bg-green-800/30 text-green-300' : 'bg-red-800/30 text-red-300'}">${m.result.toUpperCase()}</span>` : ''}
+            ${m.mvp ? `<div class="text-sm text-[#00f0ff]">MVP: ${m.mvp.ign}</div>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
 
-<!-- Matches & Schedule Container -->
-<div id="schedule-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-  <!-- Dynamic Schedule Fixtures Inject Here -->
-</div>
-  
-    
+    function renderSponsors(containerId, sponsors) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = sponsors.map(s => `
+        <a href="${s.website || '#'}" target="_blank" class="hover:scale-105 transition">
+          <img src="${s.logo_url || 'https://via.placeholder.com/100x50'}" alt="${s.name}" class="h-12 object-contain" />
+        </a>
+      `).join('');
+    }
+
+    function renderMerch(containerId, items) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = items.map(item => `
+        <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#2a2a2a]">
+          <img src="${item.image_url || 'https://via.placeholder.com/300x200'}" alt="${item.name}" class="w-full h-48 object-cover rounded-lg mb-3" />
+          <h3 class="text-lg font-bold">${item.name}</h3>
+          <p class="text-gray-400">₹${item.price}</p>
+        </div>
+      `).join('');
+    }
+
+    // ---- Load all data and render ----
+    async function loadAll() {
+      const [players, news, sponsors, merchandise, matchesScheduled, matchesLive, matchesCompleted] = await Promise.all([
+        fetchPlayers(),
+        fetchNews(6),
+        fetchSponsors(),
+        fetchMerchandise(),
+        fetchMatches('scheduled'),
+        fetchMatches('live'),
+        fetchMatches('completed')
+      ]);
+
+      // Home
+      renderNews('home-news', news);
+      renderMatches('home-matches', matchesScheduled.slice(0, 5));
+      renderPlayers('home-players', players, 4);
+      renderSponsors('home-sponsors', sponsors);
+      renderMerch('home-merch', merchandise.slice(0, 3));
+
+      // Team
+      renderPlayers('team-grid', players);
+
+      // Matches (all tabs)
+      renderMatches('matches-list', matchesScheduled); // default tab
+      // Store all match data for tab switching
+      window.matchData = { scheduled: matchesScheduled, live: matchesLive, completed: matchesCompleted };
+
+      // News
+      renderNews('news-list', await fetchNews(20));
+
+      // Shop
+      renderMerch('shop-grid', merchandise);
+    }
+
+    loadAll();
+
+    // ---- Match tab switching ----
+    document.querySelectorAll('.match-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.match-tab').forEach(b => {
+          b.classList.remove('bg-[#00f0ff]', 'text-black');
+          b.classList.add('bg-[#2a2a2a]', 'text-gray-300');
+        });
+        btn.classList.add('bg-[#00f0ff]', 'text-black');
+        btn.classList.remove('bg-[#2a2a2a]', 'text-gray-300');
+        const status = btn.dataset.status;
+        const matches = window.matchData[status] || [];
+        renderMatches('matches-list', matches);
+      });
+    });
+
+    // ---- Real-time match updates ----
+    const matchChannel = supabase
+      .channel('matches-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, async () => {
+        // Refresh all match data
+        const [scheduled, live, completed] = await Promise.all([
+          fetchMatches('scheduled'),
+          fetchMatches('live'),
+          fetchMatches('completed')
+        ]);
+        window.matchData = { scheduled, live, completed };
+        // Update currently visible tab
+        const activeTab = document.querySelector('.match-tab.bg-[#00f0ff]');
+        if (activeTab) {
+          const status = activeTab.dataset.status;
+          renderMatches('matches-list', window.matchData[status] || []);
+        }
+        // Also update home matches (upcoming)
+        renderMatches('home-matches', scheduled.slice(0, 5));
+      })
+      .subscribe();
+
+    // ---- Contact form submission ----
+    document.getElementById('contact-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+      const { error } = await supabase.from('contact_submissions').insert([data]);
+      const responseDiv = document.getElementById('contact-response');
+      if (error) {
+        responseDiv.innerHTML = `<div class="bg-red-800/30 text-red-300 p-3 rounded">Error: ${error.message}</div>`;
+      } else {
+        responseDiv.innerHTML = `<div class="bg-green-800/30 text-green-300 p-3 rounded">Message sent successfully!</div>`;
+        e.target.reset();
+      }
+    });
+
+    // ---- Newsletter (simple inline) ----
+    // You can add a newsletter input in footer if desired – not implemented here but can be added.
+
+    console.log('🐺 Wolf Society Esports website loaded!');
   </script>
 </body>
 </html>
