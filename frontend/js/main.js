@@ -1,106 +1,116 @@
-import { supabase } from './supabase-client.js';
-import { getCurrentUser, logout } from './auth.js';
+// main.js
+import { supabase, subscribeToTable, getLiveMatches, getLatestNews } from './supabase-client.js';
+import { getSession, isStaff, signOut } from './auth.js';
 
-// ---- Data fetching ----
-export async function getActivePlayers() {
-  const { data, error } = await supabase
-    .from('players')
-    .select('*')
-    .eq('is_active', true)
-    .order('ign');
-  if (error) console.error(error);
-  return data || [];
-}
+document.addEventListener('DOMContentLoaded', async () => {
+  // ---- Navbar active link ----
+  const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    if (link.getAttribute('href') === currentPath) link.classList.add('active');
+  });
 
-export async function getLatestNews(limit = 6) {
-  const { data, error } = await supabase
-    .from('news')
-    .select('*')
-    .eq('is_published', true)
-    .order('published_at', { ascending: false })
-    .limit(limit);
-  if (error) console.error(error);
-  return data || [];
-}
+  // ---- Auth UI sync ----
+  const session = await getSession();
+  const signupLink = document.getElementById('navSignup');
+  const dashboardLink = document.getElementById('navDashboard');
+  const logoutBtn = document.getElementById('navLogout');
 
-export async function getMatches(status = null) {
-  let query = supabase
-    .from('matches')
-    .select('*, tournament: tournament_id(name), mvp: mvp_id(ign)');
-  if (status) query = query.eq('status', status);
-  const { data, error } = await query.order('scheduled_at', { ascending: true });
-  if (error) console.error(error);
-  return data || [];
-}
-
-export async function getSponsors() {
-  const { data, error } = await supabase.from('sponsors').select('*').order('display_order');
-  if (error) console.error(error);
-  return data || [];
-}
-
-export async function getMerchandise() {
-  const { data, error } = await supabase.from('merchandise').select('*').eq('is_available', true);
-  if (error) console.error(error);
-  return data || [];
-}
-
-// ---- Navigation updater ----
-export async function updateNav() {
-  const user = await getCurrentUser();
-  const nav = document.querySelector('nav .nav-links');
-  if (!nav) return;
-
-  let html = `
-    <a href="/" class="nav-link">Home</a>
-    <a href="./about.html" class="nav-link">About</a>
-    <a href="./team.html" class="nav-link">Team</a>
-    <a href="./matches.html" class="nav-link">Matches</a>
-    <a href="./news.html" class="nav-link">News</a>
-    <a href="./gallery.html" class="nav-link">Gallery</a>
-    <a href="./shop.html" class="nav-link">Shop</a>
-    <a href="./contact.html" class="nav-link">Contact</a>
-  `;
-
-  if (user) {
-    const role = user.profile?.role;
-    if (['management', 'admin', 'super_admin'].includes(role)) {
-      html += `<a href="/frontend/admin/dashboard.html" class="nav-link">Admin</a>`;
+  if (session) {
+    if (signupLink) signupLink.style.display = 'none';
+    if (dashboardLink) {
+      const staff = await isStaff();
+      dashboardLink.style.display = staff ? 'inline-flex' : 'none';
     }
-    html += `<a href="./dashboard.html" class="nav-link">Dashboard</a>`;
-    html += `<a href="#" id="logout-link" class="nav-link text-red-400">Logout</a>`;
-    nav.innerHTML = html;
-    document.getElementById('logout-link')?.addEventListener('click', async (e) => {
-      e.preventDefault();
-      await logout();
-      window.location.href = '/';
-    });
-  } else {
-    html += `<a href="./signup.html" class="nav-link">Sign Up</a>`;
-    html += `<a href="./dashboard.html" class="nav-link">Login</a>`;
-    nav.innerHTML = html;
-  }
-
-  // Mobile menu
-  const mobileNav = document.querySelector('#mobile-menu');
-  if (mobileNav) {
-    mobileNav.innerHTML = nav.innerHTML.replace(/nav-link/g, 'nav-link-mobile');
-    const logoutMobile = mobileNav.querySelector('#logout-link');
-    if (logoutMobile) {
-      logoutMobile.addEventListener('click', async (e) => {
+    if (logoutBtn) {
+      logoutBtn.style.display = 'inline-flex';
+      logoutBtn.addEventListener('click', async (e) => {
         e.preventDefault();
-        await logout();
-        window.location.href = '/';
+        await signOut();
+        window.location.href = 'index.html';
       });
     }
+  } else {
+    if (signupLink) signupLink.style.display = 'inline-flex';
+    if (dashboardLink) dashboardLink.style.display = 'none';
+    if (logoutBtn) logoutBtn.style.display = 'none';
   }
-}
 
-// ---- Page‑specific initialisers ----
-// This script runs on every page and will call the appropriate functions
-// based on the page's content.
+  // ---- Live ticker ----
+  const tickerEl = document.getElementById('liveTicker');
+  if (tickerEl) {
+    const updateTicker = (matches) => {
+      const items = matches.map(m => `
+        <span class="ticker-item">
+          ${m.status === 'live' ? '<span class="badge-live">live</span>' : ''}
+          ${m.home_team.name} vs. ${m.away_team.name}
+          <span class="vs">·</span> ${m.home_score}-${m.away_score}
+          <span class="vs">·</span> ${m.time_elapsed || '00:00'}
+        </span>
+      `).join('');
+      tickerEl.innerHTML = items + items; // seamless scroll
+    };
 
-// We'll use a pattern where each page defines its own logic, but we centralise
-// common actions like loading header/footer, particles, etc.
-// For simplicity, we're already calling updateNav() from each page's own <script>.
-// But we can also auto‑run based on page URL – but we'll keep explicit.
+    try {
+      const matches = await getLiveMatches();
+      updateTicker(matches);
+    } catch (e) { console.warn('Ticker init error', e); }
+
+    subscribeToTable('matches', (newMatch) => {
+      if (newMatch.status === 'live') {
+        getLiveMatches().then(updateTicker);
+      }
+    });
+  }
+
+  // ---- News feed ----
+  const newsGrid = document.getElementById('newsGrid');
+  if (newsGrid) {
+    try {
+      const news = await getLatestNews(3);
+      newsGrid.innerHTML = news.map(item => `
+        <article class="news-card">
+          <div class="card-img">${item.icon || '📰'}</div>
+          <div class="card-body">
+            <span style="font-size:0.7rem; color:var(--primary); text-transform:uppercase; letter-spacing:0.06em;">${item.category || 'News'}</span>
+            <h3>${item.title}</h3>
+            <p>${item.excerpt}</p>
+            <a href="news.html" style="color:var(--primary); font-weight:600; font-size:0.85rem;">Read more →</a>
+          </div>
+        </article>
+      `).join('');
+    } catch (e) { console.warn('News load error', e); }
+  }
+
+  // ---- 3D tilt on hero card ----
+  const heroCard = document.querySelector('.hero-3d-card');
+  if (heroCard) {
+    document.addEventListener('mousemove', (e) => {
+      const rect = heroCard.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      heroCard.style.transform = `rotateY(${x*8}deg) rotateX(${y*-8}deg) translateZ(20px)`;
+    });
+    document.addEventListener('mouseleave', () => {
+      heroCard.style.transform = 'rotateY(0deg) rotateX(0deg) translateZ(0px)';
+    });
+  }
+
+  // ---- Scroll reveal ----
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // ---- Protected pages redirect ----
+  if (window.location.pathname.includes('dashboard') || window.location.pathname.includes('/admin/')) {
+    if (!session) {
+      window.location.href = 'signup.html';
+    } else {
+      const staff = await isStaff();
+      if (!staff) window.location.href = 'index.html';
+    }
+  }
+});
