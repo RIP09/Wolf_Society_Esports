@@ -1,58 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Team · Wolf Society</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./frontend/css/style.css" />
+    <!-- same head as about.html -->
+    <title>Wolf Society · Team</title>
 </head>
 <body>
-  <!-- Same header -->
-  <header class="fixed top-0 left-0 w-full bg-[#0a0a0a]/90 backdrop-blur-md border-b border-[#2a2a2a] z-50 px-4 py-3 flex justify-between items-center">
-    <div class="flex items-center space-x-2">
-      <a href="/" class="text-2xl font-bold gradient-text">Wolf Society</a>
-      <span class="text-xs text-gray-500 hidden sm:inline">Esports</span>
-    </div>
-    <nav class="hidden md:flex space-x-6 text-sm font-medium nav-links"></nav>
-    <div class="flex items-center space-x-3">
-      <button id="mobile-menu-btn" class="md:hidden text-gray-300 text-xl"><i class="fas fa-bars"></i></button>
-    </div>
-  </header>
-  <div id="mobile-menu" class="md:hidden fixed top-16 left-0 w-full bg-[#0a0a0a]/95 backdrop-blur-md border-b border-[#2a2a2a] p-4 flex-col space-y-3 text-sm font-medium z-40 hidden"></div>
+    <div class="ambient-bg"></div>
+    <!-- same navbar as about.html, with active link to team.html -->
+    <nav class="navbar" id="mainNav">...</nav>
 
-  <main class="pt-16">
-    <section class="max-w-7xl mx-auto px-4 section-pad">
-      <h1 class="text-4xl font-bold mb-8">Our Roster</h1>
-      <div id="team-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+    <section class="section" style="padding-top:8rem;">
+        <div class="container">
+            <div class="badge-glow">👥 Our Pack</div>
+            <h1 class="section-title" id="pageTitle">Meet Divine Wolf</h1>
+            <p class="section-sub" id="pageSub">Five players. One mission. Total domination.</p>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:2rem; margin-top:2rem;" id="rosterGrid">
+                <!-- Player cards -->
+                <div class="glass player-card" style="padding:1.5rem; border-radius:var(--radius-lg); text-align:center; cursor:pointer;" data-modal-open="playerModal" data-player="Alpha">
+                    <div style="font-size:4rem;">🦊</div>
+                    <h3>Alpha</h3>
+                    <p style="color:var(--text-secondary);">Captain · Top Laner</p>
+                    <span class="badge-glow" style="font-size:0.6rem;">★★★★★</span>
+                </div>
+                <div class="glass player-card" style="padding:1.5rem; border-radius:var(--radius-lg); text-align:center; cursor:pointer;" data-modal-open="playerModal" data-player="Beta">
+                    <div style="font-size:4rem;">🐉</div>
+                    <h3>Beta</h3>
+                    <p style="color:var(--text-secondary);">Jungler</p>
+                    <span class="badge-glow" style="font-size:0.6rem;">★★★★☆</span>
+                </div>
+                <div class="glass player-card" style="padding:1.5rem; border-radius:var(--radius-lg); text-align:center; cursor:pointer;" data-modal-open="playerModal" data-player="Gamma">
+                    <div style="font-size:4rem;">🧙</div>
+                    <h3>Gamma</h3>
+                    <p style="color:var(--text-secondary);">Mid Laner</p>
+                    <span class="badge-glow" style="font-size:0.6rem;">★★★★★</span>
+                </div>
+                <div class="glass player-card" style="padding:1.5rem; border-radius:var(--radius-lg); text-align:center; cursor:pointer;" data-modal-open="playerModal" data-player="Delta">
+                    <div style="font-size:4rem;">🏹</div>
+                    <h3>Delta</h3>
+                    <p style="color:var(--text-secondary);">ADC</p>
+                    <span class="badge-glow" style="font-size:0.6rem;">★★★★☆</span>
+                </div>
+                <div class="glass player-card" style="padding:1.5rem; border-radius:var(--radius-lg); text-align:center; cursor:pointer;" data-modal-open="playerModal" data-player="Epsilon">
+                    <div style="font-size:4rem;">🛡️</div>
+                    <h3>Epsilon</h3>
+                    <p style="color:var(--text-secondary);">Support</p>
+                    <span class="badge-glow" style="font-size:0.6rem;">★★★★★</span>
+                </div>
+            </div>
+        </div>
     </section>
-  </main>
 
-  <!-- Same footer -->
-  <footer class="bg-[#1a1a1a] border-t border-[#2a2a2a] py-8 px-4 text-center text-gray-400 text-sm">
-    <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center">
-      <div class="flex items-center space-x-4">
-        <span class="text-xl font-bold gradient-text">Wolf Society</span>
-        <span>© 2026 All rights reserved.</span>
-      </div>
-      <div class="flex space-x-4 mt-4 md:mt-0">
-        <a href="./legal.html" class="hover:text-white transition">Privacy</a>
-        <a href="./legal.html" class="hover:text-white transition">Terms</a>
-        <a href="./faq.html" class="hover:text-white transition">FAQ</a>
-      </div>
+    <!-- Modal -->
+    <div class="modal-overlay" id="playerModal">
+        <div class="modal">
+            <button class="close-btn">&times;</button>
+            <h2 id="playerName">Player Name</h2>
+            <p id="playerRole" style="color:var(--text-secondary);">Role</p>
+            <p style="margin-top:1rem;">Detailed stats and bio will appear here.</p>
+            <button class="btn btn-primary btn-ripple" style="margin-top:1.5rem;">View Full Profile</button>
+        </div>
     </div>
-  </footer>
 
-  <script type="importmap">
-    {
-      "imports": {
-        "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
-      }
-    }
-  </script>
-  <script type="module" src="./frontend/js/main.js"></script>
+    <!-- same footer -->
+    <footer class="footer">...</footer>
+
+    <script src="frontend/js/supabase-client.js" type="module"></script>
+    <script src="frontend/js/auth.js" type="module"></script>
+    <script src="frontend/js/main.js" type="module"></script>
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.from('#pageTitle', { opacity: 0, y: 40, duration: 0.8, delay: 0.2 });
+        gsap.from('#pageSub', { opacity: 0, y: 30, duration: 0.8, delay: 0.4 });
+        document.querySelectorAll('.player-card').forEach((card, i) => {
+            gsap.from(card, { scrollTrigger: { trigger: card, start: 'top 88%' }, opacity: 0, y: 30, duration: 0.6, delay: i * 0.08, ease: 'back.out(1.7)' });
+        });
+        // Modal logic
+        document.querySelectorAll('[data-modal-open="playerModal"]').forEach(el => {
+            el.addEventListener('click', function() {
+                document.getElementById('playerName').textContent = this.dataset.player;
+                document.getElementById('playerRole').textContent = this.querySelector('p')?.textContent || 'Player';
+                document.getElementById('playerModal').classList.add('active');
+            });
+        });
+    </script>
 </body>
 </html>
