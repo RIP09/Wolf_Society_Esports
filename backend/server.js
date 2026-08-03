@@ -1,3 +1,4 @@
+// backend/server.js
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -33,26 +34,31 @@ const logger = winston.createLogger({
   ]
 });
 
-// Ensure logs directory exists
 if (!fs.existsSync('logs')) fs.mkdirSync('logs');
 
 // ============================================================
-//  ENVIRONMENT VALIDATION (with clear error)
+//  ENVIRONMENT VARIABLES (support both names)
 // ============================================================
 const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+const JWT_SECRET = process.env.JWT_SECRET;
+const FRONTEND_URL = process.env.FRONTEND_URL || '*';
+const PORT = process.env.PORT || 5000;
 
-if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+// Validate required variables
+const missing = [];
+if (!SUPABASE_URL) missing.push('SUPABASE_URL');
+if (!SUPABASE_SERVICE_KEY) missing.push('SUPABASE_SERVICE_KEY or SUPABASE_SERVICE_ROLE_KEY');
+
+if (missing.length > 0) {
   logger.error('❌ Missing required environment variables:');
-  if (!SUPABASE_URL) logger.error('   - SUPABASE_URL is not set');
-  if (!SUPABASE_SERVICE_KEY) logger.error('   - SUPABASE_SERVICE_KEY is not set');
+  missing.forEach(v => logger.error(`   - ${v}`));
   logger.error('');
   logger.error('💡 To fix:');
-  logger.error('   1. Go to your Render dashboard → select this Web Service.');
-  logger.error('   2. Click on "Environment" → "Add Environment Variable".');
-  logger.error('   3. Add both SUPABASE_URL and SUPABASE_SERVICE_KEY with your Supabase values.');
+  logger.error('   1. Create a .env file with these variables (or set them on Render).');
+  logger.error('   2. For Render: go to Dashboard → Environment → Add Variable.');
+  logger.error('   3. Use the key name "SUPABASE_SERVICE_KEY" (without _ROLE).');
   logger.error('   4. Save and redeploy.');
-  logger.error('');
   process.exit(1);
 }
 
@@ -69,11 +75,11 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: { origin: process.env.CLIENT_URL || '*' }
+  cors: { origin: FRONTEND_URL || '*' }
 });
 
 app.use(helmet());
-app.use(cors({ origin: process.env.CLIENT_URL || '*', credentials: true }));
+app.use(cors({ origin: FRONTEND_URL || '*', credentials: true }));
 app.use(morgan('combined', { stream: { write: (msg) => logger.info(msg.trim()) } }));
 
 const limiter = rateLimit({
@@ -177,10 +183,10 @@ app.use((req, res) => res.status(404).json({ error: 'Not found' }));
 // ============================================================
 //  START
 // ============================================================
-const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
   logger.info(`🚀 Backend running on port ${PORT}`);
   logger.info(`📡 Supabase URL: ${SUPABASE_URL}`);
+  logger.info(`🌐 Frontend URL: ${FRONTEND_URL}`);
 });
 
 process.on('SIGTERM', () => {
