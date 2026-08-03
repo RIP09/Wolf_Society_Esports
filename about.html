@@ -1,121 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wolf Society · About</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐺</text></svg>" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="stylesheet" href="frontend/css/style.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wolf Society · About</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐺</text></svg>" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.js"></script>
+    <link rel="stylesheet" href="frontend/css/style.css" />
 </head>
 <body>
-  <!-- ===== NAVBAR ===== -->
-  <nav class="navbar" id="mainNav">
-    <div class="container navbar-inner">
-      <a href="index.html" class="nav-brand">
-        <span class="brand-icon">🐺</span>
-        <span class="brand-text">Wolf<span class="brand-accent">Society</span></span>
-      </a>
-      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
-        <span></span><span></span><span></span>
-      </button>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
-        <li><a href="about.html" class="active"><i class="fas fa-info-circle"></i> About</a></li>
-        <li><a href="team.html"><i class="fas fa-users"></i> Team</a></li>
-        <li><a href="matches.html"><i class="fas fa-trophy"></i> Matches</a></li>
-        <li><a href="news.html"><i class="fas fa-newspaper"></i> News</a></li>
-        <li><a href="gallery.html"><i class="fas fa-images"></i> Gallery</a></li>
-        <li><a href="shop.html"><i class="fas fa-shopping-bag"></i> Shop</a></li>
-        <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
-        <li class="nav-actions">
-          <a href="signup.html" class="btn btn-outline btn-sm" id="navSignup"><i class="fas fa-user-plus"></i> Sign Up</a>
-          <a href="dashboard.html" class="btn btn-primary btn-sm" id="navDashboard"><i class="fas fa-user-cog"></i> Dashboard</a>
-          <button class="btn btn-outline btn-sm" id="navLogout" style="display:none;"><i class="fas fa-sign-out-alt"></i> Logout</button>
-        </li>
-      </ul>
-    </div>
-  </nav>
+    <div class="ambient-bg"></div>
 
-  <!-- ===== PAGE CONTENT ===== -->
-  <section class="section" style="padding-top:8rem;">
-    <div class="container">
-      <div class="badge-glow">🐺 Our Story</div>
-      <h1 style="font-size:3rem; font-weight:800; margin-bottom:1.5rem;">About Wolf Society</h1>
-      <div style="max-width:800px; margin:0 auto;">
-        <p style="font-size:1.2rem; color:var(--text-secondary);">
-          Wolf Society Esports is a premier competitive gaming organisation founded in 2023. Our flagship team, <strong class="text-gradient">Divine Wolf</strong>, competes at the highest level in <strong>Moba Legends 5v5</strong>.
-        </p>
-        <p style="margin-top:1.5rem; color:var(--text-secondary);">
-          We believe in teamwork, discipline, and innovation. Our roster is a mix of seasoned veterans and rising stars, all united by a common goal: to dominate the rift and inspire a global community.
-        </p>
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:2rem; margin-top:3rem;">
-          <div class="glass" style="padding:1.5rem; border-radius:var(--radius-lg); text-align:center;">
-            <div style="font-size:2.5rem;">🏆</div>
-            <h3>12 Titles</h3>
-            <p style="color:var(--text-secondary); font-size:0.9rem;">Tournament victories</p>
-          </div>
-          <div class="glass" style="padding:1.5rem; border-radius:var(--radius-lg); text-align:center;">
-            <div style="font-size:2.5rem;">🌍</div>
-            <h3>Global Reach</h3>
-            <p style="color:var(--text-secondary); font-size:0.9rem;">Players from 6 countries</p>
-          </div>
-          <div class="glass" style="padding:1.5rem; border-radius:var(--radius-lg); text-align:center;">
-            <div style="font-size:2.5rem;">📈</div>
-            <h3>2.4k Community</h3>
-            <p style="color:var(--text-secondary); font-size:0.9rem;">And growing</p>
-          </div>
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar" id="mainNav">
+        <div class="container navbar-inner">
+            <a href="index.html" class="nav-brand">
+                <span class="brand-icon">🐺</span>
+                <span class="brand-text">Wolf<span class="brand-accent">Society</span></span>
+            </a>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="about.html" class="active"><i class="fas fa-info-circle"></i> About</a></li>
+                <li><a href="team.html"><i class="fas fa-users"></i> Team</a></li>
+                <li><a href="matches.html"><i class="fas fa-trophy"></i> Matches</a></li>
+                <li><a href="news.html"><i class="fas fa-newspaper"></i> News</a></li>
+                <li><a href="gallery.html"><i class="fas fa-images"></i> Gallery</a></li>
+                <li><a href="shop.html"><i class="fas fa-shopping-bag"></i> Shop</a></li>
+                <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+                <li class="nav-actions">
+                    <a href="signup.html" class="btn btn-outline btn-sm" id="navSignup"><i class="fas fa-user-plus"></i> Sign Up</a>
+                    <a href="dashboard.html" class="btn btn-primary btn-sm" id="navDashboard"><i class="fas fa-user-cog"></i> Dashboard</a>
+                    <button class="btn btn-outline btn-sm" id="navLogout" style="display:none;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </li>
+            </ul>
         </div>
-      </div>
-    </div>
-  </section>
+    </nav>
 
-  <!-- ===== FOOTER ===== -->
-  <footer class="footer">
-    <div class="container">
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:2.5rem; padding:2.5rem 0; border-bottom:1px solid rgba(255,255,255,0.04);">
-        <div>
-          <div style="font-size:1.3rem; font-weight:700;">🐺 Wolf<span style="color:var(--primary);">Society</span></div>
-          <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:0.5rem;">Home of Divine Wolf — Moba Legends 5v5.</p>
+    <!-- ===== PAGE CONTENT ===== -->
+    <section class="section" style="padding-top:8rem;">
+        <div class="container">
+            <div class="badge-glow">🐺 Our Story</div>
+            <h1 class="section-title" id="pageTitle">About Wolf Society</h1>
+            <p class="section-sub" id="pageSub">Founded in 2023, we are a premier esports organisation competing at the highest level.</p>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr)); gap:2rem; margin-top:3rem;">
+                <div class="glass" style="padding:2rem; border-radius:var(--radius-lg); text-align:center;">
+                    <div style="font-size:3rem;">🏆</div>
+                    <h3>12 Titles</h3>
+                    <p style="color:var(--text-secondary);">Tournament victories</p>
+                </div>
+                <div class="glass" style="padding:2rem; border-radius:var(--radius-lg); text-align:center;">
+                    <div style="font-size:3rem;">🌍</div>
+                    <h3>Global Reach</h3>
+                    <p style="color:var(--text-secondary);">Players from 6 countries</p>
+                </div>
+                <div class="glass" style="padding:2rem; border-radius:var(--radius-lg); text-align:center;">
+                    <div style="font-size:3rem;">📈</div>
+                    <h3>2.4k Community</h3>
+                    <p style="color:var(--text-secondary);">And growing</p>
+                </div>
+            </div>
+            <div style="max-width:800px; margin:2rem auto 0; color:var(--text-secondary); line-height:1.8;">
+                <p>Wolf Society Esports is built on a foundation of teamwork, discipline, and innovation. Our flagship team, <strong class="text-gradient">Divine Wolf</strong>, competes in <strong>Moba Legends 5v5</strong> and has become a force to be reckoned with. We believe in inspiring the next generation of gamers and building a community that shares our passion.</p>
+            </div>
         </div>
-        <div>
-          <h4 style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-secondary);">Pages</h4>
-          <ul style="list-style:none; padding:0; margin-top:0.5rem; font-size:0.9rem;">
-            <li><a href="about.html">About</a></li>
-            <li><a href="team.html">Team</a></li>
-            <li><a href="matches.html">Matches</a></li>
-            <li><a href="shop.html">Shop</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-secondary);">Support</h4>
-          <ul style="list-style:none; padding:0; margin-top:0.5rem; font-size:0.9rem;">
-            <li><a href="faq.html">FAQ</a></li>
-            <li><a href="contact.html">Contact</a></li>
-            <li><a href="legal.html">Legal</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-secondary);">Connect</h4>
-          <div style="display:flex; gap:0.75rem; font-size:1.4rem; margin-top:0.5rem;">
-            <a href="#" style="color:var(--text-secondary);"><i class="fab fa-twitch"></i></a>
-            <a href="#" style="color:var(--text-secondary);"><i class="fab fa-youtube"></i></a>
-            <a href="#" style="color:var(--text-secondary);"><i class="fab fa-discord"></i></a>
-            <a href="#" style="color:var(--text-secondary);"><i class="fab fa-twitter"></i></a>
-          </div>
-        </div>
-      </div>
-      <div style="text-align:center; padding:1.5rem 0; font-size:0.8rem; color:var(--text-secondary);">
-        &copy; 2026 Wolf Society Esports. All rights reserved. &nbsp;·&nbsp; Built with 🐺 by the Pack.
-      </div>
-    </div>
-  </footer>
+    </section>
 
-  <script src="frontend/js/supabase-client.js" type="module"></script>
-  <script src="frontend/js/auth.js" type="module"></script>
-  <script src="frontend/js/main.js" type="module"></script>
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="container">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:2.5rem; padding:2.5rem 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+                <div><div style="font-size:1.3rem; font-weight:700;">🐺 Wolf<span style="color:var(--primary);">Society</span></div><p style="color:var(--text-secondary); font-size:0.85rem; margin-top:0.5rem;">Home of Divine Wolf — Moba Legends 5v5.</p></div>
+                <div><h4 style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-secondary);">Pages</h4><ul style="list-style:none; padding:0; margin-top:0.5rem; font-size:0.9rem;"><li><a href="about.html">About</a></li><li><a href="team.html">Team</a></li><li><a href="matches.html">Matches</a></li><li><a href="shop.html">Shop</a></li></ul></div>
+                <div><h4 style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-secondary);">Support</h4><ul style="list-style:none; padding:0; margin-top:0.5rem; font-size:0.9rem;"><li><a href="faq.html">FAQ</a></li><li><a href="contact.html">Contact</a></li><li><a href="legal.html">Legal</a></li></ul></div>
+                <div><h4 style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-secondary);">Connect</h4><div style="display:flex; gap:0.75rem; font-size:1.4rem; margin-top:0.5rem;"><a href="#" style="color:var(--text-secondary);"><i class="fab fa-twitch"></i></a><a href="#" style="color:var(--text-secondary);"><i class="fab fa-youtube"></i></a><a href="#" style="color:var(--text-secondary);"><i class="fab fa-discord"></i></a><a href="#" style="color:var(--text-secondary);"><i class="fab fa-twitter"></i></a></div></div>
+            </div>
+            <div style="text-align:center; padding:1.5rem 0; font-size:0.8rem; color:var(--text-secondary);">&copy; 2026 Wolf Society Esports. All rights reserved. &nbsp;·&nbsp; Built with 🐺 by the Pack.</div>
+        </div>
+    </footer>
+
+    <script src="frontend/js/supabase-client.js" type="module"></script>
+    <script src="frontend/js/auth.js" type="module"></script>
+    <script src="frontend/js/main.js" type="module"></script>
+    <script>
+        // Page-specific GSAP animations
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.from('#pageTitle', { opacity: 0, y: 40, duration: 0.8, delay: 0.2, ease: 'power3.out' });
+        gsap.from('#pageSub', { opacity: 0, y: 30, duration: 0.8, delay: 0.4, ease: 'power3.out' });
+        document.querySelectorAll('.glass').forEach((el, i) => {
+            gsap.from(el, { scrollTrigger: { trigger: el, start: 'top 85%' }, opacity: 0, y: 30, duration: 0.6, delay: i * 0.1, ease: 'power2.out' });
+        });
+    </script>
 </body>
 </html>
