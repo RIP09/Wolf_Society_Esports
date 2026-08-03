@@ -8,7 +8,7 @@
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="stylesheet" href="./frontend/css/style.css" />
 </head>
 <body>
   <!-- Same header -->
@@ -44,6 +44,7 @@
     </section>
   </main>
 
+  <!-- Same footer -->
   <footer class="bg-[#1a1a1a] border-t border-[#2a2a2a] py-8 px-4 text-center text-gray-400 text-sm">
     <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center">
       <div class="flex items-center space-x-4">
@@ -58,34 +59,13 @@
     </div>
   </footer>
 
-  <script type="importmap">{
-    "imports": {
-      "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
-    }
-  }</script>
-  <script type="module">
-    import { supabase } from './js/supabase-client.js';
-    import { updateNav } from './js/main.js';
-    import AOS from 'https://unpkg.com/aos@2.3.1/dist/aos.esm.js';
-    AOS.init({ duration: 800, once: true });
-    await updateNav();
-    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-      document.getElementById('mobile-menu').classList.toggle('hidden');
-    });
-
-    document.getElementById('contact-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData.entries());
-      const { error } = await supabase.from('contact_submissions').insert([data]);
-      const responseDiv = document.getElementById('contact-response');
-      if (error) {
-        responseDiv.innerHTML = `<div class="bg-red-800/30 text-red-300 p-3 rounded">Error: ${error.message}</div>`;
-      } else {
-        responseDiv.innerHTML = `<div class="bg-green-800/30 text-green-300 p-3 rounded">Message sent successfully!</div>`;
-        e.target.reset();
+  <script type="importmap">
+    {
+      "imports": {
+        "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
       }
-    });
+    }
   </script>
+  <script type="module" src="./frontend/js/main.js"></script>
 </body>
 </html>
