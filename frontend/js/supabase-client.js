@@ -1,9 +1,9 @@
-// supabase-client.js
+// frontend/js/supabase-client.js
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/+esm';
 
-const SUPABASE_URL = 'https://tdfkebgapncswtvbtaqy.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ';
-
+// Use environment variables (for Vercel/Netlify) or fallback to hardcoded
+const SUPABASE_URL = import.meta.env?.VITE_SUPABASE_URL || 'https://tdfkebgapncswtvbtaqy.supabase.co';
+const SUPABASE_ANON_KEY = import.meta.env?.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -32,10 +32,10 @@ export async function getLiveMatches() {
     .eq('status', 'live')
     .order('start_time', { ascending: false });
   if (error) throw error;
-  return data;
+  return data || [];
 }
 
-// Fetch news
+// Fetch latest news
 export async function getLatestNews(limit = 3) {
   const { data, error } = await supabase
     .from('news')
@@ -43,7 +43,5 @@ export async function getLatestNews(limit = 3) {
     .order('created_at', { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return data;
+  return data || [];
 }
-
-// ... other CRUD helpers
