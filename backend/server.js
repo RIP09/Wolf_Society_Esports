@@ -132,9 +132,9 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
   });
 });
 
-app.use('/api/matches', require('./routes/matches'));
-app.use('/api/rosters', require('./routes/rosters'));
-app.use('/api/webhooks', require('./routes/webhooks'));
+app.use('/api/matches', require('./routes/matches')(supabase));
+app.use('/api/rosters', require('./routes/rosters')(supabase));
+app.use('/api/webhooks', require('./routes/webhooks')(supabase));
 
 // ============================================================
 //  SOCKET.IO EVENTS
