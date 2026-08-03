@@ -1,61 +1,85 @@
-// rosters.js – factory function
+// backend/routes/rosters.js
 module.exports = (supabase) => {
   const router = require('express').Router();
 
-  // GET all players (with role 'player' or 'coach')
+  // GET all players (role = 'player' or 'coach')
   router.get('/', async (req, res) => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('id, full_name, username, avatar_url, role, created_at')
-      .in('role', ['player', 'coach']);
-    if (error) return res.status(500).json({ error });
-    res.json(data);
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, full_name, username, avatar_url, role, created_at')
+        .in('role', ['player', 'coach']);
+      if (error) throw error;
+      res.json(data);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   });
 
   // GET a single player with contract info
   router.get('/:id', async (req, res) => {
-    const { id } = req.params;
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*, contracts(*)')
-      .eq('id', id)
-      .single();
-    if (error) return res.status(500).json({ error });
-    res.json(data);
+    try {
+      const { id } = req.params;
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*, contracts(*)')
+        .eq('id', id)
+        .single();
+      if (error) throw error;
+      if (!data) return res.status(404).json({ error: 'Player not found' });
+      res.json(data);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   });
 
   // POST – add a new player (admin only – protect with middleware later)
   router.post('/', async (req, res) => {
-    const { full_name, username, role, avatar_url } = req.body;
-    const { data, error } = await supabase
-      .from('profiles')
-      .insert([{ full_name, username, role, avatar_url }])
-      .select();
-    if (error) return res.status(500).json({ error });
-    res.status(201).json(data);
+    try {
+      const { full_name, username, role, avatar_url } = req.body;
+      if (!full_name || !username) {
+        return res.status(400).json({ error: 'Missing required fields' });
+      }
+      const { data, error } = await supabase
+        .from('profiles')
+        .insert([{ full_name, username, role: role || 'player', avatar_url }])
+        .select();
+      if (error) throw error;
+      res.status(201).json(data);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   });
 
-  // PUT – update contract details (salary, end_date, substitute)
+  // PUT – update contract details
   router.put('/:id/contract', async (req, res) => {
-    const { id } = req.params;
-    const { salary, end_date, substitute } = req.body;
-    const { data, error } = await supabase
-      .from('contracts')
-      .upsert({ player_id: id, salary, end_date, substitute })
-      .select();
-    if (error) return res.status(500).json({ error });
-    res.json(data);
+    try {
+      const { id } = req.params;
+      const { salary, end_date, substitute } = req.body;
+      const { data, error } = await supabase
+        .from('contracts')
+        .upsert({ player_id: id, salary, end_date, substitute })
+        .select();
+      if (error) throw error;
+      res.json(data);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   });
 
   // DELETE – demote a player to 'fan' (soft delete)
   router.delete('/:id', async (req, res) => {
-    const { id } = req.params;
-    const { error } = await supabase
-      .from('profiles')
-      .update({ role: 'fan' })
-      .eq('id', id);
-    if (error) return res.status(500).json({ error });
-    res.json({ success: true });
+    try {
+      const { id } = req.params;
+      const { error } = await supabase
+        .from('profiles')
+        .update({ role: 'fan' })
+        .eq('id', id);
+      if (error) throw error;
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   });
 
   return router;
