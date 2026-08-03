@@ -1,0 +1,29 @@
+/* Custom styles */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0a0a0a;
+  color: #e5e7eb;
+  overflow-x: hidden;
+}
+.gradient-text {
+  background: linear-gradient(135deg, #00f0ff, #ff2d55);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.section-pad { padding: 5rem 0; }
+.btn-glow:hover {
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+}
+.live-pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+/* Mobile menu hidden by default */
+#mobile-menu { display: none; }
+#mobile-menu.open { display: flex; }
