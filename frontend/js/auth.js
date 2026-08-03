@@ -1,46 +1,62 @@
+// auth.js
 import { supabase } from './supabase-client.js';
 
-// Sign up
-export async function signUp(email, password, username, fullName) {
-  const { data, error } = await supabase.auth.signUp({ email, password });
+export async function signUp(email, password, fullName, role = 'fan') {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: { full_name: fullName, role } }
+  });
   if (error) throw error;
-  const { error: profileError } = await supabase
-    .from('profiles')
-    .insert([{ id: data.user.id, username, full_name: fullName, role: 'public' }]);
-  if (profileError) throw profileError;
+  // Insert profile
+  if (data.user) {
+    await supabase.from('profiles').upsert({
+      id: data.user.id,
+      full_name: fullName,
+      role: role,
+      username: email.split('@')[0]
+    });
+  }
   return data;
 }
 
-export async function login(email, password) {
+export async function signIn(email, password) {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) throw error;
   return data;
 }
 
-export async function logout() {
-  await supabase.auth.signOut();
+export async function signOut() {
+  const { error } = await supabase.auth.signOut();
+  if (error) throw error;
 }
 
-export async function getCurrentUser() {
-  const { data: { user }, error } = await supabase.auth.getUser();
-  if (error || !user) return null;
-  const { data: profile } = await supabase
+export async function getSession() {
+  const { data, error } = await supabase.auth.getSession();
+  if (error) throw error;
+  return data.session;
+}
+
+export async function getProfile(userId) {
+  const { data, error } = await supabase
     .from('profiles')
     .select('*')
-    .eq('id', user.id)
+    .eq('id', userId)
     .single();
-  return { ...user, profile };
+  if (error) throw error;
+  return data;
 }
 
-export async function hasRole(requiredRole) {
-  const user = await getCurrentUser();
-  if (!user) return false;
-  const hierarchy = { public: 0, user: 1, management: 2, admin: 3, super_admin: 4 };
-  const userLevel = hierarchy[user.profile?.role] ?? 0;
-  return userLevel >= hierarchy[requiredRole];
+export async function isStaff() {
+  const session = await getSession();
+  if (!session) return false;
+  const profile = await getProfile(session.user.id);
+  return ['admin', 'manager', 'coach'].includes(profile.role);
 }
 
-export async function isSuperAdmin() {
-  const user = await getCurrentUser();
-  return user?.profile?.role === 'super_admin';
+export async function isAdmin() {
+  const session = await getSession();
+  if (!session) return false;
+  const profile = await getProfile(session.user.id);
+  return profile.role === 'admin';
 }
