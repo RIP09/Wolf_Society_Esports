@@ -6,7 +6,7 @@
   <title>Manage Players · Wolf Society Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="/frontend/css/style.css" />
 </head>
 <body class="bg-[#0a0a0a] text-gray-200">
   <nav class="bg-[#1a1a1a] border-b border-[#2a2a2a] p-4 flex justify-between items-center">
@@ -64,20 +64,20 @@
     </div>
   </div>
 
-  <script type="importmap">{
-    "imports": {
-      "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
+  <script type="importmap">
+    {
+      "imports": {
+        "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
+      }
     }
-  }</script>
+  </script>
   <script type="module">
-    import { supabase } from '../js/supabase-client.js';
-    import { getCurrentUser, hasRole, logout } from '../js/auth.js';
+    import { supabase } from '/frontend/js/supabase-client.js';
+    import { getCurrentUser, hasRole, logout } from '/frontend/js/auth.js';
 
-    // Auth check
     const user = await getCurrentUser();
     if (!user || !(await hasRole('management'))) window.location.href = './index.html';
 
-    // Load players
     async function loadPlayers() {
       const { data, error } = await supabase.from('players').select('*').order('ign');
       if (error) return alert('Error loading players');
@@ -94,7 +94,6 @@
           </td>
         </tr>
       `).join('');
-      // Attach events
       document.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', () => openModal(btn.dataset.id)));
       document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', async () => {
         if (confirm('Delete this player?')) {
@@ -104,7 +103,6 @@
       }));
     }
 
-    // Modal
     const modal = document.getElementById('player-modal');
     const form = document.getElementById('player-form');
     const modalTitle = document.getElementById('modal-title');
@@ -163,7 +161,6 @@
       }
     });
 
-    // Logout
     document.getElementById('logout-btn').addEventListener('click', async () => {
       await logout();
       window.location.href = './index.html';
