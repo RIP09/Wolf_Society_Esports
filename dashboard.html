@@ -8,9 +8,10 @@
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="stylesheet" href="./frontend/css/style.css" />
 </head>
 <body>
+  <!-- Same header -->
   <header class="fixed top-0 left-0 w-full bg-[#0a0a0a]/90 backdrop-blur-md border-b border-[#2a2a2a] z-50 px-4 py-3 flex justify-between items-center">
     <div class="flex items-center space-x-2">
       <a href="/" class="text-2xl font-bold gradient-text">Wolf Society</a>
@@ -25,11 +26,10 @@
 
   <main class="pt-16 max-w-7xl mx-auto px-4 section-pad">
     <h1 class="text-4xl font-bold mb-8">Dashboard</h1>
-    <div id="dashboard-content" class="bg-[#1a1a1a] p-6 rounded-xl border border-[#2a2a2a]">
-      <!-- Content loaded by JS -->
-    </div>
+    <div id="dashboard-content" class="bg-[#1a1a1a] p-6 rounded-xl border border-[#2a2a2a]"></div>
   </main>
 
+  <!-- Same footer -->
   <footer class="bg-[#1a1a1a] border-t border-[#2a2a2a] py-8 px-4 text-center text-gray-400 text-sm">
     <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center">
       <div class="flex items-center space-x-4">
@@ -44,90 +44,13 @@
     </div>
   </footer>
 
-  <script type="importmap">{
-    "imports": {
-      "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
-    }
-  }</script>
-  <script type="module">
-    import { getCurrentUser, login, logout } from './js/auth.js';
-    import { updateNav } from './js/main.js';
-    import AOS from 'https://unpkg.com/aos@2.3.1/dist/aos.esm.js';
-    AOS.init({ duration: 800, once: true });
-    await updateNav();
-    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-      document.getElementById('mobile-menu').classList.toggle('hidden');
-    });
-
-    const container = document.getElementById('dashboard-content');
-    const user = await getCurrentUser();
-    if (!user) {
-      // Show login form
-      container.innerHTML = `
-        <h2 class="text-2xl font-bold mb-4">Login</h2>
-        <form id="login-form" class="space-y-4 max-w-sm">
-          <input type="email" id="login-email" placeholder="Email" required class="w-full px-4 py-3 bg-[#2a2a2a] border border-[#3a3a3a] rounded-lg text-white focus:ring-2 focus:ring-[#00f0ff] outline-none" />
-          <input type="password" id="login-password" placeholder="Password" required class="w-full px-4 py-3 bg-[#2a2a2a] border border-[#3a3a3a] rounded-lg text-white focus:ring-2 focus:ring-[#00f0ff] outline-none" />
-          <button type="submit" class="w-full py-3 bg-[#00f0ff] text-black font-bold rounded-lg hover:opacity-90 transition">Login</button>
-        </form>
-        <div id="login-error" class="text-red-400 text-sm mt-2 hidden"></div>
-        <p class="mt-4 text-gray-400">Don't have an account? <a href="./signup.html" class="text-[#00f0ff] hover:underline">Sign up</a></p>
-      `;
-      document.getElementById('login-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
-        try {
-          await login(email, password);
-          window.location.reload();
-        } catch (err) {
-          document.getElementById('login-error').textContent = err.message;
-          document.getElementById('login-error').classList.remove('hidden');
-        }
-      });
-    } else {
-      // Logged in – show role‑based dashboard
-      const role = user.profile?.role || 'public';
-      let html = `
-        <div class="flex justify-between items-center mb-6">
-          <div>
-            <h2 class="text-2xl font-bold">Welcome, ${user.profile?.full_name || user.email}!</h2>
-            <p class="text-gray-400">Role: <span class="text-[#00f0ff] capitalize">${role}</span></p>
-          </div>
-          <button id="logout-btn" class="bg-red-600/20 hover:bg-red-600/40 text-red-400 px-4 py-2 rounded transition">Logout</button>
-        </div>
-      `;
-
-      // Role‑specific content
-      if (role === 'public') {
-        html += `<p>You have basic access. Upgrade to management or admin for more features.</p>`;
-      } else if (role === 'management' || role === 'admin' || role === 'super_admin') {
-        html += `
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-            <a href="./admin/dashboard.html" class="bg-[#2a2a2a] p-4 rounded-lg text-center hover:border-[#00f0ff] border border-transparent transition">Go to Admin Panel</a>
-          </div>
-        `;
+  <script type="importmap">
+    {
+      "imports": {
+        "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
       }
-      if (role === 'super_admin') {
-        html += `
-          <div class="mt-4">
-            <h3 class="text-xl font-bold">Super Admin Controls</h3>
-            <div class="grid grid-cols-2 gap-2 mt-2">
-              <a href="./admin/users.html" class="bg-[#2a2a2a] p-2 rounded text-center">Manage Users</a>
-              <a href="./admin/players.html" class="bg-[#2a2a2a] p-2 rounded text-center">Manage Players</a>
-              <a href="./admin/news.html" class="bg-[#2a2a2a] p-2 rounded text-center">Manage News</a>
-              <a href="./admin/matches.html" class="bg-[#2a2a2a] p-2 rounded text-center">Manage Matches</a>
-            </div>
-          </div>
-        `;
-      }
-
-      container.innerHTML = html;
-      document.getElementById('logout-btn')?.addEventListener('click', async () => {
-        await logout();
-        window.location.href = '/';
-      });
     }
   </script>
+  <script type="module" src="./frontend/js/main.js"></script>
 </body>
 </html>
