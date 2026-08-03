@@ -8,10 +8,10 @@
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="stylesheet" href="./frontend/css/style.css" />
 </head>
 <body>
-  <!-- Header (same as index) -->
+  <!-- Same header as index -->
   <header class="fixed top-0 left-0 w-full bg-[#0a0a0a]/90 backdrop-blur-md border-b border-[#2a2a2a] z-50 px-4 py-3 flex justify-between items-center">
     <div class="flex items-center space-x-2">
       <a href="/" class="text-2xl font-bold gradient-text">Wolf Society</a>
@@ -25,18 +25,35 @@
   <div id="mobile-menu" class="md:hidden fixed top-16 left-0 w-full bg-[#0a0a0a]/95 backdrop-blur-md border-b border-[#2a2a2a] p-4 flex-col space-y-3 text-sm font-medium z-40 hidden"></div>
 
   <main class="pt-16">
-    <section class="max-w-4xl mx-auto px-4 section-pad">
+    <section class="max-w-4xl mx-auto px-4 section-pad" data-aos="fade-up">
       <h1 class="text-4xl font-bold mb-6">About Wolf Society</h1>
       <div class="space-y-6 text-gray-300 leading-relaxed">
         <p><strong>Founded in 2026</strong>, Wolf Society Esports is a premier Indian esports organization dedicated to excellence in competitive gaming. We began with a single game – MOBA Legends 5v5 – and a vision to build a community that thrives on teamwork, discipline, and passion.</p>
         <p><strong>Our Mission:</strong> To nurture talent, create unforgettable moments, and represent India on the global stage. We believe in rising together, hunting together, and winning together.</p>
         <p><strong>Management:</strong> Our leadership team brings years of experience in esports, business, and community building.</p>
         <p><strong>Achievements:</strong> We have already secured top‑8 finishes in national qualifiers and are aiming for international glory.</p>
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+          <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#2a2a2a]">
+            <i class="fas fa-trophy text-4xl text-[#00f0ff]"></i>
+            <h3 class="text-xl font-bold mt-2">Top 8</h3>
+            <p class="text-gray-400">National Qualifiers</p>
+          </div>
+          <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#2a2a2a]">
+            <i class="fas fa-users text-4xl text-[#ff2d55]"></i>
+            <h3 class="text-xl font-bold mt-2">50+</h3>
+            <p class="text-gray-400">Community Members</p>
+          </div>
+          <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#2a2a2a]">
+            <i class="fas fa-globe text-4xl text-[#00f0ff]"></i>
+            <h3 class="text-xl font-bold mt-2">India</h3>
+            <p class="text-gray-400">Proudly Indian</p>
+          </div>
+        </div>
       </div>
     </section>
   </main>
 
-  <!-- Footer (same as index) -->
+  <!-- Same footer -->
   <footer class="bg-[#1a1a1a] border-t border-[#2a2a2a] py-8 px-4 text-center text-gray-400 text-sm">
     <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center">
       <div class="flex items-center space-x-4">
@@ -51,20 +68,13 @@
     </div>
   </footer>
 
-  <script type="importmap">{
-    "imports": {
-      "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
+  <script type="importmap">
+    {
+      "imports": {
+        "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
+      }
     }
-  }</script>
-  <script type="module">
-    import { updateNav } from './js/main.js';
-    import AOS from 'https://unpkg.com/aos@2.3.1/dist/aos.esm.js';
-    AOS.init({ duration: 800, once: true });
-    await updateNav();
-    // Mobile menu toggle
-    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-      document.getElementById('mobile-menu').classList.toggle('hidden');
-    });
   </script>
+  <script type="module" src="./frontend/js/main.js"></script>
 </body>
 </html>
