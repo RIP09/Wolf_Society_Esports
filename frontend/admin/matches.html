@@ -6,9 +6,10 @@
   <title>Manage Matches · Wolf Society Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="/frontend/css/style.css" />
 </head>
 <body class="bg-[#0a0a0a] text-gray-200">
+  <!-- Same nav -->
   <nav class="bg-[#1a1a1a] border-b border-[#2a2a2a] p-4 flex justify-between items-center">
     <div class="flex items-center space-x-4">
       <span class="text-2xl font-bold gradient-text">Wolf Society</span>
@@ -23,7 +24,6 @@
       <button id="logout-btn" class="text-red-400 hover:text-red-300">Logout</button>
     </div>
   </nav>
-
   <main class="max-w-7xl mx-auto p-6">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-3xl font-bold">Matches</h1>
@@ -38,8 +38,7 @@
       </table>
     </div>
   </main>
-
-  <!-- Modal -->
+  <!-- Modal with /frontend/ paths -->
   <div id="match-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center hidden">
     <div class="bg-[#1a1a1a] rounded-xl p-6 max-w-md w-full border border-[#2a2a2a]">
       <h2 id="modal-title" class="text-2xl font-bold mb-4">Add Match</h2>
@@ -47,7 +46,7 @@
         <input type="hidden" id="match-id" />
         <div class="space-y-3">
           <input type="text" id="opponent" placeholder="Opponent Team" required class="w-full px-4 py-2 bg-[#2a2a2a] border border-[#3a3a3a] rounded text-white" />
-          <input type="text" id="tournament_name" placeholder="Tournament Name (will create if not exists)" class="w-full px-4 py-2 bg-[#2a2a2a] border border-[#3a3a3a] rounded text-white" />
+          <input type="text" id="tournament_name" placeholder="Tournament Name" class="w-full px-4 py-2 bg-[#2a2a2a] border border-[#3a3a3a] rounded text-white" />
           <select id="status" class="w-full px-4 py-2 bg-[#2a2a2a] border border-[#3a3a3a] rounded text-white">
             <option value="scheduled">Scheduled</option>
             <option value="live">Live</option>
@@ -64,7 +63,6 @@
             <option value="loss">Loss</option>
             <option value="draw">Draw</option>
           </select>
-          <!-- MVP dropdown - load players -->
           <select id="mvp_id" class="w-full px-4 py-2 bg-[#2a2a2a] border border-[#3a3a3a] rounded text-white">
             <option value="">MVP (optional)</option>
           </select>
@@ -76,21 +74,19 @@
       </form>
     </div>
   </div>
-
-  <script type="importmap">{
-    "imports": {
-      "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
+  <script type="importmap">
+    {
+      "imports": {
+        "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
+      }
     }
-  }</script>
+  </script>
   <script type="module">
-    import { supabase } from '../js/supabase-client.js';
-    import { getCurrentUser, hasRole, logout } from '../js/auth.js';
+    import { supabase } from '/frontend/js/supabase-client.js';
+    import { getCurrentUser, hasRole, logout } from '/frontend/js/auth.js';
 
-    // Auth check
-    const user = await getCurrentUser();
-    if (!user || !(await hasRole('management'))) window.location.href = './index.html';
+    if (!(await getCurrentUser()) || !(await hasRole('management'))) window.location.href = './index.html';
 
-    // Load players for MVP dropdown
     async function loadPlayersOptions() {
       const { data } = await supabase.from('players').select('id, ign').eq('is_active', true);
       const select = document.getElementById('mvp_id');
@@ -98,7 +94,6 @@
     }
     await loadPlayersOptions();
 
-    // Load matches
     async function loadMatches() {
       const { data, error } = await supabase.from('matches').select('*, tournament: tournament_id(name), mvp: mvp_id(ign)').order('scheduled_at', { ascending: true });
       if (error) return alert('Error loading matches');
@@ -125,7 +120,6 @@
       }));
     }
 
-    // Modal
     const modal = document.getElementById('match-modal');
     const form = document.getElementById('match-form');
     const modalTitle = document.getElementById('modal-title');
@@ -166,10 +160,8 @@
       const tournamentName = document.getElementById('tournament_name').value.trim();
       let tournamentId = null;
       if (tournamentName) {
-        // Check if tournament exists
         let { data: existing } = await supabase.from('tournaments').select('id').eq('name', tournamentName).maybeSingle();
         if (!existing) {
-          // Create new tournament
           const { data: newTourn, error: tErr } = await supabase.from('tournaments').insert([{ name: tournamentName }]).select().single();
           if (tErr) return alert('Error creating tournament');
           tournamentId = newTourn.id;
