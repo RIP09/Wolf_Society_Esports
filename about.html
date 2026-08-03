@@ -3,78 +3,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>About · Wolf Society</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./frontend/css/style.css" />
+  <title>Wolf Society · About</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐺</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="frontend/css/style.css" />
 </head>
 <body>
-  <!-- Same header as index -->
-  <header class="fixed top-0 left-0 w-full bg-[#0a0a0a]/90 backdrop-blur-md border-b border-[#2a2a2a] z-50 px-4 py-3 flex justify-between items-center">
-    <div class="flex items-center space-x-2">
-      <a href="/" class="text-2xl font-bold gradient-text">Wolf Society</a>
-      <span class="text-xs text-gray-500 hidden sm:inline">Esports</span>
-    </div>
-    <nav class="hidden md:flex space-x-6 text-sm font-medium nav-links"></nav>
-    <div class="flex items-center space-x-3">
-      <button id="mobile-menu-btn" class="md:hidden text-gray-300 text-xl"><i class="fas fa-bars"></i></button>
-    </div>
-  </header>
-  <div id="mobile-menu" class="md:hidden fixed top-16 left-0 w-full bg-[#0a0a0a]/95 backdrop-blur-md border-b border-[#2a2a2a] p-4 flex-col space-y-3 text-sm font-medium z-40 hidden"></div>
+  <!-- ===== SAME NAVBAR (copy from index.html) ===== -->
+  <nav class="navbar" id="mainNav">...</nav>
 
-  <main class="pt-16">
-    <section class="max-w-4xl mx-auto px-4 section-pad" data-aos="fade-up">
-      <h1 class="text-4xl font-bold mb-6">About Wolf Society</h1>
-      <div class="space-y-6 text-gray-300 leading-relaxed">
-        <p><strong>Founded in 2026</strong>, Wolf Society Esports is a premier Indian esports organization dedicated to excellence in competitive gaming. We began with a single game – MOBA Legends 5v5 – and a vision to build a community that thrives on teamwork, discipline, and passion.</p>
-        <p><strong>Our Mission:</strong> To nurture talent, create unforgettable moments, and represent India on the global stage. We believe in rising together, hunting together, and winning together.</p>
-        <p><strong>Management:</strong> Our leadership team brings years of experience in esports, business, and community building.</p>
-        <p><strong>Achievements:</strong> We have already secured top‑8 finishes in national qualifiers and are aiming for international glory.</p>
-        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-          <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#2a2a2a]">
-            <i class="fas fa-trophy text-4xl text-[#00f0ff]"></i>
-            <h3 class="text-xl font-bold mt-2">Top 8</h3>
-            <p class="text-gray-400">National Qualifiers</p>
-          </div>
-          <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#2a2a2a]">
-            <i class="fas fa-users text-4xl text-[#ff2d55]"></i>
-            <h3 class="text-xl font-bold mt-2">50+</h3>
-            <p class="text-gray-400">Community Members</p>
-          </div>
-          <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#2a2a2a]">
-            <i class="fas fa-globe text-4xl text-[#00f0ff]"></i>
-            <h3 class="text-xl font-bold mt-2">India</h3>
-            <p class="text-gray-400">Proudly Indian</p>
-          </div>
+  <!-- ===== PAGE CONTENT ===== -->
+  <section class="section" style="padding-top:8rem;">
+    <div class="container">
+      <h1 class="text-gradient">About Wolf Society</h1>
+      <p class="hero-sub" style="max-width:100%;">We are a professional esports organisation competing in Moba Legends 5v5. Our team, Divine Wolf, is known for strategic gameplay, community engagement, and a relentless pursuit of victory.</p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:2rem; margin-top:2rem;">
+        <div class="glass" style="padding:2rem; border-radius:var(--radius-lg); text-align:center;">
+          <div style="font-size:3rem;">🎯</div>
+          <h3>Mission</h3>
+          <p style="color:var(--text-secondary);">To inspire and lead the next generation of esports talent.</p>
+        </div>
+        <div class="glass" style="padding:2rem; border-radius:var(--radius-lg); text-align:center;">
+          <div style="font-size:3rem;">👁️</div>
+          <h3>Vision</h3>
+          <p style="color:var(--text-secondary);">Become a global powerhouse in competitive gaming.</p>
+        </div>
+        <div class="glass" style="padding:2rem; border-radius:var(--radius-lg); text-align:center;">
+          <div style="font-size:3rem;">🤝</div>
+          <h3>Values</h3>
+          <p style="color:var(--text-secondary);">Teamwork, integrity, and constant improvement.</p>
         </div>
       </div>
-    </section>
-  </main>
-
-  <!-- Same footer -->
-  <footer class="bg-[#1a1a1a] border-t border-[#2a2a2a] py-8 px-4 text-center text-gray-400 text-sm">
-    <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center">
-      <div class="flex items-center space-x-4">
-        <span class="text-xl font-bold gradient-text">Wolf Society</span>
-        <span>© 2026 All rights reserved.</span>
-      </div>
-      <div class="flex space-x-4 mt-4 md:mt-0">
-        <a href="./legal.html" class="hover:text-white transition">Privacy</a>
-        <a href="./legal.html" class="hover:text-white transition">Terms</a>
-        <a href="./faq.html" class="hover:text-white transition">FAQ</a>
-      </div>
     </div>
-  </footer>
+  </section>
 
-  <script type="importmap">
-    {
-      "imports": {
-        "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
-      }
-    }
-  </script>
-  <script type="module" src="./frontend/js/main.js"></script>
+  <!-- ===== SAME FOOTER (copy from index.html) ===== -->
+  <footer class="footer">...</footer>
+
+  <script src="frontend/js/supabase-client.js" type="module"></script>
+  <script src="frontend/js/auth.js" type="module"></script>
+  <script src="frontend/js/main.js" type="module"></script>
 </body>
 </html>
