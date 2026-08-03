@@ -1,4 +1,3 @@
-// backend/server.js
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -14,7 +13,7 @@ const winston = require('winston');
 require('dotenv').config();
 
 // ============================================================
-//  LOGGER (winston)
+//  LOGGER
 // ============================================================
 const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || 'info',
@@ -35,20 +34,29 @@ const logger = winston.createLogger({
 });
 
 // Ensure logs directory exists
-if (!fs.existsSync('logs')) {
-  fs.mkdirSync('logs');
-}
+if (!fs.existsSync('logs')) fs.mkdirSync('logs');
 
 // ============================================================
-//  ENVIRONMENT VALIDATION
+//  ENVIRONMENT VALIDATION (with clear error)
 // ============================================================
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-  logger.error('❌ Missing SUPABASE_URL or SUPABASE_SERVICE_KEY in environment');
+  logger.error('❌ Missing required environment variables:');
+  if (!SUPABASE_URL) logger.error('   - SUPABASE_URL is not set');
+  if (!SUPABASE_SERVICE_KEY) logger.error('   - SUPABASE_SERVICE_KEY is not set');
+  logger.error('');
+  logger.error('💡 To fix:');
+  logger.error('   1. Go to your Render dashboard → select this Web Service.');
+  logger.error('   2. Click on "Environment" → "Add Environment Variable".');
+  logger.error('   3. Add both SUPABASE_URL and SUPABASE_SERVICE_KEY with your Supabase values.');
+  logger.error('   4. Save and redeploy.');
+  logger.error('');
   process.exit(1);
 }
+
+logger.info('✅ Environment variables loaded successfully');
 
 // ============================================================
 //  SUPABASE CLIENT
@@ -56,128 +64,68 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 // ============================================================
-//  EXPRESS APP
+//  EXPRESS APP & MIDDLEWARE
 // ============================================================
 const app = express();
 const server = http.createServer(app);
-
-// ============================================================
-//  SOCKET.IO
-// ============================================================
 const io = new Server(server, {
-  cors: {
-    origin: process.env.CLIENT_URL || '*',
-    methods: ['GET', 'POST']
-  }
+  cors: { origin: process.env.CLIENT_URL || '*' }
 });
 
-// ============================================================
-//  MIDDLEWARE
-// ============================================================
+app.use(helmet());
+app.use(cors({ origin: process.env.CLIENT_URL || '*', credentials: true }));
+app.use(morgan('combined', { stream: { write: (msg) => logger.info(msg.trim()) } }));
 
-// Security headers
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      connectSrc: ["'self'", SUPABASE_URL],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
-      styleSrc: ["'self'", "'unsafe-inline'"]
-    }
-  }
-}));
-
-// CORS
-app.use(cors({
-  origin: process.env.CLIENT_URL || '*',
-  credentials: true
-}));
-
-// Logging
-app.use(morgan('combined', {
-  stream: { write: (message) => logger.info(message.trim()) }
-}));
-
-// Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: { error: 'Too many requests, please try again later.' },
-  standardHeaders: true,
-  legacyHeaders: false
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: { error: 'Too many requests, please try again later.' }
 });
 app.use('/api', limiter);
 
-// Body parsers
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
-// Static files (for uploaded images)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ============================================================
-//  MULTER CONFIGURATION (file uploads)
+//  MULTER (file upload)
 // ============================================================
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, 'uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
+    const dir = path.join(__dirname, 'uploads');
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
   }
 });
-
-const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|gif|webp|svg/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype);
-  if (mimetype && extname) {
-    return cb(null, true);
-  }
-  cb(new Error('Only image files are allowed!'));
-};
-
 const upload = multer({
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-  fileFilter: fileFilter
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowed = /jpeg|jpg|png|gif|webp|svg/;
+    const ext = allowed.test(path.extname(file.originalname).toLowerCase());
+    const mime = allowed.test(file.mimetype);
+    cb(null, mime && ext);
+  }
 });
 
 // ============================================================
 //  ROUTES
 // ============================================================
-
-// Health check
 app.get('/health', (req, res) => {
-  res.json({
-    status: 'OK',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    memory: process.memoryUsage()
-  });
+  res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// File upload endpoint
 app.post('/api/upload', upload.single('file'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: 'No file uploaded' });
-  }
-  const fileUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   res.json({
     success: true,
-    fileUrl: fileUrl,
-    filename: req.file.filename,
-    originalName: req.file.originalname,
-    size: req.file.size
+    fileUrl: `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`
   });
 });
 
-// API Routes
 app.use('/api/matches', require('./routes/matches'));
 app.use('/api/rosters', require('./routes/rosters'));
 app.use('/api/webhooks', require('./routes/webhooks'));
@@ -186,108 +134,56 @@ app.use('/api/webhooks', require('./routes/webhooks'));
 //  SOCKET.IO EVENTS
 // ============================================================
 io.on('connection', (socket) => {
-  logger.info(`Staff connected: ${socket.id}`);
-
-  // Join staff room with role verification
+  logger.info(`New connection: ${socket.id}`);
   socket.on('join-staff', (role) => {
-    if (['admin', 'manager', 'coach'].includes(role)) {
+    if (['admin','manager','coach'].includes(role)) {
       socket.join('staff-room');
-      logger.info(`User ${socket.id} joined staff room with role: ${role}`);
-    } else {
-      socket.emit('error', { message: 'Unauthorized role' });
+      logger.info(`User ${socket.id} joined staff room as ${role}`);
     }
   });
-
-  // Scrim updates
   socket.on('scrim-update', async (data) => {
     try {
       const { error } = await supabase.from('scrims').upsert(data);
       if (error) throw error;
       io.to('staff-room').emit('scrim-refresh');
-      logger.info(`Scrim updated: ${JSON.stringify(data)}`);
     } catch (err) {
-      logger.error(`Scrim update error: ${err.message}`);
-      socket.emit('error', { message: 'Failed to update scrim' });
+      socket.emit('error', { message: err.message });
     }
   });
-
-  // Staff chat
-  socket.on('chat-message', (msg) => {
-    io.to('staff-room').emit('new-message', {
-      ...msg,
-      timestamp: new Date().toISOString(),
-      socketId: socket.id
-    });
-  });
-
-  // Match update (real-time score)
   socket.on('match-score', async (data) => {
     try {
       const { matchId, homeScore, awayScore, status } = data;
       const { error } = await supabase
         .from('matches')
-        .update({
-          home_score: homeScore,
-          away_score: awayScore,
-          status: status || 'live'
-        })
+        .update({ home_score: homeScore, away_score: awayScore, status })
         .eq('id', matchId);
       if (error) throw error;
-      io.emit('match-refresh', { matchId, homeScore, awayScore, status });
-      logger.info(`Match ${matchId} score updated: ${homeScore}-${awayScore}`);
+      io.emit('match-refresh', data);
     } catch (err) {
-      logger.error(`Match score update error: ${err.message}`);
-      socket.emit('error', { message: 'Failed to update match score' });
+      socket.emit('error', { message: err.message });
     }
-  });
-
-  socket.on('disconnect', () => {
-    logger.info(`Staff disconnected: ${socket.id}`);
   });
 });
 
 // ============================================================
-//  ERROR HANDLING MIDDLEWARE
+//  ERROR HANDLING
 // ============================================================
 app.use((err, req, res, next) => {
-  logger.error(`Error: ${err.message}`);
   logger.error(err.stack);
-
-  if (err instanceof multer.MulterError) {
-    if (err.code === 'FILE_TOO_LARGE') {
-      return res.status(413).json({ error: 'File too large. Maximum size is 5MB.' });
-    }
-    return res.status(400).json({ error: err.message });
-  }
-
-  res.status(err.status || 500).json({
-    error: err.message || 'Internal server error',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
-  });
+  res.status(err.status || 500).json({ error: err.message || 'Server error' });
 });
-
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ error: `Route ${req.method} ${req.path} not found` });
-});
+app.use((req, res) => res.status(404).json({ error: 'Not found' }));
 
 // ============================================================
-//  START SERVER
+//  START
 // ============================================================
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
-  logger.info(`🚀 Server running on port ${PORT}`);
-  logger.info(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
-  logger.info(`🔗 Supabase URL: ${SUPABASE_URL}`);
+  logger.info(`🚀 Backend running on port ${PORT}`);
+  logger.info(`📡 Supabase URL: ${SUPABASE_URL}`);
 });
 
-// Graceful shutdown
 process.on('SIGTERM', () => {
-  logger.info('SIGTERM received, shutting down gracefully...');
-  server.close(() => {
-    logger.info('Server closed');
-    process.exit(0);
-  });
+  logger.info('SIGTERM received, closing...');
+  server.close(() => process.exit(0));
 });
-
-module.exports = { app, server, io, supabase };
