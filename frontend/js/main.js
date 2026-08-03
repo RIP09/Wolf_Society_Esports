@@ -65,7 +65,7 @@ export async function updateNav() {
   if (user) {
     const role = user.profile?.role;
     if (['management', 'admin', 'super_admin'].includes(role)) {
-      html += `<a href="./admin/dashboard.html" class="nav-link">Admin</a>`;
+      html += `<a href="/frontend/admin/dashboard.html" class="nav-link">Admin</a>`;
     }
     html += `<a href="./dashboard.html" class="nav-link">Dashboard</a>`;
     html += `<a href="#" id="logout-link" class="nav-link text-red-400">Logout</a>`;
@@ -81,12 +81,10 @@ export async function updateNav() {
     nav.innerHTML = html;
   }
 
-  // Update mobile menu similarly (duplicate logic or use same nav)
+  // Mobile menu
   const mobileNav = document.querySelector('#mobile-menu');
   if (mobileNav) {
-    // Simple clone of desktop links – for brevity, we'll just use the same HTML
     mobileNav.innerHTML = nav.innerHTML.replace(/nav-link/g, 'nav-link-mobile');
-    // Re‑attach logout for mobile
     const logoutMobile = mobileNav.querySelector('#logout-link');
     if (logoutMobile) {
       logoutMobile.addEventListener('click', async (e) => {
@@ -97,3 +95,12 @@ export async function updateNav() {
     }
   }
 }
+
+// ---- Page‑specific initialisers ----
+// This script runs on every page and will call the appropriate functions
+// based on the page's content.
+
+// We'll use a pattern where each page defines its own logic, but we centralise
+// common actions like loading header/footer, particles, etc.
+// For simplicity, we're already calling updateNav() from each page's own <script>.
+// But we can also auto‑run based on page URL – but we'll keep explicit.
