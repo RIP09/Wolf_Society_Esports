@@ -3,66 +3,66 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard · Wolf Society</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <link rel="stylesheet" href="/frontend/css/style.css" />
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <!-- FontAwesome, fonts, etc. -->
 </head>
-<body class="bg-[#0a0a0a] text-gray-200">
-  <nav class="bg-[#1a1a1a] border-b border-[#2a2a2a] p-4 flex justify-between items-center">
-    <div class="flex items-center space-x-4">
-      <span class="text-2xl font-bold gradient-text">Wolf Society</span>
-      <span class="text-gray-400">Admin</span>
+<body>
+  <!-- Same navbar as public pages -->
+  <nav class="navbar">...</nav>
+
+  <section class="section" style="padding-top:8rem;">
+    <div class="container">
+      <h1>Admin Dashboard</h1>
+      <div class="admin-grid">
+        <div class="admin-card">
+          <div class="card-icon">👥</div>
+          <h3>Users</h3>
+          <p>Manage players and staff</p>
+          <a href="users.html" class="btn btn-primary btn-sm btn-slide">
+            <span class="original">Manage</span>
+            <span class="hover-text">Go</span>
+          </a>
+        </div>
+        <div class="admin-card">
+          <div class="card-icon">🏆</div>
+          <h3>Matches</h3>
+          <p>Edit scores, schedule</p>
+          <a href="matches.html" class="btn btn-primary btn-sm btn-ripple">Edit</a>
+        </div>
+        <div class="admin-card">
+          <div class="card-icon">📰</div>
+          <h3>News</h3>
+          <p>Create and publish</p>
+          <a href="news.html" class="btn btn-primary btn-sm btn-pulse">Publish</a>
+        </div>
+      </div>
+      <!-- Example toggle switch -->
+      <div style="margin-top:2rem;">
+        <label class="switch">
+          <input type="checkbox" id="maintenanceMode">
+          <span class="slider"></span>
+        </label>
+        <span style="margin-left:0.5rem;">Maintenance mode</span>
+      </div>
+      <!-- Modal trigger -->
+      <button class="btn btn-outline" data-modal-open="announceModal">Announce</button>
     </div>
-    <div class="flex space-x-4">
-      <a href="./dashboard.html" class="text-[#00f0ff]">Dashboard</a>
-      <a href="./players.html" class="hover:text-white">Players</a>
-      <a href="./news.html" class="hover:text-white">News</a>
-      <a href="./matches.html" class="hover:text-white">Matches</a>
-      <a href="./users.html" class="hover:text-white">Users</a>
-      <button id="logout-btn" class="text-red-400 hover:text-red-300">Logout</button>
+  </section>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="announceModal">
+    <div class="modal">
+      <button class="close-btn">&times;</button>
+      <h2>Announcement</h2>
+      <textarea class="input-focus" rows="4" placeholder="Type announcement..."></textarea>
+      <button class="btn btn-primary btn-ripple" style="margin-top:1rem;">Send</button>
     </div>
-  </nav>
-  <main class="max-w-7xl mx-auto p-6">
-    <h1 class="text-3xl font-bold mb-6">Admin Dashboard</h1>
-    <div id="stats" class="grid grid-cols-1 md:grid-cols-4 gap-6"></div>
-    <div class="grid grid-cols-2 gap-4 mt-8">
-      <a href="./players.html" class="bg-[#1a1a1a] p-6 rounded-xl border border-[#2a2a2a] text-center hover:border-[#00f0ff]">Manage Players</a>
-      <a href="./news.html" class="bg-[#1a1a1a] p-6 rounded-xl border border-[#2a2a2a] text-center hover:border-[#00f0ff]">Manage News</a>
-      <a href="./matches.html" class="bg-[#1a1a1a] p-6 rounded-xl border border-[#2a2a2a] text-center hover:border-[#00f0ff]">Manage Matches</a>
-      <a href="./users.html" class="bg-[#1a1a1a] p-6 rounded-xl border border-[#2a2a2a] text-center hover:border-[#00f0ff]">Manage Users</a>
-    </div>
-  </main>
-  <script type="importmap">
-    {
-      "imports": {
-        "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
-      }
-    }
-  </script>
-  <script type="module">
-    import { supabase } from '/frontend/js/supabase-client.js';
-    import { getCurrentUser, hasRole, logout } from '/frontend/js/auth.js';
-    const user = await getCurrentUser();
-    if (!user || !(await hasRole('management'))) {
-      window.location.href = './index.html';
-    }
-    const [playersCount, newsCount, matchesCount, usersCount] = await Promise.all([
-      supabase.from('players').select('id', { count: 'exact', head: true }),
-      supabase.from('news').select('id', { count: 'exact', head: true }),
-      supabase.from('matches').select('id', { count: 'exact', head: true }),
-      supabase.from('profiles').select('id', { count: 'exact', head: true })
-    ]);
-    document.getElementById('stats').innerHTML = `
-      <div class="bg-[#1a1a1a] p-4 rounded-xl"><h3>Players</h3><p class="text-2xl font-bold">${playersCount.count || 0}</p></div>
-      <div class="bg-[#1a1a1a] p-4 rounded-xl"><h3>News</h3><p class="text-2xl font-bold">${newsCount.count || 0}</p></div>
-      <div class="bg-[#1a1a1a] p-4 rounded-xl"><h3>Matches</h3><p class="text-2xl font-bold">${matchesCount.count || 0}</p></div>
-      <div class="bg-[#1a1a1a] p-4 rounded-xl"><h3>Users</h3><p class="text-2xl font-bold">${usersCount.count || 0}</p></div>
-    `;
-    document.getElementById('logout-btn').addEventListener('click', async () => {
-      await logout();
-      window.location.href = './index.html';
-    });
-  </script>
+  </div>
+
+  <footer class="footer">...</footer>
+  <script src="../js/supabase-client.js" type="module"></script>
+  <script src="../js/auth.js" type="module"></script>
+  <script src="../js/main.js" type="module"></script>
 </body>
 </html>
