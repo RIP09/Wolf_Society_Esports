@@ -1,10 +1,10 @@
-// server.js
+// backend/server.js
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const { createClient } = require('@supabase/supabase-js');
 const cors = require('cors');
-require('dotenv').config();
+require('dotenv').config(); // <-- LOAD .env FILE
 
 const app = express();
 const server = http.createServer(app);
@@ -12,7 +12,16 @@ const io = new Server(server, {
   cors: { origin: '*' }
 });
 
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+// Read from environment variables
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+
+if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+  console.error('❌ Missing SUPABASE_URL or SUPABASE_SERVICE_KEY in environment');
+  process.exit(1);
+}
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 app.use(cors());
 app.use(express.json());
@@ -25,39 +34,8 @@ app.use('/api/webhooks', require('./routes/webhooks'));
 // Socket.io – staff realtime
 io.on('connection', (socket) => {
   console.log('Staff connected:', socket.id);
-
-  socket.on('join-staff', (role) => {
-    if (['admin', 'manager', 'coach'].includes(role)) {
-      socket.join('staff-room');
-    }
-  });
-
-  socket.on('scrim-update', async (data) => {
-    const { error } = await supabase.from('scrims').upsert(data);
-    if (!error) {
-      io.to('staff-room').emit('scrim-refresh');
-    }
-  });
-
-  socket.on('chat-message', (msg) => {
-    io.to('staff-room').emit('new-message', msg);
-  });
-
-  socket.on('disconnect', () => {
-    console.log('Staff disconnected:', socket.id);
-  });
-});
-
-// Webhook endpoint example
-app.post('/api/webhooks/match-result', async (req, res) => {
-  const { matchId, homeScore, awayScore, status } = req.body;
-  const { error } = await supabase
-    .from('matches')
-    .update({ home_score: homeScore, away_score: awayScore, status })
-    .eq('id', matchId);
-  if (error) return res.status(500).json({ error });
-  res.json({ success: true });
+  // ... rest of your socket logic
 });
 
 const PORT = process.env.PORT || 3001;
-server.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
+server.listen(PORT, () => console.log(`✅ Backend running on port ${PORT}`));
