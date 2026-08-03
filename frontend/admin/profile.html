@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile · Wolf Society Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link rel="stylesheet" href="/frontend/css/style.css" />
+</head>
+<body class="bg-[#0a0a0a] text-gray-200">
+  <nav class="bg-[#1a1a1a] border-b border-[#2a2a2a] p-4 flex justify-between items-center">
+    <div class="flex items-center space-x-4">
+      <span class="text-2xl font-bold gradient-text">Wolf Society</span>
+      <span class="text-gray-400">Admin</span>
+    </div>
+    <div class="flex space-x-4">
+      <a href="./dashboard.html" class="hover:text-white">Dashboard</a>
+      <a href="./players.html" class="hover:text-white">Players</a>
+      <a href="./news.html" class="hover:text-white">News</a>
+      <a href="./matches.html" class="hover:text-white">Matches</a>
+      <a href="./users.html" class="hover:text-white">Users</a>
+      <button id="logout-btn" class="text-red-400 hover:text-red-300">Logout</button>
+    </div>
+  </nav>
+  <main class="max-w-3xl mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6">My Profile</h1>
+    <div class="bg-[#1a1a1a] p-6 rounded-xl border border-[#2a2a2a]">
+      <p class="text-gray-400">Profile management coming soon – you can edit your name, avatar, etc.</p>
+    </div>
+  </main>
+  <script type="importmap">
+    {
+      "imports": {
+        "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
+      }
+    }
+  </script>
+  <script type="module">
+    import { getCurrentUser, hasRole, logout } from '/frontend/js/auth.js';
+    if (!(await getCurrentUser()) || !(await hasRole('management'))) window.location.href = './index.html';
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      await logout();
+      window.location.href = './index.html';
+    });
+  </script>
+</body>
+</html>
