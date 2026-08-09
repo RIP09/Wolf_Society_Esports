@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wolf Society · Schedule</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Raleway:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js">
+    </script>
+</head>
+<body>
+
+    <nav class="navbar-wolf">
+        <div class="container" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">
+            <a href="index.html" class="brand">🐺 WOLF<span>SOCIETY</span></a>
+            <button class="nav-toggle"><i class="fas fa-bars"></i></button>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="roster.html">Roster</a>
+                <a href="schedule.html" class="active">Schedule</a>
+                <a href="bracket.html">Bracket</a>
+                <a href="news.html">News</a>
+                <a href="sponsors.html">Sponsors</a>
+                <a href="merch.html">Merch</a>
+                <a href="community.html">Community</a>
+                <a href="about.html">About</a>
+                <a href="tryouts.html">Tryouts</a>
+                <div class="nav-right">
+                    <a href="login.html" class="btn-neon btn-neon-sm">Login</a>
+                    <a href="dashboard.html" class="btn-neon btn-neon-sm btn-neon-secondary">Admin</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-wrapper">
+        <div class="container section-padding" style="padding-top:0;">
+            <h2 class="section-title">📅 Match <span class="highlight">Schedule</span></h2>
+            <p class="section-subtitle">Upcoming and recent battles.</p>
+
+            <div class="glass-card match-item">
+                <div class="teams"><span class="fw-bold text-white">WOLF</span> <span class="vs">vs</span> <span class="fw-bold text-white">PHX</span> <span class="score ms-2">3 - 1</span></div>
+                <div><span class="badge-live"><i class="fas fa-circle me-1"></i>LIVE</span> <span class="text-muted small">Now</span></div>
+            </div>
+            <div class="glass-card match-item">
+                <div class="teams"><span class="fw-bold text-white">WOLF</span> <span class="vs">vs</span> <span class="fw-bold text-white">VNM</span></div>
+                <div><span class="text-muted small">Upcoming</span> <span class="text-muted small">20:00 UTC</span></div>
+            </div>
+            <div class="glass-card match-item">
+                <div class="teams"><span class="fw-bold text-white">ELF</span> <span class="vs">vs</span> <span class="fw-bold text-white">DRG</span> <span class="score ms-2">2 - 0</span></div>
+                <div><span class="text-muted small">Finished</span> <span class="text-muted small">Aug 7</span></div>
+            </div>
+            <div class="glass-card match-item">
+                <div class="teams"><span class="fw-bold text-white">WOLF</span> <span class="vs">vs</span> <span class="fw-bold text-white">ELF</span></div>
+                <div><span class="text-muted small">Upcoming</span> <span class="text-muted small">Tomorrow · 18:00 UTC</span></div>
+            </div>
+            <div class="glass-card match-item">
+                <div class="teams"><span class="fw-bold text-white">SNW</span> <span class="vs">vs</span> <span class="fw-bold text-white">FLC</span> <span class="score ms-2">1 - 2</span></div>
+                <div><span class="text-muted small">Finished</span> <span class="text-muted small">Aug 6</span></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer-wolf">
+        <div class="container">
+            <div class="row" style="grid-template-columns:2fr 1fr 1fr 2fr;">
+                <div>
+                    <div class="brand">🐺 WOLF<span>SOCIETY</span></div>
+                    <p>India's premier esports collective.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h6 style="font-weight:bold;color:#fff;">Quick Links</h6>
+                    <div class="footer-links">
+                        <a href="index.html">Home</a>
+                        <a href="roster.html">Roster</a>
+                        <a href="schedule.html">Schedule</a>
+                        <a href="news.html">News</a>
+                    </div>
+                </div>
+                <div>
+                    <h6 style="font-weight:bold;color:#fff;">Community</h6>
+                    <div class="footer-links">
+                        <a href="community.html">Fan Zone</a>
+                        <a href="tryouts.html">Tryouts</a>
+                        <a href="about.html">About</a>
+                    </div>
+                </div>
+                <div>
+                    <h6 style="font-weight:bold;color:#fff;">Stay Updated</h6>
+                    <p class="text-muted small">Subscribe for the latest intel.</p>
+                    <div style="display:flex;">
+                        <input type="email" placeholder="Your email" style="flex:1;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:9999px 0 0 9999px;padding:0.5rem 1rem;color:#fff;" />
+                        <button class="btn-neon" style="border-radius:0 9999px 9999px 0;padding:0.5rem 1.2rem;">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">&copy; 2026 Wolf Society Esports.</div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html>
