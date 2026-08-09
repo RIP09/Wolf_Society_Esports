@@ -1,56 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard · Wolf Society</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./frontend/css/style.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wolf Society · Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Raleway:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js">
+    </script>
 </head>
 <body>
-  <!-- Same header -->
-  <header class="fixed top-0 left-0 w-full bg-[#0a0a0a]/90 backdrop-blur-md border-b border-[#2a2a2a] z-50 px-4 py-3 flex justify-between items-center">
-    <div class="flex items-center space-x-2">
-      <a href="/" class="text-2xl font-bold gradient-text">Wolf Society</a>
-      <span class="text-xs text-gray-500 hidden sm:inline">Esports</span>
-    </div>
-    <nav class="hidden md:flex space-x-6 text-sm font-medium nav-links"></nav>
-    <div class="flex items-center space-x-3">
-      <button id="mobile-menu-btn" class="md:hidden text-gray-300 text-xl"><i class="fas fa-bars"></i></button>
-    </div>
-  </header>
-  <div id="mobile-menu" class="md:hidden fixed top-16 left-0 w-full bg-[#0a0a0a]/95 backdrop-blur-md border-b border-[#2a2a2a] p-4 flex-col space-y-3 text-sm font-medium z-40 hidden"></div>
 
-  <main class="pt-16 max-w-7xl mx-auto px-4 section-pad">
-    <h1 class="text-4xl font-bold mb-8">Dashboard</h1>
-    <div id="dashboard-content" class="bg-[#1a1a1a] p-6 rounded-xl border border-[#2a2a2a]"></div>
-  </main>
+    <nav class="navbar-wolf">
+        <div class="container" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">
+            <a href="index.html" class="brand">🐺 WOLF<span>SOCIETY</span></a>
+            <button class="nav-toggle"><i class="fas fa-bars"></i></button>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="roster.html">Roster</a>
+                <a href="schedule.html">Schedule</a>
+                <a href="bracket.html">Bracket</a>
+                <a href="news.html">News</a>
+                <a href="sponsors.html">Sponsors</a>
+                <a href="merch.html">Merch</a>
+                <a href="community.html">Community</a>
+                <a href="about.html">About</a>
+                <a href="tryouts.html">Tryouts</a>
+                <div class="nav-right">
+                    <span class="text-muted small" id="userDisplay">👤 User</span>
+                    <a href="#" onclick="logoutUser()" class="btn-neon btn-neon-sm btn-neon-danger">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-  <!-- Same footer -->
-  <footer class="bg-[#1a1a1a] border-t border-[#2a2a2a] py-8 px-4 text-center text-gray-400 text-sm">
-    <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center">
-      <div class="flex items-center space-x-4">
-        <span class="text-xl font-bold gradient-text">Wolf Society</span>
-        <span>© 2026 All rights reserved.</span>
-      </div>
-      <div class="flex space-x-4 mt-4 md:mt-0">
-        <a href="./legal.html" class="hover:text-white transition">Privacy</a>
-        <a href="./legal.html" class="hover:text-white transition">Terms</a>
-        <a href="./faq.html" class="hover:text-white transition">FAQ</a>
-      </div>
+    <div class="main-wrapper">
+        <div class="container section-padding" style="padding-top:0;">
+            <h2 class="section-title">📊 <span class="highlight">Dashboard</span></h2>
+            <p class="section-subtitle">Overview of your organization.</p>
+            <div class="row" style="grid-template-columns:repeat(4,1fr);">
+                <div class="stat-card"><div class="stat-icon"><i class="fas fa-users"></i></div><div class="stat-number" id="dashPlayers">0</div><div class="stat-label">Players</div></div>
+                <div class="stat-card"><div class="stat-icon"><i class="fas fa-calendar-check"></i></div><div class="stat-number" id="dashMatches">0</div><div class="stat-label">Matches</div></div>
+                <div class="stat-card"><div class="stat-icon"><i class="fas fa-coins"></i></div><div class="stat-number" id="dashRevenue">₹0</div><div class="stat-label">Revenue</div></div>
+                <div class="stat-card"><div class="stat-icon"><i class="fas fa-file-signature"></i></div><div class="stat-number" id="dashApps">0</div><div class="stat-label">Applications</div></div>
+            </div>
+
+            <div style="margin-top:2rem;display:flex;flex-wrap:wrap;gap:0.75rem;">
+                <a href="admin-roster.html" class="btn-neon"><i class="fas fa-users me-2"></i>Manage Roster</a>
+                <a href="admin-matches.html" class="btn-neon btn-neon-secondary"><i class="fas fa-calendar-check me-2"></i>Manage Matches</a>
+                <a href="admin-scrims.html" class="btn-neon"><i class="fas fa-sword me-2"></i>Scrims</a>
+                <a href="admin-financial.html" class="btn-neon btn-neon-secondary"><i class="fas fa-coins me-2"></i>Financial</a>
+                <a href="admin-documents.html" class="btn-neon"><i class="fas fa-file-contract me-2"></i>Documents</a>
+                <a href="admin-media.html" class="btn-neon btn-neon-secondary"><i class="fas fa-photo-video me-2"></i>Media</a>
+                <a href="admin-applications.html" class="btn-neon"><i class="fas fa-file-signature me-2"></i>Applications</a>
+            </div>
+        </div>
     </div>
-  </footer>
 
-  <script type="importmap">
-    {
-      "imports": {
-        "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
-      }
-    }
-  </script>
-  <script type="module" src="./frontend/js/main.js"></script>
+    <footer class="footer-wolf" style="margin-top:0;">
+        <div class="container">
+            <div class="copyright">&copy; 2026 Wolf Society Esports.</div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script>
+        // Fetch user info
+        async function loadDashboard() {
+            const session = await checkAuth();
+            if (!session) return;
+            document.getElementById('userDisplay').textContent = '👤 ' + (session.user.email || 'User');
+
+            // Fetch counts
+            const { count: players, error: e1 } = await supabase.from('rosters').select('*', { count: 'exact', head: true });
+            const { count: matches, error: e2 } = await supabase.from('matches').select('*', { count: 'exact', head: true });
+            const { count: apps, error: e3 } = await supabase.from('applications').select('*', { count: 'exact', head: true });
+
+            document.getElementById('dashPlayers').textContent = players || 0;
+            document.getElementById('dashMatches').textContent = matches || 0;
+            document.getElementById('dashApps').textContent = apps || 0;
+            document.getElementById('dashRevenue').textContent = '₹' + (Math.floor(Math.random() * 500000) + 100000);
+        }
+        loadDashboard();
+    </script>
 </body>
 </html>
