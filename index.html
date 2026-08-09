@@ -3,24 +3,21 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wolf Society Esports · Champion Circuit</title>
+    <title>Wolf Society Esports · Official</title>
 
-    <!-- ====== Tailwind via CDN ====== -->
+    <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com">
     </script>
 
-    <!-- ====== Custom Configuration ====== -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#7C3AED', // vibrant purple
-                        secondary: '#06D6A0', // mint
-                        accent: '#F59E0B', // warm gold
+                        primary: '#7C3AED',
+                        secondary: '#06D6A0',
+                        accent: '#F59E0B',
                         dark: '#0B0B12',
-                        glass: 'rgba(255, 255, 255, 0.06)',
-                        glassBorder: 'rgba(255, 255, 255, 0.08)',
                         textLight: '#F8FAFC',
                         textMuted: '#94A3B8',
                     },
@@ -28,47 +25,13 @@
                         display: ['"Clash Display"', '"Inter"', 'system-ui', 'sans-serif'],
                         body: ['"Space Grotesk"', '"Inter"', 'system-ui', 'sans-serif'],
                     },
-                    backdropBlur: {
-                        xl: '24px',
-                    },
-                    animation: {
-                        'float': 'float 8s ease-in-out infinite',
-                        'pulse-soft': 'pulseSoft 3s ease-in-out infinite',
-                        'slide-up': 'slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                        'fade-in': 'fadeIn 0.9s ease forwards',
-                        'glow-pulse': 'glowPulse 4s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%': { transform: 'translateY(-12px)' },
-                        },
-                        pulseSoft: {
-                            '0%, 100%': { opacity: 1 },
-                            '50%': { opacity: 0.5 },
-                        },
-                        slideUp: {
-                            '0%': { opacity: '0', transform: 'translateY(30px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
-                        },
-                        glowPulse: {
-                            '0%, 100%': { boxShadow: '0 0 20px rgba(124, 58, 237, 0.15)' },
-                            '50%': { boxShadow: '0 0 40px rgba(124, 58, 237, 0.3)' },
-                        },
-                    },
                 }
             }
         }
     </script>
 
-    <!-- ====== Google Fonts ====== -->
     <link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-    <!-- ====== Custom Styles ====== -->
     <style>
         /* ----- Reset & Base ----- */
         * {
@@ -76,19 +39,15 @@
             padding: 0;
             box-sizing: border-box;
         }
-        html {
-            scroll-behavior: smooth;
-        }
         body {
             background: #0B0B12;
             color: #F8FAFC;
             font-family: 'Space Grotesk', sans-serif;
             -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
             min-height: 100vh;
         }
 
-        /* ----- Glassmorphism (Modern, Transparent) ----- */
+        /* ----- Glassmorphism ----- */
         .glass {
             background: rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(24px) saturate(1.4);
@@ -113,15 +72,14 @@
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .glass-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(124, 58, 237, 0.2);
-            box-shadow: 0 12px 40px rgba(124, 58, 237, 0.06);
+            transform: translateY(-5px);
+            border-color: rgba(124, 58, 237, 0.25);
+            box-shadow: 0 12px 40px rgba(124, 58, 237, 0.08);
         }
 
         /* ----- Scrollbar ----- */
         ::-webkit-scrollbar {
             width: 5px;
-            height: 5px;
         }
         ::-webkit-scrollbar-track {
             background: transparent;
@@ -131,9 +89,9 @@
             border-radius: 12px;
         }
 
-        /* ----- Navigation (Clean, Minimal) ----- */
+        /* ----- Navigation ----- */
         .nav-modern {
-            background: rgba(11, 11, 18, 0.7);
+            background: rgba(11, 11, 18, 0.75);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
@@ -146,6 +104,7 @@
             padding: 0.4rem 1rem;
             border-radius: 9999px;
             border: 1px solid transparent;
+            cursor: pointer;
         }
         .nav-link:hover {
             color: #F8FAFC;
@@ -158,20 +117,30 @@
             border-color: rgba(124, 58, 237, 0.2);
         }
 
-        /* ----- Sections ----- */
-        .section-page {
+        /* ----- Pages ----- */
+        .page {
             display: none;
-            opacity: 0;
-            animation: fadeIn 0.6s ease forwards;
             padding: 2rem 1.5rem 4rem;
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
+            animation: fadeIn 0.5s ease;
         }
-        .section-page.active {
+        .page.active {
             display: block;
         }
 
-        /* ----- Gradient Text ----- */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ----- Gradient text ----- */
         .gradient-text {
             background: linear-gradient(135deg, #7C3AED 0%, #A78BFA 40%, #06D6A0 100%);
             -webkit-background-clip: text;
@@ -179,15 +148,16 @@
             background-clip: text;
         }
 
-        /* ----- Subtle glow for buttons ----- */
+        /* ----- Buttons ----- */
         .btn-primary {
             background: rgba(124, 58, 237, 0.15);
             border: 1px solid rgba(124, 58, 237, 0.2);
             color: #F8FAFC;
-            padding: 0.6rem 1.5rem;
+            padding: 0.6rem 1.8rem;
             border-radius: 9999px;
             font-weight: 500;
             transition: all 0.25s ease;
+            cursor: pointer;
         }
         .btn-primary:hover {
             background: rgba(124, 58, 237, 0.25);
@@ -196,22 +166,23 @@
             transform: translateY(-2px);
         }
 
-        /* ----- Bracket iframe container ----- */
+        /* ----- Bracket iframe ----- */
         .bracket-wrapper {
             border-radius: 1.5rem;
             overflow: hidden;
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.04);
+            min-height: 550px;
         }
         .bracket-wrapper iframe {
             display: block;
             width: 100%;
-            height: 520px;
+            height: 550px;
             border: none;
             background: transparent;
         }
 
-        /* ----- Responsive tweaks ----- */
+        /* ----- Responsive ----- */
         @media (max-width: 768px) {
             .nav-scroll {
                 flex-wrap: nowrap;
@@ -227,7 +198,7 @@
                 font-size: 0.75rem;
                 padding: 0.3rem 0.7rem;
             }
-            .section-page {
+            .page {
                 padding: 1.5rem 1rem 3rem;
             }
             .bracket-wrapper iframe {
@@ -239,29 +210,25 @@
 <body>
 
     <!-- ============================================================ -->
-    <!-- NAVIGATION (Modern, Minimal)                                 -->
+    <!-- NAVIGATION                                                   -->
     <!-- ============================================================ -->
     <nav class="nav-modern fixed top-0 left-0 right-0 z-50 px-4 py-2 flex items-center gap-1 overflow-x-auto nav-scroll">
-        <span class="font-display font-bold text-xl text-white mr-4 whitespace-nowrap tracking-tight">
-            🐺 WOLF
-        </span>
-        <button class="nav-link active" data-page="page-home">Home</button>
-        <button class="nav-link" data-page="page-roster">Roster</button>
-        <button class="nav-link" data-page="page-bracket">Bracket</button>
-        <button class="nav-link" data-page="page-community">Community</button>
-        <button class="nav-link" data-page="page-about">About</button>
+        <span class="font-display font-bold text-xl text-white mr-4 whitespace-nowrap tracking-tight">🐺 WOLF</span>
+        <span class="nav-link active" data-page="home">Home</span>
+        <span class="nav-link" data-page="roster">Roster</span>
+        <span class="nav-link" data-page="bracket">Bracket</span>
+        <span class="nav-link" data-page="community">Community</span>
+        <span class="nav-link" data-page="about">About</span>
     </nav>
 
     <!-- ============================================================ -->
-    <!-- MAIN CONTENT                                                 -->
+    <!-- PAGES                                                        -->
     <!-- ============================================================ -->
     <main class="pt-16">
 
         <!-- ========== HOME ========== -->
-        <section id="page-home" class="section-page active">
+        <section id="page-home" class="page active">
             <div class="flex flex-col lg:flex-row items-start gap-10 lg:gap-14">
-
-                <!-- Hero -->
                 <div class="flex-1 space-y-6">
                     <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-mono tracking-wider">
                         <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
@@ -271,22 +238,22 @@
                         <span class="text-white">WOLF</span><br />
                         <span class="gradient-text">SOCIETY</span>
                     </h1>
-                    <p class="text-textMuted text-lg max-w-lg leading-relaxed">
-                        Built for gamers, athletes, and creators — where competition meets community.
+                    <p class="text-textMuted text-lg max-w-xl leading-relaxed">
+                        India's premier esports and gaming collective. We compete, create, and connect — from the battlefield to the big stage.
                     </p>
                     <div class="flex flex-wrap gap-3">
-                        <span class="px-4 py-2 glass-light text-sm text-textLight">🏆 3-1 vs PHX</span>
-                        <span class="px-4 py-2 glass-light text-sm text-textLight">⏱ 24:36</span>
-                        <span class="px-4 py-2 glass-light text-sm text-textLight">🏅 +2.4k Gold</span>
+                        <span class="px-4 py-2 glass-light text-sm text-textLight border border-white/5">🏆 3-1 vs PHX</span>
+                        <span class="px-4 py-2 glass-light text-sm text-textLight border border-white/5">⏱ 24:36</span>
+                        <span class="px-4 py-2 glass-light text-sm text-textLight border border-white/5">🏅 +2.4k Gold</span>
                     </div>
-                    <div class="flex gap-4 pt-2">
-                        <button class="btn-primary" onclick="navigateTo('page-bracket')">View Bracket →</button>
-                        <button class="px-5 py-2.5 glass-light text-textMuted hover:text-white transition" onclick="navigateTo('page-roster')">Meet the Pack</button>
+                    <div class="flex flex-wrap gap-4 pt-2">
+                        <button class="btn-primary" onclick="navigateTo('bracket')">View Live Bracket →</button>
+                        <button class="px-5 py-2.5 glass-light text-textMuted hover:text-white transition" onclick="navigateTo('roster')">Meet the Pack</button>
                     </div>
                 </div>
 
-                <!-- Live Match Card (Glass) -->
-                <div class="w-full lg:w-72 glass p-6 space-y-4 animate-glow-pulse">
+                <!-- Live Match Card -->
+                <div class="w-full lg:w-72 glass p-6 space-y-4">
                     <div class="flex justify-between items-center">
                         <span class="text-textMuted text-xs font-mono">CURRENT MATCH</span>
                         <span class="text-secondary text-xs font-bold animate-pulse">● LIVE</span>
@@ -310,22 +277,44 @@
                         <span>🎯 Objectives: 3/5</span>
                     </div>
                     <div class="pt-2 border-t border-white/5 text-center text-xs text-textMuted">
-                        Next: vs. VNM · 20:00 UTC
+                        Next match: <strong class="text-white">vs. VNM</strong> · 20:00 UTC
+                    </div>
+                    <div class="text-center text-xs text-textMuted bg-white/5 p-2 rounded-lg">
+                        📅 Upcoming: <strong>Bharat Gaming Masters 2026</strong> — Qualifiers
                     </div>
                 </div>
             </div>
 
+            <!-- Upcoming Schedule -->
+            <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="glass-card p-5 text-center">
+                    <div class="text-xs text-textMuted">Today · 20:00 UTC</div>
+                    <div class="font-bold text-white mt-1">WOLF vs VNM</div>
+                    <div class="text-xs text-textMuted">Semifinal · Bo3</div>
+                </div>
+                <div class="glass-card p-5 text-center border border-secondary/10">
+                    <div class="text-xs text-textMuted">Tomorrow · 18:00 UTC</div>
+                    <div class="font-bold text-white mt-1">WOLF vs ELF</div>
+                    <div class="text-xs text-textMuted">Grand Final · Bo5</div>
+                </div>
+                <div class="glass-card p-5 text-center">
+                    <div class="text-xs text-textMuted">Aug 12 · 14:00 UTC</div>
+                    <div class="font-bold text-white mt-1">Community Showmatch</div>
+                    <div class="text-xs text-textMuted">Fan vs Pros</div>
+                </div>
+            </div>
+
             <!-- News Ticker -->
-            <div class="mt-10 glass-light p-4 rounded-2xl overflow-hidden">
+            <div class="mt-8 glass-light p-4 rounded-2xl overflow-hidden border border-white/5">
                 <div class="flex items-center gap-4">
                     <span class="font-mono text-xs text-primary whitespace-nowrap">📡 INTEL</span>
                     <div class="relative overflow-hidden w-full">
                         <div class="flex gap-8 text-sm text-textMuted animate-[scroll_20s_linear_infinite] whitespace-nowrap w-max">
-                            <span>Wolf Society secures top seed</span>
+                            <span>Wolf Society secures top seed in BGM 2026</span>
                             <span>•</span>
-                            <span>Roster changes incoming</span>
+                            <span>Roster synergy at all-time high</span>
                             <span>•</span>
-                            <span>New merch drop</span>
+                            <span>New limited-edition jersey drop</span>
                             <span>•</span>
                             <span>AMA with captain this Friday</span>
                             <span>•</span>
@@ -334,126 +323,161 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Quick Access -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-                <div class="glass-card p-5 text-center cursor-pointer" onclick="navigateTo('page-roster')">
-                    <div class="text-3xl mb-1">👥</div>
-                    <div class="text-xs text-textMuted">Roster</div>
-                </div>
-                <div class="glass-card p-5 text-center cursor-pointer" onclick="navigateTo('page-bracket')">
-                    <div class="text-3xl mb-1">🏆</div>
-                    <div class="text-xs text-textMuted">Bracket</div>
-                </div>
-                <div class="glass-card p-5 text-center cursor-pointer" onclick="navigateTo('page-community')">
-                    <div class="text-3xl mb-1">🎮</div>
-                    <div class="text-xs text-textMuted">Community</div>
-                </div>
-                <div class="glass-card p-5 text-center cursor-pointer" onclick="navigateTo('page-about')">
-                    <div class="text-3xl mb-1">ℹ️</div>
-                    <div class="text-xs text-textMuted">About</div>
-                </div>
-            </div>
         </section>
 
         <!-- ========== ROSTER ========== -->
-        <section id="page-roster" class="section-page">
+        <section id="page-roster" class="page">
             <h2 class="font-display text-4xl font-bold text-white">👥 The Pack</h2>
-            <p class="text-textMuted mt-1">Our 5‑man squad — ready for battle.</p>
+            <p class="text-textMuted mt-1">Our starting five — elite, relentless, and ready for glory.</p>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 mt-6">
-                <!-- Player 1 -->
                 <div class="glass-card p-5 text-center">
-                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 mx-auto border-2 border-primary/30"></div>
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 mx-auto border-2 border-primary/30 flex items-center justify-center text-3xl">🐺</div>
                     <div class="font-bold text-white mt-3">AlphaWolf</div>
-                    <div class="text-xs text-textMuted">Top</div>
+                    <div class="text-xs text-textMuted">Top Laner</div>
                     <div class="text-xs text-primary font-mono mt-1">KDA 4.2 · 67% WR</div>
+                    <div class="text-[10px] text-textMuted mt-2 leading-relaxed">The rock of the team. Unshakeable in lane, clutch in teamfights.</div>
                 </div>
                 <div class="glass-card p-5 text-center">
-                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 mx-auto border-2 border-primary/30"></div>
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 mx-auto border-2 border-primary/30 flex items-center justify-center text-3xl">🌑</div>
                     <div class="font-bold text-white mt-3">ShadowStrike</div>
-                    <div class="text-xs text-textMuted">Jungle</div>
+                    <div class="text-xs text-textMuted">Jungler</div>
                     <div class="text-xs text-primary font-mono mt-1">KDA 3.8 · 72% WR</div>
+                    <div class="text-[10px] text-textMuted mt-2 leading-relaxed">The silent predator. Controls the map and dictates the tempo.</div>
                 </div>
                 <div class="glass-card p-5 text-center">
-                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 mx-auto border-2 border-primary/30"></div>
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 mx-auto border-2 border-primary/30 flex items-center justify-center text-3xl">🔥</div>
                     <div class="font-bold text-white mt-3">CrimsonMage</div>
-                    <div class="text-xs text-textMuted">Mid</div>
+                    <div class="text-xs text-textMuted">Mid Laner</div>
                     <div class="text-xs text-primary font-mono mt-1">KDA 5.1 · 68% WR</div>
+                    <div class="text-[10px] text-textMuted mt-2 leading-relaxed">The mechanical god. Outplays opponents with raw skill and precision.</div>
                 </div>
                 <div class="glass-card p-5 text-center">
-                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 mx-auto border-2 border-primary/30"></div>
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 mx-auto border-2 border-primary/30 flex items-center justify-center text-3xl">🎯</div>
                     <div class="font-bold text-white mt-3">IronSight</div>
                     <div class="text-xs text-textMuted">ADC</div>
                     <div class="text-xs text-primary font-mono mt-1">KDA 4.5 · 71% WR</div>
+                    <div class="text-[10px] text-textMuted mt-2 leading-relaxed">The hyper-carry. Farms like a machine and destroys in late game.</div>
                 </div>
                 <div class="glass-card p-5 text-center">
-                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 mx-auto border-2 border-primary/30"></div>
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 mx-auto border-2 border-primary/30 flex items-center justify-center text-3xl">🛡️</div>
                     <div class="font-bold text-white mt-3">VoidWarden</div>
                     <div class="text-xs text-textMuted">Support</div>
                     <div class="text-xs text-primary font-mono mt-1">KDA 3.2 · 65% WR</div>
+                    <div class="text-[10px] text-textMuted mt-2 leading-relaxed">The visionary. Sets up plays and keeps the team alive.</div>
                 </div>
             </div>
-            <div class="mt-6 glass-light p-4 rounded-2xl flex flex-wrap justify-between gap-2 text-sm">
+            <div class="mt-6 glass-light p-4 rounded-2xl flex flex-wrap justify-between gap-2 text-sm border border-white/5">
                 <span class="text-textMuted">Team KDA</span>
                 <span class="font-mono text-primary">4.16</span>
                 <span class="text-textMuted">Win Rate</span>
                 <span class="font-mono text-secondary">68.6%</span>
-                <span class="text-textMuted">Streak</span>
+                <span class="text-textMuted">Current Streak</span>
                 <span class="font-mono text-accent">🔥 W3</span>
+                <span class="text-textMuted">Region</span>
+                <span class="font-mono text-white">India (IN)</span>
             </div>
         </section>
 
-        <!-- ========== BRACKET (with iframe) ========== -->
-        <section id="page-bracket" class="section-page">
-            <h2 class="font-display text-4xl font-bold text-white">🏆 Bharat Gaming Masters 2026</h2>
-            <p class="text-textMuted mt-1">Qualifiers · Live bracket powered by Challonge.</p>
-            <div class="mt-5 bracket-wrapper glass">
-                <iframe src="https://challonge.com/gvh3taf5/module" width="100%" height="520" frameborder="0" scrolling="auto" allowtransparency="true"></iframe>
+        <!-- ========== BRACKET ========== -->
+        <section id="page-bracket" class="page">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h2 class="font-display text-4xl font-bold text-white">🏆 Bharat Gaming Masters 2026</h2>
+                    <p class="text-textMuted mt-1">Official Qualifiers · Live Brackets</p>
+                </div>
+                <div class="flex gap-3 text-xs text-textMuted bg-white/5 px-4 py-2 rounded-full border border-white/5">
+                    <span class="text-secondary">● Live</span>
+                    <span>|</span>
+                    <span>Prize Pool: ₹1,00,000</span>
+                    <span>|</span>
+                    <span>32 Teams</span>
+                </div>
             </div>
-            <p class="text-xs text-textMuted mt-3 text-center">Bracket updates in real-time. All matches best-of-3.</p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-5">
+                <div class="lg:col-span-3 bracket-wrapper glass">
+                    <iframe src="https://challonge.com/gvh3taf5/module" width="100%" height="550" frameborder="0" scrolling="auto" allowtransparency="true"></iframe>
+                </div>
+                <div class="space-y-4">
+                    <div class="glass p-5 space-y-3">
+                        <h4 class="font-display text-secondary text-sm">Tournament Format</h4>
+                        <ul class="text-xs text-textMuted space-y-2">
+                            <li class="flex justify-between"><span>Group Stage</span><span class="text-white">4 Groups of 8</span></li>
+                            <li class="flex justify-between"><span>Knockout</span><span class="text-white">Top 2 advance</span></li>
+                            <li class="flex justify-between"><span>Finals</span><span class="text-accent">Best of 5</span></li>
+                        </ul>
+                        <div class="pt-2 border-t border-white/5 text-xs text-textMuted">
+                            <span>📅 Aug 8 – 15, 2026</span>
+                        </div>
+                    </div>
+                    <div class="glass p-5 text-center">
+                        <div class="text-xs text-textMuted">Your Team</div>
+                        <div class="font-bold text-white text-lg mt-1">Wolf Society</div>
+                        <div class="text-xs text-textMuted">Seed #1 · Group A</div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-xs text-textMuted mt-4 text-center">Bracket updates in real-time. All matches are streamed on our official channels.</p>
         </section>
 
         <!-- ========== COMMUNITY ========== -->
-        <section id="page-community" class="section-page">
+        <section id="page-community" class="page">
             <h2 class="font-display text-4xl font-bold text-white">🎮 Community Hub</h2>
-            <p class="text-textMuted mt-1">Connect, compete, and celebrate.</p>
+            <p class="text-textMuted mt-1">Connect, predict, play, and win with the pack.</p>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <!-- Oracle -->
                 <div class="glass p-6 space-y-4">
                     <h3 class="font-display text-xl text-secondary">🔮 Match Oracle</h3>
-                    <p class="text-sm text-textMuted">Predict the outcome</p>
+                    <p class="text-sm text-textMuted">Cast your prediction for the next big match.</p>
                     <div class="space-y-3">
                         <div class="flex justify-between items-center">
                             <span class="text-sm">WOLF wins</span>
-                            <span class="text-sm font-mono text-primary">68%</span>
+                            <span class="text-sm font-mono text-primary" id="oracleWolf">68%</span>
                         </div>
-                        <div class="h-2 bg-white/5 rounded-full"><div class="h-full w-[68%] bg-primary rounded-full"></div></div>
+                        <div class="h-2 bg-white/5 rounded-full"><div class="h-full w-[68%] bg-primary rounded-full" id="oracleWolfBar"></div></div>
                         <div class="flex justify-between items-center">
                             <span class="text-sm">PHX wins</span>
-                            <span class="text-sm font-mono text-textMuted">32%</span>
+                            <span class="text-sm font-mono text-textMuted" id="oraclePhx">32%</span>
                         </div>
-                        <div class="h-2 bg-white/5 rounded-full"><div class="h-full w-[32%] bg-textMuted rounded-full"></div></div>
-                        <button class="mt-2 px-5 py-2 btn-primary text-sm">Submit Prediction</button>
+                        <div class="h-2 bg-white/5 rounded-full"><div class="h-full w-[32%] bg-textMuted rounded-full" id="oraclePhxBar"></div></div>
+                        <button class="mt-2 px-5 py-2 btn-primary text-sm w-full" onclick="alert('Prediction submitted! (Simulated)')">Submit Your Prediction</button>
+                        <div class="text-xs text-textMuted text-center">Predictions reset every match.</div>
                     </div>
                 </div>
-                <div class="glass p-6 space-y-4">
-                    <h3 class="font-display text-xl text-accent">🕹️ Arcade</h3>
-                    <p class="text-sm text-textMuted">Play to earn fan tokens</p>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="glass-light p-4 text-center cursor-pointer hover:bg-white/5 transition">
-                            <div class="text-2xl">🎯</div>
-                            <div class="text-xs text-textMuted">Aim Trainer</div>
+
+                <!-- Arcade & Community -->
+                <div class="space-y-6">
+                    <div class="glass p-6 space-y-4">
+                        <h3 class="font-display text-xl text-accent">🕹️ Arcade</h3>
+                        <p class="text-sm text-textMuted">Play mini-games and earn Wolf Tokens.</p>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="glass-light p-4 text-center cursor-pointer hover:bg-white/5 transition">
+                                <div class="text-2xl">🎯</div>
+                                <div class="text-xs text-textMuted">Aim Trainer</div>
+                            </div>
+                            <div class="glass-light p-4 text-center cursor-pointer hover:bg-white/5 transition">
+                                <div class="text-2xl">🧩</div>
+                                <div class="text-xs text-textMuted">Trivia</div>
+                            </div>
+                            <div class="glass-light p-4 text-center cursor-pointer hover:bg-white/5 transition">
+                                <div class="text-2xl">🏎️</div>
+                                <div class="text-xs text-textMuted">Speed Run</div>
+                            </div>
+                            <div class="glass-light p-4 text-center cursor-pointer hover:bg-white/5 transition">
+                                <div class="text-2xl">⚔️</div>
+                                <div class="text-xs text-textMuted">1v1 Duel</div>
+                            </div>
                         </div>
-                        <div class="glass-light p-4 text-center cursor-pointer hover:bg-white/5 transition">
-                            <div class="text-2xl">🧩</div>
-                            <div class="text-xs text-textMuted">Quiz</div>
-                        </div>
-                        <div class="glass-light p-4 text-center cursor-pointer hover:bg-white/5 transition">
-                            <div class="text-2xl">🏎️</div>
-                            <div class="text-xs text-textMuted">Race</div>
-                        </div>
-                        <div class="glass-light p-4 text-center cursor-pointer hover:bg-white/5 transition">
-                            <div class="text-2xl">⚔️</div>
-                            <div class="text-xs text-textMuted">Duel</div>
+                    </div>
+
+                    <div class="glass p-6 space-y-3">
+                        <h3 class="font-display text-xl text-primary">💬 Join the Conversation</h3>
+                        <p class="text-sm text-textMuted">Follow us on Discord and Twitter for live updates.</p>
+                        <div class="flex gap-3">
+                            <button class="px-4 py-2 glass-light text-sm text-textLight hover:text-white transition border border-white/5">Discord</button>
+                            <button class="px-4 py-2 glass-light text-sm text-textLight hover:text-white transition border border-white/5">Twitter/X</button>
+                            <button class="px-4 py-2 glass-light text-sm text-textLight hover:text-white transition border border-white/5">YouTube</button>
                         </div>
                     </div>
                 </div>
@@ -461,27 +485,51 @@
         </section>
 
         <!-- ========== ABOUT ========== -->
-        <section id="page-about" class="section-page">
+        <section id="page-about" class="page">
             <h2 class="font-display text-4xl font-bold text-white">ℹ️ About Wolf Society</h2>
             <p class="text-textMuted mt-1">India's first fusion ecosystem for Esports, Sports, and AI.</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                <div class="glass p-6 space-y-4">
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+                <div class="lg:col-span-2 glass p-6 space-y-5">
                     <p class="text-textMuted leading-relaxed">
-                        Wolf Society is a community-driven esports organization built for players who compete with heart. We bring together gaming, turf sports, swimming, and AI-powered performance tracking — creating a new way for youth to play, compete, and connect.
+                        <strong class="text-white">Wolf Society</strong> is a community-driven esports organization built for players who compete with heart. We bring together gaming, turf sports, swimming, and AI-powered performance tracking — creating a new way for youth to play, compete, and connect.
                     </p>
                     <p class="text-textMuted leading-relaxed">
-                        From gaming tournaments and influencer IPs to real-world sports and AI analytics, we're redefining what it means to be a modern athlete.
+                        From gaming tournaments and influencer IPs to real-world sports and AI analytics, we're redefining what it means to be a modern athlete. Our mission is to build the largest multi-sport ecosystem in India, bridging the gap between digital and physical sports.
                     </p>
+                    <div class="grid grid-cols-2 gap-4 pt-2">
+                        <div class="glass-light p-4 text-center">
+                            <div class="text-2xl font-bold text-primary">500+</div>
+                            <div class="text-xs text-textMuted">Community Members</div>
+                        </div>
+                        <div class="glass-light p-4 text-center">
+                            <div class="text-2xl font-bold text-secondary">12</div>
+                            <div class="text-xs text-textMuted">Tournaments Hosted</div>
+                        </div>
+                        <div class="glass-light p-4 text-center">
+                            <div class="text-2xl font-bold text-accent">₹5L+</div>
+                            <div class="text-xs text-textMuted">Prize Pool Distributed</div>
+                        </div>
+                        <div class="glass-light p-4 text-center">
+                            <div class="text-2xl font-bold text-white">2024</div>
+                            <div class="text-xs text-textMuted">Founded</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="glass p-6 space-y-4">
-                    <h3 class="font-display text-xl text-secondary">Core Values</h3>
-                    <ul class="space-y-2 text-textMuted">
-                        <li class="flex items-center gap-3"><span class="w-2 h-2 rounded-full bg-primary"></span> Community First</li>
-                        <li class="flex items-center gap-3"><span class="w-2 h-2 rounded-full bg-secondary"></span> Competitive Integrity</li>
-                        <li class="flex items-center gap-3"><span class="w-2 h-2 rounded-full bg-accent"></span> Innovation &amp; Inclusion</li>
-                    </ul>
-                    <div class="pt-3 border-t border-white/5">
-                        <span class="text-xs text-textMuted">Est. 2024 · Based in India</span>
+
+                <div class="space-y-6">
+                    <div class="glass p-6 space-y-4">
+                        <h3 class="font-display text-xl text-secondary">Core Values</h3>
+                        <ul class="space-y-3 text-textMuted text-sm">
+                            <li class="flex items-center gap-3"><span class="w-2 h-2 rounded-full bg-primary"></span> <strong class="text-white">Community First</strong> — We rise together.</li>
+                            <li class="flex items-center gap-3"><span class="w-2 h-2 rounded-full bg-secondary"></span> <strong class="text-white">Competitive Integrity</strong> — Fair play always.</li>
+                            <li class="flex items-center gap-3"><span class="w-2 h-2 rounded-full bg-accent"></span> <strong class="text-white">Innovation & Inclusion</strong> — For every gamer.</li>
+                        </ul>
+                    </div>
+                    <div class="glass p-6 text-center">
+                        <div class="text-3xl mb-2">🇮🇳</div>
+                        <div class="text-sm text-textMuted">Proudly based in India</div>
+                        <div class="text-xs text-textMuted mt-1">Delhi · Mumbai · Bengaluru</div>
                     </div>
                 </div>
             </div>
@@ -490,60 +538,73 @@
     </main>
 
     <!-- ============================================================ -->
-    <!-- JAVASCRIPT — Navigation & Interactivity                      -->
+    <!-- FOOTER                                                        -->
+    <!-- ============================================================ -->
+    <footer class="border-t border-white/5 py-8 px-4 text-center text-textMuted text-sm">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <span class="font-display font-bold text-white">🐺 Wolf Society Esports</span>
+            <div class="flex gap-6">
+                <a href="#" class="hover:text-white transition">Twitter</a>
+                <a href="#" class="hover:text-white transition">Instagram</a>
+                <a href="#" class="hover:text-white transition">YouTube</a>
+                <a href="#" class="hover:text-white transition">Discord</a>
+            </div>
+            <span>© 2026 Wolf Society. All rights reserved.</span>
+        </div>
+    </footer>
+
+    <!-- ============================================================ -->
+    <!-- JAVASCRIPT — Navigation & Live Oracle Updates                -->
     <!-- ============================================================ -->
     <script>
-        // ============================================================
-        // NAVIGATION
-        // ============================================================
+        // ----- Navigation -----
         const navLinks = document.querySelectorAll('.nav-link');
-        const pages = document.querySelectorAll('.section-page');
+        const pages = document.querySelectorAll('.page');
 
         function navigateTo(pageId) {
             // Hide all pages
             pages.forEach(p => p.classList.remove('active'));
-            // Show target
-            const target = document.getElementById(pageId);
+            // Show target page
+            const target = document.getElementById('page-' + pageId);
             if (target) target.classList.add('active');
-            // Update nav
+            // Update nav links
             navLinks.forEach(link => {
-                link.classList.toggle('active', link.dataset.page === pageId);
+                link.classList.remove('active');
+                if (link.dataset.page === pageId) link.classList.add('active');
             });
+            // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                navigateTo(link.dataset.page);
+            link.addEventListener('click', function() {
+                const page = this.dataset.page;
+                if (page) navigateTo(page);
             });
         });
 
-        // Handle hash on load
-        if (window.location.hash) {
-            const id = window.location.hash.replace('#', '');
-            if (document.getElementById(id)) navigateTo(id);
+        // ----- Ensure home page is active if no hash -----
+        if (!window.location.hash) {
+            // Already active by default
         }
 
-        // ============================================================
-        // SIMULATED LIVE UPDATES (Oracle & Stats)
-        // ============================================================
-        function updateOracle() {
+        // ----- Live Oracle updates (simulated) -----
+        setInterval(() => {
             const wolf = 60 + Math.floor(Math.random() * 30);
             const phx = 100 - wolf;
-            const wolfEl = document.querySelector('#page-community .text-primary.font-mono');
-            const phxEl = document.querySelector('#page-community .text-textMuted.font-mono');
-            const wolfBar = document.querySelector('#page-community .bg-primary');
-            const phxBar = document.querySelector('#page-community .bg-textMuted');
-            if (wolfEl) wolfEl.textContent = wolf + '%';
-            if (phxEl) phxEl.textContent = phx + '%';
-            if (wolfBar) wolfBar.style.width = wolf + '%';
-            if (phxBar) phxBar.style.width = phx + '%';
-        }
+            const wolfEl = document.getElementById('oracleWolf');
+            const phxEl = document.getElementById('oraclePhx');
+            const wolfBar = document.getElementById('oracleWolfBar');
+            const phxBar = document.getElementById('oraclePhxBar');
+            if (wolfEl && phxEl && wolfBar && phxBar) {
+                wolfEl.textContent = wolf + '%';
+                phxEl.textContent = phx + '%';
+                wolfBar.style.width = wolf + '%';
+                phxBar.style.width = phx + '%';
+            }
+        }, 8000);
 
-        // Update every 10 seconds
-        setInterval(updateOracle, 10000);
-
-        console.log('🐺 Wolf Society Esports · Champion Circuit style loaded');
+        console.log('🐺 Wolf Society Esports · Full Content Loaded');
         console.log('📡 Bracket: https://challonge.com/gvh3taf5/module');
     </script>
 
