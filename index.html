@@ -7,8 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Raleway:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link rel="stylesheet" href="style.css" />
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js">
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 
@@ -16,9 +15,9 @@
     <!-- NAVIGATION -->
     <!-- =========================================================== -->
     <nav class="navbar-wolf">
-        <div class="container" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">
+        <div class="container" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;position:relative;">
             <a href="index.html" class="brand">🐺 WOLF<span>SOCIETY</span></a>
-            <button class="nav-toggle"><i class="fas fa-bars"></i></button>
+            <button class="nav-toggle" aria-label="Toggle navigation"><i class="fas fa-bars"></i></button>
             <div class="nav-links">
                 <a href="index.html" class="active">Home</a>
                 <a href="roster.html">Roster</a>
@@ -65,18 +64,18 @@
                             <span class="text-success small fw-bold"><span class="dot d-inline-block me-1" style="width:8px;height:8px;border-radius:50%;background:#06D6A0;animation:pulse-dot 2s infinite;"></span> Live</span>
                         </div>
                         <div style="display:flex;align-items:center;justify-content:space-between;">
-                            <div class="text-center"><div style="font-weight:bold;font-size:1.25rem;">WOLF</div><div style="font-size:3rem;font-weight:bold;color:var(--primary);">3</div></div>
+                            <div class="text-center"><div style="font-weight:bold;font-size:1.25rem;">WOLF</div><div style="font-size:3rem;font-weight:bold;color:var(--primary,#00e5ff);">3</div></div>
                             <div class="text-muted small">vs</div>
-                            <div class="text-center"><div style="font-weight:bold;font-size:1.25rem;">PHX</div><div style="font-size:3rem;font-weight:bold;color:var(--text-muted);">1</div></div>
+                            <div class="text-center"><div style="font-weight:bold;font-size:1.25rem;">PHX</div><div style="font-size:3rem;font-weight:bold;color:var(--text-muted,#888);">1</div></div>
                         </div>
                         <div class="progress" style="height:4px;background:rgba(255,255,255,0.05);margin-top:0.75rem;">
                             <div class="progress-bar bg-primary" style="width:75%;"></div>
                         </div>
-                        <div style="display:flex;justify-content:space-between;margin-top:0.5rem;font-size:0.75rem;color:var(--text-muted);">
+                        <div style="display:flex;justify-content:space-between;margin-top:0.5rem;font-size:0.75rem;color:var(--text-muted,#888);">
                             <span><i class="fas fa-trophy me-1"></i> Gold: +2.4k</span>
                             <span><i class="fas fa-bullseye me-1"></i> Obj: 3/5</span>
                         </div>
-                        <div style="margin-top:0.75rem;padding-top:0.5rem;border-top:1px solid rgba(255,255,255,0.05);text-align:center;font-size:0.75rem;color:var(--text-muted);">
+                        <div style="margin-top:0.75rem;padding-top:0.5rem;border-top:1px solid rgba(255,255,255,0.05);text-align:center;font-size:0.75rem;color:var(--text-muted,#888);">
                             Next: <strong class="text-white">vs. VNM</strong> · 20:00 UTC
                         </div>
                     </div>
@@ -127,7 +126,7 @@
                     </div>
                 </div>
             </div>
-            <div class="copyright">&copy; 2026 Wolf Society Esports. Built with <i class="fas fa-heart" style="color:var(--primary);"></i> in India.</div>
+            <div class="copyright">&copy; 2026 Wolf Society Esports. Built with <i class="fas fa-heart" style="color:var(--primary,#00e5ff);"></i> in India.</div>
         </div>
     </footer>
 
