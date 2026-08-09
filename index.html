@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wolf Society Esports · Complete Platform</title>
+    <title>Wolf Society Esports · Full Platform</title>
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Raleway:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
@@ -37,12 +37,18 @@
             --font-primary: 'Roboto', sans-serif;
             --font-display: 'Raleway', sans-serif;
         }
+        html, body {
+            height: 100%;
+        }
         body {
             font-family: var(--font-primary);
             background: var(--dark);
             color: var(--text-light);
             line-height: 1.7;
             overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         a {
             color: var(--primary);
@@ -51,6 +57,11 @@
         }
         a:hover {
             color: var(--secondary);
+        }
+
+        /* Main wrapper to push footer down */
+        .main-wrapper {
+            flex: 1 0 auto;
         }
 
         /* Utilities */
@@ -159,6 +170,7 @@
             padding: 0.4rem 0.9rem;
             transition: all 0.3s ease;
             border-radius: 0.5rem;
+            cursor: pointer;
         }
         .navbar-wolf .navbar-nav .nav-link:hover,
         .navbar-wolf .navbar-nav .nav-link.active {
@@ -174,6 +186,7 @@
         .navbar-wolf .dropdown-item {
             color: var(--text-muted);
             transition: all 0.3s ease;
+            cursor: pointer;
         }
         .navbar-wolf .dropdown-item:hover {
             background: rgba(124, 58, 237, 0.08);
@@ -725,6 +738,98 @@
             margin-bottom: 0.5rem;
         }
 
+        /* Footer */
+        .footer-wolf {
+            background: rgba(10, 10, 16, 0.8);
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            padding: 2.5rem 0 1.5rem;
+            flex-shrink: 0;
+            margin-top: 2rem;
+        }
+        .footer-wolf .brand {
+            font-family: var(--font-display);
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: #fff;
+        }
+        .footer-wolf .brand span {
+            color: var(--primary);
+        }
+        .footer-wolf p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .footer-wolf .social-links a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: var(--text-muted);
+            text-align: center;
+            line-height: 40px;
+            transition: all 0.3s ease;
+            margin-right: 0.5rem;
+        }
+        .footer-wolf .social-links a:hover {
+            background: rgba(124, 58, 237, 0.12);
+            border-color: var(--primary);
+            color: #fff;
+        }
+        .footer-wolf .footer-links a {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            display: block;
+            padding: 0.25rem 0;
+            transition: all 0.3s ease;
+        }
+        .footer-wolf .footer-links a:hover {
+            color: #fff;
+            padding-left: 4px;
+        }
+        .footer-wolf .copyright {
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            padding-top: 1.5rem;
+            margin-top: 2rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        /* Auth status indicator */
+        .auth-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .auth-status .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #fff;
+            font-weight: 700;
+        }
+        .auth-status .user-name {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .auth-status .logout-btn {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .auth-status .logout-btn:hover {
+            color: #ef4444;
+        }
+
         /* Responsive */
         @media (max-width: 991px) {
             .hero-section {
@@ -762,6 +867,9 @@
             .navbar-wolf .navbar-brand {
                 font-size: 1.3rem;
             }
+            .footer-wolf .row > div {
+                margin-bottom: 1.5rem;
+            }
         }
         @media (max-width: 575px) {
             .hero-section h1 {
@@ -780,39 +888,6 @@
                 gap: 0.75rem;
             }
         }
-
-        /* Auth status indicator */
-        .auth-status {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .auth-status .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            color: #fff;
-            font-weight: 700;
-        }
-        .auth-status .user-name {
-            color: var(--text-light);
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-        .auth-status .logout-btn {
-            color: var(--text-muted);
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .auth-status .logout-btn:hover {
-            color: #ef4444;
-        }
     </style>
 </head>
 <body>
@@ -822,23 +897,23 @@
     <!-- ============================================================= -->
     <nav class="navbar navbar-expand-lg navbar-wolf fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="#home">🐺 WOLF<span>SOCIETY</span></a>
+            <a class="navbar-brand" href="#" onclick="navigateTo('home')">🐺 WOLF<span>SOCIETY</span></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#wolfNavbar">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="wolfNavbar">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
                     <!-- Public Pages -->
-                    <li class="nav-item"><a class="nav-link active" href="#home">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#roster">Roster</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#schedule">Schedule</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#bracket">Bracket</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#news">News</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#sponsors">Sponsors</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#merch">Merch</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#community">Community</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#tryouts">Tryouts</a></li>
+                    <li class="nav-item"><a class="nav-link active" data-page="home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" data-page="roster">Roster</a></li>
+                    <li class="nav-item"><a class="nav-link" data-page="schedule">Schedule</a></li>
+                    <li class="nav-item"><a class="nav-link" data-page="bracket">Bracket</a></li>
+                    <li class="nav-item"><a class="nav-link" data-page="news">News</a></li>
+                    <li class="nav-item"><a class="nav-link" data-page="sponsors">Sponsors</a></li>
+                    <li class="nav-item"><a class="nav-link" data-page="merch">Merch</a></li>
+                    <li class="nav-item"><a class="nav-link" data-page="community">Community</a></li>
+                    <li class="nav-item"><a class="nav-link" data-page="about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" data-page="tryouts">Tryouts</a></li>
 
                     <!-- Admin / Management (visible when logged in) -->
                     <li class="nav-item dropdown" id="adminNavItem" style="display:none;">
@@ -846,14 +921,14 @@
                             <i class="fas fa-cog"></i> Manage
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="#dashboard"><i class="fas fa-chart-pie me-2"></i>Dashboard</a></li>
-                            <li><a class="dropdown-item" href="#admin-roster"><i class="fas fa-users me-2"></i>Roster</a></li>
-                            <li><a class="dropdown-item" href="#admin-matches"><i class="fas fa-calendar-check me-2"></i>Matches</a></li>
-                            <li><a class="dropdown-item" href="#admin-scrims"><i class="fas fa-sword me-2"></i>Scrims</a></li>
-                            <li><a class="dropdown-item" href="#admin-financial"><i class="fas fa-coins me-2"></i>Financial</a></li>
-                            <li><a class="dropdown-item" href="#admin-documents"><i class="fas fa-file-contract me-2"></i>Documents</a></li>
-                            <li><a class="dropdown-item" href="#admin-media"><i class="fas fa-photo-video me-2"></i>Media</a></li>
-                            <li><a class="dropdown-item" href="#admin-applications"><i class="fas fa-file-signature me-2"></i>Applications</a></li>
+                            <li><a class="dropdown-item" data-page="dashboard"><i class="fas fa-chart-pie me-2"></i>Dashboard</a></li>
+                            <li><a class="dropdown-item" data-page="admin-roster"><i class="fas fa-users me-2"></i>Roster</a></li>
+                            <li><a class="dropdown-item" data-page="admin-matches"><i class="fas fa-calendar-check me-2"></i>Matches</a></li>
+                            <li><a class="dropdown-item" data-page="admin-scrims"><i class="fas fa-sword me-2"></i>Scrims</a></li>
+                            <li><a class="dropdown-item" data-page="admin-financial"><i class="fas fa-coins me-2"></i>Financial</a></li>
+                            <li><a class="dropdown-item" data-page="admin-documents"><i class="fas fa-file-contract me-2"></i>Documents</a></li>
+                            <li><a class="dropdown-item" data-page="admin-media"><i class="fas fa-photo-video me-2"></i>Media</a></li>
+                            <li><a class="dropdown-item" data-page="admin-applications"><i class="fas fa-file-signature me-2"></i>Applications</a></li>
                             <li><hr class="dropdown-divider" /></li>
                             <li><a class="dropdown-item text-danger" href="#" onclick="logoutUser();"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                         </ul>
@@ -878,608 +953,615 @@
     </nav>
 
     <!-- ============================================================= -->
-    <!-- AUTH MODAL                                                    -->
+    <!-- MAIN WRAPPER (pushes footer down)                            -->
     <!-- ============================================================= -->
-    <div class="modal fade auth-modal" id="authModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="authModalTitle"><i class="fas fa-sign-in-alt me-2"></i>Login</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="authError" class="alert alert-danger d-none"></div>
-                    <form id="authForm">
-                        <div id="loginFields">
-                            <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" id="authEmail" class="form-control" placeholder="you@example.com" required />
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Password</label>
-                                <input type="password" id="authPassword" class="form-control" placeholder="••••••••" required />
-                            </div>
-                        </div>
-                        <div id="registerFields" style="display:none;">
-                            <div class="mb-3">
-                                <label class="form-label">Full Name</label>
-                                <input type="text" id="authFullName" class="form-control" placeholder="Your Name" />
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Role (Admin/Manager/Coach/Player)</label>
-                                <select id="authRole" class="form-control">
-                                    <option value="player">Player</option>
-                                    <option value="coach">Coach</option>
-                                    <option value="manager">Manager</option>
-                                    <option value="admin">Admin</option>
-                                </select>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn-neon w-100" id="authSubmitBtn">Login</button>
-                    </form>
-                    <div class="text-center mt-3">
-                        <span class="text-muted small" id="authToggleText">Don't have an account?</span>
-                        <a href="#" class="small" id="authToggleLink">Register</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div class="main-wrapper">
 
-    <!-- ============================================================= -->
-    <!-- PAGE: HOME                                                    -->
-    <!-- ============================================================= -->
-    <section id="page-home" class="page-section active hero-section">
-        <div class="hero-bg-parallax" id="parallaxBg"></div>
-        <div class="container hero-content">
-            <div class="row align-items-center">
-                <div class="col-lg-7">
-                    <div class="hero-badge"><span class="dot"></span> Live · Major Final</div>
-                    <h1>Where the<br /><span class="highlight">Pack Hunts</span></h1>
-                    <p>Wolf Society Esports — India's premier gaming collective. We compete, create, and connect from the battlefield to the big stage.</p>
-                    <div>
-                        <a href="#bracket" class="btn-neon">View Live Bracket <i class="fas fa-arrow-right ms-2"></i></a>
-                        <a href="#roster" class="btn-neon btn-neon-secondary ms-2">Meet the Pack</a>
+        <!-- ============================================================= -->
+        <!-- AUTH MODAL                                                    -->
+        <!-- ============================================================= -->
+        <div class="modal fade auth-modal" id="authModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="authModalTitle"><i class="fas fa-sign-in-alt me-2"></i>Login</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
-                    <div class="hero-stats">
-                        <div class="stat-item"><span class="number" id="statMembers">500+</span><span class="label">Community Members</span></div>
-                        <div class="stat-item"><span class="number" id="statTournaments">12</span><span class="label">Tournaments</span></div>
-                        <div class="stat-item"><span class="number" id="statPrize">₹5L+</span><span class="label">Prize Pool</span></div>
-                    </div>
-                </div>
-                <div class="col-lg-5 mt-5 mt-lg-0">
-                    <div class="glass-card">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="text-muted small text-uppercase">Current Match</span>
-                            <span class="text-success small fw-bold"><span class="dot d-inline-block me-1" style="width:8px;height:8px;border-radius:50%;background:var(--secondary);animation:pulse-dot 2s infinite;"></span> Live</span>
-                        </div>
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="text-center"><div class="fw-bold fs-5">WOLF</div><div class="display-4 fw-bold text-primary" id="liveScoreWolf">3</div></div>
-                            <div class="text-muted small fw-light">vs</div>
-                            <div class="text-center"><div class="fw-bold fs-5">PHX</div><div class="display-4 fw-bold text-muted" id="liveScorePhx">1</div></div>
-                        </div>
-                        <div class="progress mt-3" style="height:4px;background:rgba(255,255,255,0.05);">
-                            <div class="progress-bar bg-primary" id="liveProgress" style="width:75%;"></div>
-                        </div>
-                        <div class="d-flex justify-content-between mt-2 small text-muted">
-                            <span><i class="fas fa-trophy me-1"></i> Gold: <span id="liveGold">+2.4k</span></span>
-                            <span><i class="fas fa-bullseye me-1"></i> Obj: <span id="liveObj">3/5</span></span>
-                        </div>
-                        <div class="mt-3 pt-2 border-top border-white/5 text-center small text-muted">Next: <strong class="text-white">vs. VNM</strong> · 20:00 UTC</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================= -->
-    <!-- PAGE: ROSTER                                                  -->
-    <!-- ============================================================= -->
-    <section id="page-roster" class="page-section section-padding">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">👥 The <span class="highlight">Pack</span></h2>
-                <p class="section-subtitle">Our starting five — elite, relentless, and ready for glory.</p>
-            </div>
-            <div id="rosterGrid" class="row g-4">
-                <!-- populated by JS -->
-            </div>
-            <div class="mt-5 glass-card-light d-flex flex-wrap justify-content-between gap-2 p-4">
-                <span class="text-muted">Team KDA</span>
-                <span class="fw-bold text-primary" id="teamKDA">—</span>
-                <span class="text-muted">Win Rate</span>
-                <span class="fw-bold text-secondary" id="teamWR">—</span>
-                <span class="text-muted">Streak</span>
-                <span class="fw-bold text-warning">🔥 W3</span>
-                <span class="text-muted">Region</span>
-                <span class="fw-bold text-white">India (IN)</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================= -->
-    <!-- PAGE: SCHEDULE                                                -->
-    <!-- ============================================================= -->
-    <section id="page-schedule" class="page-section section-padding" style="padding-top:0;">
-        <div class="container">
-            <h2 class="section-title">📅 Match <span class="highlight">Schedule</span></h2>
-            <p class="section-subtitle">Upcoming and recent battles.</p>
-            <div id="scheduleGrid" class="mt-4 space-y-3">
-                <!-- populated by JS -->
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================= -->
-    <!-- PAGE: BRACKET                                                 -->
-    <!-- ============================================================= -->
-    <section id="page-bracket" class="page-section section-padding" style="padding-top:0;">
-        <div class="container">
-            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
-                <div>
-                    <h2 class="section-title">🏆 Bharat Gaming <span class="highlight">Masters 2026</span></h2>
-                    <p class="section-subtitle">Official Qualifiers · Live Brackets</p>
-                </div>
-                <div class="glass-card-light px-4 py-2 d-flex gap-3 small text-muted">
-                    <span class="text-success">● Live</span>
-                    <span>|</span>
-                    <span>Prize: ₹1,00,000</span>
-                    <span>|</span>
-                    <span>32 Teams</span>
-                </div>
-            </div>
-            <div class="row g-4">
-                <div class="col-lg-9">
-                    <div class="glass-card p-2" style="border-radius:1.5rem;overflow:hidden;min-height:520px;">
-                        <iframe src="https://challonge.com/gvh3taf5/module" width="100%" height="520" frameborder="0" scrolling="auto" allowtransparency="true" style="border-radius:1.25rem;"></iframe>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="glass-card mb-4">
-                        <h5 class="fw-bold text-secondary">Tournament Format</h5>
-                        <ul class="list-unstyled small text-muted">
-                            <li class="d-flex justify-content-between py-1"><span>Group Stage</span><span class="text-white">4 Groups of 8</span></li>
-                            <li class="d-flex justify-content-between py-1"><span>Knockout</span><span class="text-white">Top 2 advance</span></li>
-                            <li class="d-flex justify-content-between py-1"><span>Finals</span><span class="text-warning">Best of 5</span></li>
-                        </ul>
-                        <div class="pt-2 border-top border-white/5 small text-muted">📅 Aug 8 – 15, 2026</div>
-                    </div>
-                    <div class="glass-card text-center">
-                        <div class="small text-muted">Your Team</div>
-                        <div class="fw-bold text-white fs-5">Wolf Society</div>
-                        <div class="small text-muted">Seed #1 · Group A</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================= -->
-    <!-- PAGE: NEWS                                                    -->
-    <!-- ============================================================= -->
-    <section id="page-news" class="page-section section-padding" style="padding-top:0;">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">📰 Latest <span class="highlight">Intel</span></h2>
-                <p class="section-subtitle">Stay updated with the latest from Wolf Society.</p>
-            </div>
-            <div class="owl-carousel owl-theme" id="newsCarousel">
-                <!-- populated by JS -->
-            </div>
-            <div id="newsList" class="row g-4 mt-4">
-                <!-- populated by JS -->
-            </div>
-            <div class="author-box">
-                <div class="author-avatar">🐺</div>
-                <div class="author-info">
-                    <div class="name">Wolf Society Editorial</div>
-                    <p class="bio">The official news and content team of Wolf Society Esports. Bringing you the latest intel from the battlefield.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-discord"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================= -->
-    <!-- PAGE: SPONSORS                                                -->
-    <!-- ============================================================= -->
-    <section id="page-sponsors" class="page-section section-padding" style="padding-top:0;">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">🤝 Our <span class="highlight">Partners</span></h2>
-                <p class="section-subtitle">Proudly supported by these amazing brands.</p>
-            </div>
-            <div id="sponsorGrid" class="sponsor-grid">
-                <!-- populated by JS -->
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================= -->
-    <!-- PAGE: MERCH                                                   -->
-    <!-- ============================================================= -->
-    <section id="page-merch" class="page-section section-padding" style="padding-top:0;">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">🛍️ <span class="highlight">Merch</span> Store</h2>
-                <p class="section-subtitle">Gear up with official Wolf Society merchandise.</p>
-            </div>
-            <div id="merchGrid" class="row g-4">
-                <!-- populated by JS -->
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================= -->
-    <!-- PAGE: COMMUNITY                                               -->
-    <!-- ============================================================= -->
-    <section id="page-community" class="page-section section-padding" style="padding-top:0;">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">🎮 Community <span class="highlight">Hub</span></h2>
-                <p class="section-subtitle">Connect, predict, play, and win with the pack.</p>
-            </div>
-            <div class="row g-4">
-                <div class="col-md-6">
-                    <div class="glass-card">
-                        <h4 class="fw-bold text-secondary"><i class="fas fa-crystal-ball me-2"></i>Match Oracle</h4>
-                        <p class="text-muted small">Cast your prediction for the next big match.</p>
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between small"><span>WOLF wins</span><span class="fw-bold text-primary" id="oracleWolf">68%</span></div>
-                            <div class="progress" style="height:6px;background:rgba(255,255,255,0.05);">
-                                <div class="progress-bar bg-primary" id="oracleWolfBar" style="width:68%;"></div>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between small"><span>PHX wins</span><span class="fw-bold text-muted" id="oraclePhx">32%</span></div>
-                            <div class="progress" style="height:6px;background:rgba(255,255,255,0.05);">
-                                <div class="progress-bar bg-secondary" id="oraclePhxBar" style="width:32%;"></div>
-                            </div>
-                        </div>
-                        <button class="btn-neon w-100" onclick="alert('Prediction submitted! (Simulated)')">Submit Your Prediction</button>
-                        <div class="text-center small text-muted mt-2">Predictions reset every match.</div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="glass-card mb-4">
-                        <h4 class="fw-bold text-warning"><i class="fas fa-gamepad me-2"></i>Arcade</h4>
-                        <p class="text-muted small">Play mini-games and earn Wolf Tokens.</p>
-                        <div class="row g-2">
-                            <div class="col-3"><div class="glass-card-light text-center py-3 cursor-pointer hover:bg-white/5 transition"><div class="fs-3">🎯</div><div class="small text-muted">Aim</div></div></div>
-                            <div class="col-3"><div class="glass-card-light text-center py-3 cursor-pointer hover:bg-white/5 transition"><div class="fs-3">🧩</div><div class="small text-muted">Trivia</div></div></div>
-                            <div class="col-3"><div class="glass-card-light text-center py-3 cursor-pointer hover:bg-white/5 transition"><div class="fs-3">🏎️</div><div class="small text-muted">Speed</div></div></div>
-                            <div class="col-3"><div class="glass-card-light text-center py-3 cursor-pointer hover:bg-white/5 transition"><div class="fs-3">⚔️</div><div class="small text-muted">Duel</div></div></div>
-                        </div>
-                    </div>
-                    <div class="glass-card">
-                        <h4 class="fw-bold text-primary"><i class="fas fa-comments me-2"></i>Join the Conversation</h4>
-                        <p class="text-muted small">Follow us for live updates and community events.</p>
-                        <div class="d-flex gap-2 flex-wrap">
-                            <a href="#" class="btn-neon btn-neon-secondary" style="padding:0.4rem 1rem;font-size:0.8rem;"><i class="fab fa-discord me-1"></i>Discord</a>
-                            <a href="#" class="btn-neon btn-neon-secondary" style="padding:0.4rem 1rem;font-size:0.8rem;"><i class="fab fa-twitter me-1"></i>Twitter</a>
-                            <a href="#" class="btn-neon btn-neon-secondary" style="padding:0.4rem 1rem;font-size:0.8rem;"><i class="fab fa-youtube me-1"></i>YouTube</a>
-                        </div>
-                        <div class="mt-3">
-                            <label class="form-label small text-muted">Subscribe to Newsletter</label>
-                            <div class="d-flex">
-                                <input type="email" class="form-control bg-dark border-white/10 text-white" placeholder="Your email" style="border-radius:0.75rem 0 0 0.75rem;padding:0.5rem 1rem;" />
-                                <button class="btn-neon" style="border-radius:0 0.75rem 0.75rem 0;padding:0.5rem 1.2rem;">Subscribe</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================= -->
-    <!-- PAGE: ABOUT                                                   -->
-    <!-- ============================================================= -->
-    <section id="page-about" class="page-section section-padding" style="padding-top:0;">
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-lg-8">
-                    <h2 class="section-title">ℹ️ About <span class="highlight">Wolf Society</span></h2>
-                    <p class="section-subtitle">India's first fusion ecosystem for Esports, Sports, and AI.</p>
-                    <div class="glass-card">
-                        <p class="text-muted"><strong class="text-white">Wolf Society</strong> is a community-driven esports organization built for players who compete with heart. We bring together gaming, turf sports, swimming, and AI-powered performance tracking — creating a new way for youth to play, compete, and connect.</p>
-                        <p class="text-muted">From gaming tournaments and influencer IPs to real-world sports and AI analytics, we're redefining what it means to be a modern athlete. Our mission is to build the largest multi-sport ecosystem in India, bridging the gap between digital and physical sports.</p>
-                        <div class="row g-3 mt-3">
-                            <div class="col-6 col-md-3"><div class="glass-card-light text-center p-3"><div class="fs-2 fw-bold text-primary">500+</div><div class="small text-muted">Members</div></div></div>
-                            <div class="col-6 col-md-3"><div class="glass-card-light text-center p-3"><div class="fs-2 fw-bold text-secondary">12</div><div class="small text-muted">Tournaments</div></div></div>
-                            <div class="col-6 col-md-3"><div class="glass-card-light text-center p-3"><div class="fs-2 fw-bold text-warning">₹5L+</div><div class="small text-muted">Prize Pool</div></div></div>
-                            <div class="col-6 col-md-3"><div class="glass-card-light text-center p-3"><div class="fs-2 fw-bold text-white">2024</div><div class="small text-muted">Founded</div></div></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="glass-card mb-4">
-                        <h5 class="fw-bold text-secondary">Core Values</h5>
-                        <ul class="list-unstyled small text-muted">
-                            <li class="d-flex align-items-center gap-2 py-1"><span class="text-primary">●</span> <strong class="text-white">Community First</strong> — We rise together.</li>
-                            <li class="d-flex align-items-center gap-2 py-1"><span class="text-secondary">●</span> <strong class="text-white">Competitive Integrity</strong> — Fair play always.</li>
-                            <li class="d-flex align-items-center gap-2 py-1"><span class="text-warning">●</span> <strong class="text-white">Innovation &amp; Inclusion</strong> — For every gamer.</li>
-                        </ul>
-                    </div>
-                    <div class="glass-card text-center">
-                        <div class="fs-1 mb-2">🇮🇳</div>
-                        <div class="text-muted small">Proudly based in India</div>
-                        <div class="text-muted small">Delhi · Mumbai · Bengaluru</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================= -->
-    <!-- PAGE: TRYOUTS                                                 -->
-    <!-- ============================================================= -->
-    <section id="page-tryouts" class="page-section section-padding" style="padding-top:0;">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="glass-card p-4 p-md-5">
-                        <h2 class="section-title text-center">📋 Join the <span class="highlight">Pack</span></h2>
-                        <p class="text-center text-muted">Submit your application to become part of Wolf Society.</p>
-                        <form id="tryoutForm" class="mt-4">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label small text-muted">Summoner Name</label>
-                                    <input type="text" id="tryoutName" class="form-control bg-dark border-white/10 text-white" placeholder="Enter your IGN" required style="border-radius:0.75rem;padding:0.7rem 1rem;" />
+                    <div class="modal-body">
+                        <div id="authError" class="alert alert-danger d-none"></div>
+                        <form id="authForm">
+                            <div id="loginFields">
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" id="authEmail" class="form-control" placeholder="you@example.com" required />
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label small text-muted">Role</label>
-                                    <select id="tryoutRole" class="form-select bg-dark border-white/10 text-white" style="border-radius:0.75rem;padding:0.7rem 1rem;">
-                                        <option>Top</option>
-                                        <option>Jungle</option>
-                                        <option>Mid</option>
-                                        <option>ADC</option>
-                                        <option>Support</option>
+                                <div class="mb-3">
+                                    <label class="form-label">Password</label>
+                                    <input type="password" id="authPassword" class="form-control" placeholder="••••••••" required />
+                                </div>
+                            </div>
+                            <div id="registerFields" style="display:none;">
+                                <div class="mb-3">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" id="authFullName" class="form-control" placeholder="Your Name" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Role (Admin/Manager/Coach/Player)</label>
+                                    <select id="authRole" class="form-control">
+                                        <option value="player">Player</option>
+                                        <option value="coach">Coach</option>
+                                        <option value="manager">Manager</option>
+                                        <option value="admin">Admin</option>
                                     </select>
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label small text-muted">Current Rank</label>
-                                    <input type="text" id="tryoutRank" class="form-control bg-dark border-white/10 text-white" placeholder="e.g. Diamond 2" required style="border-radius:0.75rem;padding:0.7rem 1rem;" />
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label small text-muted">Discord Tag</label>
-                                    <input type="text" id="tryoutDiscord" class="form-control bg-dark border-white/10 text-white" placeholder="username#0000" style="border-radius:0.75rem;padding:0.7rem 1rem;" />
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label small text-muted">Why Wolf Society?</label>
-                                    <textarea id="tryoutMessage" rows="4" class="form-control bg-dark border-white/10 text-white" placeholder="Tell us about yourself..." style="border-radius:0.75rem;padding:0.7rem 1rem;"></textarea>
-                                </div>
-                                <div class="col-12 text-center">
-                                    <button type="submit" class="btn-neon px-5">Submit Application</button>
-                                    <div id="tryoutFeedback" class="mt-2 small text-success d-none">✅ Application received! We'll be in touch.</div>
-                                </div>
                             </div>
+                            <button type="submit" class="btn-neon w-100" id="authSubmitBtn">Login</button>
                         </form>
+                        <div class="text-center mt-3">
+                            <span class="text-muted small" id="authToggleText">Don't have an account?</span>
+                            <a href="#" class="small" id="authToggleLink">Register</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- ============================================================= -->
-    <!-- PAGE: DASHBOARD (Admin)                                      -->
-    <!-- ============================================================= -->
-    <section id="page-dashboard" class="page-section section-padding" style="padding-top:0;">
-        <div class="container">
-            <h2 class="section-title">📊 <span class="highlight">Dashboard</span></h2>
-            <p class="section-subtitle">Overview of your organization.</p>
-            <div class="row g-4" id="dashboardStats">
-                <div class="col-6 col-md-3">
-                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-users"></i></div><div class="stat-number" id="dashPlayers">0</div><div class="stat-label">Players</div></div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-calendar-check"></i></div><div class="stat-number" id="dashMatches">0</div><div class="stat-label">Matches</div></div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-coins"></i></div><div class="stat-number" id="dashRevenue">₹0</div><div class="stat-label">Revenue</div></div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-file-signature"></i></div><div class="stat-number" id="dashApps">0</div><div class="stat-label">Applications</div></div>
+        <!-- ============================================================= -->
+        <!-- PAGE: HOME                                                    -->
+        <!-- ============================================================= -->
+        <section id="page-home" class="page-section active hero-section">
+            <div class="hero-bg-parallax" id="parallaxBg"></div>
+            <div class="container hero-content">
+                <div class="row align-items-center">
+                    <div class="col-lg-7">
+                        <div class="hero-badge"><span class="dot"></span> Live · Major Final</div>
+                        <h1>Where the<br /><span class="highlight">Pack Hunts</span></h1>
+                        <p>Wolf Society Esports — India's premier gaming collective. We compete, create, and connect from the battlefield to the big stage.</p>
+                        <div>
+                            <a class="btn-neon" onclick="navigateTo('bracket')">View Live Bracket <i class="fas fa-arrow-right ms-2"></i></a>
+                            <a class="btn-neon btn-neon-secondary ms-2" onclick="navigateTo('roster')">Meet the Pack</a>
+                        </div>
+                        <div class="hero-stats">
+                            <div class="stat-item"><span class="number" id="statMembers">500+</span><span class="label">Community Members</span></div>
+                            <div class="stat-item"><span class="number" id="statTournaments">12</span><span class="label">Tournaments</span></div>
+                            <div class="stat-item"><span class="number" id="statPrize">₹5L+</span><span class="label">Prize Pool</span></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5 mt-5 mt-lg-0">
+                        <div class="glass-card">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-muted small text-uppercase">Current Match</span>
+                                <span class="text-success small fw-bold"><span class="dot d-inline-block me-1" style="width:8px;height:8px;border-radius:50%;background:var(--secondary);animation:pulse-dot 2s infinite;"></span> Live</span>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="text-center"><div class="fw-bold fs-5">WOLF</div><div class="display-4 fw-bold text-primary" id="liveScoreWolf">3</div></div>
+                                <div class="text-muted small fw-light">vs</div>
+                                <div class="text-center"><div class="fw-bold fs-5">PHX</div><div class="display-4 fw-bold text-muted" id="liveScorePhx">1</div></div>
+                            </div>
+                            <div class="progress mt-3" style="height:4px;background:rgba(255,255,255,0.05);">
+                                <div class="progress-bar bg-primary" id="liveProgress" style="width:75%;"></div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-2 small text-muted">
+                                <span><i class="fas fa-trophy me-1"></i> Gold: <span id="liveGold">+2.4k</span></span>
+                                <span><i class="fas fa-bullseye me-1"></i> Obj: <span id="liveObj">3/5</span></span>
+                            </div>
+                            <div class="mt-3 pt-2 border-top border-white/5 text-center small text-muted">Next: <strong class="text-white">vs. VNM</strong> · 20:00 UTC</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- ============================================================= -->
-    <!-- PAGE: ADMIN ROSTER                                            -->
-    <!-- ============================================================= -->
-    <section id="page-admin-roster" class="page-section section-padding" style="padding-top:0;">
-        <div class="container">
-            <h2 class="section-title">👥 <span class="highlight">Roster</span> Management</h2>
-            <p class="section-subtitle">Add, edit, or remove players.</p>
-            <div class="glass-card p-4">
-                <div class="table-responsive">
-                    <table class="admin-table table table-dark table-borderless">
-                        <thead><tr><th>Name</th><th>Role</th><th>KDA</th><th>WR%</th><th>Bio</th><th>Actions</th></tr></thead>
-                        <tbody id="adminRosterBody"><tr><td colspan="6" class="text-muted">Loading...</td></tr></tbody>
-                    </table>
+        <!-- ============================================================= -->
+        <!-- PAGE: ROSTER                                                  -->
+        <!-- ============================================================= -->
+        <section id="page-roster" class="page-section section-padding">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h2 class="section-title">👥 The <span class="highlight">Pack</span></h2>
+                    <p class="section-subtitle">Our starting five — elite, relentless, and ready for glory.</p>
                 </div>
-                <hr class="border-white/10" />
-                <h5 class="fw-bold text-secondary">Add Player</h5>
-                <div class="row g-2">
-                    <div class="col-md-2"><input type="text" id="newRosterName" class="form-control bg-dark border-white/10 text-white" placeholder="Name" /></div>
-                    <div class="col-md-2"><input type="text" id="newRosterRole" class="form-control bg-dark border-white/10 text-white" placeholder="Role" /></div>
-                    <div class="col-md-1"><input type="number" id="newRosterKda" class="form-control bg-dark border-white/10 text-white" placeholder="KDA" step="0.1" /></div>
-                    <div class="col-md-1"><input type="number" id="newRosterWr" class="form-control bg-dark border-white/10 text-white" placeholder="WR" /></div>
-                    <div class="col-md-3"><input type="text" id="newRosterBio" class="form-control bg-dark border-white/10 text-white" placeholder="Bio" /></div>
-                    <div class="col-md-2"><input type="text" id="newRosterSocial" class="form-control bg-dark border-white/10 text-white" placeholder="Twitter @handle" /></div>
-                    <div class="col-12"><button id="addRosterBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Player</button></div>
+                <div id="rosterGrid" class="row g-4">
+                    <!-- populated by JS -->
+                </div>
+                <div class="mt-5 glass-card-light d-flex flex-wrap justify-content-between gap-2 p-4">
+                    <span class="text-muted">Team KDA</span>
+                    <span class="fw-bold text-primary" id="teamKDA">—</span>
+                    <span class="text-muted">Win Rate</span>
+                    <span class="fw-bold text-secondary" id="teamWR">—</span>
+                    <span class="text-muted">Streak</span>
+                    <span class="fw-bold text-warning">🔥 W3</span>
+                    <span class="text-muted">Region</span>
+                    <span class="fw-bold text-white">India (IN)</span>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- ============================================================= -->
-    <!-- PAGE: ADMIN MATCHES                                           -->
-    <!-- ============================================================= -->
-    <section id="page-admin-matches" class="page-section section-padding" style="padding-top:0;">
-        <div class="container">
-            <h2 class="section-title">📅 <span class="highlight">Matches</span> Management</h2>
-            <p class="section-subtitle">Schedule and manage matches.</p>
-            <div class="glass-card p-4">
-                <div class="table-responsive">
-                    <table class="admin-table table table-dark table-borderless">
-                        <thead><tr><th>Team A</th><th>Team B</th><th>Score A</th><th>Score B</th><th>Status</th><th>Time</th><th>Actions</th></tr></thead>
-                        <tbody id="adminMatchesBody"><tr><td colspan="7" class="text-muted">Loading...</td></tr></tbody>
-                    </table>
-                </div>
-                <hr class="border-white/10" />
-                <h5 class="fw-bold text-secondary">Add Match</h5>
-                <div class="row g-2">
-                    <div class="col-md-2"><input type="text" id="newMatchA" class="form-control bg-dark border-white/10 text-white" placeholder="Team A" /></div>
-                    <div class="col-md-2"><input type="text" id="newMatchB" class="form-control bg-dark border-white/10 text-white" placeholder="Team B" /></div>
-                    <div class="col-md-1"><input type="number" id="newMatchScoreA" class="form-control bg-dark border-white/10 text-white" placeholder="SA" /></div>
-                    <div class="col-md-1"><input type="number" id="newMatchScoreB" class="form-control bg-dark border-white/10 text-white" placeholder="SB" /></div>
-                    <div class="col-md-2"><input type="text" id="newMatchStatus" class="form-control bg-dark border-white/10 text-white" placeholder="Status" /></div>
-                    <div class="col-md-2"><input type="text" id="newMatchTime" class="form-control bg-dark border-white/10 text-white" placeholder="Time" /></div>
-                    <div class="col-12"><button id="addMatchBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Match</button></div>
+        <!-- ============================================================= -->
+        <!-- PAGE: SCHEDULE                                                -->
+        <!-- ============================================================= -->
+        <section id="page-schedule" class="page-section section-padding" style="padding-top:0;">
+            <div class="container">
+                <h2 class="section-title">📅 Match <span class="highlight">Schedule</span></h2>
+                <p class="section-subtitle">Upcoming and recent battles.</p>
+                <div id="scheduleGrid" class="mt-4 space-y-3">
+                    <!-- populated by JS -->
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- ============================================================= -->
-    <!-- PAGE: ADMIN SCRIMS                                            -->
-    <!-- ============================================================= -->
-    <section id="page-admin-scrims" class="page-section section-padding" style="padding-top:0;">
-        <div class="container">
-            <h2 class="section-title">⚔️ <span class="highlight">Scrim</span> Scheduler</h2>
-            <p class="section-subtitle">Manage practice sessions and scrims.</p>
-            <div class="glass-card p-4">
-                <div class="table-responsive">
-                    <table class="admin-table table table-dark table-borderless">
-                        <thead><tr><th>Team</th><th>Opponent</th><th>Date/Time</th><th>Duration</th><th>Status</th><th>Actions</th></tr></thead>
-                        <tbody id="adminScrimsBody"><tr><td colspan="6" class="text-muted">Loading...</td></tr></tbody>
-                    </table>
+        <!-- ============================================================= -->
+        <!-- PAGE: BRACKET                                                 -->
+        <!-- ============================================================= -->
+        <section id="page-bracket" class="page-section section-padding" style="padding-top:0;">
+            <div class="container">
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="section-title">🏆 Bharat Gaming <span class="highlight">Masters 2026</span></h2>
+                        <p class="section-subtitle">Official Qualifiers · Live Brackets</p>
+                    </div>
+                    <div class="glass-card-light px-4 py-2 d-flex gap-3 small text-muted">
+                        <span class="text-success">● Live</span>
+                        <span>|</span>
+                        <span>Prize: ₹1,00,000</span>
+                        <span>|</span>
+                        <span>32 Teams</span>
+                    </div>
                 </div>
-                <hr class="border-white/10" />
-                <h5 class="fw-bold text-secondary">Add Scrim</h5>
-                <div class="row g-2">
-                    <div class="col-md-2"><input type="text" id="newScrimTeam" class="form-control bg-dark border-white/10 text-white" placeholder="Team" /></div>
-                    <div class="col-md-2"><input type="text" id="newScrimOpponent" class="form-control bg-dark border-white/10 text-white" placeholder="Opponent" /></div>
-                    <div class="col-md-3"><input type="datetime-local" id="newScrimDateTime" class="form-control bg-dark border-white/10 text-white" /></div>
-                    <div class="col-md-1"><input type="number" id="newScrimDuration" class="form-control bg-dark border-white/10 text-white" placeholder="Hrs" /></div>
-                    <div class="col-md-2"><input type="text" id="newScrimStatus" class="form-control bg-dark border-white/10 text-white" placeholder="Status" /></div>
-                    <div class="col-12"><button id="addScrimBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Scrim</button></div>
+                <div class="row g-4">
+                    <div class="col-lg-9">
+                        <div class="glass-card p-2" style="border-radius:1.5rem;overflow:hidden;min-height:520px;">
+                            <iframe src="https://challonge.com/gvh3taf5/module" width="100%" height="520" frameborder="0" scrolling="auto" allowtransparency="true" style="border-radius:1.25rem;"></iframe>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="glass-card mb-4">
+                            <h5 class="fw-bold text-secondary">Tournament Format</h5>
+                            <ul class="list-unstyled small text-muted">
+                                <li class="d-flex justify-content-between py-1"><span>Group Stage</span><span class="text-white">4 Groups of 8</span></li>
+                                <li class="d-flex justify-content-between py-1"><span>Knockout</span><span class="text-white">Top 2 advance</span></li>
+                                <li class="d-flex justify-content-between py-1"><span>Finals</span><span class="text-warning">Best of 5</span></li>
+                            </ul>
+                            <div class="pt-2 border-top border-white/5 small text-muted">📅 Aug 8 – 15, 2026</div>
+                        </div>
+                        <div class="glass-card text-center">
+                            <div class="small text-muted">Your Team</div>
+                            <div class="fw-bold text-white fs-5">Wolf Society</div>
+                            <div class="small text-muted">Seed #1 · Group A</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- ============================================================= -->
-    <!-- PAGE: ADMIN FINANCIAL                                         -->
-    <!-- ============================================================= -->
-    <section id="page-admin-financial" class="page-section section-padding" style="padding-top:0;">
-        <div class="container">
-            <h2 class="section-title">💰 <span class="highlight">Financial</span> Ledger</h2>
-            <p class="section-subtitle">Track revenue, expenses, and budgets.</p>
-            <div class="glass-card p-4">
-                <div class="table-responsive">
-                    <table class="admin-table table table-dark table-borderless">
-                        <thead><tr><th>Type</th><th>Category</th><th>Amount</th><th>Description</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
-                        <tbody id="adminFinancialBody"><tr><td colspan="7" class="text-muted">Loading...</td></tr></tbody>
-                    </table>
+        <!-- ============================================================= -->
+        <!-- PAGE: NEWS                                                    -->
+        <!-- ============================================================= -->
+        <section id="page-news" class="page-section section-padding" style="padding-top:0;">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h2 class="section-title">📰 Latest <span class="highlight">Intel</span></h2>
+                    <p class="section-subtitle">Stay updated with the latest from Wolf Society.</p>
                 </div>
-                <hr class="border-white/10" />
-                <h5 class="fw-bold text-secondary">Add Entry</h5>
-                <div class="row g-2">
-                    <div class="col-md-2"><select id="newFinType" class="form-control bg-dark border-white/10 text-white"><option value="income">Income</option><option value="expense">Expense</option></select></div>
-                    <div class="col-md-2"><input type="text" id="newFinCategory" class="form-control bg-dark border-white/10 text-white" placeholder="Category" /></div>
-                    <div class="col-md-2"><input type="number" id="newFinAmount" class="form-control bg-dark border-white/10 text-white" placeholder="Amount" /></div>
-                    <div class="col-md-3"><input type="text" id="newFinDesc" class="form-control bg-dark border-white/10 text-white" placeholder="Description" /></div>
-                    <div class="col-md-2"><input type="date" id="newFinDate" class="form-control bg-dark border-white/10 text-white" /></div>
-                    <div class="col-12"><button id="addFinBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Entry</button></div>
+                <div class="owl-carousel owl-theme" id="newsCarousel">
+                    <!-- populated by JS -->
                 </div>
-                <div class="mt-3 d-flex gap-3">
-                    <span class="text-muted">Total Income: <strong class="text-success" id="totalIncome">₹0</strong></span>
-                    <span class="text-muted">Total Expenses: <strong class="text-danger" id="totalExpenses">₹0</strong></span>
-                    <span class="text-muted">Balance: <strong class="text-primary" id="totalBalance">₹0</strong></span>
+                <div id="newsList" class="row g-4 mt-4">
+                    <!-- populated by JS -->
+                </div>
+                <div class="author-box">
+                    <div class="author-avatar">🐺</div>
+                    <div class="author-info">
+                        <div class="name">Wolf Society Editorial</div>
+                        <p class="bio">The official news and content team of Wolf Society Esports. Bringing you the latest intel from the battlefield.</p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-discord"></i></a>
+                            <a href="#"><i class="fab fa-youtube"></i></a>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- ============================================================= -->
-    <!-- PAGE: ADMIN DOCUMENTS                                         -->
-    <!-- ============================================================= -->
-    <section id="page-admin-documents" class="page-section section-padding" style="padding-top:0;">
-        <div class="container">
-            <h2 class="section-title">📄 <span class="highlight">Document</span> Vault</h2>
-            <p class="section-subtitle">Secure storage for contracts and legal forms.</p>
-            <div class="glass-card p-4">
-                <div class="table-responsive">
-                    <table class="admin-table table table-dark table-borderless">
-                        <thead><tr><th>Title</th><th>Type</th><th>Uploaded</th><th>Actions</th></tr></thead>
-                        <tbody id="adminDocumentsBody"><tr><td colspan="4" class="text-muted">Loading...</td></tr></tbody>
-                    </table>
+        <!-- ============================================================= -->
+        <!-- PAGE: SPONSORS                                                -->
+        <!-- ============================================================= -->
+        <section id="page-sponsors" class="page-section section-padding" style="padding-top:0;">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h2 class="section-title">🤝 Our <span class="highlight">Partners</span></h2>
+                    <p class="section-subtitle">Proudly supported by these amazing brands.</p>
                 </div>
-                <hr class="border-white/10" />
-                <h5 class="fw-bold text-secondary">Add Document</h5>
-                <div class="row g-2">
-                    <div class="col-md-3"><input type="text" id="newDocTitle" class="form-control bg-dark border-white/10 text-white" placeholder="Title" /></div>
-                    <div class="col-md-2"><input type="text" id="newDocType" class="form-control bg-dark border-white/10 text-white" placeholder="Type (Contract/NDA/etc)" /></div>
-                    <div class="col-md-4"><input type="text" id="newDocUrl" class="form-control bg-dark border-white/10 text-white" placeholder="File URL (Google Drive link)" /></div>
-                    <div class="col-12"><button id="addDocBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Document</button></div>
+                <div id="sponsorGrid" class="sponsor-grid">
+                    <!-- populated by JS -->
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- ============================================================= -->
-    <!-- PAGE: ADMIN MEDIA                                             -->
-    <!-- ============================================================= -->
-    <section id="page-admin-media" class="page-section section-padding" style="padding-top:0;">
-        <div class="container">
-            <h2 class="section-title">🖼️ <span class="highlight">Media</span> Library</h2>
-            <p class="section-subtitle">Centralized repository for brand assets.</p>
-            <div class="glass-card p-4">
-                <div class="table-responsive">
-                    <table class="admin-table table table-dark table-borderless">
-                        <thead><tr><th>Title</th><th>Type</th><th>URL</th><th>Actions</th></tr></thead>
-                        <tbody id="adminMediaBody"><tr><td colspan="4" class="text-muted">Loading...</td></tr></tbody>
-                    </table>
+        <!-- ============================================================= -->
+        <!-- PAGE: MERCH                                                   -->
+        <!-- ============================================================= -->
+        <section id="page-merch" class="page-section section-padding" style="padding-top:0;">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h2 class="section-title">🛍️ <span class="highlight">Merch</span> Store</h2>
+                    <p class="section-subtitle">Gear up with official Wolf Society merchandise.</p>
                 </div>
-                <hr class="border-white/10" />
-                <h5 class="fw-bold text-secondary">Add Media</h5>
-                <div class="row g-2">
-                    <div class="col-md-3"><input type="text" id="newMediaTitle" class="form-control bg-dark border-white/10 text-white" placeholder="Title" /></div>
-                    <div class="col-md-2"><input type="text" id="newMediaType" class="form-control bg-dark border-white/10 text-white" placeholder="Type (logo/promo/etc)" /></div>
-                    <div class="col-md-4"><input type="text" id="newMediaUrl" class="form-control bg-dark border-white/10 text-white" placeholder="Image URL" /></div>
-                    <div class="col-12"><button id="addMediaBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Media</button></div>
+                <div id="merchGrid" class="row g-4">
+                    <!-- populated by JS -->
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- ============================================================= -->
-    <!-- PAGE: ADMIN APPLICATIONS                                      -->
-    <!-- ============================================================= -->
-    <section id="page-admin-applications" class="page-section section-padding" style="padding-top:0;">
-        <div class="container">
-            <h2 class="section-title">📋 <span class="highlight">Applications</span></h2>
-            <p class="section-subtitle">Review tryout applications.</p>
-            <div class="glass-card p-4">
-                <div class="table-responsive">
-                    <table class="admin-table table table-dark table-borderless">
-                        <thead><tr><th>Name</th><th>Role</th><th>Rank</th><th>Discord</th><th>Message</th><th>Status</th><th>Actions</th></tr></thead>
-                        <tbody id="adminApplicationsBody"><tr><td colspan="7" class="text-muted">Loading...</td></tr></tbody>
-                    </table>
+        <!-- ============================================================= -->
+        <!-- PAGE: COMMUNITY                                               -->
+        <!-- ============================================================= -->
+        <section id="page-community" class="page-section section-padding" style="padding-top:0;">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h2 class="section-title">🎮 Community <span class="highlight">Hub</span></h2>
+                    <p class="section-subtitle">Connect, predict, play, and win with the pack.</p>
+                </div>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="glass-card">
+                            <h4 class="fw-bold text-secondary"><i class="fas fa-crystal-ball me-2"></i>Match Oracle</h4>
+                            <p class="text-muted small">Cast your prediction for the next big match.</p>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between small"><span>WOLF wins</span><span class="fw-bold text-primary" id="oracleWolf">68%</span></div>
+                                <div class="progress" style="height:6px;background:rgba(255,255,255,0.05);">
+                                    <div class="progress-bar bg-primary" id="oracleWolfBar" style="width:68%;"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between small"><span>PHX wins</span><span class="fw-bold text-muted" id="oraclePhx">32%</span></div>
+                                <div class="progress" style="height:6px;background:rgba(255,255,255,0.05);">
+                                    <div class="progress-bar bg-secondary" id="oraclePhxBar" style="width:32%;"></div>
+                                </div>
+                            </div>
+                            <button class="btn-neon w-100" onclick="alert('Prediction submitted! (Simulated)')">Submit Your Prediction</button>
+                            <div class="text-center small text-muted mt-2">Predictions reset every match.</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="glass-card mb-4">
+                            <h4 class="fw-bold text-warning"><i class="fas fa-gamepad me-2"></i>Arcade</h4>
+                            <p class="text-muted small">Play mini-games and earn Wolf Tokens.</p>
+                            <div class="row g-2">
+                                <div class="col-3"><div class="glass-card-light text-center py-3 cursor-pointer hover:bg-white/5 transition"><div class="fs-3">🎯</div><div class="small text-muted">Aim</div></div></div>
+                                <div class="col-3"><div class="glass-card-light text-center py-3 cursor-pointer hover:bg-white/5 transition"><div class="fs-3">🧩</div><div class="small text-muted">Trivia</div></div></div>
+                                <div class="col-3"><div class="glass-card-light text-center py-3 cursor-pointer hover:bg-white/5 transition"><div class="fs-3">🏎️</div><div class="small text-muted">Speed</div></div></div>
+                                <div class="col-3"><div class="glass-card-light text-center py-3 cursor-pointer hover:bg-white/5 transition"><div class="fs-3">⚔️</div><div class="small text-muted">Duel</div></div></div>
+                            </div>
+                        </div>
+                        <div class="glass-card">
+                            <h4 class="fw-bold text-primary"><i class="fas fa-comments me-2"></i>Join the Conversation</h4>
+                            <p class="text-muted small">Follow us for live updates and community events.</p>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <a href="#" class="btn-neon btn-neon-secondary" style="padding:0.4rem 1rem;font-size:0.8rem;"><i class="fab fa-discord me-1"></i>Discord</a>
+                                <a href="#" class="btn-neon btn-neon-secondary" style="padding:0.4rem 1rem;font-size:0.8rem;"><i class="fab fa-twitter me-1"></i>Twitter</a>
+                                <a href="#" class="btn-neon btn-neon-secondary" style="padding:0.4rem 1rem;font-size:0.8rem;"><i class="fab fa-youtube me-1"></i>YouTube</a>
+                            </div>
+                            <div class="mt-3">
+                                <label class="form-label small text-muted">Subscribe to Newsletter</label>
+                                <div class="d-flex">
+                                    <input type="email" class="form-control bg-dark border-white/10 text-white" placeholder="Your email" style="border-radius:0.75rem 0 0 0.75rem;padding:0.5rem 1rem;" />
+                                    <button class="btn-neon" style="border-radius:0 0.75rem 0.75rem 0;padding:0.5rem 1.2rem;">Subscribe</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- PAGE: ABOUT                                                   -->
+        <!-- ============================================================= -->
+        <section id="page-about" class="page-section section-padding" style="padding-top:0;">
+            <div class="container">
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <h2 class="section-title">ℹ️ About <span class="highlight">Wolf Society</span></h2>
+                        <p class="section-subtitle">India's first fusion ecosystem for Esports, Sports, and AI.</p>
+                        <div class="glass-card">
+                            <p class="text-muted"><strong class="text-white">Wolf Society</strong> is a community-driven esports organization built for players who compete with heart. We bring together gaming, turf sports, swimming, and AI-powered performance tracking — creating a new way for youth to play, compete, and connect.</p>
+                            <p class="text-muted">From gaming tournaments and influencer IPs to real-world sports and AI analytics, we're redefining what it means to be a modern athlete. Our mission is to build the largest multi-sport ecosystem in India, bridging the gap between digital and physical sports.</p>
+                            <div class="row g-3 mt-3">
+                                <div class="col-6 col-md-3"><div class="glass-card-light text-center p-3"><div class="fs-2 fw-bold text-primary">500+</div><div class="small text-muted">Members</div></div></div>
+                                <div class="col-6 col-md-3"><div class="glass-card-light text-center p-3"><div class="fs-2 fw-bold text-secondary">12</div><div class="small text-muted">Tournaments</div></div></div>
+                                <div class="col-6 col-md-3"><div class="glass-card-light text-center p-3"><div class="fs-2 fw-bold text-warning">₹5L+</div><div class="small text-muted">Prize Pool</div></div></div>
+                                <div class="col-6 col-md-3"><div class="glass-card-light text-center p-3"><div class="fs-2 fw-bold text-white">2024</div><div class="small text-muted">Founded</div></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="glass-card mb-4">
+                            <h5 class="fw-bold text-secondary">Core Values</h5>
+                            <ul class="list-unstyled small text-muted">
+                                <li class="d-flex align-items-center gap-2 py-1"><span class="text-primary">●</span> <strong class="text-white">Community First</strong> — We rise together.</li>
+                                <li class="d-flex align-items-center gap-2 py-1"><span class="text-secondary">●</span> <strong class="text-white">Competitive Integrity</strong> — Fair play always.</li>
+                                <li class="d-flex align-items-center gap-2 py-1"><span class="text-warning">●</span> <strong class="text-white">Innovation &amp; Inclusion</strong> — For every gamer.</li>
+                            </ul>
+                        </div>
+                        <div class="glass-card text-center">
+                            <div class="fs-1 mb-2">🇮🇳</div>
+                            <div class="text-muted small">Proudly based in India</div>
+                            <div class="text-muted small">Delhi · Mumbai · Bengaluru</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- PAGE: TRYOUTS                                                 -->
+        <!-- ============================================================= -->
+        <section id="page-tryouts" class="page-section section-padding" style="padding-top:0;">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="glass-card p-4 p-md-5">
+                            <h2 class="section-title text-center">📋 Join the <span class="highlight">Pack</span></h2>
+                            <p class="text-center text-muted">Submit your application to become part of Wolf Society.</p>
+                            <form id="tryoutForm" class="mt-4">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label small text-muted">Summoner Name</label>
+                                        <input type="text" id="tryoutName" class="form-control bg-dark border-white/10 text-white" placeholder="Enter your IGN" required style="border-radius:0.75rem;padding:0.7rem 1rem;" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small text-muted">Role</label>
+                                        <select id="tryoutRole" class="form-select bg-dark border-white/10 text-white" style="border-radius:0.75rem;padding:0.7rem 1rem;">
+                                            <option>Top</option>
+                                            <option>Jungle</option>
+                                            <option>Mid</option>
+                                            <option>ADC</option>
+                                            <option>Support</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small text-muted">Current Rank</label>
+                                        <input type="text" id="tryoutRank" class="form-control bg-dark border-white/10 text-white" placeholder="e.g. Diamond 2" required style="border-radius:0.75rem;padding:0.7rem 1rem;" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small text-muted">Discord Tag</label>
+                                        <input type="text" id="tryoutDiscord" class="form-control bg-dark border-white/10 text-white" placeholder="username#0000" style="border-radius:0.75rem;padding:0.7rem 1rem;" />
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label small text-muted">Why Wolf Society?</label>
+                                        <textarea id="tryoutMessage" rows="4" class="form-control bg-dark border-white/10 text-white" placeholder="Tell us about yourself..." style="border-radius:0.75rem;padding:0.7rem 1rem;"></textarea>
+                                    </div>
+                                    <div class="col-12 text-center">
+                                        <button type="submit" class="btn-neon px-5">Submit Application</button>
+                                        <div id="tryoutFeedback" class="mt-2 small text-success d-none">✅ Application received! We'll be in touch.</div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- PAGE: DASHBOARD (Admin)                                      -->
+        <!-- ============================================================= -->
+        <section id="page-dashboard" class="page-section section-padding" style="padding-top:0;">
+            <div class="container">
+                <h2 class="section-title">📊 <span class="highlight">Dashboard</span></h2>
+                <p class="section-subtitle">Overview of your organization.</p>
+                <div class="row g-4" id="dashboardStats">
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card"><div class="stat-icon"><i class="fas fa-users"></i></div><div class="stat-number" id="dashPlayers">0</div><div class="stat-label">Players</div></div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card"><div class="stat-icon"><i class="fas fa-calendar-check"></i></div><div class="stat-number" id="dashMatches">0</div><div class="stat-label">Matches</div></div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card"><div class="stat-icon"><i class="fas fa-coins"></i></div><div class="stat-number" id="dashRevenue">₹0</div><div class="stat-label">Revenue</div></div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card"><div class="stat-icon"><i class="fas fa-file-signature"></i></div><div class="stat-number" id="dashApps">0</div><div class="stat-label">Applications</div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- PAGE: ADMIN ROSTER                                            -->
+        <!-- ============================================================= -->
+        <section id="page-admin-roster" class="page-section section-padding" style="padding-top:0;">
+            <div class="container">
+                <h2 class="section-title">👥 <span class="highlight">Roster</span> Management</h2>
+                <p class="section-subtitle">Add, edit, or remove players.</p>
+                <div class="glass-card p-4">
+                    <div class="table-responsive">
+                        <table class="admin-table table table-dark table-borderless">
+                            <thead><tr><th>Name</th><th>Role</th><th>KDA</th><th>WR%</th><th>Bio</th><th>Actions</th></tr></thead>
+                            <tbody id="adminRosterBody"><tr><td colspan="6" class="text-muted">Loading...</td></tr></tbody>
+                        </table>
+                    </div>
+                    <hr class="border-white/10" />
+                    <h5 class="fw-bold text-secondary">Add Player</h5>
+                    <div class="row g-2">
+                        <div class="col-md-2"><input type="text" id="newRosterName" class="form-control bg-dark border-white/10 text-white" placeholder="Name" /></div>
+                        <div class="col-md-2"><input type="text" id="newRosterRole" class="form-control bg-dark border-white/10 text-white" placeholder="Role" /></div>
+                        <div class="col-md-1"><input type="number" id="newRosterKda" class="form-control bg-dark border-white/10 text-white" placeholder="KDA" step="0.1" /></div>
+                        <div class="col-md-1"><input type="number" id="newRosterWr" class="form-control bg-dark border-white/10 text-white" placeholder="WR" /></div>
+                        <div class="col-md-3"><input type="text" id="newRosterBio" class="form-control bg-dark border-white/10 text-white" placeholder="Bio" /></div>
+                        <div class="col-md-2"><input type="text" id="newRosterSocial" class="form-control bg-dark border-white/10 text-white" placeholder="Twitter @handle" /></div>
+                        <div class="col-12"><button id="addRosterBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Player</button></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- PAGE: ADMIN MATCHES                                           -->
+        <!-- ============================================================= -->
+        <section id="page-admin-matches" class="page-section section-padding" style="padding-top:0;">
+            <div class="container">
+                <h2 class="section-title">📅 <span class="highlight">Matches</span> Management</h2>
+                <p class="section-subtitle">Schedule and manage matches.</p>
+                <div class="glass-card p-4">
+                    <div class="table-responsive">
+                        <table class="admin-table table table-dark table-borderless">
+                            <thead><tr><th>Team A</th><th>Team B</th><th>Score A</th><th>Score B</th><th>Status</th><th>Time</th><th>Actions</th></tr></thead>
+                            <tbody id="adminMatchesBody"><tr><td colspan="7" class="text-muted">Loading...</td></tr></tbody>
+                        </table>
+                    </div>
+                    <hr class="border-white/10" />
+                    <h5 class="fw-bold text-secondary">Add Match</h5>
+                    <div class="row g-2">
+                        <div class="col-md-2"><input type="text" id="newMatchA" class="form-control bg-dark border-white/10 text-white" placeholder="Team A" /></div>
+                        <div class="col-md-2"><input type="text" id="newMatchB" class="form-control bg-dark border-white/10 text-white" placeholder="Team B" /></div>
+                        <div class="col-md-1"><input type="number" id="newMatchScoreA" class="form-control bg-dark border-white/10 text-white" placeholder="SA" /></div>
+                        <div class="col-md-1"><input type="number" id="newMatchScoreB" class="form-control bg-dark border-white/10 text-white" placeholder="SB" /></div>
+                        <div class="col-md-2"><input type="text" id="newMatchStatus" class="form-control bg-dark border-white/10 text-white" placeholder="Status" /></div>
+                        <div class="col-md-2"><input type="text" id="newMatchTime" class="form-control bg-dark border-white/10 text-white" placeholder="Time" /></div>
+                        <div class="col-12"><button id="addMatchBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Match</button></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- PAGE: ADMIN SCRIMS                                            -->
+        <!-- ============================================================= -->
+        <section id="page-admin-scrims" class="page-section section-padding" style="padding-top:0;">
+            <div class="container">
+                <h2 class="section-title">⚔️ <span class="highlight">Scrim</span> Scheduler</h2>
+                <p class="section-subtitle">Manage practice sessions and scrims.</p>
+                <div class="glass-card p-4">
+                    <div class="table-responsive">
+                        <table class="admin-table table table-dark table-borderless">
+                            <thead><tr><th>Team</th><th>Opponent</th><th>Date/Time</th><th>Duration</th><th>Status</th><th>Actions</th></tr></thead>
+                            <tbody id="adminScrimsBody"><tr><td colspan="6" class="text-muted">Loading...</td></tr></tbody>
+                        </table>
+                    </div>
+                    <hr class="border-white/10" />
+                    <h5 class="fw-bold text-secondary">Add Scrim</h5>
+                    <div class="row g-2">
+                        <div class="col-md-2"><input type="text" id="newScrimTeam" class="form-control bg-dark border-white/10 text-white" placeholder="Team" /></div>
+                        <div class="col-md-2"><input type="text" id="newScrimOpponent" class="form-control bg-dark border-white/10 text-white" placeholder="Opponent" /></div>
+                        <div class="col-md-3"><input type="datetime-local" id="newScrimDateTime" class="form-control bg-dark border-white/10 text-white" /></div>
+                        <div class="col-md-1"><input type="number" id="newScrimDuration" class="form-control bg-dark border-white/10 text-white" placeholder="Hrs" /></div>
+                        <div class="col-md-2"><input type="text" id="newScrimStatus" class="form-control bg-dark border-white/10 text-white" placeholder="Status" /></div>
+                        <div class="col-12"><button id="addScrimBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Scrim</button></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- PAGE: ADMIN FINANCIAL                                         -->
+        <!-- ============================================================= -->
+        <section id="page-admin-financial" class="page-section section-padding" style="padding-top:0;">
+            <div class="container">
+                <h2 class="section-title">💰 <span class="highlight">Financial</span> Ledger</h2>
+                <p class="section-subtitle">Track revenue, expenses, and budgets.</p>
+                <div class="glass-card p-4">
+                    <div class="table-responsive">
+                        <table class="admin-table table table-dark table-borderless">
+                            <thead><tr><th>Type</th><th>Category</th><th>Amount</th><th>Description</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+                            <tbody id="adminFinancialBody"><tr><td colspan="7" class="text-muted">Loading...</td></tr></tbody>
+                        </table>
+                    </div>
+                    <hr class="border-white/10" />
+                    <h5 class="fw-bold text-secondary">Add Entry</h5>
+                    <div class="row g-2">
+                        <div class="col-md-2"><select id="newFinType" class="form-control bg-dark border-white/10 text-white"><option value="income">Income</option><option value="expense">Expense</option></select></div>
+                        <div class="col-md-2"><input type="text" id="newFinCategory" class="form-control bg-dark border-white/10 text-white" placeholder="Category" /></div>
+                        <div class="col-md-2"><input type="number" id="newFinAmount" class="form-control bg-dark border-white/10 text-white" placeholder="Amount" /></div>
+                        <div class="col-md-3"><input type="text" id="newFinDesc" class="form-control bg-dark border-white/10 text-white" placeholder="Description" /></div>
+                        <div class="col-md-2"><input type="date" id="newFinDate" class="form-control bg-dark border-white/10 text-white" /></div>
+                        <div class="col-12"><button id="addFinBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Entry</button></div>
+                    </div>
+                    <div class="mt-3 d-flex gap-3">
+                        <span class="text-muted">Total Income: <strong class="text-success" id="totalIncome">₹0</strong></span>
+                        <span class="text-muted">Total Expenses: <strong class="text-danger" id="totalExpenses">₹0</strong></span>
+                        <span class="text-muted">Balance: <strong class="text-primary" id="totalBalance">₹0</strong></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- PAGE: ADMIN DOCUMENTS                                         -->
+        <!-- ============================================================= -->
+        <section id="page-admin-documents" class="page-section section-padding" style="padding-top:0;">
+            <div class="container">
+                <h2 class="section-title">📄 <span class="highlight">Document</span> Vault</h2>
+                <p class="section-subtitle">Secure storage for contracts and legal forms.</p>
+                <div class="glass-card p-4">
+                    <div class="table-responsive">
+                        <table class="admin-table table table-dark table-borderless">
+                            <thead><tr><th>Title</th><th>Type</th><th>Uploaded</th><th>Actions</th></tr></thead>
+                            <tbody id="adminDocumentsBody"><tr><td colspan="4" class="text-muted">Loading...</td></tr></tbody>
+                        </table>
+                    </div>
+                    <hr class="border-white/10" />
+                    <h5 class="fw-bold text-secondary">Add Document</h5>
+                    <div class="row g-2">
+                        <div class="col-md-3"><input type="text" id="newDocTitle" class="form-control bg-dark border-white/10 text-white" placeholder="Title" /></div>
+                        <div class="col-md-2"><input type="text" id="newDocType" class="form-control bg-dark border-white/10 text-white" placeholder="Type (Contract/NDA/etc)" /></div>
+                        <div class="col-md-4"><input type="text" id="newDocUrl" class="form-control bg-dark border-white/10 text-white" placeholder="File URL (Google Drive link)" /></div>
+                        <div class="col-12"><button id="addDocBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Document</button></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- PAGE: ADMIN MEDIA                                             -->
+        <!-- ============================================================= -->
+        <section id="page-admin-media" class="page-section section-padding" style="padding-top:0;">
+            <div class="container">
+                <h2 class="section-title">🖼️ <span class="highlight">Media</span> Library</h2>
+                <p class="section-subtitle">Centralized repository for brand assets.</p>
+                <div class="glass-card p-4">
+                    <div class="table-responsive">
+                        <table class="admin-table table table-dark table-borderless">
+                            <thead><tr><th>Title</th><th>Type</th><th>URL</th><th>Actions</th></tr></thead>
+                            <tbody id="adminMediaBody"><tr><td colspan="4" class="text-muted">Loading...</td></tr></tbody>
+                        </table>
+                    </div>
+                    <hr class="border-white/10" />
+                    <h5 class="fw-bold text-secondary">Add Media</h5>
+                    <div class="row g-2">
+                        <div class="col-md-3"><input type="text" id="newMediaTitle" class="form-control bg-dark border-white/10 text-white" placeholder="Title" /></div>
+                        <div class="col-md-2"><input type="text" id="newMediaType" class="form-control bg-dark border-white/10 text-white" placeholder="Type (logo/promo/etc)" /></div>
+                        <div class="col-md-4"><input type="text" id="newMediaUrl" class="form-control bg-dark border-white/10 text-white" placeholder="Image URL" /></div>
+                        <div class="col-12"><button id="addMediaBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Media</button></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- PAGE: ADMIN APPLICATIONS                                      -->
+        <!-- ============================================================= -->
+        <section id="page-admin-applications" class="page-section section-padding" style="padding-top:0;">
+            <div class="container">
+                <h2 class="section-title">📋 <span class="highlight">Applications</span></h2>
+                <p class="section-subtitle">Review tryout applications.</p>
+                <div class="glass-card p-4">
+                    <div class="table-responsive">
+                        <table class="admin-table table table-dark table-borderless">
+                            <thead><tr><th>Name</th><th>Role</th><th>Rank</th><th>Discord</th><th>Message</th><th>Status</th><th>Actions</th></tr></thead>
+                            <tbody id="adminApplicationsBody"><tr><td colspan="7" class="text-muted">Loading...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div> <!-- end main-wrapper -->
 
     <!-- ============================================================= -->
-    <!-- FOOTER                                                        -->
+    <!-- FOOTER (outside main-wrapper)                                 -->
     <!-- ============================================================= -->
     <footer class="footer-wolf">
         <div class="container">
@@ -1497,18 +1579,18 @@
                 <div class="col-6 col-lg-2">
                     <h6 class="fw-bold text-white">Quick Links</h6>
                     <div class="footer-links">
-                        <a href="#home">Home</a>
-                        <a href="#roster">Roster</a>
-                        <a href="#schedule">Schedule</a>
-                        <a href="#news">News</a>
+                        <a onclick="navigateTo('home')">Home</a>
+                        <a onclick="navigateTo('roster')">Roster</a>
+                        <a onclick="navigateTo('schedule')">Schedule</a>
+                        <a onclick="navigateTo('news')">News</a>
                     </div>
                 </div>
                 <div class="col-6 col-lg-2">
                     <h6 class="fw-bold text-white">Community</h6>
                     <div class="footer-links">
-                        <a href="#community">Fan Zone</a>
-                        <a href="#tryouts">Tryouts</a>
-                        <a href="#about">About</a>
+                        <a onclick="navigateTo('community')">Fan Zone</a>
+                        <a onclick="navigateTo('tryouts')">Tryouts</a>
+                        <a onclick="navigateTo('about')">About</a>
                     </div>
                 </div>
                 <div class="col-lg-4">
@@ -1537,11 +1619,8 @@
     <script>
         /**
          * ==============================================================
-         * WOLF SOCIETY — COMPLETE PLATFORM
-         * - Supabase Auth (role-based access)
-         * - Public pages: Home, Roster, Schedule, Bracket, News, Sponsors, Merch, Community, About, Tryouts
-         * - Admin pages: Dashboard, Roster, Matches, Scrims, Financial, Documents, Media, Applications
-         * - All data stored in Supabase
+         * WOLF SOCIETY — COMPLETE PLATFORM (No hash routing)
+         * All navigation is done via data-page attributes and navigateTo()
          * ==============================================================
          */
 
@@ -1553,6 +1632,7 @@
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let currentUser = null;
         let currentUserRole = null;
+        let currentPage = 'home';
 
         // --- DOM refs ---
         const pages = {
@@ -1577,14 +1657,12 @@
         };
 
         // ==============================================================
-        // 1. AUTHENTICATION
+        // 1. AUTHENTICATION (unchanged)
         // ==============================================================
-
         async function checkAuth() {
             const { data: { session }, error } = await supabase.auth.getSession();
             if (session) {
                 currentUser = session.user;
-                // Get user role from profiles table
                 const { data: profile, error: profileError } = await supabase
                     .from('profiles')
                     .select('role, full_name')
@@ -1617,8 +1695,10 @@
             $('#userNavItem').hide();
             $('#adminNavItem').hide();
             // If on an admin page, redirect to home
-            const hash = window.location.hash;
-            if (hash && (hash.includes('admin') || hash.includes('dashboard'))) {
+            const adminPages = ['dashboard', 'admin-roster', 'admin-matches', 'admin-scrims',
+                'admin-financial', 'admin-documents', 'admin-media', 'admin-applications'
+            ];
+            if (adminPages.includes(currentPage)) {
                 navigateTo('home');
             }
         }
@@ -1626,17 +1706,15 @@
         function updateAdminNav() {
             const isAdmin = currentUserRole === 'admin' || currentUserRole === 'manager';
             $('#adminNavItem').toggle(isAdmin && currentUser !== null);
-            // Show/hide admin pages based on role
             const adminPages = ['dashboard', 'admin-roster', 'admin-matches', 'admin-scrims',
                 'admin-financial', 'admin-documents', 'admin-media', 'admin-applications'
             ];
-            const hash = window.location.hash.replace('#', '');
-            if (adminPages.includes(hash) && !isAdmin) {
+            if (adminPages.includes(currentPage) && !isAdmin) {
                 navigateTo('home');
             }
         }
 
-        // --- Auth Modal ---
+        // Auth Modal
         const authModal = new bootstrap.Modal(document.getElementById('authModal'));
         let isLoginMode = true;
 
@@ -1695,7 +1773,6 @@
                         options: { data: { full_name: fullName, role: role } }
                     });
                     if (error) throw error;
-                    // Create profile entry
                     if (data.user) {
                         await supabase.from('profiles').insert([{
                             id: data.user.id,
@@ -1722,7 +1799,6 @@
             navigateTo('home');
         };
 
-        // --- Check auth on load ---
         supabase.auth.onAuthStateChange((event, session) => {
             if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
                 checkAuth();
@@ -1735,20 +1811,23 @@
         });
 
         // ==============================================================
-        // 2. PAGE ROUTING
+        // 2. PAGE NAVIGATION (no hash)
         // ==============================================================
 
         function navigateTo(pageId) {
             // Hide all pages
             Object.keys(pages).forEach(key => pages[key].removeClass('active'));
             // Show target
-            if (pages[pageId]) pages[pageId].addClass('active');
+            if (pages[pageId]) {
+                pages[pageId].addClass('active');
+                currentPage = pageId;
+            }
 
-            // Update nav links
+            // Update nav links (top nav)
             $('.navbar-nav .nav-link').removeClass('active');
-            $(`.navbar-nav .nav-link[href="#${pageId}"]`).addClass('active');
+            $(`.navbar-nav .nav-link[data-page="${pageId}"]`).addClass('active');
 
-            // If admin page, check permissions
+            // If admin page, check permissions and refresh data
             const adminPages = ['dashboard', 'admin-roster', 'admin-matches', 'admin-scrims',
                 'admin-financial', 'admin-documents', 'admin-media', 'admin-applications'
             ];
@@ -1764,54 +1843,43 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Intercept nav clicks
-        $(document).on('click', '.navbar-nav .nav-link', function(e) {
-            const href = $(this).attr('href');
-            if (href && href.startsWith('#')) {
-                e.preventDefault();
-                const pageId = href.substring(1);
-                // If admin page, check auth
-                const adminPages = ['dashboard', 'admin-roster', 'admin-matches', 'admin-scrims',
-                    'admin-financial', 'admin-documents', 'admin-media', 'admin-applications'
-                ];
-                if (adminPages.includes(pageId) && !currentUser) {
-                    openAuthModal();
-                    return;
-                }
-                navigateTo(pageId);
-                window.location.hash = href;
+        // --- Intercept clicks on nav links with data-page ---
+        $(document).on('click', '.navbar-nav .nav-link[data-page]', function(e) {
+            e.preventDefault();
+            const pageId = $(this).data('page');
+            const adminPages = ['dashboard', 'admin-roster', 'admin-matches', 'admin-scrims',
+                'admin-financial', 'admin-documents', 'admin-media', 'admin-applications'
+            ];
+            if (adminPages.includes(pageId) && !currentUser) {
+                openAuthModal();
+                return;
             }
+            navigateTo(pageId);
         });
 
-        // Dropdown items
-        $(document).on('click', '.dropdown-item[href]', function(e) {
-            const href = $(this).attr('href');
-            if (href && href.startsWith('#')) {
-                e.preventDefault();
-                const pageId = href.substring(1);
-                navigateTo(pageId);
-                window.location.hash = href;
-                // Close dropdown
-                $('.dropdown-menu').removeClass('show');
+        // Intercept dropdown items with data-page
+        $(document).on('click', '.dropdown-item[data-page]', function(e) {
+            e.preventDefault();
+            const pageId = $(this).data('page');
+            const adminPages = ['dashboard', 'admin-roster', 'admin-matches', 'admin-scrims',
+                'admin-financial', 'admin-documents', 'admin-media', 'admin-applications'
+            ];
+            if (adminPages.includes(pageId) && !currentUser) {
+                openAuthModal();
+                return;
             }
+            navigateTo(pageId);
+            // Close dropdown
+            $('.dropdown-menu').removeClass('show');
         });
 
-        // Hash change
-        $(window).on('hashchange', function() {
-            const hash = window.location.hash.substring(1) || 'home';
-            if (pages[hash]) navigateTo(hash);
-        });
-
-        // Initial page
-        const initialHash = window.location.hash.substring(1) || 'home';
-        if (pages[initialHash]) navigateTo(initialHash);
-        else navigateTo('home');
+        // Intercept navigation from buttons with onclick="navigateTo('...')"
+        window.navigateTo = navigateTo;
 
         // ==============================================================
-        // 3. DATA FETCHING & RENDERING
+        // 3. DATA FETCHING & RENDERING (unchanged)
         // ==============================================================
 
-        // --- Tables ---
         const TABLES = {
             roster: 'rosters',
             matches: 'matches',
@@ -1832,7 +1900,6 @@
             return data || [];
         }
 
-        // --- Render: Roster ---
         async function renderRoster() {
             const roster = await fetchTable(TABLES.roster);
             const container = $('#rosterGrid');
@@ -1857,7 +1924,6 @@
             });
             container.html(html);
 
-            // Team stats
             const totalKDA = roster.reduce((s, p) => s + p.kda, 0);
             const avgKDA = roster.length > 0 ? (totalKDA / roster.length).toFixed(2) : '—';
             const avgWR = roster.length > 0 ? (roster.reduce((s, p) => s + p.wr, 0) / roster.length).toFixed(1) : '—';
@@ -1865,7 +1931,6 @@
             $('#teamWR').text(avgWR + '%');
         }
 
-        // --- Render: Schedule ---
         async function renderSchedule() {
             const matches = await fetchTable(TABLES.matches);
             const container = $('#scheduleGrid');
@@ -1895,10 +1960,8 @@
             container.html(html);
         }
 
-        // --- Render: News (Carousel + List) ---
         async function renderNews() {
             const news = await fetchTable(TABLES.news, 'published_date');
-            // Carousel
             const carousel = $('#newsCarousel');
             if (news && news.length > 0) {
                 let carouselHtml = '';
@@ -1918,7 +1981,6 @@
                     `;
                 });
                 carousel.html(carouselHtml);
-                // Re-init Owl if needed
                 if ($.fn.owlCarousel) {
                     carousel.owlCarousel('destroy');
                     carousel.owlCarousel({
@@ -1937,7 +1999,6 @@
                 carousel.html('<p class="text-muted text-center">No news available.</p>');
             }
 
-            // News list (below carousel)
             const list = $('#newsList');
             if (news && news.length > 0) {
                 let listHtml = '';
@@ -1959,13 +2020,11 @@
             }
         }
 
-        // --- Render: Sponsors ---
         async function renderSponsors() {
             const sponsors = await fetchTable(TABLES.sponsors);
             const container = $('#sponsorGrid');
             if (!sponsors || sponsors.length === 0) {
-                container.html(
-                    '<div class="sponsor-item"><i class="fas fa-handshake"></i>Your Brand Here</div>');
+                container.html('<div class="sponsor-item"><i class="fas fa-handshake"></i>Your Brand Here</div>');
                 return;
             }
             let html = '';
@@ -1982,13 +2041,11 @@
             container.html(html);
         }
 
-        // --- Render: Merch ---
         async function renderMerch() {
             const products = await fetchTable(TABLES.products);
             const container = $('#merchGrid');
             if (!products || products.length === 0) {
-                container.html(
-                    '<div class="col-12 text-center text-muted">No merchandise available yet.</div>');
+                container.html('<div class="col-12 text-center text-muted">No merchandise available yet.</div>');
                 return;
             }
             let html = '';
@@ -2011,7 +2068,7 @@
         }
 
         // ==============================================================
-        // 4. ADMIN RENDERING (CRUD)
+        // 4. ADMIN RENDERING (unchanged)
         // ==============================================================
 
         let adminData = {};
@@ -2037,7 +2094,6 @@
             renderDashboard(roster, matches, financial, applications);
         }
 
-        // --- Admin: Roster ---
         function renderAdminRoster(roster) {
             const tbody = $('#adminRosterBody');
             if (!roster || roster.length === 0) {
@@ -2119,7 +2175,6 @@
             renderRoster();
         });
 
-        // --- Admin: Matches ---
         function renderAdminMatches(matches) {
             const tbody = $('#adminMatchesBody');
             if (!matches || matches.length === 0) {
@@ -2203,7 +2258,6 @@
             renderSchedule();
         });
 
-        // --- Admin: Scrims ---
         function renderAdminScrims(scrims) {
             const tbody = $('#adminScrimsBody');
             if (!scrims || scrims.length === 0) {
@@ -2257,7 +2311,6 @@
             refreshAdminData();
         });
 
-        // --- Admin: Financial ---
         function renderAdminFinancial(financial) {
             const tbody = $('#adminFinancialBody');
             if (!financial || financial.length === 0) {
@@ -2321,7 +2374,6 @@
             refreshAdminData();
         });
 
-        // --- Admin: Documents ---
         function renderAdminDocuments(documents) {
             const tbody = $('#adminDocumentsBody');
             if (!documents || documents.length === 0) {
@@ -2371,7 +2423,6 @@
             refreshAdminData();
         });
 
-        // --- Admin: Media ---
         function renderAdminMedia(media) {
             const tbody = $('#adminMediaBody');
             if (!media || media.length === 0) {
@@ -2419,7 +2470,6 @@
             refreshAdminData();
         });
 
-        // --- Admin: Applications ---
         function renderAdminApplications(applications) {
             const tbody = $('#adminApplicationsBody');
             if (!applications || applications.length === 0) {
@@ -2462,7 +2512,6 @@
             refreshAdminData();
         };
 
-        // --- Dashboard ---
         function renderDashboard(roster, matches, financial, applications) {
             $('#dashPlayers').text(roster ? roster.length : 0);
             $('#dashMatches').text(matches ? matches.length : 0);
@@ -2558,7 +2607,7 @@
         init();
 
         // Re-run when switching to admin pages
-        $(document).on('click', '.dropdown-item[href*="admin"]', function() {
+        $(document).on('click', '.dropdown-item[data-page*="admin"]', function() {
             setTimeout(refreshAdminData, 300);
         });
     </script>
