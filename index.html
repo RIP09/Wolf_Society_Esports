@@ -3,1348 +3,549 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wolf Society Esports — Next‑Gen Experience</title>
+    <title>Wolf Society Esports · Champion Circuit</title>
 
-    <!-- ============================================================
-    FONTS & ICONS
-    ============================================================ -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
-    <!-- ============================================================
-    GSAP + SCROLLTRIGGER (CDN – no terminal, no npm)
-    ============================================================ -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js">
+    <!-- ====== Tailwind via CDN ====== -->
+    <script src="https://cdn.tailwindcss.com">
     </script>
 
-    <!-- ============================================================
-    LOTTIE (dotLottie web player – lightweight JSON animations)
-    ============================================================ -->
-    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.js">
+    <!-- ====== Custom Configuration ====== -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#7C3AED', // vibrant purple
+                        secondary: '#06D6A0', // mint
+                        accent: '#F59E0B', // warm gold
+                        dark: '#0B0B12',
+                        glass: 'rgba(255, 255, 255, 0.06)',
+                        glassBorder: 'rgba(255, 255, 255, 0.08)',
+                        textLight: '#F8FAFC',
+                        textMuted: '#94A3B8',
+                    },
+                    fontFamily: {
+                        display: ['"Clash Display"', '"Inter"', 'system-ui', 'sans-serif'],
+                        body: ['"Space Grotesk"', '"Inter"', 'system-ui', 'sans-serif'],
+                    },
+                    backdropBlur: {
+                        xl: '24px',
+                    },
+                    animation: {
+                        'float': 'float 8s ease-in-out infinite',
+                        'pulse-soft': 'pulseSoft 3s ease-in-out infinite',
+                        'slide-up': 'slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'fade-in': 'fadeIn 0.9s ease forwards',
+                        'glow-pulse': 'glowPulse 4s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-12px)' },
+                        },
+                        pulseSoft: {
+                            '0%, 100%': { opacity: 1 },
+                            '50%': { opacity: 0.5 },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        glowPulse: {
+                            '0%, 100%': { boxShadow: '0 0 20px rgba(124, 58, 237, 0.15)' },
+                            '50%': { boxShadow: '0 0 40px rgba(124, 58, 237, 0.3)' },
+                        },
+                    },
+                }
+            }
+        }
     </script>
 
+    <!-- ====== Google Fonts ====== -->
+    <link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- ====== Custom Styles ====== -->
     <style>
-        /* ============================================================
-           RESET & VARIABLES
-           ============================================================ */
+        /* ----- Reset & Base ----- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
-        :root {
-            --bg-primary: #0a0a14;
-            --bg-secondary: #12121f;
-            --text-primary: #f0f0f8;
-            --text-secondary: #a0a0b8;
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --primary-glow: rgba(99, 102, 241, 0.3);
-            --radius: 12px;
-            --radius-lg: 24px;
-            --transition: 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            --font: 'Inter', sans-serif;
-        }
-
         html {
             scroll-behavior: smooth;
         }
-
         body {
-            font-family: var(--font);
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
+            background: #0B0B12;
+            color: #F8FAFC;
+            font-family: 'Space Grotesk', sans-serif;
+            -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
+            min-height: 100vh;
         }
 
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-        ul {
-            list-style: none;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
-
-        /* ============================================================
-           GLASSMORPHISM
-           ============================================================ */
+        /* ----- Glassmorphism (Modern, Transparent) ----- */
         .glass {
             background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(24px) saturate(1.4);
+            -webkit-backdrop-filter: blur(24px) saturate(1.4);
             border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .glass-light {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px) saturate(1.2);
+            -webkit-backdrop-filter: blur(16px) saturate(1.2);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 1rem;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 1.25rem;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .glass-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(124, 58, 237, 0.2);
+            box-shadow: 0 12px 40px rgba(124, 58, 237, 0.06);
         }
 
-        /* ============================================================
-           BUTTONS – with micro‑interactions
-           ============================================================ */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.7rem 2rem;
-            border-radius: 100px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            border: none;
-            cursor: pointer;
-            transition: var(--transition);
+        /* ----- Scrollbar ----- */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
             background: transparent;
-            color: var(--text-primary);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #7C3AED;
+            border-radius: 12px;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: #fff;
-            border-color: var(--primary);
-        }
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: scale(1.04);
-            box-shadow: 0 8px 30px var(--primary-glow);
-        }
-
-        .btn-outline {
-            border-color: rgba(255, 255, 255, 0.15);
-        }
-        .btn-outline:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: var(--primary);
-        }
-
-        .btn-lg {
-            padding: 0.9rem 2.5rem;
-            font-size: 1.1rem;
-        }
-        .btn-sm {
-            padding: 0.4rem 1.2rem;
-            font-size: 0.8rem;
-        }
-
-        /* Slide‑Up Button */
-        .btn-slide .original,
-        .btn-slide .hover-text {
-            display: block;
-            transition: transform 0.4s cubic-bezier(0.87, 0, 0.13, 1);
-        }
-        .btn-slide .hover-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, 100%);
-            opacity: 0;
-        }
-        .btn-slide:hover .original {
-            transform: translateY(-100%);
-        }
-        .btn-slide:hover .hover-text {
-            transform: translate(-50%, -50%);
-            opacity: 1;
-        }
-
-        /* Ripple */
-        .btn-ripple {
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-ripple .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(0);
-            animation: rippleAnim 0.6s linear;
-        }
-        @keyframes rippleAnim {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-
-        /* Pulse */
-        .btn-pulse {
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 var(--primary-glow);
-            }
-            70% {
-                box-shadow: 0 0 0 10px transparent;
-            }
-            100% {
-                box-shadow: 0 0 0 0 transparent;
-            }
-        }
-
-        /* ============================================================
-           AMBIENT BACKGROUND – moving gradient
-           ============================================================ */
-        .ambient-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 80%, rgba(99, 102, 241, 0.04) 0%, transparent 40%);
-            animation: ambientMove 20s ease-in-out infinite alternate;
-        }
-
-        @keyframes ambientMove {
-            0% {
-                transform: translate(0, 0) scale(1);
-            }
-            33% {
-                transform: translate(2%, -3%) scale(1.02);
-            }
-            66% {
-                transform: translate(-2%, 4%) scale(0.98);
-            }
-            100% {
-                transform: translate(1%, -1%) scale(1.01);
-            }
-        }
-
-        /* ============================================================
-           NAVBAR
-           ============================================================ */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            padding: 0.8rem 0;
-            background: rgba(10, 10, 20, 0.7);
+        /* ----- Navigation (Clean, Minimal) ----- */
+        .nav-modern {
+            background: rgba(11, 11, 18, 0.7);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
         }
-
-        .navbar-inner {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-brand {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            font-size: 1.2rem;
-            font-weight: 700;
-        }
-        .brand-icon {
-            font-size: 1.8rem;
-        }
-        .brand-accent {
-            color: var(--primary);
-        }
-
-        .nav-toggle {
-            display: none;
-            flex-direction: column;
-            gap: 4px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-        }
-        .nav-toggle span {
-            display: block;
-            width: 26px;
-            height: 2px;
-            background: var(--text-primary);
-            border-radius: 2px;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            transform-origin: center;
-        }
-        .nav-toggle.active span:nth-child(1) {
-            transform: translateY(6px) rotate(45deg);
-        }
-        .nav-toggle.active span:nth-child(2) {
-            opacity: 0;
-            transform: scaleX(0);
-        }
-        .nav-toggle.active span:nth-child(3) {
-            transform: translateY(-6px) rotate(-45deg);
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-        }
-        .nav-links a {
-            padding: 0.4rem 0.8rem;
-            border-radius: 100px;
+        .nav-link {
+            transition: all 0.2s ease;
+            color: #94A3B8;
+            font-weight: 500;
             font-size: 0.85rem;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
+            padding: 0.4rem 1rem;
+            border-radius: 9999px;
+            border: 1px solid transparent;
         }
-        .nav-links a:hover,
-        .nav-links a.active {
-            background: rgba(255, 255, 255, 0.06);
-            color: var(--primary);
+        .nav-link:hover {
+            color: #F8FAFC;
+            background: rgba(124, 58, 237, 0.08);
+            border-color: rgba(124, 58, 237, 0.15);
         }
-        .nav-links a i {
-            transition: var(--transition);
-        }
-        .nav-links a:hover i {
-            transform: scale(1.2) rotate(-6deg);
-        }
-        .nav-actions {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
+        .nav-link.active {
+            color: #F8FAFC;
+            background: rgba(124, 58, 237, 0.12);
+            border-color: rgba(124, 58, 237, 0.2);
         }
 
-        @media (max-width: 1024px) {
-            .nav-toggle {
-                display: flex;
-            }
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: var(--bg-primary);
-                padding: 1.5rem;
-                gap: 0.8rem;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            }
-            .nav-links.open {
-                display: flex;
-            }
-            .nav-actions {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
+        /* ----- Sections ----- */
+        .section-page {
+            display: none;
+            opacity: 0;
+            animation: fadeIn 0.6s ease forwards;
+            padding: 2rem 1.5rem 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section-page.active {
+            display: block;
         }
 
-        /* ============================================================
-           HERO – cinematic text reveal + 3D card
-           ============================================================ */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            padding-top: 5rem;
-        }
-
-        .hero-title {
-            font-size: 4.2rem;
-            font-weight: 900;
-            line-height: 1.05;
-        }
-
-        .text-gradient {
-            background: linear-gradient(135deg, #6366f1, #a78bfa, #818cf8);
+        /* ----- Gradient Text ----- */
+        .gradient-text {
+            background: linear-gradient(135deg, #7C3AED 0%, #A78BFA 40%, #06D6A0 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-size: 200% 200%;
-            animation: gradientShift 6s ease-in-out infinite;
+            background-clip: text;
         }
 
-        @keyframes gradientShift {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
+        /* ----- Subtle glow for buttons ----- */
+        .btn-primary {
+            background: rgba(124, 58, 237, 0.15);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            color: #F8FAFC;
+            padding: 0.6rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 500;
+            transition: all 0.25s ease;
+        }
+        .btn-primary:hover {
+            background: rgba(124, 58, 237, 0.25);
+            border-color: rgba(124, 58, 237, 0.35);
+            box-shadow: 0 0 30px rgba(124, 58, 237, 0.08);
+            transform: translateY(-2px);
         }
 
-        .hero-sub {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            max-width: 540px;
-            margin-top: 1rem;
+        /* ----- Bracket iframe container ----- */
+        .bracket-wrapper {
+            border-radius: 1.5rem;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
         }
-
-        .badge-glow {
-            display: inline-block;
-            padding: 0.2rem 1.2rem;
-            border-radius: 100px;
-            background: rgba(99, 102, 241, 0.12);
-            color: var(--primary);
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            margin-bottom: 0.8rem;
-        }
-
-        .hero-3d-card {
-            perspective: 1200px;
-        }
-        .hero-3d-card .card-inner {
-            position: relative;
+        .bracket-wrapper iframe {
+            display: block;
             width: 100%;
-            max-width: 420px;
-            aspect-ratio: 1/1;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(99, 102, 241, 0.25), transparent 70%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transform-style: preserve-3d;
-            transition: transform 0.1s ease-out;
-        }
-        .hero-3d-card .card-inner .wolf-icon {
-            font-size: 10rem;
-            filter: drop-shadow(0 20px 60px rgba(99, 102, 241, 0.4));
-            animation: float 4s ease-in-out infinite;
-        }
-        .hero-3d-card .card-inner .ring-1 {
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.06);
-            animation: spin 28s linear infinite;
-        }
-        .hero-3d-card .card-inner .ring-2 {
-            position: absolute;
-            inset: -12px;
-            border-radius: 50%;
-            border: 1px solid rgba(99, 102, 241, 0.15);
-            animation: spin 38s linear infinite reverse;
+            height: 520px;
+            border: none;
+            background: transparent;
         }
 
-        @keyframes float {
-            0%,
-            100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-16px);
-            }
-        }
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* ============================================================
-           SCROLL‑TRIGGERED REVEAL CLASSES (GSAP will handle these)
-           ============================================================ */
-        .reveal {
-            opacity: 0;
-            transform: translateY(40px);
-        }
-
-        .reveal-left {
-            opacity: 0;
-            transform: translateX(-60px);
-        }
-
-        .reveal-right {
-            opacity: 0;
-            transform: translateX(60px);
-        }
-
-        .reveal-scale {
-            opacity: 0;
-            transform: scale(0.85);
-        }
-
-        /* ============================================================
-           SECTIONS
-           ============================================================ */
-        .section {
-            padding: 5rem 0;
-        }
-
-        .section-title {
-            font-size: 2.8rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-        }
-
-        .section-sub {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            max-width: 600px;
-        }
-
-        /* ============================================================
-           STATS
-           ============================================================ */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .stat-item {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: var(--radius-lg);
-            padding: 2rem 1.5rem;
-            text-align: center;
-            transition: var(--transition);
-        }
-        .stat-item:hover {
-            transform: translateY(-6px);
-            border-color: var(--primary);
-            background: rgba(255, 255, 255, 0.06);
-        }
-        .stat-item .stat-icon {
-            font-size: 2.4rem;
-        }
-        .stat-item .stat-number {
-            font-size: 2.2rem;
-            font-weight: 800;
-            margin: 0.25rem 0;
-        }
-        .stat-item .stat-label {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-        }
-
-        /* ============================================================
-           MATCH TICKER – with Lottie integration
-           ============================================================ */
-        .match-ticker {
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: var(--radius-lg);
-            padding: 0.8rem 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            overflow: hidden;
-        }
-
-        .ticker-scroll {
-            display: flex;
-            gap: 2.5rem;
-            animation: tickerScroll 30s linear infinite;
-            white-space: nowrap;
-        }
-
-        @keyframes tickerScroll {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(-50%);
-            }
-        }
-
-        .ticker-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-        .ticker-item .vs {
-            color: var(--primary);
-            font-weight: 700;
-        }
-
-        .badge-live {
-            background: #ef4444;
-            color: #fff;
-            font-size: 0.6rem;
-            font-weight: 700;
-            padding: 0.1rem 0.6rem;
-            border-radius: 100px;
-            text-transform: uppercase;
-            animation: pulseLive 1.2s ease-in-out infinite;
-        }
-
-        @keyframes pulseLive {
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.6;
-                transform: scale(0.9);
-            }
-        }
-
-        /* ============================================================
-           NEWS GRID
-           ============================================================ */
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.8rem;
-        }
-
-        .news-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            transition: var(--transition);
-        }
-        .news-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--primary);
-            box-shadow: 0 24px 60px -16px rgba(0, 0, 0, 0.6);
-        }
-        .news-card .card-img {
-            height: 160px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            color: var(--primary);
-        }
-        .news-card .card-body {
-            padding: 1.5rem;
-        }
-        .news-card .card-body h3 {
-            margin: 0.4rem 0 0.6rem;
-            font-size: 1.1rem;
-        }
-        .news-card .card-body p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        /* ============================================================
-           3D PERSPECTIVE GALLERY
-           ============================================================ */
-        .gallery-3d {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            perspective: 1200px;
-        }
-
-        .gallery-3d .gallery-item {
-            aspect-ratio: 1;
-            border-radius: var(--radius-lg);
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.1));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
-            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            transform-style: preserve-3d;
-            cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .gallery-3d .gallery-item:hover {
-            transform: rotateY(8deg) rotateX(4deg) translateZ(20px);
-            border-color: var(--primary);
-            box-shadow: 0 20px 50px rgba(99, 102, 241, 0.2);
-        }
-
-        /* ============================================================
-           SPONSORS
-           ============================================================ */
-        .sponsor-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .sponsor-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: var(--radius-md);
-            padding: 1.5rem 1rem;
-            text-align: center;
-            transition: var(--transition);
-            filter: grayscale(0.5);
-        }
-        .sponsor-item:hover {
-            filter: grayscale(0);
-            border-color: var(--primary);
-            transform: scale(1.05);
-            background: rgba(255, 255, 255, 0.06);
-        }
-        .sponsor-item .sponsor-icon {
-            font-size: 2.6rem;
-            color: var(--text-secondary);
-            transition: var(--transition);
-        }
-        .sponsor-item:hover .sponsor-icon {
-            color: var(--primary);
-        }
-
-        /* ============================================================
-           PARALLAX LAYERS (CSS‑only depth)
-           ============================================================ */
-        .parallax-section {
-            position: relative;
-            overflow: hidden;
-            min-height: 60vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .parallax-layer {
-            position: absolute;
-            will-change: transform;
-        }
-
-        .parallax-layer-bg {
-            top: -10%;
-            left: -10%;
-            width: 120%;
-            height: 120%;
-            background: radial-gradient(ellipse at 30% 40%, rgba(99, 102, 241, 0.06), transparent 70%);
-            transform: translateZ(-40px) scale(1.2);
-        }
-
-        .parallax-layer-mid {
-            top: 10%;
-            right: 5%;
-            font-size: 8rem;
-            opacity: 0.06;
-            transform: translateZ(-20px) scale(0.9);
-        }
-
-        .parallax-layer-front {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-        }
-
-        /* ============================================================
-           FOOTER
-           ============================================================ */
-        .footer {
-            border-top: 1px solid rgba(255, 255, 255, 0.04);
-            margin-top: 2rem;
-        }
-        .footer a {
-            color: var(--text-secondary);
-            transition: var(--transition);
-        }
-        .footer a:hover {
-            color: var(--primary);
-        }
-
-        /* ============================================================
-           RESPONSIVE
-           ============================================================ */
+        /* ----- Responsive tweaks ----- */
         @media (max-width: 768px) {
-            .hero-title {
-                font-size: 2.6rem;
+            .nav-scroll {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
             }
-            .hero-3d-card .card-inner .wolf-icon {
-                font-size: 6rem;
+            .nav-scroll::-webkit-scrollbar {
+                display: none;
             }
-            .section-title {
-                font-size: 2rem;
+            .nav-link {
+                flex: 0 0 auto;
+                font-size: 0.75rem;
+                padding: 0.3rem 0.7rem;
             }
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
+            .section-page {
+                padding: 1.5rem 1rem 3rem;
             }
-            .news-grid {
-                grid-template-columns: 1fr;
-            }
-            .gallery-3d {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .match-ticker {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 0.75rem;
-                padding: 1rem;
-            }
-            .ticker-scroll {
-                animation-duration: 40s;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero-title {
-                font-size: 2rem;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            .gallery-3d {
-                grid-template-columns: 1fr;
-            }
-            .sponsor-grid {
-                grid-template-columns: 1fr 1fr;
+            .bracket-wrapper iframe {
+                height: 420px;
             }
         }
     </style>
 </head>
-
 <body>
 
-    <!-- ============================================================
-    AMBIENT BACKGROUND (moving gradient)
-    ============================================================ -->
-    <div class="ambient-bg"></div>
-
-    <!-- ============================================================
-    NAVBAR
-    ============================================================ -->
-    <nav class="navbar" id="mainNav">
-        <div class="container navbar-inner">
-            <a href="#home" class="nav-brand">
-                <span class="brand-icon">🐺</span>
-                <span class="brand-text">Wolf<span class="brand-accent">Society</span></span>
-            </a>
-            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
-                <span></span><span></span><span></span>
-            </button>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="#home" class="active"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="#about"><i class="fas fa-info-circle"></i> About</a></li>
-                <li><a href="#team"><i class="fas fa-users"></i> Team</a></li>
-                <li><a href="#matches"><i class="fas fa-trophy"></i> Matches</a></li>
-                <li><a href="#news"><i class="fas fa-newspaper"></i> News</a></li>
-                <li><a href="#gallery"><i class="fas fa-images"></i> Gallery</a></li>
-                <li><a href="#shop"><i class="fas fa-shopping-bag"></i> Shop</a></li>
-                <li class="nav-actions">
-                    <a href="#" class="btn btn-outline btn-sm"><i class="fas fa-user-plus"></i> Sign Up</a>
-                    <a href="#" class="btn btn-primary btn-sm"><i class="fas fa-user-cog"></i> Dashboard</a>
-                </li>
-            </ul>
-        </div>
+    <!-- ============================================================ -->
+    <!-- NAVIGATION (Modern, Minimal)                                 -->
+    <!-- ============================================================ -->
+    <nav class="nav-modern fixed top-0 left-0 right-0 z-50 px-4 py-2 flex items-center gap-1 overflow-x-auto nav-scroll">
+        <span class="font-display font-bold text-xl text-white mr-4 whitespace-nowrap tracking-tight">
+            🐺 WOLF
+        </span>
+        <button class="nav-link active" data-page="page-home">Home</button>
+        <button class="nav-link" data-page="page-roster">Roster</button>
+        <button class="nav-link" data-page="page-bracket">Bracket</button>
+        <button class="nav-link" data-page="page-community">Community</button>
+        <button class="nav-link" data-page="page-about">About</button>
     </nav>
 
-    <!-- ============================================================
-    HERO
-    ============================================================ -->
-    <section class="hero" id="home">
-        <div class="container">
-            <div class="row" style="display:flex; flex-wrap:wrap; gap:2rem; align-items:center;">
-                <div class="col" style="flex:1.2; min-width:280px;">
-                    <div class="badge-glow">🔥 Moba Legends 5v5</div>
-                    <h1 class="hero-title" id="heroTitle">
-                        <span class="text-gradient">Divine Wolf</span>
-                        <br />
-                        <span style="font-size:0.5em; font-weight:400; color:var(--text-secondary);">Wolf Society Esports</span>
+    <!-- ============================================================ -->
+    <!-- MAIN CONTENT                                                 -->
+    <!-- ============================================================ -->
+    <main class="pt-16">
+
+        <!-- ========== HOME ========== -->
+        <section id="page-home" class="section-page active">
+            <div class="flex flex-col lg:flex-row items-start gap-10 lg:gap-14">
+
+                <!-- Hero -->
+                <div class="flex-1 space-y-6">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-mono tracking-wider">
+                        <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+                        LIVE · MAJOR FINAL
+                    </div>
+                    <h1 class="font-display text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight">
+                        <span class="text-white">WOLF</span><br />
+                        <span class="gradient-text">SOCIETY</span>
                     </h1>
-                    <p class="hero-sub" id="heroSub">
-                        Dominating the rift with precision, teamwork, and an unbreakable spirit.
+                    <p class="text-textMuted text-lg max-w-lg leading-relaxed">
+                        Built for gamers, athletes, and creators — where competition meets community.
                     </p>
-                    <div class="hero-actions" style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:1.8rem;">
-                        <a href="#team" class="btn btn-primary btn-lg btn-slide">
-                            <span class="original">Meet the Pack</span>
-                            <span class="hover-text"><i class="fas fa-users"></i> Join now</span>
-                        </a>
-                        <a href="#matches" class="btn btn-outline btn-lg btn-ripple"><i class="fas fa-calendar-alt"></i> Schedule</a>
-                        <a href="#shop" class="btn btn-outline btn-lg btn-pulse"><i class="fas fa-shopping-bag"></i> Merch</a>
+                    <div class="flex flex-wrap gap-3">
+                        <span class="px-4 py-2 glass-light text-sm text-textLight">🏆 3-1 vs PHX</span>
+                        <span class="px-4 py-2 glass-light text-sm text-textLight">⏱ 24:36</span>
+                        <span class="px-4 py-2 glass-light text-sm text-textLight">🏅 +2.4k Gold</span>
+                    </div>
+                    <div class="flex gap-4 pt-2">
+                        <button class="btn-primary" onclick="navigateTo('page-bracket')">View Bracket →</button>
+                        <button class="px-5 py-2.5 glass-light text-textMuted hover:text-white transition" onclick="navigateTo('page-roster')">Meet the Pack</button>
                     </div>
                 </div>
-                <div class="col hero-3d-card" style="flex:1; min-width:280px; display:flex; justify-content:center;">
-                    <div class="card-inner" id="heroCard">
-                        <div class="wolf-icon">🐺</div>
-                        <div class="ring-1"></div>
-                        <div class="ring-2"></div>
+
+                <!-- Live Match Card (Glass) -->
+                <div class="w-full lg:w-72 glass p-6 space-y-4 animate-glow-pulse">
+                    <div class="flex justify-between items-center">
+                        <span class="text-textMuted text-xs font-mono">CURRENT MATCH</span>
+                        <span class="text-secondary text-xs font-bold animate-pulse">● LIVE</span>
+                    </div>
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="text-center">
+                            <div class="text-xl font-bold text-white">WOLF</div>
+                            <div class="text-3xl font-mono text-primary">3</div>
+                        </div>
+                        <div class="text-textMuted text-sm font-mono">vs</div>
+                        <div class="text-center">
+                            <div class="text-xl font-bold text-white">PHX</div>
+                            <div class="text-3xl font-mono text-textMuted">1</div>
+                        </div>
+                    </div>
+                    <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                        <div class="h-full w-3/4 bg-primary rounded-full"></div>
+                    </div>
+                    <div class="flex justify-between text-xs text-textMuted">
+                        <span>🏅 Gold Lead: +2.4k</span>
+                        <span>🎯 Objectives: 3/5</span>
+                    </div>
+                    <div class="pt-2 border-t border-white/5 text-center text-xs text-textMuted">
+                        Next: vs. VNM · 20:00 UTC
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- ============================================================
-    STATS
-    ============================================================ -->
-    <section class="section" id="about">
-        <div class="container">
-            <div class="stats-grid">
-                <div class="stat-item reveal">
-                    <div class="stat-icon">🏆</div>
-                    <div class="stat-number">12</div>
-                    <div class="stat-label">Tournament Wins</div>
-                </div>
-                <div class="stat-item reveal" style="transition-delay:0.1s;">
-                    <div class="stat-icon">⚔️</div>
-                    <div class="stat-number">89</div>
-                    <div class="stat-label">Matches Played</div>
-                </div>
-                <div class="stat-item reveal" style="transition-delay:0.2s;">
-                    <div class="stat-icon">⭐</div>
-                    <div class="stat-number">74%</div>
-                    <div class="stat-label">Win Rate</div>
-                </div>
-                <div class="stat-item reveal" style="transition-delay:0.3s;">
-                    <div class="stat-icon">👥</div>
-                    <div class="stat-number">2.4k</div>
-                    <div class="stat-label">Community</div>
+            <!-- News Ticker -->
+            <div class="mt-10 glass-light p-4 rounded-2xl overflow-hidden">
+                <div class="flex items-center gap-4">
+                    <span class="font-mono text-xs text-primary whitespace-nowrap">📡 INTEL</span>
+                    <div class="relative overflow-hidden w-full">
+                        <div class="flex gap-8 text-sm text-textMuted animate-[scroll_20s_linear_infinite] whitespace-nowrap w-max">
+                            <span>Wolf Society secures top seed</span>
+                            <span>•</span>
+                            <span>Roster changes incoming</span>
+                            <span>•</span>
+                            <span>New merch drop</span>
+                            <span>•</span>
+                            <span>AMA with captain this Friday</span>
+                            <span>•</span>
+                            <span>Community tournament sign-ups open</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- ============================================================
-    MATCH TICKER (with Lottie animation placeholder)
-    ============================================================ -->
-    <section class="section" style="padding-top:0;" id="matches">
-        <div class="container">
-            <div class="match-ticker">
-                <span style="font-weight:700; color:var(--primary); display:flex; align-items:center; gap:0.5rem;">
-                    <dotlottie-player src="https://lottie.host/3f5f8e48-7bd7-4b0c-87be-40a83d489322/Bg5NlLJDHL.lottie"
-                    background="transparent" speed="1" style="width:30px; height:30px;" loop autoplay>
-                </dotlottie-player>
-                LIVE
-            </span>
-            <div class="ticker-scroll" id="liveTicker">
-                <span class="ticker-item"><span class="badge-live">live</span> Divine Wolf vs. Shadow Clan <span class="vs">·</span> 2-1 <span class="vs">·</span> 24:38</span>
-                <span class="ticker-item">Divine Wolf vs. Frost Giants <span class="vs">·</span> 3-0 <span class="vs">·</span> 12:15</span>
-                <span class="ticker-item"><span class="badge-live">live</span> Divine Wolf vs. Storm Breakers <span class="vs">·</span> 1-1 <span class="vs">·</span> 08:22</span>
-                <span class="ticker-item">Divine Wolf vs. Ember Knights <span class="vs">·</span> 2-0 <span class="vs">·</span> 45:10</span>
-                <span class="ticker-item"><span class="badge-live">live</span> Divine Wolf vs. Void Walkers <span class="vs">·</span> 0-0 <span class="vs">·</span> 03:47</span>
-                <!-- duplicate for seamless scroll -->
-                <span class="ticker-item"><span class="badge-live">live</span> Divine Wolf vs. Shadow Clan <span class="vs">·</span> 2-1 <span class="vs">·</span> 24:38</span>
-                <span class="ticker-item">Divine Wolf vs. Frost Giants <span class="vs">·</span> 3-0 <span class="vs">·</span> 12:15</span>
-                <span class="ticker-item"><span class="badge-live">live</span> Divine Wolf vs. Storm Breakers <span class="vs">·</span> 1-1 <span class="vs">·</span> 08:22</span>
-                <span class="ticker-item">Divine Wolf vs. Ember Knights <span class="vs">·</span> 2-0 <span class="vs">·</span> 45:10</span>
-                <span class="ticker-item"><span class="badge-live">live</span> Divine Wolf vs. Void Walkers <span class="vs">·</span> 0-0 <span class="vs">·</span> 03:47</span>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ============================================================
-PARALLAX SECTION – cinematic depth
-============================================================ -->
-<section class="parallax-section" id="team" style="min-height:60vh;">
-    <div class="parallax-layer parallax-layer-bg"></div>
-    <div class="parallax-layer parallax-layer-mid">🐺</div>
-    <div class="parallax-layer parallax-layer-front container">
-        <div class="badge-glow">👥 Our Pack</div>
-        <h2 class="section-title">Meet Divine Wolf</h2>
-        <p class="section-sub" style="margin:0 auto 2rem;">Five players. One mission. Total domination.</p>
-        <div style="display:flex; gap:1.5rem; flex-wrap:wrap; justify-content:center;">
-            <span class="glass" style="padding:0.5rem 1.5rem; border-radius:100px;">🦊 Alpha</span>
-            <span class="glass" style="padding:0.5rem 1.5rem; border-radius:100px;">🐉 Beta</span>
-            <span class="glass" style="padding:0.5rem 1.5rem; border-radius:100px;">🧙 Gamma</span>
-            <span class="glass" style="padding:0.5rem 1.5rem; border-radius:100px;">🏹 Delta</span>
-            <span class="glass" style="padding:0.5rem 1.5rem; border-radius:100px;">🛡️ Epsilon</span>
-        </div>
-    </div>
-</section>
-
-<!-- ============================================================
-3D PERSPECTIVE GALLERY
-============================================================ -->
-<section class="section" id="gallery">
-    <div class="container">
-        <div style="text-align:center; margin-bottom:2.5rem;">
-            <span class="badge-glow">📸 Moments</span>
-            <h2 class="section-title">3D Gallery</h2>
-            <p class="section-sub" style="margin:0 auto;">Hover each tile to experience the depth.</p>
-        </div>
-        <div class="gallery-3d">
-            <div class="gallery-item">🏆</div>
-            <div class="gallery-item">🎮</div>
-            <div class="gallery-item">🤝</div>
-            <div class="gallery-item">📸</div>
-            <div class="gallery-item">🔥</div>
-            <div class="gallery-item">⭐</div>
-        </div>
-    </div>
-</section>
-
-<!-- ============================================================
-NEWS
-============================================================ -->
-<section class="section" id="news">
-    <div class="container">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:2.5rem;">
-            <div>
-                <span class="badge-glow">📰 Latest</span>
-                <h2 class="section-title" style="margin:0;">News &amp; Announcements</h2>
-            </div>
-            <a href="#" class="btn btn-outline btn-ripple">View All <i class="fas fa-arrow-right"></i></a>
-        </div>
-        <div class="news-grid" id="newsGrid">
-            <article class="news-card reveal">
-                <div class="card-img">🏆</div>
-                <div class="card-body">
-                    <span style="font-size:0.7rem;color:var(--primary);text-transform:uppercase;letter-spacing:0.06em;">Tournament</span>
-                    <h3>Divine Wolf Crowned Champions</h3>
-                    <p>After an intense 5-game series, Divine Wolf takes home the trophy.</p>
-                    <a href="#" class="btn btn-outline btn-sm" style="margin-top:0.5rem;">Read more →</a>
+            <!-- Quick Access -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                <div class="glass-card p-5 text-center cursor-pointer" onclick="navigateTo('page-roster')">
+                    <div class="text-3xl mb-1">👥</div>
+                    <div class="text-xs text-textMuted">Roster</div>
                 </div>
-            </article>
-            <article class="news-card reveal" style="transition-delay:0.1s;">
-                <div class="card-img">🤝</div>
-                <div class="card-body">
-                    <span style="font-size:0.7rem;color:var(--primary);text-transform:uppercase;letter-spacing:0.06em;">Sponsor</span>
-                    <h3>New Partnership with Razer</h3>
-                    <p>Exclusive gear and giveaways for the community.</p>
-                    <a href="#" class="btn btn-outline btn-sm" style="margin-top:0.5rem;">Read more →</a>
+                <div class="glass-card p-5 text-center cursor-pointer" onclick="navigateTo('page-bracket')">
+                    <div class="text-3xl mb-1">🏆</div>
+                    <div class="text-xs text-textMuted">Bracket</div>
                 </div>
-            </article>
-            <article class="news-card reveal" style="transition-delay:0.2s;">
-                <div class="card-img">🎮</div>
-                <div class="card-body">
-                    <span style="font-size:0.7rem;color:var(--primary);text-transform:uppercase;letter-spacing:0.06em;">Roster</span>
-                    <h3>New Jungle Talent Joins</h3>
-                    <p>Welcome "Fang" – rank #1 EU ladder.</p>
-                    <a href="#" class="btn btn-outline btn-sm" style="margin-top:0.5rem;">Read more →</a>
+                <div class="glass-card p-5 text-center cursor-pointer" onclick="navigateTo('page-community')">
+                    <div class="text-3xl mb-1">🎮</div>
+                    <div class="text-xs text-textMuted">Community</div>
                 </div>
-            </article>
-        </div>
-    </div>
-</section>
-
-<!-- ============================================================
-SPONSORS
-============================================================ -->
-<section class="section" style="background: rgba(255,255,255,0.015);" id="shop">
-    <div class="container">
-        <div style="text-align:center; margin-bottom:2.5rem;">
-            <span class="badge-glow">🤝 Partners</span>
-            <h2 class="section-title">Trusted by the Best</h2>
-        </div>
-        <div class="sponsor-grid">
-            <div class="sponsor-item"><div class="sponsor-icon">⚡</div><div>Razer</div></div>
-            <div class="sponsor-item"><div class="sponsor-icon">🎮</div><div>HyperX</div></div>
-            <div class="sponsor-item"><div class="sponsor-icon">🖥️</div><div>Alienware</div></div>
-            <div class="sponsor-item"><div class="sponsor-icon">🧊</div><div>G FUEL</div></div>
-            <div class="sponsor-item"><div class="sponsor-icon">📺</div><div>Twitch</div></div>
-            <div class="sponsor-item"><div class="sponsor-icon">🎧</div><div>Logitech</div></div>
-        </div>
-    </div>
-</section>
-
-<!-- ============================================================
-CTA
-============================================================ -->
-<section class="section" style="background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(139,92,246,0.03));">
-    <div class="container" style="text-align:center; padding:2.5rem 0;">
-        <h2 style="font-size:2.2rem;">Join the Pack</h2>
-        <p style="color:var(--text-secondary); max-width:540px; margin:0.5rem auto 1.8rem;">
-            Subscribe to our newsletter and never miss a match, announcement, or drop.
-        </p>
-        <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
-            <input type="email" placeholder="Enter your email" style="padding:0.8rem 1.4rem; border-radius:100px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.04); color:#fff; min-width:240px; outline:none; transition:border 0.3s;" />
-            <button class="btn btn-primary btn-ripple" style="border-radius:100px;"><i class="fas fa-paper-plane"></i> Subscribe</button>
-        </div>
-        <div style="display:flex; gap:1.5rem; justify-content:center; margin-top:2rem; font-size:1.6rem; color:var(--text-secondary);">
-            <a href="#" style="color:inherit; transition:color 0.3s;"><i class="fab fa-twitch"></i></a>
-            <a href="#" style="color:inherit; transition:color 0.3s;"><i class="fab fa-youtube"></i></a>
-            <a href="#" style="color:inherit; transition:color 0.3s;"><i class="fab fa-discord"></i></a>
-            <a href="#" style="color:inherit; transition:color 0.3s;"><i class="fab fa-twitter"></i></a>
-            <a href="#" style="color:inherit; transition:color 0.3s;"><i class="fab fa-instagram"></i></a>
-        </div>
-    </div>
-</section>
-
-<!-- ============================================================
-FOOTER
-============================================================ -->
-<footer class="footer">
-    <div class="container">
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:2.5rem; padding:2.5rem 0; border-bottom:1px solid rgba(255,255,255,0.04);">
-            <div>
-                <div style="font-size:1.3rem; font-weight:700;">🐺 Wolf<span style="color:var(--primary);">Society</span></div>
-                <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:0.5rem;">Home of Divine Wolf — Moba Legends 5v5.</p>
-            </div>
-            <div>
-                <h4 style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-secondary);">Pages</h4>
-                <ul style="list-style:none; padding:0; margin-top:0.5rem; font-size:0.9rem;">
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#team">Team</a></li>
-                    <li><a href="#matches">Matches</a></li>
-                    <li><a href="#shop">Shop</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-secondary);">Support</h4>
-                <ul style="list-style:none; padding:0; margin-top:0.5rem; font-size:0.9rem;">
-                    <li><a href="#">FAQ</a></li>
-                    <li><a href="#">Contact</a></li>
-                    <li><a href="#">Legal</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-secondary);">Connect</h4>
-                <div style="display:flex; gap:0.75rem; font-size:1.4rem; margin-top:0.5rem;">
-                    <a href="#" style="color:var(--text-secondary); transition:color 0.3s;"><i class="fab fa-twitch"></i></a>
-                    <a href="#" style="color:var(--text-secondary); transition:color 0.3s;"><i class="fab fa-youtube"></i></a>
-                    <a href="#" style="color:var(--text-secondary); transition:color 0.3s;"><i class="fab fa-discord"></i></a>
-                    <a href="#" style="color:var(--text-secondary); transition:color 0.3s;"><i class="fab fa-twitter"></i></a>
+                <div class="glass-card p-5 text-center cursor-pointer" onclick="navigateTo('page-about')">
+                    <div class="text-3xl mb-1">ℹ️</div>
+                    <div class="text-xs text-textMuted">About</div>
                 </div>
             </div>
-        </div>
-        <div style="text-align:center; padding:1.5rem 0; font-size:0.8rem; color:var(--text-secondary);">
-            &copy; 2026 Wolf Society Esports. All rights reserved. &nbsp;·&nbsp; Built with 🐺 by the Pack.
-        </div>
-    </div>
-</footer>
+        </section>
 
-<!-- ============================================================
-JAVASCRIPT – GSAP + ScrollTrigger + Lottie + Interactions
-============================================================ -->
-<script>
-    // ============================================================
-    // 1. REGISTER GSAP PLUGINS
-    // ============================================================
-    gsap.registerPlugin(ScrollTrigger);
+        <!-- ========== ROSTER ========== -->
+        <section id="page-roster" class="section-page">
+            <h2 class="font-display text-4xl font-bold text-white">👥 The Pack</h2>
+            <p class="text-textMuted mt-1">Our 5‑man squad — ready for battle.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 mt-6">
+                <!-- Player 1 -->
+                <div class="glass-card p-5 text-center">
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 mx-auto border-2 border-primary/30"></div>
+                    <div class="font-bold text-white mt-3">AlphaWolf</div>
+                    <div class="text-xs text-textMuted">Top</div>
+                    <div class="text-xs text-primary font-mono mt-1">KDA 4.2 · 67% WR</div>
+                </div>
+                <div class="glass-card p-5 text-center">
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 mx-auto border-2 border-primary/30"></div>
+                    <div class="font-bold text-white mt-3">ShadowStrike</div>
+                    <div class="text-xs text-textMuted">Jungle</div>
+                    <div class="text-xs text-primary font-mono mt-1">KDA 3.8 · 72% WR</div>
+                </div>
+                <div class="glass-card p-5 text-center">
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 mx-auto border-2 border-primary/30"></div>
+                    <div class="font-bold text-white mt-3">CrimsonMage</div>
+                    <div class="text-xs text-textMuted">Mid</div>
+                    <div class="text-xs text-primary font-mono mt-1">KDA 5.1 · 68% WR</div>
+                </div>
+                <div class="glass-card p-5 text-center">
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 mx-auto border-2 border-primary/30"></div>
+                    <div class="font-bold text-white mt-3">IronSight</div>
+                    <div class="text-xs text-textMuted">ADC</div>
+                    <div class="text-xs text-primary font-mono mt-1">KDA 4.5 · 71% WR</div>
+                </div>
+                <div class="glass-card p-5 text-center">
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 mx-auto border-2 border-primary/30"></div>
+                    <div class="font-bold text-white mt-3">VoidWarden</div>
+                    <div class="text-xs text-textMuted">Support</div>
+                    <div class="text-xs text-primary font-mono mt-1">KDA 3.2 · 65% WR</div>
+                </div>
+            </div>
+            <div class="mt-6 glass-light p-4 rounded-2xl flex flex-wrap justify-between gap-2 text-sm">
+                <span class="text-textMuted">Team KDA</span>
+                <span class="font-mono text-primary">4.16</span>
+                <span class="text-textMuted">Win Rate</span>
+                <span class="font-mono text-secondary">68.6%</span>
+                <span class="text-textMuted">Streak</span>
+                <span class="font-mono text-accent">🔥 W3</span>
+            </div>
+        </section>
 
-    // ============================================================
-    // 2. NAVBAR TOGGLE
-    // ============================================================
-    const toggle = document.getElementById('navToggle');
-    const navLinks = document.getElementById('navLinks');
-    if (toggle && navLinks) {
-        toggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            navLinks.classList.toggle('open');
-            this.classList.toggle('active');
-        });
-        navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', function() {
-                navLinks.classList.remove('open');
-                toggle.classList.remove('active');
+        <!-- ========== BRACKET (with iframe) ========== -->
+        <section id="page-bracket" class="section-page">
+            <h2 class="font-display text-4xl font-bold text-white">🏆 Bharat Gaming Masters 2026</h2>
+            <p class="text-textMuted mt-1">Qualifiers · Live bracket powered by Challonge.</p>
+            <div class="mt-5 bracket-wrapper glass">
+                <iframe src="https://challonge.com/gvh3taf5/module" width="100%" height="520" frameborder="0" scrolling="auto" allowtransparency="true"></iframe>
+            </div>
+            <p class="text-xs text-textMuted mt-3 text-center">Bracket updates in real-time. All matches best-of-3.</p>
+        </section>
+
+        <!-- ========== COMMUNITY ========== -->
+        <section id="page-community" class="section-page">
+            <h2 class="font-display text-4xl font-bold text-white">🎮 Community Hub</h2>
+            <p class="text-textMuted mt-1">Connect, compete, and celebrate.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div class="glass p-6 space-y-4">
+                    <h3 class="font-display text-xl text-secondary">🔮 Match Oracle</h3>
+                    <p class="text-sm text-textMuted">Predict the outcome</p>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm">WOLF wins</span>
+                            <span class="text-sm font-mono text-primary">68%</span>
+                        </div>
+                        <div class="h-2 bg-white/5 rounded-full"><div class="h-full w-[68%] bg-primary rounded-full"></div></div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm">PHX wins</span>
+                            <span class="text-sm font-mono text-textMuted">32%</span>
+                        </div>
+                        <div class="h-2 bg-white/5 rounded-full"><div class="h-full w-[32%] bg-textMuted rounded-full"></div></div>
+                        <button class="mt-2 px-5 py-2 btn-primary text-sm">Submit Prediction</button>
+                    </div>
+                </div>
+                <div class="glass p-6 space-y-4">
+                    <h3 class="font-display text-xl text-accent">🕹️ Arcade</h3>
+                    <p class="text-sm text-textMuted">Play to earn fan tokens</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="glass-light p-4 text-center cursor-pointer hover:bg-white/5 transition">
+                            <div class="text-2xl">🎯</div>
+                            <div class="text-xs text-textMuted">Aim Trainer</div>
+                        </div>
+                        <div class="glass-light p-4 text-center cursor-pointer hover:bg-white/5 transition">
+                            <div class="text-2xl">🧩</div>
+                            <div class="text-xs text-textMuted">Quiz</div>
+                        </div>
+                        <div class="glass-light p-4 text-center cursor-pointer hover:bg-white/5 transition">
+                            <div class="text-2xl">🏎️</div>
+                            <div class="text-xs text-textMuted">Race</div>
+                        </div>
+                        <div class="glass-light p-4 text-center cursor-pointer hover:bg-white/5 transition">
+                            <div class="text-2xl">⚔️</div>
+                            <div class="text-xs text-textMuted">Duel</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== ABOUT ========== -->
+        <section id="page-about" class="section-page">
+            <h2 class="font-display text-4xl font-bold text-white">ℹ️ About Wolf Society</h2>
+            <p class="text-textMuted mt-1">India's first fusion ecosystem for Esports, Sports, and AI.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div class="glass p-6 space-y-4">
+                    <p class="text-textMuted leading-relaxed">
+                        Wolf Society is a community-driven esports organization built for players who compete with heart. We bring together gaming, turf sports, swimming, and AI-powered performance tracking — creating a new way for youth to play, compete, and connect.
+                    </p>
+                    <p class="text-textMuted leading-relaxed">
+                        From gaming tournaments and influencer IPs to real-world sports and AI analytics, we're redefining what it means to be a modern athlete.
+                    </p>
+                </div>
+                <div class="glass p-6 space-y-4">
+                    <h3 class="font-display text-xl text-secondary">Core Values</h3>
+                    <ul class="space-y-2 text-textMuted">
+                        <li class="flex items-center gap-3"><span class="w-2 h-2 rounded-full bg-primary"></span> Community First</li>
+                        <li class="flex items-center gap-3"><span class="w-2 h-2 rounded-full bg-secondary"></span> Competitive Integrity</li>
+                        <li class="flex items-center gap-3"><span class="w-2 h-2 rounded-full bg-accent"></span> Innovation &amp; Inclusion</li>
+                    </ul>
+                    <div class="pt-3 border-t border-white/5">
+                        <span class="text-xs text-textMuted">Est. 2024 · Based in India</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ============================================================ -->
+    <!-- JAVASCRIPT — Navigation & Interactivity                      -->
+    <!-- ============================================================ -->
+    <script>
+        // ============================================================
+        // NAVIGATION
+        // ============================================================
+        const navLinks = document.querySelectorAll('.nav-link');
+        const pages = document.querySelectorAll('.section-page');
+
+        function navigateTo(pageId) {
+            // Hide all pages
+            pages.forEach(p => p.classList.remove('active'));
+            // Show target
+            const target = document.getElementById(pageId);
+            if (target) target.classList.add('active');
+            // Update nav
+            navLinks.forEach(link => {
+                link.classList.toggle('active', link.dataset.page === pageId);
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                navigateTo(link.dataset.page);
             });
         });
-    }
 
-    // ============================================================
-    // 3. RIPPLE EFFECT ON BUTTONS
-    // ============================================================
-    document.querySelectorAll('.btn-ripple').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            const rect = this.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const ripple = document.createElement('span');
-            ripple.className = 'ripple';
-            ripple.style.cssText =
-                `position:absolute; left:${x}px; top:${y}px; width:20px; height:20px; border-radius:50%; background:rgba(255,255,255,0.3); transform:scale(0); animation:rippleAnim 0.6s linear; pointer-events:none;`;
-            this.style.position = 'relative';
-            this.style.overflow = 'hidden';
-            this.appendChild(ripple);
-            setTimeout(() => ripple.remove(), 600);
-        });
-    });
+        // Handle hash on load
+        if (window.location.hash) {
+            const id = window.location.hash.replace('#', '');
+            if (document.getElementById(id)) navigateTo(id);
+        }
 
-    // ============================================================
-    // 4. 3D TILT ON HERO CARD
-    // ============================================================
-    const heroCard = document.getElementById('heroCard');
-    if (heroCard) {
-        document.addEventListener('mousemove', (e) => {
-            const rect = heroCard.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / rect.width - 0.5;
-            const y = (e.clientY - rect.top) / rect.height - 0.5;
-            heroCard.style.transform =
-                `rotateY(${x * 10}deg) rotateX(${y * -10}deg) translateZ(10px)`;
-        });
-        document.addEventListener('mouseleave', () => {
-            heroCard.style.transform = 'rotateY(0deg) rotateX(0deg) translateZ(0px)';
-        });
-    }
+        // ============================================================
+        // SIMULATED LIVE UPDATES (Oracle & Stats)
+        // ============================================================
+        function updateOracle() {
+            const wolf = 60 + Math.floor(Math.random() * 30);
+            const phx = 100 - wolf;
+            const wolfEl = document.querySelector('#page-community .text-primary.font-mono');
+            const phxEl = document.querySelector('#page-community .text-textMuted.font-mono');
+            const wolfBar = document.querySelector('#page-community .bg-primary');
+            const phxBar = document.querySelector('#page-community .bg-textMuted');
+            if (wolfEl) wolfEl.textContent = wolf + '%';
+            if (phxEl) phxEl.textContent = phx + '%';
+            if (wolfBar) wolfBar.style.width = wolf + '%';
+            if (phxBar) phxBar.style.width = phx + '%';
+        }
 
-    // ============================================================
-    // 5. GSAP SCROLL‑TRIGGERED ANIMATIONS
-    // ============================================================
+        // Update every 10 seconds
+        setInterval(updateOracle, 10000);
 
-    // --- Hero title: cinematic letter‑by‑letter reveal ---
-    const heroTitle = document.getElementById('heroTitle');
-    if (heroTitle) {
-        const letters = heroTitle.textContent.split('');
-        heroTitle.innerHTML = letters.map(l =>
-            `<span style="display:inline-block; opacity:0; transform:translateY(30px) rotateX(40deg);">${l === ' ' ? '&nbsp;' : l}</span>`
-        ).join('');
-
-        gsap.to(heroTitle.querySelectorAll('span'), {
-            opacity: 1,
-            y: 0,
-            rotateX: 0,
-            duration: 0.6,
-            stagger: 0.04,
-            ease: 'power3.out',
-            delay: 0.3,
-        });
-    }
-
-    // --- Hero subtitle: fade & slide ---
-    const heroSub = document.getElementById('heroSub');
-    if (heroSub) {
-        gsap.from(heroSub, {
-            opacity: 0,
-            y: 30,
-            duration: 1,
-            delay: 0.8,
-            ease: 'power3.out',
-        });
-    }
-
-    // --- Stats: scroll‑triggered reveal ---
-    document.querySelectorAll('.stat-item').forEach((item, i) => {
-        gsap.from(item, {
-            scrollTrigger: {
-                trigger: item,
-                start: 'top 85%',
-                toggleActions: 'play none none none',
-            },
-            opacity: 0,
-            y: 40,
-            duration: 0.8,
-            delay: i * 0.1,
-            ease: 'power3.out',
-        });
-    });
-
-    // --- News cards: staggered reveal ---
-    document.querySelectorAll('.news-card').forEach((card, i) => {
-        gsap.from(card, {
-            scrollTrigger: {
-                trigger: card,
-                start: 'top 88%',
-                toggleActions: 'play none none none',
-            },
-            opacity: 0,
-            y: 50,
-            duration: 0.7,
-            delay: i * 0.12,
-            ease: 'power3.out',
-        });
-    });
-
-    // --- 3D Gallery items: scale & rotate on scroll ---
-    document.querySelectorAll('.gallery-item').forEach((item, i) => {
-        gsap.from(item, {
-            scrollTrigger: {
-                trigger: item,
-                start: 'top 90%',
-                toggleActions: 'play none none none',
-            },
-            opacity: 0,
-            scale: 0.7,
-            rotationY: 20,
-            duration: 0.8,
-            delay: i * 0.08,
-            ease: 'back.out(1.7)',
-        });
-    });
-
-    // --- Sponsors: fade in staggered ---
-    document.querySelectorAll('.sponsor-item').forEach((item, i) => {
-        gsap.from(item, {
-            scrollTrigger: {
-                trigger: item,
-                start: 'top 92%',
-                toggleActions: 'play none none none',
-            },
-            opacity: 0,
-            y: 30,
-            duration: 0.6,
-            delay: i * 0.06,
-            ease: 'power2.out',
-        });
-    });
-
-    // --- Parallax layers: move at different speeds ---
-    const parallaxBg = document.querySelector('.parallax-layer-bg');
-    const parallaxMid = document.querySelector('.parallax-layer-mid');
-    const parallaxSection = document.querySelector('.parallax-section');
-
-    if (parallaxSection) {
-        gsap.to(parallaxBg, {
-            scrollTrigger: {
-                trigger: parallaxSection,
-                start: 'top bottom',
-                end: 'bottom top',
-                scrub: 1,
-            },
-            y: 80,
-            scale: 1.1,
-            ease: 'none',
-        });
-
-        gsap.to(parallaxMid, {
-            scrollTrigger: {
-                trigger: parallaxSection,
-                start: 'top bottom',
-                end: 'bottom top',
-                scrub: 1,
-            },
-            y: -60,
-            rotation: 10,
-            ease: 'none',
-        });
-    }
-
-    // --- Match ticker: subtle scale pulse on scroll ---
-    const ticker = document.querySelector('.match-ticker');
-    if (ticker) {
-        gsap.from(ticker, {
-            scrollTrigger: {
-                trigger: ticker,
-                start: 'top 90%',
-                toggleActions: 'play none none none',
-            },
-            opacity: 0,
-            scale: 0.95,
-            duration: 0.8,
-            ease: 'power2.out',
-        });
-    }
-
-    // --- CTA section: reveal ---
-    const ctaSection = document.querySelector('.section:last-of-type');
-    if (ctaSection) {
-        gsap.from(ctaSection, {
-            scrollTrigger: {
-                trigger: ctaSection,
-                start: 'top 85%',
-                toggleActions: 'play none none none',
-            },
-            opacity: 0,
-            y: 40,
-            duration: 1,
-            ease: 'power3.out',
-        });
-    }
-
-    // ============================================================
-    // 6. SMOOTH SCROLL (native with GSAP ScrollTrigger)
-    // ============================================================
-    // Enable smooth scrolling with ScrollTrigger's built‑in smoothing
-    // (Note: for full smooth scroll, consider Lenis, but we keep it native)
-
-    console.log('🐺 Wolf Society Esports — Next‑Gen Experience');
-    console.log('✨ GSAP + ScrollTrigger + Lottie + 3D interactions');
-</script>
+        console.log('🐺 Wolf Society Esports · Champion Circuit style loaded');
+        console.log('📡 Bracket: https://challonge.com/gvh3taf5/module');
+    </script>
 
 </body>
 </html>
