@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wolf Society · Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Raleway:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js">
+    </script>
+</head>
+<body>
+
+    <nav class="navbar-wolf">
+        <div class="container" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">
+            <a href="index.html" class="brand">🐺 WOLF<span>SOCIETY</span></a>
+            <button class="nav-toggle"><i class="fas fa-bars"></i></button>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="roster.html">Roster</a>
+                <a href="schedule.html">Schedule</a>
+                <a href="bracket.html">Bracket</a>
+                <a href="news.html">News</a>
+                <a href="sponsors.html">Sponsors</a>
+                <a href="merch.html">Merch</a>
+                <a href="community.html">Community</a>
+                <a href="about.html">About</a>
+                <a href="tryouts.html">Tryouts</a>
+                <div class="nav-right">
+                    <a href="login.html" class="btn-neon btn-neon-sm">Login</a>
+                    <a href="dashboard.html" class="btn-neon btn-neon-sm btn-neon-secondary">Admin</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-wrapper">
+        <div class="container auth-container">
+            <div class="auth-box glass-card p-5">
+                <h2 class="section-title text-center" style="font-size:2rem;">🔐 <span class="highlight">Login</span></h2>
+                <p class="text-center text-muted small">Access your Wolf Society account.</p>
+                <form id="loginForm" class="mt-4">
+                    <div id="loginError" class="alert alert-danger d-none"></div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" id="loginEmail" class="form-control" placeholder="you@example.com" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required />
+                    </div>
+                    <button type="submit" class="btn-neon w-100">Login</button>
+                </form>
+                <div class="text-center mt-3">
+                    <span class="text-muted small">Don't have an account?</span>
+                    <a href="register.html" class="small">Register</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer-wolf" style="margin-top:0;">
+        <div class="container">
+            <div class="copyright">&copy; 2026 Wolf Society Esports.</div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            const errorEl = document.getElementById('loginError');
+
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                window.location.href = 'dashboard.html';
+            } catch (err) {
+                errorEl.textContent = err.message;
+                errorEl.classList.remove('d-none');
+            }
+        });
+    </script>
+</body>
+</html>
