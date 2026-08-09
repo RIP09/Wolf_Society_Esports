@@ -9,8 +9,11 @@
 const SUPABASE_URL = 'https://tdfkebgapncswtvbtaqy.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ';
 
-// Initialize Supabase
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Initialize Supabase safely
+let supabase = null;
+if (window.supabase && typeof window.supabase.createClient === 'function') {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
 
 // ============================================================
 // Navigation Toggle (Mobile)
@@ -18,9 +21,20 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 document.addEventListener('DOMContentLoaded', function() {
     const toggle = document.querySelector('.nav-toggle');
     const navLinks = document.querySelector('.nav-links');
+
     if (toggle && navLinks) {
-        toggle.addEventListener('click', function() {
+        toggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            // Toggle both active and open classes to match JS and CSS selectors
             navLinks.classList.toggle('open');
+            navLinks.classList.toggle('active');
+        });
+
+        // Close mobile nav when clicking anywhere outside
+        document.addEventListener('click', function(e) {
+            if (!navLinks.contains(e.target) && !toggle.contains(e.target)) {
+                navLinks.classList.remove('open', 'active');
+            }
         });
     }
 
@@ -38,6 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Auth Check (for admin pages)
 // ============================================================
 async function checkAuth() {
+    if (!supabase) return null;
     const { data: { session }, error } = await supabase.auth.getSession();
     if (!session) {
         // Redirect to login if on admin page
@@ -54,7 +69,9 @@ async function checkAuth() {
 // Logout
 // ============================================================
 async function logoutUser() {
-    await supabase.auth.signOut();
+    if (supabase) {
+        await supabase.auth.signOut();
+    }
     window.location.href = 'index.html';
 }
 
@@ -62,6 +79,7 @@ async function logoutUser() {
 // Fetch Table Helper
 // ============================================================
 async function fetchTable(table, orderBy = 'id') {
+    if (!supabase) return [];
     const { data, error } = await supabase.from(table).select('*').order(orderBy, { ascending: true });
     if (error) console.error(`Error fetching ${table}:`, error);
     return data || [];
