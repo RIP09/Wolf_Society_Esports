@@ -3,108 +3,65 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wolf Society Esports · Official</title>
+    <title>Wolf Society Esports · Supabase Multi‑Page</title>
 
-    <!-- ============================================================ -->
-    <!-- 1. SEO & Meta Tags                                           -->
-    <!-- ============================================================ -->
-    <meta name="description" content="Wolf Society Esports — India's premier gaming collective. Compete, create, and connect." />
-    <meta name="keywords" content="esports, gaming, wolf society, tournaments, roster, india" />
-    <meta name="author" content="Wolf Society Esports" />
-    <link rel="canonical" href="https://wolfsocietyesports.com" />
-
-    <!-- ============================================================ -->
-    <!-- 2. Google Fonts (Roboto + Raleway)                          -->
-    <!-- ============================================================ -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Raleway:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
-
-    <!-- ============================================================ -->
-    <!-- 3. Font Awesome 6 (Free) + Ion Icons                        -->
-    <!-- ============================================================ -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.5.6/css/ionicons.min.css" />
-
-    <!-- ============================================================ -->
-    <!-- 4. Bootstrap 5 (CSS)                                         -->
-    <!-- ============================================================ -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-
-    <!-- ============================================================ -->
-    <!-- 5. Owl Carousel 2 (CSS)                                      -->
-    <!-- ============================================================ -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" />
 
-    <!-- ============================================================ -->
-    <!-- 6. Main Custom Stylesheet                                    -->
-    <!-- ============================================================ -->
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js">
+    </script>
+
     <style>
-        /* ==============================================================
-               1. RESET & BASE
-               ============================================================== */
+        /* ============================
+                   RESET & BASE
+                   ============================ */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         :root {
             --primary: #7C3AED;
-            --primary-dark: #5B21B6;
             --secondary: #06D6A0;
             --accent: #F59E0B;
             --dark: #0A0A10;
-            --dark-surface: #12121E;
-            --dark-card: #1A1A2E;
             --text-light: #F8FAFC;
             --text-muted: #94A3B8;
             --glass-bg: rgba(255, 255, 255, 0.04);
             --glass-border: rgba(255, 255, 255, 0.06);
             --font-primary: 'Roboto', sans-serif;
             --font-display: 'Raleway', sans-serif;
-            --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
         body {
             font-family: var(--font-primary);
             background: var(--dark);
             color: var(--text-light);
             line-height: 1.7;
             overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
         }
-
         a {
             color: var(--primary);
             text-decoration: none;
-            transition: var(--transition);
+            transition: all 0.3s ease;
         }
         a:hover {
             color: var(--secondary);
         }
 
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        /* ==============================================================
-               2. UTILITY CLASSES
-               ============================================================== */
+        /* Utilities */
         .section-padding {
             padding: 80px 0;
         }
-
         .section-title {
             font-family: var(--font-display);
             font-weight: 800;
             font-size: 2.5rem;
             margin-bottom: 0.5rem;
-            letter-spacing: -0.02em;
         }
         .section-title .highlight {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -118,41 +75,33 @@
             font-weight: 300;
             margin-bottom: 2rem;
         }
-
-        /* ----- Glassmorphism Cards ----- */
         .glass-card {
             background: var(--glass-bg);
             backdrop-filter: blur(20px) saturate(1.4);
-            -webkit-backdrop-filter: blur(20px) saturate(1.4);
             border: 1px solid var(--glass-border);
             border-radius: 1.25rem;
             padding: 1.5rem;
-            transition: var(--transition);
+            transition: all 0.3s ease;
         }
         .glass-card:hover {
             transform: translateY(-6px);
             border-color: rgba(124, 58, 237, 0.25);
             box-shadow: 0 12px 48px rgba(124, 58, 237, 0.08);
         }
-
         .glass-card-light {
             background: rgba(255, 255, 255, 0.02);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.04);
             border-radius: 1rem;
             padding: 1.25rem;
-            transition: var(--transition);
         }
-
-        /* ----- Buttons ----- */
         .btn-neon {
             display: inline-block;
             padding: 0.65rem 2rem;
             border-radius: 9999px;
             font-weight: 600;
             font-size: 0.9rem;
-            transition: var(--transition);
+            transition: all 0.3s ease;
             border: 1px solid var(--primary);
             background: rgba(124, 58, 237, 0.12);
             color: var(--text-light);
@@ -172,8 +121,10 @@
             background: rgba(6, 214, 160, 0.2);
             box-shadow: 0 0 40px rgba(6, 214, 160, 0.12);
         }
-
-        /* ----- Gradient Text ----- */
+        .btn-neon-sm {
+            padding: 0.3rem 1rem;
+            font-size: 0.75rem;
+        }
         .gradient-text {
             background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
             -webkit-background-clip: text;
@@ -181,45 +132,18 @@
             background-clip: text;
         }
 
-        /* ----- Breadcrumb ----- */
-        .breadcrumb-custom {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 0.75rem;
-            padding: 0.75rem 1.25rem;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            margin-bottom: 1.5rem;
-        }
-        .breadcrumb-custom .breadcrumb-item {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-        .breadcrumb-custom .breadcrumb-item a {
-            color: var(--primary);
-        }
-        .breadcrumb-custom .breadcrumb-item.active {
-            color: var(--text-light);
-        }
-        .breadcrumb-custom .breadcrumb-item+.breadcrumb-item::before {
-            color: var(--text-muted);
-        }
-
-        /* ==============================================================
-               3. NAVIGATION (Responsive Dropdown)
-               ============================================================== */
+        /* Navigation */
         .navbar-wolf {
             background: rgba(10, 10, 16, 0.85);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
             padding: 0.75rem 0;
-            transition: var(--transition);
         }
         .navbar-wolf .navbar-brand {
             font-family: var(--font-display);
             font-weight: 900;
             font-size: 1.6rem;
             color: #fff;
-            letter-spacing: -0.02em;
         }
         .navbar-wolf .navbar-brand span {
             color: var(--primary);
@@ -229,58 +153,36 @@
             font-weight: 500;
             font-size: 0.9rem;
             padding: 0.5rem 1rem;
-            transition: var(--transition);
+            transition: all 0.3s ease;
             border-radius: 0.5rem;
-            position: relative;
         }
         .navbar-wolf .navbar-nav .nav-link:hover,
         .navbar-wolf .navbar-nav .nav-link.active {
             color: #fff;
             background: rgba(124, 58, 237, 0.08);
         }
-        .navbar-wolf .navbar-nav .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: 4px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px;
-            height: 2px;
-            background: var(--primary);
-            border-radius: 4px;
-        }
-
-        /* Dropdown */
         .navbar-wolf .dropdown-menu {
             background: rgba(18, 18, 30, 0.95);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 0.75rem;
-            padding: 0.5rem 0;
         }
         .navbar-wolf .dropdown-item {
             color: var(--text-muted);
-            padding: 0.5rem 1.25rem;
-            transition: var(--transition);
+            transition: all 0.3s ease;
         }
         .navbar-wolf .dropdown-item:hover {
             background: rgba(124, 58, 237, 0.08);
             color: #fff;
         }
-
-        /* Mobile Toggle */
         .navbar-wolf .navbar-toggler {
             border-color: rgba(255, 255, 255, 0.1);
-            padding: 0.4rem 0.6rem;
         }
         .navbar-wolf .navbar-toggler-icon {
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255,255,255,0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
         }
 
-        /* ==============================================================
-               4. HERO / PARALLAX SECTION
-               ============================================================== */
+        /* Hero */
         .hero-section {
             position: relative;
             min-height: 100vh;
@@ -344,7 +246,6 @@
                 transform: scale(0.8);
             }
         }
-
         .hero-section h1 {
             font-family: var(--font-display);
             font-weight: 900;
@@ -389,9 +290,7 @@
             letter-spacing: 0.06em;
         }
 
-        /* ==============================================================
-               5. OWL CAROUSEL CUSTOM
-               ============================================================== */
+        /* Owl Carousel custom */
         .owl-carousel .owl-nav button {
             background: rgba(255, 255, 255, 0.04) !important;
             border-radius: 50% !important;
@@ -403,7 +302,7 @@
             border: 1px solid rgba(255, 255, 255, 0.06) !important;
             color: #fff !important;
             font-size: 1.2rem !important;
-            transition: var(--transition);
+            transition: all 0.3s ease;
         }
         .owl-carousel .owl-nav button:hover {
             background: rgba(124, 58, 237, 0.15) !important;
@@ -416,18 +315,15 @@
             background: var(--primary) !important;
         }
 
-        /* ==============================================================
-               6. ROSTER CARDS
-               ============================================================== */
+        /* Roster Cards */
         .roster-card {
             text-align: center;
             padding: 1.5rem 1rem;
             background: var(--glass-bg);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border);
             border-radius: 1.25rem;
-            transition: var(--transition);
+            transition: all 0.3s ease;
         }
         .roster-card:hover {
             transform: translateY(-8px);
@@ -469,16 +365,14 @@
             line-height: 1.5;
         }
 
-        /* ==============================================================
-               7. MATCH SCHEDULE
-               ============================================================== */
+        /* Match Item */
         .match-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0.75rem 1rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            transition: var(--transition);
+            transition: all 0.3s ease;
         }
         .match-item:hover {
             background: rgba(255, 255, 255, 0.02);
@@ -505,17 +399,14 @@
             color: var(--text-muted);
         }
 
-        /* ==============================================================
-               8. NEWS / BLOG
-               ============================================================== */
+        /* News Cards */
         .news-card {
             background: var(--glass-bg);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border);
             border-radius: 1.25rem;
             overflow: hidden;
-            transition: var(--transition);
+            transition: all 0.3s ease;
             height: 100%;
         }
         .news-card:hover {
@@ -564,13 +455,8 @@
             display: flex;
             gap: 1rem;
         }
-        .news-card .news-body .meta i {
-            margin-right: 0.25rem;
-        }
 
-        /* ==============================================================
-               9. AUTHOR BOX
-               ============================================================== */
+        /* Author Box */
         .author-box {
             display: flex;
             align-items: center;
@@ -578,7 +464,6 @@
             padding: 1.5rem;
             background: var(--glass-bg);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border);
             border-radius: 1.25rem;
             margin-top: 2rem;
@@ -608,50 +493,13 @@
             color: var(--text-muted);
             font-size: 0.9rem;
             margin-right: 0.75rem;
-            transition: var(--transition);
+            transition: all 0.3s ease;
         }
         .author-box .author-info .social-links a:hover {
             color: var(--primary);
         }
 
-        /* ==============================================================
-               10. RELATED POSTS
-               ============================================================== */
-        .related-posts .related-item {
-            display: flex;
-            gap: 1rem;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-        }
-        .related-posts .related-item:last-child {
-            border-bottom: none;
-        }
-        .related-posts .related-item .thumb {
-            width: 64px;
-            height: 64px;
-            border-radius: 0.5rem;
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(6, 214, 160, 0.05));
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-        .related-posts .related-item .info h6 {
-            font-family: var(--font-display);
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: #fff;
-            margin: 0 0 0.2rem;
-        }
-        .related-posts .related-item .info .date {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        /* ==============================================================
-               11. SPONSORS
-               ============================================================== */
+        /* Sponsors */
         .sponsor-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -661,12 +509,11 @@
         .sponsor-grid .sponsor-item {
             background: var(--glass-bg);
             backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
             border: 1px solid var(--glass-border);
             border-radius: 1rem;
             padding: 1.5rem 1rem;
             text-align: center;
-            transition: var(--transition);
+            transition: all 0.3s ease;
             color: var(--text-muted);
             font-weight: 500;
             font-size: 0.9rem;
@@ -682,9 +529,7 @@
             color: var(--primary);
         }
 
-        /* ==============================================================
-               12. FOOTER
-               ============================================================== */
+        /* Footer */
         .footer-wolf {
             background: rgba(10, 10, 16, 0.8);
             border-top: 1px solid rgba(255, 255, 255, 0.04);
@@ -714,7 +559,7 @@
             color: var(--text-muted);
             text-align: center;
             line-height: 40px;
-            transition: var(--transition);
+            transition: all 0.3s ease;
             margin-right: 0.5rem;
         }
         .footer-wolf .social-links a:hover {
@@ -727,7 +572,7 @@
             font-size: 0.85rem;
             display: block;
             padding: 0.25rem 0;
-            transition: var(--transition);
+            transition: all 0.3s ease;
         }
         .footer-wolf .footer-links a:hover {
             color: #fff;
@@ -742,41 +587,68 @@
             text-align: center;
         }
 
-        /* ==============================================================
-               13. 404 PAGE
-               ============================================================== */
-        .error-404 {
-            min-height: 70vh;
+        /* Admin Panel */
+        .admin-table td,
+        .admin-table th {
+            padding: 0.5rem 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .admin-table input,
+        .admin-table select {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            color: #fff;
+            width: 100%;
+        }
+        .admin-table input:focus,
+        .admin-table select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .admin-actions {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            flex-direction: column;
+            gap: 0.5rem;
+            flex-wrap: wrap;
         }
-        .error-404 .code {
-            font-family: var(--font-display);
-            font-weight: 900;
-            font-size: 8rem;
-            line-height: 1;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .error-404 h2 {
-            font-family: var(--font-display);
-            font-weight: 700;
-            font-size: 2rem;
-            margin: 1rem 0;
-        }
-        .error-404 p {
+        .admin-actions button {
+            background: transparent;
+            border: none;
             color: var(--text-muted);
-            max-width: 400px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .admin-actions button:hover {
+            color: #fff;
+        }
+        .admin-actions .delete-btn {
+            color: #ff6b6b;
+        }
+        .admin-actions .delete-btn:hover {
+            color: #ff0000;
         }
 
-        /* ==============================================================
-               14. RESPONSIVE
-               ============================================================== */
+        /* Page sections */
+        .page-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .page-section.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
         @media (max-width: 991px) {
             .hero-section {
                 min-height: auto;
@@ -789,7 +661,6 @@
                 font-size: 2rem;
             }
         }
-
         @media (max-width: 767px) {
             .section-padding {
                 padding: 50px 0;
@@ -815,7 +686,6 @@
                 font-size: 1.3rem;
             }
         }
-
         @media (max-width: 575px) {
             .hero-section h1 {
                 font-size: 2rem;
@@ -833,114 +703,53 @@
                 gap: 0.75rem;
             }
         }
-
-        /* ==============================================================
-               15. MIXITUP FILTERS
-               ============================================================== */
-        .filter-buttons .btn-filter {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            color: var(--text-muted);
-            padding: 0.4rem 1.2rem;
-            border-radius: 9999px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            transition: var(--transition);
-            cursor: pointer;
-        }
-        .filter-buttons .btn-filter:hover,
-        .filter-buttons .btn-filter.active {
-            background: rgba(124, 58, 237, 0.12);
-            border-color: var(--primary);
-            color: #fff;
-        }
-        .mix {
-            display: none;
-        }
-
-        /* ==============================================================
-               16. TYPED JS CURSOR
-               ============================================================== */
-        .typed-cursor {
-            color: var(--primary);
-            font-weight: 300;
-        }
     </style>
 </head>
-
 <body>
 
-    <!-- ============================================================ -->
-    <!-- 7. NAVIGATION (Bootstrap 5 Navbar with Dropdown)            -->
-    <!-- ============================================================ -->
+    <!-- ============================================================= -->
+    <!-- NAVIGATION                                                    -->
+    <!-- ============================================================= -->
     <nav class="navbar navbar-expand-lg navbar-wolf fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="#page-home">
-                🐺 WOLF<span>SOCIETY</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#wolfNavbar" aria-controls="wolfNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand" href="#home">🐺 WOLF<span>SOCIETY</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#wolfNavbar">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="wolfNavbar">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
-                    <li class="nav-item"><a class="nav-link active" href="#page-home">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#page-roster">Roster</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#page-bracket">Bracket</a></li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="communityDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Community
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="communityDropdown">
-                            <li><a class="dropdown-item" href="#page-community">Fan Zone</a></li>
-                            <li><a class="dropdown-item" href="#page-community">Match Oracle</a></li>
-                            <li><a class="dropdown-item" href="#page-community">Arcade</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="#page-about">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#page-news">News</a></li>
-                    <li class="nav-item"><a class="btn-neon ms-lg-2" href="#page-tryouts">Join the Pack</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#roster">Roster</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#bracket">Bracket</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#community">Community</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#news">News</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#tryouts">Tryouts</a></li>
+                    <li class="nav-item"><a class="nav-link text-neon" href="#admin" style="color:var(--primary);">Admin</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- ============================================================ -->
-    <!-- 8. HERO SECTION (with Parallax)                              -->
-    <!-- ============================================================ -->
-    <section id="page-home" class="hero-section">
+    <!-- ============================================================= -->
+    <!-- PAGE: HOME                                                    -->
+    <!-- ============================================================= -->
+    <section id="page-home" class="page-section active hero-section">
         <div class="hero-bg-parallax" id="parallaxBg"></div>
         <div class="container hero-content">
             <div class="row align-items-center">
                 <div class="col-lg-7">
-                    <div class="hero-badge">
-                        <span class="dot"></span>
-                        Live · Major Final
-                    </div>
-                    <h1>
-                        Where the<br />
-                        <span class="highlight">Pack Hunts</span>
-                    </h1>
-                    <p>
-                        Wolf Society Esports — India's premier gaming collective.
-                        We compete, create, and connect from the battlefield to the big stage.
-                    </p>
+                    <div class="hero-badge"><span class="dot"></span> Live · Major Final</div>
+                    <h1>Where the<br /><span class="highlight">Pack Hunts</span></h1>
+                    <p>Wolf Society Esports — India's premier gaming collective. We compete, create, and connect from the battlefield to the big stage.</p>
                     <div>
-                        <a href="#page-bracket" class="btn-neon">View Live Bracket <i class="fas fa-arrow-right ms-2"></i></a>
-                        <a href="#page-roster" class="btn-neon btn-neon-secondary ms-2">Meet the Pack</a>
+                        <a href="#bracket" class="btn-neon">View Live Bracket <i class="fas fa-arrow-right ms-2"></i></a>
+                        <a href="#roster" class="btn-neon btn-neon-secondary ms-2">Meet the Pack</a>
                     </div>
                     <div class="hero-stats">
-                        <div class="stat-item">
-                            <span class="number" id="statMembers">500+</span>
-                            <span class="label">Community Members</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="number" id="statTournaments">12</span>
-                            <span class="label">Tournaments Hosted</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="number" id="statPrize">₹5L+</span>
-                            <span class="label">Prize Pool</span>
-                        </div>
+                        <div class="stat-item"><span class="number" id="statMembers">500+</span><span class="label">Community Members</span></div>
+                        <div class="stat-item"><span class="number" id="statTournaments">12</span><span class="label">Tournaments</span></div>
+                        <div class="stat-item"><span class="number" id="statPrize">₹5L+</span><span class="label">Prize Pool</span></div>
                     </div>
                 </div>
                 <div class="col-lg-5 mt-5 mt-lg-0">
@@ -950,121 +759,41 @@
                             <span class="text-success small fw-bold"><span class="dot d-inline-block me-1" style="width:8px;height:8px;border-radius:50%;background:var(--secondary);animation:pulse-dot 2s infinite;"></span> Live</span>
                         </div>
                         <div class="d-flex align-items-center justify-content-between">
-                            <div class="text-center">
-                                <div class="fw-bold fs-5">WOLF</div>
-                                <div class="display-4 fw-bold text-primary">3</div>
-                            </div>
+                            <div class="text-center"><div class="fw-bold fs-5">WOLF</div><div class="display-4 fw-bold text-primary" id="liveScoreWolf">3</div></div>
                             <div class="text-muted small fw-light">vs</div>
-                            <div class="text-center">
-                                <div class="fw-bold fs-5">PHX</div>
-                                <div class="display-4 fw-bold text-muted">1</div>
-                            </div>
+                            <div class="text-center"><div class="fw-bold fs-5">PHX</div><div class="display-4 fw-bold text-muted" id="liveScorePhx">1</div></div>
                         </div>
                         <div class="progress mt-3" style="height:4px;background:rgba(255,255,255,0.05);">
-                            <div class="progress-bar bg-primary" style="width:75%;"></div>
+                            <div class="progress-bar bg-primary" id="liveProgress" style="width:75%;"></div>
                         </div>
                         <div class="d-flex justify-content-between mt-2 small text-muted">
-                            <span><i class="fas fa-trophy me-1"></i> Gold: +2.4k</span>
-                            <span><i class="fas fa-bullseye me-1"></i> Obj: 3/5</span>
+                            <span><i class="fas fa-trophy me-1"></i> Gold: <span id="liveGold">+2.4k</span></span>
+                            <span><i class="fas fa-bullseye me-1"></i> Obj: <span id="liveObj">3/5</span></span>
                         </div>
-                        <div class="mt-3 pt-2 border-top border-white/5 text-center small text-muted">
-                            Next: <strong class="text-white">vs. VNM</strong> · 20:00 UTC
-                        </div>
+                        <div class="mt-3 pt-2 border-top border-white/5 text-center small text-muted">Next: <strong class="text-white">vs. VNM</strong> · 20:00 UTC</div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ============================================================ -->
-    <!-- 9. BREADCRUMB (Example on Roster Page)                      -->
-    <!-- ============================================================ -->
-    <div class="container mt-4">
-        <nav aria-label="breadcrumb" class="breadcrumb-custom">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="#page-home"><i class="fas fa-home me-1"></i>Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Roster</li>
-            </ol>
-        </nav>
-    </div>
-
-    <!-- ============================================================ -->
-    <!-- 10. ROSTER SECTION                                           -->
-    <!-- ============================================================ -->
-    <section id="page-roster" class="section-padding">
+    <!-- ============================================================= -->
+    <!-- PAGE: ROSTER (fetches from Supabase)                         -->
+    <!-- ============================================================= -->
+    <section id="page-roster" class="page-section section-padding">
         <div class="container">
             <div class="text-center mb-5">
                 <h2 class="section-title">👥 The <span class="highlight">Pack</span></h2>
                 <p class="section-subtitle">Our starting five — elite, relentless, and ready for glory.</p>
             </div>
-            <div class="row g-4">
-                <!-- Player 1 -->
-                <div class="col-6 col-md-4 col-lg-2">
-                    <div class="roster-card">
-                        <div class="avatar">🐺</div>
-                        <div class="name">AlphaWolf</div>
-                        <div class="role">Top Laner</div>
-                        <div class="stats">KDA 4.2 · 67% WR</div>
-                        <div class="bio">The rock of the team.</div>
-                    </div>
-                </div>
-                <!-- Player 2 -->
-                <div class="col-6 col-md-4 col-lg-2">
-                    <div class="roster-card">
-                        <div class="avatar">🌑</div>
-                        <div class="name">ShadowStrike</div>
-                        <div class="role">Jungler</div>
-                        <div class="stats">KDA 3.8 · 72% WR</div>
-                        <div class="bio">Silent predator.</div>
-                    </div>
-                </div>
-                <!-- Player 3 -->
-                <div class="col-6 col-md-4 col-lg-2">
-                    <div class="roster-card">
-                        <div class="avatar">🔥</div>
-                        <div class="name">CrimsonMage</div>
-                        <div class="role">Mid Laner</div>
-                        <div class="stats">KDA 5.1 · 68% WR</div>
-                        <div class="bio">Mechanical god.</div>
-                    </div>
-                </div>
-                <!-- Player 4 -->
-                <div class="col-6 col-md-4 col-lg-2">
-                    <div class="roster-card">
-                        <div class="avatar">🎯</div>
-                        <div class="name">IronSight</div>
-                        <div class="role">ADC</div>
-                        <div class="stats">KDA 4.5 · 71% WR</div>
-                        <div class="bio">Hyper-carry.</div>
-                    </div>
-                </div>
-                <!-- Player 5 -->
-                <div class="col-6 col-md-4 col-lg-2">
-                    <div class="roster-card">
-                        <div class="avatar">🛡️</div>
-                        <div class="name">VoidWarden</div>
-                        <div class="role">Support</div>
-                        <div class="stats">KDA 3.2 · 65% WR</div>
-                        <div class="bio">The visionary.</div>
-                    </div>
-                </div>
-                <!-- Player 6 (Sub) -->
-                <div class="col-6 col-md-4 col-lg-2">
-                    <div class="roster-card">
-                        <div class="avatar">⚡</div>
-                        <div class="name">StormBringer</div>
-                        <div class="role">Substitute</div>
-                        <div class="stats">KDA 3.9 · 66% WR</div>
-                        <div class="bio">The wildcard.</div>
-                    </div>
-                </div>
+            <div id="rosterGrid" class="row g-4">
+                <!-- populated by JS -->
             </div>
-            <!-- Team Stats -->
             <div class="mt-5 glass-card-light d-flex flex-wrap justify-content-between gap-2 p-4">
                 <span class="text-muted">Team KDA</span>
-                <span class="fw-bold text-primary">4.16</span>
+                <span class="fw-bold text-primary" id="teamKDA">—</span>
                 <span class="text-muted">Win Rate</span>
-                <span class="fw-bold text-secondary">68.6%</span>
+                <span class="fw-bold text-secondary" id="teamWR">—</span>
                 <span class="text-muted">Streak</span>
                 <span class="fw-bold text-warning">🔥 W3</span>
                 <span class="text-muted">Region</span>
@@ -1073,10 +802,10 @@
         </div>
     </section>
 
-    <!-- ============================================================ -->
-    <!-- 11. BRACKET SECTION (with Challonge iframe)                  -->
-    <!-- ============================================================ -->
-    <section id="page-bracket" class="section-padding" style="padding-top:0;">
+    <!-- ============================================================= -->
+    <!-- PAGE: BRACKET (Challonge iframe)                             -->
+    <!-- ============================================================= -->
+    <section id="page-bracket" class="page-section section-padding" style="padding-top:0;">
         <div class="container">
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
                 <div>
@@ -1117,17 +846,16 @@
         </div>
     </section>
 
-    <!-- ============================================================ -->
-    <!-- 12. COMMUNITY / FAN ZONE                                     -->
-    <!-- ============================================================ -->
-    <section id="page-community" class="section-padding" style="padding-top:0;">
+    <!-- ============================================================= -->
+    <!-- PAGE: COMMUNITY                                              -->
+    <!-- ============================================================= -->
+    <section id="page-community" class="page-section section-padding" style="padding-top:0;">
         <div class="container">
             <div class="text-center mb-5">
                 <h2 class="section-title">🎮 Community <span class="highlight">Hub</span></h2>
                 <p class="section-subtitle">Connect, predict, play, and win with the pack.</p>
             </div>
             <div class="row g-4">
-                <!-- Match Oracle -->
                 <div class="col-md-6">
                     <div class="glass-card">
                         <h4 class="fw-bold text-secondary"><i class="fas fa-crystal-ball me-2"></i>Match Oracle</h4>
@@ -1148,7 +876,6 @@
                         <div class="text-center small text-muted mt-2">Predictions reset every match.</div>
                     </div>
                 </div>
-                <!-- Arcade & Social -->
                 <div class="col-md-6">
                     <div class="glass-card mb-4">
                         <h4 class="fw-bold text-warning"><i class="fas fa-gamepad me-2"></i>Arcade</h4>
@@ -1174,18 +901,17 @@
         </div>
     </section>
 
-    <!-- ============================================================ -->
-    <!-- 13. NEWS / BLOG SECTION (with Owl Carousel)                  -->
-    <!-- ============================================================ -->
-    <section id="page-news" class="section-padding" style="padding-top:0;">
+    <!-- ============================================================= -->
+    <!-- PAGE: NEWS (with Owl Carousel)                               -->
+    <!-- ============================================================= -->
+    <section id="page-news" class="page-section section-padding" style="padding-top:0;">
         <div class="container">
             <div class="text-center mb-5">
                 <h2 class="section-title">📰 Latest <span class="highlight">Intel</span></h2>
                 <p class="section-subtitle">Stay updated with the latest from Wolf Society.</p>
             </div>
-
-            <!-- Owl Carousel -->
             <div class="owl-carousel owl-theme" id="newsCarousel">
+                <!-- static news items -->
                 <div class="item">
                     <div class="news-card">
                         <div class="news-img"><i class="fas fa-trophy"></i></div>
@@ -1232,35 +958,26 @@
                 </div>
             </div>
 
-            <!-- Related Posts (below carousel) -->
+            <!-- Related Posts -->
             <div class="mt-5">
                 <h5 class="fw-bold mb-3"><i class="fas fa-link me-2"></i>Related Posts</h5>
-                <div class="row g-3 related-posts">
+                <div class="row g-3">
                     <div class="col-md-4">
-                        <div class="related-item">
-                            <div class="thumb"><i class="fas fa-gamepad"></i></div>
-                            <div class="info">
-                                <h6>Tournament Recap: Wolf vs PHX</h6>
-                                <div class="date">Aug 7, 2026</div>
-                            </div>
+                        <div class="d-flex gap-3 p-2 border-bottom border-white/05">
+                            <div class="thumb" style="width:64px;height:64px;border-radius:0.5rem;background:rgba(124,58,237,0.1);display:flex;align-items:center;justify-content:center;font-size:1.5rem;"><i class="fas fa-gamepad"></i></div>
+                            <div><h6 class="fw-bold text-white">Tournament Recap: Wolf vs PHX</h6><div class="small text-muted">Aug 7, 2026</div></div>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="related-item">
-                            <div class="thumb"><i class="fas fa-star"></i></div>
-                            <div class="info">
-                                <h6>Player Spotlight: CrimsonMage</h6>
-                                <div class="date">Aug 5, 2026</div>
-                            </div>
+                        <div class="d-flex gap-3 p-2 border-bottom border-white/05">
+                            <div class="thumb" style="width:64px;height:64px;border-radius:0.5rem;background:rgba(124,58,237,0.1);display:flex;align-items:center;justify-content:center;font-size:1.5rem;"><i class="fas fa-star"></i></div>
+                            <div><h6 class="fw-bold text-white">Player Spotlight: CrimsonMage</h6><div class="small text-muted">Aug 5, 2026</div></div>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="related-item">
-                            <div class="thumb"><i class="fas fa-calendar"></i></div>
-                            <div class="info">
-                                <h6>Community Tournament Schedule</h6>
-                                <div class="date">Aug 3, 2026</div>
-                            </div>
+                        <div class="d-flex gap-3 p-2 border-bottom border-white/05">
+                            <div class="thumb" style="width:64px;height:64px;border-radius:0.5rem;background:rgba(124,58,237,0.1);display:flex;align-items:center;justify-content:center;font-size:1.5rem;"><i class="fas fa-calendar"></i></div>
+                            <div><h6 class="fw-bold text-white">Community Tournament Schedule</h6><div class="small text-muted">Aug 3, 2026</div></div>
                         </div>
                     </div>
                 </div>
@@ -1282,10 +999,10 @@
         </div>
     </section>
 
-    <!-- ============================================================ -->
-    <!-- 14. TRYOUTS SECTION                                          -->
-    <!-- ============================================================ -->
-    <section id="page-tryouts" class="section-padding" style="padding-top:0;">
+    <!-- ============================================================= -->
+    <!-- PAGE: TRYOUTS                                                -->
+    <!-- ============================================================= -->
+    <section id="page-tryouts" class="page-section section-padding" style="padding-top:0;">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-8">
@@ -1332,47 +1049,23 @@
         </div>
     </section>
 
-    <!-- ============================================================ -->
-    <!-- 15. ABOUT SECTION                                            -->
-    <!-- ============================================================ -->
-    <section id="page-about" class="section-padding" style="padding-top:0;">
+    <!-- ============================================================= -->
+    <!-- PAGE: ABOUT                                                  -->
+    <!-- ============================================================= -->
+    <section id="page-about" class="page-section section-padding" style="padding-top:0;">
         <div class="container">
             <div class="row g-4">
                 <div class="col-lg-8">
                     <h2 class="section-title">ℹ️ About <span class="highlight">Wolf Society</span></h2>
                     <p class="section-subtitle">India's first fusion ecosystem for Esports, Sports, and AI.</p>
                     <div class="glass-card">
-                        <p class="text-muted">
-                            <strong class="text-white">Wolf Society</strong> is a community-driven esports organization built for players who compete with heart. We bring together gaming, turf sports, swimming, and AI-powered performance tracking — creating a new way for youth to play, compete, and connect.
-                        </p>
-                        <p class="text-muted">
-                            From gaming tournaments and influencer IPs to real-world sports and AI analytics, we're redefining what it means to be a modern athlete. Our mission is to build the largest multi-sport ecosystem in India, bridging the gap between digital and physical sports.
-                        </p>
+                        <p class="text-muted"><strong class="text-white">Wolf Society</strong> is a community-driven esports organization built for players who compete with heart. We bring together gaming, turf sports, swimming, and AI-powered performance tracking — creating a new way for youth to play, compete, and connect.</p>
+                        <p class="text-muted">From gaming tournaments and influencer IPs to real-world sports and AI analytics, we're redefining what it means to be a modern athlete. Our mission is to build the largest multi-sport ecosystem in India, bridging the gap between digital and physical sports.</p>
                         <div class="row g-3 mt-3">
-                            <div class="col-6 col-md-3">
-                                <div class="glass-card-light text-center p-3">
-                                    <div class="fs-2 fw-bold text-primary">500+</div>
-                                    <div class="small text-muted">Members</div>
-                                </div>
-                            </div>
-                            <div class="col-6 col-md-3">
-                                <div class="glass-card-light text-center p-3">
-                                    <div class="fs-2 fw-bold text-secondary">12</div>
-                                    <div class="small text-muted">Tournaments</div>
-                                </div>
-                            </div>
-                            <div class="col-6 col-md-3">
-                                <div class="glass-card-light text-center p-3">
-                                    <div class="fs-2 fw-bold text-warning">₹5L+</div>
-                                    <div class="small text-muted">Prize Pool</div>
-                                </div>
-                            </div>
-                            <div class="col-6 col-md-3">
-                                <div class="glass-card-light text-center p-3">
-                                    <div class="fs-2 fw-bold text-white">2024</div>
-                                    <div class="small text-muted">Founded</div>
-                                </div>
-                            </div>
+                            <div class="col-6 col-md-3"><div class="glass-card-light text-center p-3"><div class="fs-2 fw-bold text-primary">500+</div><div class="small text-muted">Members</div></div></div>
+                            <div class="col-6 col-md-3"><div class="glass-card-light text-center p-3"><div class="fs-2 fw-bold text-secondary">12</div><div class="small text-muted">Tournaments</div></div></div>
+                            <div class="col-6 col-md-3"><div class="glass-card-light text-center p-3"><div class="fs-2 fw-bold text-warning">₹5L+</div><div class="small text-muted">Prize Pool</div></div></div>
+                            <div class="col-6 col-md-3"><div class="glass-card-light text-center p-3"><div class="fs-2 fw-bold text-white">2024</div><div class="small text-muted">Founded</div></div></div>
                         </div>
                     </div>
                 </div>
@@ -1395,29 +1088,102 @@
         </div>
     </section>
 
-    <!-- ============================================================ -->
-    <!-- 16. SPONSORS SECTION                                         -->
-    <!-- ============================================================ -->
-    <section class="section-padding" style="padding-top:0;">
+    <!-- ============================================================= -->
+    <!-- PAGE: ADMIN PANEL (Supabase CRUD)                            -->
+    <!-- ============================================================= -->
+    <section id="page-admin" class="page-section section-padding" style="padding-top:0;">
         <div class="container">
-            <div class="text-center mb-4">
-                <h2 class="section-title">🤝 Our <span class="highlight">Partners</span></h2>
-                <p class="section-subtitle">Proudly supported by these amazing brands.</p>
-            </div>
-            <div class="sponsor-grid">
-                <div class="sponsor-item"><i class="fas fa-crown"></i> Champion</div>
-                <div class="sponsor-item"><i class="fas fa-bolt"></i> Thunder</div>
-                <div class="sponsor-item"><i class="fas fa-fire"></i> Ignite</div>
-                <div class="sponsor-item"><i class="fas fa-shield"></i> Apex</div>
-                <div class="sponsor-item"><i class="fas fa-star"></i> Vanguard</div>
-                <div class="sponsor-item"><i class="fas fa-rocket"></i> Launch</div>
+            <h2 class="section-title">⚙️ <span class="highlight">Admin</span> Panel</h2>
+            <p class="section-subtitle">Manage roster, matches, and media — all data stored in Supabase.</p>
+
+            <!-- Tabs -->
+            <ul class="nav nav-tabs border-0 gap-2 mb-4" id="adminTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="btn-neon btn-neon-sm active" data-bs-toggle="tab" data-bs-target="#adminRosterTab" type="button" role="tab">Roster</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="btn-neon btn-neon-sm btn-neon-secondary" data-bs-toggle="tab" data-bs-target="#adminMatchesTab" type="button" role="tab">Matches</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="btn-neon btn-neon-sm" data-bs-toggle="tab" data-bs-target="#adminMediaTab" type="button" role="tab">Media</button>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <!-- Roster Admin -->
+                <div class="tab-pane fade show active" id="adminRosterTab" role="tabpanel">
+                    <div class="glass-card p-4">
+                        <h4 class="fw-bold text-white mb-3">Roster Management</h4>
+                        <div class="table-responsive">
+                            <table class="admin-table table table-dark table-borderless">
+                                <thead><tr><th>Name</th><th>Role</th><th>KDA</th><th>WR%</th><th>Bio</th><th>Actions</th></tr></thead>
+                                <tbody id="adminRosterBody"><tr><td colspan="6" class="text-muted">Loading...</td></tr></tbody>
+                            </table>
+                        </div>
+                        <hr class="border-white/10" />
+                        <h5 class="fw-bold text-secondary">Add New Player</h5>
+                        <div class="row g-2">
+                            <div class="col-md-3"><input type="text" id="newRosterName" class="form-control bg-dark border-white/10 text-white" placeholder="Name" /></div>
+                            <div class="col-md-2"><input type="text" id="newRosterRole" class="form-control bg-dark border-white/10 text-white" placeholder="Role" /></div>
+                            <div class="col-md-2"><input type="number" id="newRosterKda" class="form-control bg-dark border-white/10 text-white" placeholder="KDA" step="0.1" /></div>
+                            <div class="col-md-2"><input type="number" id="newRosterWr" class="form-control bg-dark border-white/10 text-white" placeholder="WR" /></div>
+                            <div class="col-md-3"><input type="text" id="newRosterBio" class="form-control bg-dark border-white/10 text-white" placeholder="Bio" /></div>
+                            <div class="col-12"><button id="addRosterBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Player</button></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Matches Admin -->
+                <div class="tab-pane fade" id="adminMatchesTab" role="tabpanel">
+                    <div class="glass-card p-4">
+                        <h4 class="fw-bold text-white mb-3">Match Management</h4>
+                        <div class="table-responsive">
+                            <table class="admin-table table table-dark table-borderless">
+                                <thead><tr><th>Team A</th><th>Team B</th><th>Score A</th><th>Score B</th><th>Status</th><th>Time</th><th>Actions</th></tr></thead>
+                                <tbody id="adminMatchesBody"><tr><td colspan="7" class="text-muted">Loading...</td></tr></tbody>
+                            </table>
+                        </div>
+                        <hr class="border-white/10" />
+                        <h5 class="fw-bold text-secondary">Add New Match</h5>
+                        <div class="row g-2">
+                            <div class="col-md-2"><input type="text" id="newMatchA" class="form-control bg-dark border-white/10 text-white" placeholder="Team A" /></div>
+                            <div class="col-md-2"><input type="text" id="newMatchB" class="form-control bg-dark border-white/10 text-white" placeholder="Team B" /></div>
+                            <div class="col-md-1"><input type="number" id="newMatchScoreA" class="form-control bg-dark border-white/10 text-white" placeholder="SA" /></div>
+                            <div class="col-md-1"><input type="number" id="newMatchScoreB" class="form-control bg-dark border-white/10 text-white" placeholder="SB" /></div>
+                            <div class="col-md-2"><input type="text" id="newMatchStatus" class="form-control bg-dark border-white/10 text-white" placeholder="Status" /></div>
+                            <div class="col-md-2"><input type="text" id="newMatchTime" class="form-control bg-dark border-white/10 text-white" placeholder="Time" /></div>
+                            <div class="col-12"><button id="addMatchBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Match</button></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Media Admin -->
+                <div class="tab-pane fade" id="adminMediaTab" role="tabpanel">
+                    <div class="glass-card p-4">
+                        <h4 class="fw-bold text-white mb-3">Media Management</h4>
+                        <div class="table-responsive">
+                            <table class="admin-table table table-dark table-borderless">
+                                <thead><tr><th>Title</th><th>Type</th><th>URL</th><th>Actions</th></tr></thead>
+                                <tbody id="adminMediaBody"><tr><td colspan="4" class="text-muted">Loading...</td></tr></tbody>
+                            </table>
+                        </div>
+                        <hr class="border-white/10" />
+                        <h5 class="fw-bold text-secondary">Add Media Item</h5>
+                        <div class="row g-2">
+                            <div class="col-md-4"><input type="text" id="newMediaTitle" class="form-control bg-dark border-white/10 text-white" placeholder="Title" /></div>
+                            <div class="col-md-3"><input type="text" id="newMediaType" class="form-control bg-dark border-white/10 text-white" placeholder="Type (youtube/twitch)" /></div>
+                            <div class="col-md-4"><input type="text" id="newMediaUrl" class="form-control bg-dark border-white/10 text-white" placeholder="URL" /></div>
+                            <div class="col-12"><button id="addMediaBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Media</button></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- ============================================================ -->
-    <!-- 17. FOOTER                                                   -->
-    <!-- ============================================================ -->
+    <!-- ============================================================= -->
+    <!-- FOOTER                                                        -->
+    <!-- ============================================================= -->
     <footer class="footer-wolf">
         <div class="container">
             <div class="row g-4">
@@ -1434,18 +1200,18 @@
                 <div class="col-6 col-lg-2">
                     <h6 class="fw-bold text-white">Quick Links</h6>
                     <div class="footer-links">
-                        <a href="#page-home">Home</a>
-                        <a href="#page-roster">Roster</a>
-                        <a href="#page-bracket">Bracket</a>
-                        <a href="#page-news">News</a>
+                        <a href="#home">Home</a>
+                        <a href="#roster">Roster</a>
+                        <a href="#bracket">Bracket</a>
+                        <a href="#news">News</a>
                     </div>
                 </div>
                 <div class="col-6 col-lg-2">
                     <h6 class="fw-bold text-white">Community</h6>
                     <div class="footer-links">
-                        <a href="#page-community">Fan Zone</a>
-                        <a href="#page-tryouts">Tryouts</a>
-                        <a href="#page-about">About</a>
+                        <a href="#community">Fan Zone</a>
+                        <a href="#tryouts">Tryouts</a>
+                        <a href="#about">About</a>
                     </div>
                 </div>
                 <div class="col-lg-4">
@@ -1457,239 +1223,434 @@
                     </div>
                 </div>
             </div>
-            <div class="copyright">
-                &copy; 2026 Wolf Society Esports. All rights reserved. Built with <i class="fas fa-heart text-primary"></i> in India.
-            </div>
+            <div class="copyright">&copy; 2026 Wolf Society Esports. Built with <i class="fas fa-heart text-primary"></i> in India.</div>
         </div>
     </footer>
 
-    <!-- ============================================================ -->
-    <!-- 18. 404 ERROR PAGE (Hidden by default, shown via JS)         -->
-    <!-- ============================================================ -->
-    <div id="page-404" style="display:none;">
-        <div class="container error-404">
-            <div class="code">404</div>
-            <h2>Page Not Found</h2>
-            <p>The page you're looking for doesn't exist or has been moved.</p>
-            <a href="#page-home" class="btn-neon mt-3"><i class="fas fa-home me-2"></i>Go Home</a>
-        </div>
-    </div>
-
-    <!-- ============================================================ -->
-    <!-- 19. JAVASCRIPT — All Libraries & Plugins                     -->
-    <!-- ============================================================ -->
-
-    <!-- jQuery (required for Owl Carousel, Mixitup, etc.) -->
+    <!-- ============================================================= -->
+    <!-- SCRIPTS                                                       -->
+    <!-- ============================================================= -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js">
     </script>
-
-    <!-- Bootstrap 5 (JS) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
     </script>
-
-    <!-- Owl Carousel 2 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js">
     </script>
 
-    <!-- Mixitup (Filter/Sort) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mixitup/3.3.1/mixitup.min.js">
-    </script>
-
-    <!-- Typed.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js">
-    </script>
-
-    <!-- ============================================================ -->
-    <!-- 20. MAIN.JS — All initialization & effects                   -->
-    <!-- ============================================================ -->
     <script>
         /**
-         * ============================================================
-         * WOLF SOCIETY — MAIN.JS
-         * All plugins and effects are initialized here.
-         * Everything is well-commented for easy editing.
-         * ============================================================
+         * ==============================================================
+         * WOLF SOCIETY — SUPABASE INTEGRATION
+         * All data is stored in Supabase tables: rosters, matches, media_items
+         * ==============================================================
          */
 
-        (function($) {
-            'use strict';
+        // --- Supabase credentials (provided by you) ---
+        const SUPABASE_URL = 'https://tdfkebgapncswtvbtaqy.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ';
 
-            // ------------------------------------------------------------
-            // 1. PARALLAX EFFECT (Hero Background)
-            // ------------------------------------------------------------
-            $(window).on('scroll', function() {
-                var scrollPos = $(window).scrollTop();
-                $('#parallaxBg').css('transform', 'translateY(' + scrollPos * 0.15 + 'px)');
-            });
+        // --- Initialize Supabase client ---
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-            // ------------------------------------------------------------
-            // 2. OWL CAROUSEL (News Slider)
-            // ------------------------------------------------------------
-            $('#newsCarousel').owlCarousel({
-                loop: true,
-                margin: 20,
-                nav: true,
-                dots: true,
-                autoplay: true,
-                autoplayTimeout: 5000,
-                autoplayHoverPause: true,
-                responsive: {
-                    0: { items: 1 },
-                    576: { items: 2 },
-                    992: { items: 3 },
-                    1200: { items: 3 }
-                },
-                navText: [
-                    '<i class="fas fa-chevron-left"></i>',
-                    '<i class="fas fa-chevron-right"></i>'
-                ]
-            });
+        // --- DOM references ---
+        const rosterGrid = document.getElementById('rosterGrid');
+        const adminRosterBody = document.getElementById('adminRosterBody');
+        const adminMatchesBody = document.getElementById('adminMatchesBody');
+        const adminMediaBody = document.getElementById('adminMediaBody');
 
-            // ------------------------------------------------------------
-            // 3. TYPED.JS — Kinetic Typography (Hero subtitle)
-            // ------------------------------------------------------------
-            if ($('#typedText').length) {
-                new Typed('#typedText', {
-                    strings: ['compete.', 'create.', 'connect.', 'dominate.'],
-                    typeSpeed: 60,
-                    backSpeed: 30,
-                    backDelay: 2000,
-                    loop: true,
-                    cursorChar: '|',
-                });
+        // ==============================================================
+        // 1. FETCH & RENDER FUNCTIONS
+        // ==============================================================
+
+        // Fetch all tables
+        async function fetchAll() {
+            const [rosterRes, matchesRes, mediaRes] = await Promise.all([
+                supabase.from('rosters').select('*').order('id', { ascending: true }),
+                supabase.from('matches').select('*').order('id', { ascending: true }),
+                supabase.from('media_items').select('*').order('id', { ascending: true })
+            ]);
+            if (rosterRes.error) console.error('Roster error:', rosterRes.error);
+            if (matchesRes.error) console.error('Matches error:', matchesRes.error);
+            if (mediaRes.error) console.error('Media error:', mediaRes.error);
+            return {
+                roster: rosterRes.data || [],
+                matches: matchesRes.data || [],
+                media: mediaRes.data || []
+            };
+        }
+
+        // Render public roster
+        function renderRoster(roster) {
+            if (!roster || roster.length === 0) {
+                rosterGrid.innerHTML = '<p class="text-muted">No roster data available.</p>';
+                return;
             }
-
-            // ------------------------------------------------------------
-            // 4. MIXITUP — Filter/Sort (for future use, e.g., gallery)
-            // ------------------------------------------------------------
-            // Uncomment when you have a container with .mix elements
-            // if ($('.mix-container').length) {
-            //     var mixer = mixitup('.mix-container', {
-            //         selectors: {
-            //             target: '.mix'
-            //         }
-            //     });
-            // }
-
-            // ------------------------------------------------------------
-            // 5. LIVE ORACLE UPDATES (Simulated)
-            // ------------------------------------------------------------
-            setInterval(function() {
-                var wolf = 60 + Math.floor(Math.random() * 30);
-                var phx = 100 - wolf;
-                $('#oracleWolf').text(wolf + '%');
-                $('#oraclePhx').text(phx + '%');
-                $('#oracleWolfBar').css('width', wolf + '%');
-                $('#oraclePhxBar').css('width', phx + '%');
-            }, 8000);
-
-            // ------------------------------------------------------------
-            // 6. NAVIGATION — Active link highlight on scroll
-            // ------------------------------------------------------------
-            var sections = $('section[id]');
-            $(window).on('scroll', function() {
-                var scrollPos = $(window).scrollTop() + 120;
-                sections.each(function() {
-                    var top = $(this).offset().top;
-                    var bottom = top + $(this).outerHeight();
-                    var id = $(this).attr('id');
-                    if (scrollPos >= top && scrollPos < bottom) {
-                        $('.navbar-nav .nav-link').removeClass('active');
-                        $('.navbar-nav .nav-link[href="#' + id + '"]').addClass('active');
-                    }
-                });
+            let html = '';
+            roster.forEach(p => {
+                html += `
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <div class="roster-card">
+                            <div class="avatar">🐺</div>
+                            <div class="name">${p.name}</div>
+                            <div class="role">${p.role}</div>
+                            <div class="stats">KDA ${p.kda} · ${p.wr}% WR</div>
+                            <div class="bio">${p.bio || ''}</div>
+                        </div>
+                    </div>
+                `;
             });
+            rosterGrid.innerHTML = html;
 
-            // ------------------------------------------------------------
-            // 7. TRYOUT FORM SUBMISSION (Simulated)
-            // ------------------------------------------------------------
-            $('#tryoutForm').on('submit', function(e) {
-                e.preventDefault();
-                $('#tryoutFeedback').removeClass('d-none').text('✅ Application received! We\'ll be in touch.');
-                // Reset form after 3s
-                var form = this;
-                setTimeout(function() {
-                    form.reset();
-                    $('#tryoutFeedback').addClass('d-none');
-                }, 4000);
+            // Team stats
+            const totalKDA = roster.reduce((s, p) => s + p.kda, 0);
+            const avgKDA = (totalKDA / roster.length).toFixed(2);
+            const avgWR = (roster.reduce((s, p) => s + p.wr, 0) / roster.length).toFixed(1);
+            document.getElementById('teamKDA').textContent = avgKDA;
+            document.getElementById('teamWR').textContent = avgWR + '%';
+        }
+
+        // Render admin roster table
+        function renderAdminRoster(roster) {
+            if (!roster || roster.length === 0) {
+                adminRosterBody.innerHTML = '<tr><td colspan="6" class="text-muted">No players.</td></tr>';
+                return;
+            }
+            let html = '';
+            roster.forEach(p => {
+                html += `
+                    <tr>
+                        <td>${p.name}</td>
+                        <td>${p.role}</td>
+                        <td>${p.kda}</td>
+                        <td>${p.wr}</td>
+                        <td>${p.bio || ''}</td>
+                        <td>
+                            <div class="admin-actions">
+                                <button class="delete-btn" onclick="deleteRoster(${p.id})"><i class="fas fa-trash"></i></button>
+                                <button class="edit-btn" onclick="editRoster(${p.id})"><i class="fas fa-edit"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
             });
+            adminRosterBody.innerHTML = html;
+        }
 
-            // ------------------------------------------------------------
-            // 8. SMOOTH SCROLL for anchor links
-            // ------------------------------------------------------------
-            $('a[href^="#page-"]').on('click', function(e) {
-                var target = $(this.getAttribute('href'));
-                if (target.length) {
+        // Render admin matches table
+        function renderAdminMatches(matches) {
+            if (!matches || matches.length === 0) {
+                adminMatchesBody.innerHTML = '<tr><td colspan="7" class="text-muted">No matches.</td></tr>';
+                return;
+            }
+            let html = '';
+            matches.forEach(m => {
+                html += `
+                    <tr>
+                        <td>${m.team_a}</td>
+                        <td>${m.team_b}</td>
+                        <td>${m.score_a !== null ? m.score_a : '-'}</td>
+                        <td>${m.score_b !== null ? m.score_b : '-'}</td>
+                        <td>${m.status}</td>
+                        <td>${m.time}</td>
+                        <td>
+                            <div class="admin-actions">
+                                <button class="delete-btn" onclick="deleteMatch(${m.id})"><i class="fas fa-trash"></i></button>
+                                <button class="edit-btn" onclick="editMatch(${m.id})"><i class="fas fa-edit"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            adminMatchesBody.innerHTML = html;
+        }
+
+        // Render admin media table
+        function renderAdminMedia(media) {
+            if (!media || media.length === 0) {
+                adminMediaBody.innerHTML = '<tr><td colspan="4" class="text-muted">No media items.</td></tr>';
+                return;
+            }
+            let html = '';
+            media.forEach(m => {
+                html += `
+                    <tr>
+                        <td>${m.title}</td>
+                        <td>${m.type}</td>
+                        <td><a href="${m.url}" target="_blank" class="text-primary">${m.url}</a></td>
+                        <td>
+                            <div class="admin-actions">
+                                <button class="delete-btn" onclick="deleteMedia(${m.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            adminMediaBody.innerHTML = html;
+        }
+
+        // Full refresh
+        async function refreshUI() {
+            const { roster, matches, media } = await fetchAll();
+            renderRoster(roster);
+            renderAdminRoster(roster);
+            renderAdminMatches(matches);
+            renderAdminMedia(media);
+        }
+
+        // ==============================================================
+        // 2. CRUD OPERATIONS (Supabase)
+        // ==============================================================
+
+        // --- Roster ---
+        window.deleteRoster = async function(id) {
+            if (!confirm('Delete this player?')) return;
+            const { error } = await supabase.from('rosters').delete().eq('id', id);
+            if (error) { alert('Error: ' + error.message); return; }
+            refreshUI();
+        };
+
+        window.editRoster = async function(id) {
+            // Fetch current data
+            const { data, error } = await supabase.from('rosters').select('*').eq('id', id).single();
+            if (error) { alert('Error fetching player'); return; }
+            const name = prompt('Name:', data.name);
+            if (name === null) return;
+            const role = prompt('Role:', data.role);
+            if (role === null) return;
+            const kda = parseFloat(prompt('KDA:', data.kda));
+            if (isNaN(kda)) return;
+            const wr = parseInt(prompt('WR%:', data.wr));
+            if (isNaN(wr)) return;
+            const bio = prompt('Bio:', data.bio);
+            if (bio === null) return;
+            const { error: updateError } = await supabase
+                .from('rosters')
+                .update({ name, role, kda, wr, bio })
+                .eq('id', id);
+            if (updateError) { alert('Error updating: ' + updateError.message); return; }
+            refreshUI();
+        };
+
+        document.getElementById('addRosterBtn').addEventListener('click', async function() {
+            const name = document.getElementById('newRosterName').value.trim();
+            const role = document.getElementById('newRosterRole').value.trim();
+            const kda = parseFloat(document.getElementById('newRosterKda').value);
+            const wr = parseInt(document.getElementById('newRosterWr').value);
+            const bio = document.getElementById('newRosterBio').value.trim();
+            if (!name || !role || isNaN(kda) || isNaN(wr)) {
+                alert('Please fill all required fields.');
+                return;
+            }
+            const { error } = await supabase.from('rosters').insert([{ name, role, kda, wr, bio }]);
+            if (error) { alert('Error adding: ' + error.message); return; }
+            document.getElementById('newRosterName').value = '';
+            document.getElementById('newRosterRole').value = '';
+            document.getElementById('newRosterKda').value = '';
+            document.getElementById('newRosterWr').value = '';
+            document.getElementById('newRosterBio').value = '';
+            refreshUI();
+        });
+
+        // --- Matches ---
+        window.deleteMatch = async function(id) {
+            if (!confirm('Delete this match?')) return;
+            const { error } = await supabase.from('matches').delete().eq('id', id);
+            if (error) { alert('Error: ' + error.message); return; }
+            refreshUI();
+        };
+
+        window.editMatch = async function(id) {
+            const { data, error } = await supabase.from('matches').select('*').eq('id', id).single();
+            if (error) { alert('Error fetching match'); return; }
+            const team_a = prompt('Team A:', data.team_a);
+            if (team_a === null) return;
+            const team_b = prompt('Team B:', data.team_b);
+            if (team_b === null) return;
+            const score_a = parseInt(prompt('Score A:', data.score_a !== null ? data.score_a : ''));
+            const score_b = parseInt(prompt('Score B:', data.score_b !== null ? data.score_b : ''));
+            const status = prompt('Status:', data.status);
+            if (status === null) return;
+            const time = prompt('Time:', data.time);
+            if (time === null) return;
+            const { error: updateError } = await supabase
+                .from('matches')
+                .update({
+                    team_a,
+                    team_b,
+                    score_a: isNaN(score_a) ? null : score_a,
+                    score_b: isNaN(score_b) ? null : score_b,
+                    status,
+                    time
+                })
+                .eq('id', id);
+            if (updateError) { alert('Error updating: ' + updateError.message); return; }
+            refreshUI();
+        };
+
+        document.getElementById('addMatchBtn').addEventListener('click', async function() {
+            const team_a = document.getElementById('newMatchA').value.trim();
+            const team_b = document.getElementById('newMatchB').value.trim();
+            const score_a = parseInt(document.getElementById('newMatchScoreA').value) || null;
+            const score_b = parseInt(document.getElementById('newMatchScoreB').value) || null;
+            const status = document.getElementById('newMatchStatus').value.trim() || 'Upcoming';
+            const time = document.getElementById('newMatchTime').value.trim() || '';
+            if (!team_a || !team_b) {
+                alert('Please enter both team names.');
+                return;
+            }
+            const { error } = await supabase.from('matches').insert([{ team_a, team_b, score_a, score_b, status, time }]);
+            if (error) { alert('Error adding: ' + error.message); return; }
+            document.getElementById('newMatchA').value = '';
+            document.getElementById('newMatchB').value = '';
+            document.getElementById('newMatchScoreA').value = '';
+            document.getElementById('newMatchScoreB').value = '';
+            document.getElementById('newMatchStatus').value = '';
+            document.getElementById('newMatchTime').value = '';
+            refreshUI();
+        });
+
+        // --- Media ---
+        window.deleteMedia = async function(id) {
+            if (!confirm('Delete this media item?')) return;
+            const { error } = await supabase.from('media_items').delete().eq('id', id);
+            if (error) { alert('Error: ' + error.message); return; }
+            refreshUI();
+        };
+
+        document.getElementById('addMediaBtn').addEventListener('click', async function() {
+            const title = document.getElementById('newMediaTitle').value.trim();
+            const type = document.getElementById('newMediaType').value.trim();
+            const url = document.getElementById('newMediaUrl').value.trim();
+            if (!title || !type || !url) {
+                alert('Please fill all fields.');
+                return;
+            }
+            const { error } = await supabase.from('media_items').insert([{ title, type, url }]);
+            if (error) { alert('Error adding: ' + error.message); return; }
+            document.getElementById('newMediaTitle').value = '';
+            document.getElementById('newMediaType').value = '';
+            document.getElementById('newMediaUrl').value = '';
+            refreshUI();
+        });
+
+        // ==============================================================
+        // 3. PAGE ROUTING (hash-based)
+        // ==============================================================
+        const pages = {
+            home: document.getElementById('page-home'),
+            roster: document.getElementById('page-roster'),
+            bracket: document.getElementById('page-bracket'),
+            community: document.getElementById('page-community'),
+            news: document.getElementById('page-news'),
+            about: document.getElementById('page-about'),
+            tryouts: document.getElementById('page-tryouts'),
+            admin: document.getElementById('page-admin'),
+        };
+
+        function showPage(pageId) {
+            Object.values(pages).forEach(el => el.classList.remove('active'));
+            if (pages[pageId]) pages[pageId].classList.add('active');
+            document.querySelectorAll('.navbar-nav .nav-link').forEach(link => link.classList.remove('active'));
+            document.querySelector(`.navbar-nav .nav-link[href="#${pageId}"]`)?.classList.add('active');
+            if (pageId === 'admin') refreshUI();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Intercept nav clicks
+        document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href && href.startsWith('#')) {
                     e.preventDefault();
-                    $('html, body').animate({
-                        scrollTop: target.offset().top - 70
-                    }, 600);
+                    const pageId = href.substring(1);
+                    showPage(pageId);
+                    window.location.hash = href;
                 }
             });
+        });
 
-            // ------------------------------------------------------------
-            // 9. 404 PAGE DEMO (accessible via /404 or hash)
-            // ------------------------------------------------------------
-            if (window.location.hash === '#404' || window.location.pathname.includes('404')) {
-                $('.page').hide();
-                $('#page-404').show();
-            }
+        // Hash change
+        window.addEventListener('hashchange', function() {
+            const hash = window.location.hash.substring(1) || 'home';
+            if (pages[hash]) showPage(hash);
+        });
 
-            // ------------------------------------------------------------
-            // 10. COUNTER ANIMATION (Simple number increment)
-            // ------------------------------------------------------------
-            function animateCounter(el, target, suffix) {
-                var current = 0;
-                var step = Math.ceil(target / 60);
-                var interval = setInterval(function() {
-                    current += step;
-                    if (current >= target) {
-                        current = target;
-                        clearInterval(interval);
-                    }
-                    $(el).text(current + (suffix || ''));
-                }, 25);
-            }
+        // Initial page
+        const initialHash = window.location.hash.substring(1) || 'home';
+        if (pages[initialHash]) showPage(initialHash);
+        else showPage('home');
 
-            // Animate stats when they come into view
-            var statsAnimated = false;
-            $(window).on('scroll', function() {
-                if (!statsAnimated) {
-                    var statsTop = $('#statMembers').offset().top;
-                    if ($(window).scrollTop() + $(window).height() > statsTop + 100) {
-                        statsAnimated = true;
-                        animateCounter('#statMembers', 500, '+');
-                        animateCounter('#statTournaments', 12, '');
-                        animateCounter('#statPrize', 5, 'L+');
-                    }
-                }
-            });
+        // ==============================================================
+        // 4. OTHER EFFECTS
+        // ==============================================================
 
-            // ------------------------------------------------------------
-            // 11. BOOTSTRAP DROPDOWN — Fix for mobile
-            // ------------------------------------------------------------
-            $('.dropdown-toggle').on('click', function(e) {
-                var $el = $(this);
-                var $parent = $el.parent('.dropdown');
-                if ($(window).width() < 992) {
-                    e.preventDefault();
-                    $parent.toggleClass('show');
-                    $el.next('.dropdown-menu').toggleClass('show');
-                }
-            });
+        // Parallax
+        $(window).on('scroll', function() {
+            var scrollPos = $(window).scrollTop();
+            $('#parallaxBg').css('transform', 'translateY(' + scrollPos * 0.15 + 'px)');
+        });
 
-            // Close dropdown when clicking outside
-            $(document).on('click', function(e) {
-                if (!$(e.target).closest('.dropdown').length) {
-                    $('.dropdown').removeClass('show');
-                    $('.dropdown-menu').removeClass('show');
-                }
-            });
+        // Owl Carousel
+        $('#newsCarousel').owlCarousel({
+            loop: true,
+            margin: 20,
+            nav: true,
+            dots: true,
+            autoplay: true,
+            autoplayTimeout: 5000,
+            autoplayHoverPause: true,
+            responsive: {
+                0: { items: 1 },
+                576: { items: 2 },
+                992: { items: 3 },
+                1200: { items: 3 }
+            },
+            navText: [
+                '<i class="fas fa-chevron-left"></i>',
+                '<i class="fas fa-chevron-right"></i>'
+            ]
+        });
 
-            console.log('🐺 Wolf Society Esports — All systems ready.');
-            console.log('📡 Bracket: https://challonge.com/gvh3taf5/module');
+        // Live Oracle updates (simulated)
+        setInterval(function() {
+            var wolf = 60 + Math.floor(Math.random() * 30);
+            var phx = 100 - wolf;
+            $('#oracleWolf').text(wolf + '%');
+            $('#oraclePhx').text(phx + '%');
+            $('#oracleWolfBar').css('width', wolf + '%');
+            $('#oraclePhxBar').css('width', phx + '%');
+        }, 8000);
 
-        })(jQuery);
+        // Live match simulation
+        setInterval(function() {
+            var wolf = 3 + Math.floor(Math.random() * 2);
+            var phx = 1 + Math.floor(Math.random() * 2);
+            $('#liveScoreWolf').text(wolf);
+            $('#liveScorePhx').text(phx);
+            var total = wolf + phx;
+            var progress = total > 0 ? (wolf / total) * 100 : 75;
+            $('#liveProgress').css('width', Math.min(progress, 100) + '%');
+            var gold = (2 + Math.random() * 2).toFixed(1);
+            $('#liveGold').text('+' + gold + 'k');
+            $('#liveObj').text(Math.floor(2 + Math.random() * 4) + '/5');
+        }, 5000);
+
+        // Tryout form
+        $('#tryoutForm').on('submit', function(e) {
+            e.preventDefault();
+            $('#tryoutFeedback').removeClass('d-none').text('✅ Application received! We\'ll be in touch.');
+            var form = this;
+            setTimeout(function() {
+                form.reset();
+                $('#tryoutFeedback').addClass('d-none');
+            }, 4000);
+        });
+
+        // Initial refresh
+        refreshUI();
+
+        console.log('🐺 Wolf Society Esports — Supabase integration ready.');
+        console.log('📦 Data stored in Supabase tables: rosters, matches, media_items.');
     </script>
 
 </body>
