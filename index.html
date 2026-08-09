@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wolf Society Esports · Supabase Multi‑Page</title>
+    <title>Wolf Society Esports · Complete Platform</title>
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Raleway:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
@@ -17,9 +17,9 @@
     </script>
 
     <style>
-        /* ============================
-                   RESET & BASE
-                   ============================ */
+        /* ============================================================
+           RESET & BASE
+           ============================================================ */
         * {
             margin: 0;
             padding: 0;
@@ -125,11 +125,15 @@
             padding: 0.3rem 1rem;
             font-size: 0.75rem;
         }
-        .gradient-text {
-            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .btn-neon-danger {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+        .btn-neon-danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+            box-shadow: 0 0 40px rgba(239, 68, 68, 0.12);
+            color: #fff;
         }
 
         /* Navigation */
@@ -151,8 +155,8 @@
         .navbar-wolf .navbar-nav .nav-link {
             color: var(--text-muted);
             font-weight: 500;
-            font-size: 0.9rem;
-            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            padding: 0.4rem 0.9rem;
             transition: all 0.3s ease;
             border-radius: 0.5rem;
         }
@@ -290,7 +294,7 @@
             letter-spacing: 0.06em;
         }
 
-        /* Owl Carousel custom */
+        /* Owl Carousel */
         .owl-carousel .owl-nav button {
             background: rgba(255, 255, 255, 0.04) !important;
             border-radius: 50% !important;
@@ -315,7 +319,7 @@
             background: var(--primary) !important;
         }
 
-        /* Roster Cards */
+        /* Roster Card */
         .roster-card {
             text-align: center;
             padding: 1.5rem 1rem;
@@ -364,6 +368,15 @@
             margin-top: 0.5rem;
             line-height: 1.5;
         }
+        .roster-card .social-links a {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin: 0 0.3rem;
+            transition: all 0.3s ease;
+        }
+        .roster-card .social-links a:hover {
+            color: var(--primary);
+        }
 
         /* Match Item */
         .match-item {
@@ -397,6 +410,15 @@
         .match-item .time {
             font-size: 0.75rem;
             color: var(--text-muted);
+        }
+        .match-item .badge-live {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            font-size: 0.65rem;
+            padding: 0.15rem 0.6rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            animation: pulse-dot 2s infinite;
         }
 
         /* News Cards */
@@ -528,63 +550,57 @@
             margin-bottom: 0.5rem;
             color: var(--primary);
         }
-
-        /* Footer */
-        .footer-wolf {
-            background: rgba(10, 10, 16, 0.8);
-            border-top: 1px solid rgba(255, 255, 255, 0.04);
-            padding: 3rem 0 1.5rem;
-            margin-top: 2rem;
-        }
-        .footer-wolf .brand {
-            font-family: var(--font-display);
-            font-weight: 900;
-            font-size: 1.5rem;
-            color: #fff;
-        }
-        .footer-wolf .brand span {
-            color: var(--primary);
-        }
-        .footer-wolf p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-        .footer-wolf .social-links a {
+        .sponsor-grid .sponsor-item .discount {
+            font-size: 0.7rem;
+            color: var(--secondary);
+            background: rgba(6, 214, 160, 0.08);
+            padding: 0.1rem 0.5rem;
+            border-radius: 9999px;
             display: inline-block;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            color: var(--text-muted);
-            text-align: center;
-            line-height: 40px;
-            transition: all 0.3s ease;
-            margin-right: 0.5rem;
+            margin-top: 0.3rem;
         }
-        .footer-wolf .social-links a:hover {
-            background: rgba(124, 58, 237, 0.12);
-            border-color: var(--primary);
+
+        /* Product / Merch */
+        .product-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.25rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        .product-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(124, 58, 237, 0.2);
+            box-shadow: 0 12px 40px rgba(124, 58, 237, 0.06);
+        }
+        .product-card .product-img {
+            height: 180px;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(6, 214, 160, 0.04));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--text-muted);
+        }
+        .product-card .product-body {
+            padding: 1.25rem;
+        }
+        .product-card .product-body .price {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--secondary);
+        }
+        .product-card .product-body .name {
+            font-family: var(--font-display);
+            font-weight: 700;
             color: #fff;
         }
-        .footer-wolf .footer-links a {
+        .product-card .product-body p {
             color: var(--text-muted);
             font-size: 0.85rem;
-            display: block;
-            padding: 0.25rem 0;
-            transition: all 0.3s ease;
-        }
-        .footer-wolf .footer-links a:hover {
-            color: #fff;
-            padding-left: 4px;
-        }
-        .footer-wolf .copyright {
-            border-top: 1px solid rgba(255, 255, 255, 0.04);
-            padding-top: 1.5rem;
-            margin-top: 2rem;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            text-align: center;
         }
 
         /* Admin Panel */
@@ -594,7 +610,8 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
         }
         .admin-table input,
-        .admin-table select {
+        .admin-table select,
+        .admin-table textarea {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 0.5rem;
@@ -603,7 +620,8 @@
             width: 100%;
         }
         .admin-table input:focus,
-        .admin-table select:focus {
+        .admin-table select:focus,
+        .admin-table textarea:focus {
             outline: none;
             border-color: var(--primary);
         }
@@ -629,6 +647,35 @@
             color: #ff0000;
         }
 
+        /* Auth Modal */
+        .auth-modal .modal-content {
+            background: var(--dark);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.25rem;
+            color: var(--text-light);
+        }
+        .auth-modal .modal-header {
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .auth-modal .modal-footer {
+            border-top: 1px solid var(--glass-border);
+        }
+        .auth-modal .form-control {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #fff;
+            border-radius: 0.75rem;
+            padding: 0.6rem 1rem;
+        }
+        .auth-modal .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: none;
+        }
+        .auth-modal .form-label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
         /* Page sections */
         .page-section {
             display: none;
@@ -646,6 +693,36 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+
+        /* Dashboard stats */
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(124, 58, 237, 0.2);
+        }
+        .stat-card .stat-number {
+            font-family: var(--font-display);
+            font-weight: 900;
+            font-size: 2.2rem;
+            color: #fff;
+        }
+        .stat-card .stat-label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .stat-card .stat-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
         }
 
         /* Responsive */
@@ -703,6 +780,39 @@
                 gap: 0.75rem;
             }
         }
+
+        /* Auth status indicator */
+        .auth-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .auth-status .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #fff;
+            font-weight: 700;
+        }
+        .auth-status .user-name {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .auth-status .logout-btn {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .auth-status .logout-btn:hover {
+            color: #ef4444;
+        }
     </style>
 </head>
 <body>
@@ -718,18 +828,103 @@
             </button>
             <div class="collapse navbar-collapse" id="wolfNavbar">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
-                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                    <!-- Public Pages -->
+                    <li class="nav-item"><a class="nav-link active" href="#home">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="#roster">Roster</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#schedule">Schedule</a></li>
                     <li class="nav-item"><a class="nav-link" href="#bracket">Bracket</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#community">Community</a></li>
                     <li class="nav-item"><a class="nav-link" href="#news">News</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#sponsors">Sponsors</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#merch">Merch</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#community">Community</a></li>
                     <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
                     <li class="nav-item"><a class="nav-link" href="#tryouts">Tryouts</a></li>
-                    <li class="nav-item"><a class="nav-link text-neon" href="#admin" style="color:var(--primary);">Admin</a></li>
+
+                    <!-- Admin / Management (visible when logged in) -->
+                    <li class="nav-item dropdown" id="adminNavItem" style="display:none;">
+                        <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-cog"></i> Manage
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#dashboard"><i class="fas fa-chart-pie me-2"></i>Dashboard</a></li>
+                            <li><a class="dropdown-item" href="#admin-roster"><i class="fas fa-users me-2"></i>Roster</a></li>
+                            <li><a class="dropdown-item" href="#admin-matches"><i class="fas fa-calendar-check me-2"></i>Matches</a></li>
+                            <li><a class="dropdown-item" href="#admin-scrims"><i class="fas fa-sword me-2"></i>Scrims</a></li>
+                            <li><a class="dropdown-item" href="#admin-financial"><i class="fas fa-coins me-2"></i>Financial</a></li>
+                            <li><a class="dropdown-item" href="#admin-documents"><i class="fas fa-file-contract me-2"></i>Documents</a></li>
+                            <li><a class="dropdown-item" href="#admin-media"><i class="fas fa-photo-video me-2"></i>Media</a></li>
+                            <li><a class="dropdown-item" href="#admin-applications"><i class="fas fa-file-signature me-2"></i>Applications</a></li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="logoutUser();"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Auth Button -->
+                    <li class="nav-item" id="authNavItem">
+                        <button class="btn-neon btn-neon-sm" onclick="openAuthModal()">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login
+                        </button>
+                    </li>
+                    <li class="nav-item" id="userNavItem" style="display:none;">
+                        <div class="auth-status">
+                            <div class="user-avatar" id="userAvatar">W</div>
+                            <span class="user-name" id="userName">User</span>
+                            <span class="logout-btn" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i></span>
+                        </div>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
+
+    <!-- ============================================================= -->
+    <!-- AUTH MODAL                                                    -->
+    <!-- ============================================================= -->
+    <div class="modal fade auth-modal" id="authModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="authModalTitle"><i class="fas fa-sign-in-alt me-2"></i>Login</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="authError" class="alert alert-danger d-none"></div>
+                    <form id="authForm">
+                        <div id="loginFields">
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" id="authEmail" class="form-control" placeholder="you@example.com" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" id="authPassword" class="form-control" placeholder="••••••••" required />
+                            </div>
+                        </div>
+                        <div id="registerFields" style="display:none;">
+                            <div class="mb-3">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" id="authFullName" class="form-control" placeholder="Your Name" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Role (Admin/Manager/Coach/Player)</label>
+                                <select id="authRole" class="form-control">
+                                    <option value="player">Player</option>
+                                    <option value="coach">Coach</option>
+                                    <option value="manager">Manager</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-neon w-100" id="authSubmitBtn">Login</button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <span class="text-muted small" id="authToggleText">Don't have an account?</span>
+                        <a href="#" class="small" id="authToggleLink">Register</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- ============================================================= -->
     <!-- PAGE: HOME                                                    -->
@@ -778,7 +973,7 @@
     </section>
 
     <!-- ============================================================= -->
-    <!-- PAGE: ROSTER (fetches from Supabase)                         -->
+    <!-- PAGE: ROSTER                                                  -->
     <!-- ============================================================= -->
     <section id="page-roster" class="page-section section-padding">
         <div class="container">
@@ -803,7 +998,20 @@
     </section>
 
     <!-- ============================================================= -->
-    <!-- PAGE: BRACKET (Challonge iframe)                             -->
+    <!-- PAGE: SCHEDULE                                                -->
+    <!-- ============================================================= -->
+    <section id="page-schedule" class="page-section section-padding" style="padding-top:0;">
+        <div class="container">
+            <h2 class="section-title">📅 Match <span class="highlight">Schedule</span></h2>
+            <p class="section-subtitle">Upcoming and recent battles.</p>
+            <div id="scheduleGrid" class="mt-4 space-y-3">
+                <!-- populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- PAGE: BRACKET                                                 -->
     <!-- ============================================================= -->
     <section id="page-bracket" class="page-section section-padding" style="padding-top:0;">
         <div class="container">
@@ -847,7 +1055,67 @@
     </section>
 
     <!-- ============================================================= -->
-    <!-- PAGE: COMMUNITY                                              -->
+    <!-- PAGE: NEWS                                                    -->
+    <!-- ============================================================= -->
+    <section id="page-news" class="page-section section-padding" style="padding-top:0;">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">📰 Latest <span class="highlight">Intel</span></h2>
+                <p class="section-subtitle">Stay updated with the latest from Wolf Society.</p>
+            </div>
+            <div class="owl-carousel owl-theme" id="newsCarousel">
+                <!-- populated by JS -->
+            </div>
+            <div id="newsList" class="row g-4 mt-4">
+                <!-- populated by JS -->
+            </div>
+            <div class="author-box">
+                <div class="author-avatar">🐺</div>
+                <div class="author-info">
+                    <div class="name">Wolf Society Editorial</div>
+                    <p class="bio">The official news and content team of Wolf Society Esports. Bringing you the latest intel from the battlefield.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- PAGE: SPONSORS                                                -->
+    <!-- ============================================================= -->
+    <section id="page-sponsors" class="page-section section-padding" style="padding-top:0;">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">🤝 Our <span class="highlight">Partners</span></h2>
+                <p class="section-subtitle">Proudly supported by these amazing brands.</p>
+            </div>
+            <div id="sponsorGrid" class="sponsor-grid">
+                <!-- populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- PAGE: MERCH                                                   -->
+    <!-- ============================================================= -->
+    <section id="page-merch" class="page-section section-padding" style="padding-top:0;">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">🛍️ <span class="highlight">Merch</span> Store</h2>
+                <p class="section-subtitle">Gear up with official Wolf Society merchandise.</p>
+            </div>
+            <div id="merchGrid" class="row g-4">
+                <!-- populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- PAGE: COMMUNITY                                               -->
     <!-- ============================================================= -->
     <section id="page-community" class="page-section section-padding" style="padding-top:0;">
         <div class="container">
@@ -895,154 +1163,13 @@
                             <a href="#" class="btn-neon btn-neon-secondary" style="padding:0.4rem 1rem;font-size:0.8rem;"><i class="fab fa-twitter me-1"></i>Twitter</a>
                             <a href="#" class="btn-neon btn-neon-secondary" style="padding:0.4rem 1rem;font-size:0.8rem;"><i class="fab fa-youtube me-1"></i>YouTube</a>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================= -->
-    <!-- PAGE: NEWS (with Owl Carousel)                               -->
-    <!-- ============================================================= -->
-    <section id="page-news" class="page-section section-padding" style="padding-top:0;">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">📰 Latest <span class="highlight">Intel</span></h2>
-                <p class="section-subtitle">Stay updated with the latest from Wolf Society.</p>
-            </div>
-            <div class="owl-carousel owl-theme" id="newsCarousel">
-                <!-- static news items -->
-                <div class="item">
-                    <div class="news-card">
-                        <div class="news-img"><i class="fas fa-trophy"></i></div>
-                        <div class="news-body">
-                            <span class="tag">Tournament</span>
-                            <h5>Wolf Society Secures Top Seed in BGM 2026</h5>
-                            <p>Dominating the group stage with a flawless 7-0 record, Wolf Society enters the knockout phase as the #1 seed.</p>
-                            <div class="meta"><span><i class="far fa-calendar-alt"></i> Aug 8, 2026</span><span><i class="far fa-comment"></i> 12</span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="news-card">
-                        <div class="news-img"><i class="fas fa-users"></i></div>
-                        <div class="news-body">
-                            <span class="tag">Roster</span>
-                            <h5>Roster Synergy at All-Time High</h5>
-                            <p>After weeks of intense scrims, the team's chemistry is peaking just in time for the championship run.</p>
-                            <div class="meta"><span><i class="far fa-calendar-alt"></i> Aug 6, 2026</span><span><i class="far fa-comment"></i> 8</span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="news-card">
-                        <div class="news-img"><i class="fas fa-tshirt"></i></div>
-                        <div class="news-body">
-                            <span class="tag">Merch</span>
-                            <h5>New Limited-Edition Jersey Drop</h5>
-                            <p>Celebrate our championship run with the new Wolf Society jersey. Pre-orders now open for 48 hours only.</p>
-                            <div class="meta"><span><i class="far fa-calendar-alt"></i> Aug 4, 2026</span><span><i class="far fa-comment"></i> 24</span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="news-card">
-                        <div class="news-img"><i class="fas fa-microphone"></i></div>
-                        <div class="news-body">
-                            <span class="tag">Community</span>
-                            <h5>AMA with Captain AlphaWolf — This Friday</h5>
-                            <p>Join us for an exclusive Ask Me Anything session with our captain. Submit your questions now!</p>
-                            <div class="meta"><span><i class="far fa-calendar-alt"></i> Aug 2, 2026</span><span><i class="far fa-comment"></i> 31</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Related Posts -->
-            <div class="mt-5">
-                <h5 class="fw-bold mb-3"><i class="fas fa-link me-2"></i>Related Posts</h5>
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <div class="d-flex gap-3 p-2 border-bottom border-white/05">
-                            <div class="thumb" style="width:64px;height:64px;border-radius:0.5rem;background:rgba(124,58,237,0.1);display:flex;align-items:center;justify-content:center;font-size:1.5rem;"><i class="fas fa-gamepad"></i></div>
-                            <div><h6 class="fw-bold text-white">Tournament Recap: Wolf vs PHX</h6><div class="small text-muted">Aug 7, 2026</div></div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="d-flex gap-3 p-2 border-bottom border-white/05">
-                            <div class="thumb" style="width:64px;height:64px;border-radius:0.5rem;background:rgba(124,58,237,0.1);display:flex;align-items:center;justify-content:center;font-size:1.5rem;"><i class="fas fa-star"></i></div>
-                            <div><h6 class="fw-bold text-white">Player Spotlight: CrimsonMage</h6><div class="small text-muted">Aug 5, 2026</div></div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="d-flex gap-3 p-2 border-bottom border-white/05">
-                            <div class="thumb" style="width:64px;height:64px;border-radius:0.5rem;background:rgba(124,58,237,0.1);display:flex;align-items:center;justify-content:center;font-size:1.5rem;"><i class="fas fa-calendar"></i></div>
-                            <div><h6 class="fw-bold text-white">Community Tournament Schedule</h6><div class="small text-muted">Aug 3, 2026</div></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Author Box -->
-            <div class="author-box">
-                <div class="author-avatar">🐺</div>
-                <div class="author-info">
-                    <div class="name">Wolf Society Editorial</div>
-                    <p class="bio">The official news and content team of Wolf Society Esports. Bringing you the latest intel from the battlefield.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-discord"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================= -->
-    <!-- PAGE: TRYOUTS                                                -->
-    <!-- ============================================================= -->
-    <section id="page-tryouts" class="page-section section-padding" style="padding-top:0;">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="glass-card p-4 p-md-5">
-                        <h2 class="section-title text-center">📋 Join the <span class="highlight">Pack</span></h2>
-                        <p class="text-center text-muted">Submit your application to become part of Wolf Society.</p>
-                        <form id="tryoutForm" class="mt-4">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label small text-muted">Summoner Name</label>
-                                    <input type="text" class="form-control bg-dark border-white/10 text-white" placeholder="Enter your IGN" required style="border-radius:0.75rem;padding:0.7rem 1rem;" />
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label small text-muted">Role</label>
-                                    <select class="form-select bg-dark border-white/10 text-white" style="border-radius:0.75rem;padding:0.7rem 1rem;">
-                                        <option>Top</option>
-                                        <option>Jungle</option>
-                                        <option>Mid</option>
-                                        <option>ADC</option>
-                                        <option>Support</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label small text-muted">Current Rank</label>
-                                    <input type="text" class="form-control bg-dark border-white/10 text-white" placeholder="e.g. Diamond 2" required style="border-radius:0.75rem;padding:0.7rem 1rem;" />
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label small text-muted">Discord Tag</label>
-                                    <input type="text" class="form-control bg-dark border-white/10 text-white" placeholder="username#0000" style="border-radius:0.75rem;padding:0.7rem 1rem;" />
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label small text-muted">Why Wolf Society?</label>
-                                    <textarea rows="4" class="form-control bg-dark border-white/10 text-white" placeholder="Tell us about yourself..." style="border-radius:0.75rem;padding:0.7rem 1rem;"></textarea>
-                                </div>
-                                <div class="col-12 text-center">
-                                    <button type="submit" class="btn-neon px-5">Submit Application</button>
-                                    <div id="tryoutFeedback" class="mt-2 small text-success d-none">✅ Application received! We'll be in touch.</div>
-                                </div>
+                        <div class="mt-3">
+                            <label class="form-label small text-muted">Subscribe to Newsletter</label>
+                            <div class="d-flex">
+                                <input type="email" class="form-control bg-dark border-white/10 text-white" placeholder="Your email" style="border-radius:0.75rem 0 0 0.75rem;padding:0.5rem 1rem;" />
+                                <button class="btn-neon" style="border-radius:0 0.75rem 0.75rem 0;padding:0.5rem 1.2rem;">Subscribe</button>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1050,7 +1177,7 @@
     </section>
 
     <!-- ============================================================= -->
-    <!-- PAGE: ABOUT                                                  -->
+    <!-- PAGE: ABOUT                                                   -->
     <!-- ============================================================= -->
     <section id="page-about" class="page-section section-padding" style="padding-top:0;">
         <div class="container">
@@ -1089,93 +1216,263 @@
     </section>
 
     <!-- ============================================================= -->
-    <!-- PAGE: ADMIN PANEL (Supabase CRUD)                            -->
+    <!-- PAGE: TRYOUTS                                                 -->
     <!-- ============================================================= -->
-    <section id="page-admin" class="page-section section-padding" style="padding-top:0;">
+    <section id="page-tryouts" class="page-section section-padding" style="padding-top:0;">
         <div class="container">
-            <h2 class="section-title">⚙️ <span class="highlight">Admin</span> Panel</h2>
-            <p class="section-subtitle">Manage roster, matches, and media — all data stored in Supabase.</p>
-
-            <!-- Tabs -->
-            <ul class="nav nav-tabs border-0 gap-2 mb-4" id="adminTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="btn-neon btn-neon-sm active" data-bs-toggle="tab" data-bs-target="#adminRosterTab" type="button" role="tab">Roster</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="btn-neon btn-neon-sm btn-neon-secondary" data-bs-toggle="tab" data-bs-target="#adminMatchesTab" type="button" role="tab">Matches</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="btn-neon btn-neon-sm" data-bs-toggle="tab" data-bs-target="#adminMediaTab" type="button" role="tab">Media</button>
-                </li>
-            </ul>
-
-            <div class="tab-content">
-                <!-- Roster Admin -->
-                <div class="tab-pane fade show active" id="adminRosterTab" role="tabpanel">
-                    <div class="glass-card p-4">
-                        <h4 class="fw-bold text-white mb-3">Roster Management</h4>
-                        <div class="table-responsive">
-                            <table class="admin-table table table-dark table-borderless">
-                                <thead><tr><th>Name</th><th>Role</th><th>KDA</th><th>WR%</th><th>Bio</th><th>Actions</th></tr></thead>
-                                <tbody id="adminRosterBody"><tr><td colspan="6" class="text-muted">Loading...</td></tr></tbody>
-                            </table>
-                        </div>
-                        <hr class="border-white/10" />
-                        <h5 class="fw-bold text-secondary">Add New Player</h5>
-                        <div class="row g-2">
-                            <div class="col-md-3"><input type="text" id="newRosterName" class="form-control bg-dark border-white/10 text-white" placeholder="Name" /></div>
-                            <div class="col-md-2"><input type="text" id="newRosterRole" class="form-control bg-dark border-white/10 text-white" placeholder="Role" /></div>
-                            <div class="col-md-2"><input type="number" id="newRosterKda" class="form-control bg-dark border-white/10 text-white" placeholder="KDA" step="0.1" /></div>
-                            <div class="col-md-2"><input type="number" id="newRosterWr" class="form-control bg-dark border-white/10 text-white" placeholder="WR" /></div>
-                            <div class="col-md-3"><input type="text" id="newRosterBio" class="form-control bg-dark border-white/10 text-white" placeholder="Bio" /></div>
-                            <div class="col-12"><button id="addRosterBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Player</button></div>
-                        </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="glass-card p-4 p-md-5">
+                        <h2 class="section-title text-center">📋 Join the <span class="highlight">Pack</span></h2>
+                        <p class="text-center text-muted">Submit your application to become part of Wolf Society.</p>
+                        <form id="tryoutForm" class="mt-4">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label small text-muted">Summoner Name</label>
+                                    <input type="text" id="tryoutName" class="form-control bg-dark border-white/10 text-white" placeholder="Enter your IGN" required style="border-radius:0.75rem;padding:0.7rem 1rem;" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small text-muted">Role</label>
+                                    <select id="tryoutRole" class="form-select bg-dark border-white/10 text-white" style="border-radius:0.75rem;padding:0.7rem 1rem;">
+                                        <option>Top</option>
+                                        <option>Jungle</option>
+                                        <option>Mid</option>
+                                        <option>ADC</option>
+                                        <option>Support</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small text-muted">Current Rank</label>
+                                    <input type="text" id="tryoutRank" class="form-control bg-dark border-white/10 text-white" placeholder="e.g. Diamond 2" required style="border-radius:0.75rem;padding:0.7rem 1rem;" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small text-muted">Discord Tag</label>
+                                    <input type="text" id="tryoutDiscord" class="form-control bg-dark border-white/10 text-white" placeholder="username#0000" style="border-radius:0.75rem;padding:0.7rem 1rem;" />
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label small text-muted">Why Wolf Society?</label>
+                                    <textarea id="tryoutMessage" rows="4" class="form-control bg-dark border-white/10 text-white" placeholder="Tell us about yourself..." style="border-radius:0.75rem;padding:0.7rem 1rem;"></textarea>
+                                </div>
+                                <div class="col-12 text-center">
+                                    <button type="submit" class="btn-neon px-5">Submit Application</button>
+                                    <div id="tryoutFeedback" class="mt-2 small text-success d-none">✅ Application received! We'll be in touch.</div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
 
-                <!-- Matches Admin -->
-                <div class="tab-pane fade" id="adminMatchesTab" role="tabpanel">
-                    <div class="glass-card p-4">
-                        <h4 class="fw-bold text-white mb-3">Match Management</h4>
-                        <div class="table-responsive">
-                            <table class="admin-table table table-dark table-borderless">
-                                <thead><tr><th>Team A</th><th>Team B</th><th>Score A</th><th>Score B</th><th>Status</th><th>Time</th><th>Actions</th></tr></thead>
-                                <tbody id="adminMatchesBody"><tr><td colspan="7" class="text-muted">Loading...</td></tr></tbody>
-                            </table>
-                        </div>
-                        <hr class="border-white/10" />
-                        <h5 class="fw-bold text-secondary">Add New Match</h5>
-                        <div class="row g-2">
-                            <div class="col-md-2"><input type="text" id="newMatchA" class="form-control bg-dark border-white/10 text-white" placeholder="Team A" /></div>
-                            <div class="col-md-2"><input type="text" id="newMatchB" class="form-control bg-dark border-white/10 text-white" placeholder="Team B" /></div>
-                            <div class="col-md-1"><input type="number" id="newMatchScoreA" class="form-control bg-dark border-white/10 text-white" placeholder="SA" /></div>
-                            <div class="col-md-1"><input type="number" id="newMatchScoreB" class="form-control bg-dark border-white/10 text-white" placeholder="SB" /></div>
-                            <div class="col-md-2"><input type="text" id="newMatchStatus" class="form-control bg-dark border-white/10 text-white" placeholder="Status" /></div>
-                            <div class="col-md-2"><input type="text" id="newMatchTime" class="form-control bg-dark border-white/10 text-white" placeholder="Time" /></div>
-                            <div class="col-12"><button id="addMatchBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Match</button></div>
-                        </div>
-                    </div>
+    <!-- ============================================================= -->
+    <!-- PAGE: DASHBOARD (Admin)                                      -->
+    <!-- ============================================================= -->
+    <section id="page-dashboard" class="page-section section-padding" style="padding-top:0;">
+        <div class="container">
+            <h2 class="section-title">📊 <span class="highlight">Dashboard</span></h2>
+            <p class="section-subtitle">Overview of your organization.</p>
+            <div class="row g-4" id="dashboardStats">
+                <div class="col-6 col-md-3">
+                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-users"></i></div><div class="stat-number" id="dashPlayers">0</div><div class="stat-label">Players</div></div>
                 </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-calendar-check"></i></div><div class="stat-number" id="dashMatches">0</div><div class="stat-label">Matches</div></div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-coins"></i></div><div class="stat-number" id="dashRevenue">₹0</div><div class="stat-label">Revenue</div></div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-file-signature"></i></div><div class="stat-number" id="dashApps">0</div><div class="stat-label">Applications</div></div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                <!-- Media Admin -->
-                <div class="tab-pane fade" id="adminMediaTab" role="tabpanel">
-                    <div class="glass-card p-4">
-                        <h4 class="fw-bold text-white mb-3">Media Management</h4>
-                        <div class="table-responsive">
-                            <table class="admin-table table table-dark table-borderless">
-                                <thead><tr><th>Title</th><th>Type</th><th>URL</th><th>Actions</th></tr></thead>
-                                <tbody id="adminMediaBody"><tr><td colspan="4" class="text-muted">Loading...</td></tr></tbody>
-                            </table>
-                        </div>
-                        <hr class="border-white/10" />
-                        <h5 class="fw-bold text-secondary">Add Media Item</h5>
-                        <div class="row g-2">
-                            <div class="col-md-4"><input type="text" id="newMediaTitle" class="form-control bg-dark border-white/10 text-white" placeholder="Title" /></div>
-                            <div class="col-md-3"><input type="text" id="newMediaType" class="form-control bg-dark border-white/10 text-white" placeholder="Type (youtube/twitch)" /></div>
-                            <div class="col-md-4"><input type="text" id="newMediaUrl" class="form-control bg-dark border-white/10 text-white" placeholder="URL" /></div>
-                            <div class="col-12"><button id="addMediaBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Media</button></div>
-                        </div>
-                    </div>
+    <!-- ============================================================= -->
+    <!-- PAGE: ADMIN ROSTER                                            -->
+    <!-- ============================================================= -->
+    <section id="page-admin-roster" class="page-section section-padding" style="padding-top:0;">
+        <div class="container">
+            <h2 class="section-title">👥 <span class="highlight">Roster</span> Management</h2>
+            <p class="section-subtitle">Add, edit, or remove players.</p>
+            <div class="glass-card p-4">
+                <div class="table-responsive">
+                    <table class="admin-table table table-dark table-borderless">
+                        <thead><tr><th>Name</th><th>Role</th><th>KDA</th><th>WR%</th><th>Bio</th><th>Actions</th></tr></thead>
+                        <tbody id="adminRosterBody"><tr><td colspan="6" class="text-muted">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+                <hr class="border-white/10" />
+                <h5 class="fw-bold text-secondary">Add Player</h5>
+                <div class="row g-2">
+                    <div class="col-md-2"><input type="text" id="newRosterName" class="form-control bg-dark border-white/10 text-white" placeholder="Name" /></div>
+                    <div class="col-md-2"><input type="text" id="newRosterRole" class="form-control bg-dark border-white/10 text-white" placeholder="Role" /></div>
+                    <div class="col-md-1"><input type="number" id="newRosterKda" class="form-control bg-dark border-white/10 text-white" placeholder="KDA" step="0.1" /></div>
+                    <div class="col-md-1"><input type="number" id="newRosterWr" class="form-control bg-dark border-white/10 text-white" placeholder="WR" /></div>
+                    <div class="col-md-3"><input type="text" id="newRosterBio" class="form-control bg-dark border-white/10 text-white" placeholder="Bio" /></div>
+                    <div class="col-md-2"><input type="text" id="newRosterSocial" class="form-control bg-dark border-white/10 text-white" placeholder="Twitter @handle" /></div>
+                    <div class="col-12"><button id="addRosterBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Player</button></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- PAGE: ADMIN MATCHES                                           -->
+    <!-- ============================================================= -->
+    <section id="page-admin-matches" class="page-section section-padding" style="padding-top:0;">
+        <div class="container">
+            <h2 class="section-title">📅 <span class="highlight">Matches</span> Management</h2>
+            <p class="section-subtitle">Schedule and manage matches.</p>
+            <div class="glass-card p-4">
+                <div class="table-responsive">
+                    <table class="admin-table table table-dark table-borderless">
+                        <thead><tr><th>Team A</th><th>Team B</th><th>Score A</th><th>Score B</th><th>Status</th><th>Time</th><th>Actions</th></tr></thead>
+                        <tbody id="adminMatchesBody"><tr><td colspan="7" class="text-muted">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+                <hr class="border-white/10" />
+                <h5 class="fw-bold text-secondary">Add Match</h5>
+                <div class="row g-2">
+                    <div class="col-md-2"><input type="text" id="newMatchA" class="form-control bg-dark border-white/10 text-white" placeholder="Team A" /></div>
+                    <div class="col-md-2"><input type="text" id="newMatchB" class="form-control bg-dark border-white/10 text-white" placeholder="Team B" /></div>
+                    <div class="col-md-1"><input type="number" id="newMatchScoreA" class="form-control bg-dark border-white/10 text-white" placeholder="SA" /></div>
+                    <div class="col-md-1"><input type="number" id="newMatchScoreB" class="form-control bg-dark border-white/10 text-white" placeholder="SB" /></div>
+                    <div class="col-md-2"><input type="text" id="newMatchStatus" class="form-control bg-dark border-white/10 text-white" placeholder="Status" /></div>
+                    <div class="col-md-2"><input type="text" id="newMatchTime" class="form-control bg-dark border-white/10 text-white" placeholder="Time" /></div>
+                    <div class="col-12"><button id="addMatchBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Match</button></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- PAGE: ADMIN SCRIMS                                            -->
+    <!-- ============================================================= -->
+    <section id="page-admin-scrims" class="page-section section-padding" style="padding-top:0;">
+        <div class="container">
+            <h2 class="section-title">⚔️ <span class="highlight">Scrim</span> Scheduler</h2>
+            <p class="section-subtitle">Manage practice sessions and scrims.</p>
+            <div class="glass-card p-4">
+                <div class="table-responsive">
+                    <table class="admin-table table table-dark table-borderless">
+                        <thead><tr><th>Team</th><th>Opponent</th><th>Date/Time</th><th>Duration</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="adminScrimsBody"><tr><td colspan="6" class="text-muted">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+                <hr class="border-white/10" />
+                <h5 class="fw-bold text-secondary">Add Scrim</h5>
+                <div class="row g-2">
+                    <div class="col-md-2"><input type="text" id="newScrimTeam" class="form-control bg-dark border-white/10 text-white" placeholder="Team" /></div>
+                    <div class="col-md-2"><input type="text" id="newScrimOpponent" class="form-control bg-dark border-white/10 text-white" placeholder="Opponent" /></div>
+                    <div class="col-md-3"><input type="datetime-local" id="newScrimDateTime" class="form-control bg-dark border-white/10 text-white" /></div>
+                    <div class="col-md-1"><input type="number" id="newScrimDuration" class="form-control bg-dark border-white/10 text-white" placeholder="Hrs" /></div>
+                    <div class="col-md-2"><input type="text" id="newScrimStatus" class="form-control bg-dark border-white/10 text-white" placeholder="Status" /></div>
+                    <div class="col-12"><button id="addScrimBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Scrim</button></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- PAGE: ADMIN FINANCIAL                                         -->
+    <!-- ============================================================= -->
+    <section id="page-admin-financial" class="page-section section-padding" style="padding-top:0;">
+        <div class="container">
+            <h2 class="section-title">💰 <span class="highlight">Financial</span> Ledger</h2>
+            <p class="section-subtitle">Track revenue, expenses, and budgets.</p>
+            <div class="glass-card p-4">
+                <div class="table-responsive">
+                    <table class="admin-table table table-dark table-borderless">
+                        <thead><tr><th>Type</th><th>Category</th><th>Amount</th><th>Description</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="adminFinancialBody"><tr><td colspan="7" class="text-muted">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+                <hr class="border-white/10" />
+                <h5 class="fw-bold text-secondary">Add Entry</h5>
+                <div class="row g-2">
+                    <div class="col-md-2"><select id="newFinType" class="form-control bg-dark border-white/10 text-white"><option value="income">Income</option><option value="expense">Expense</option></select></div>
+                    <div class="col-md-2"><input type="text" id="newFinCategory" class="form-control bg-dark border-white/10 text-white" placeholder="Category" /></div>
+                    <div class="col-md-2"><input type="number" id="newFinAmount" class="form-control bg-dark border-white/10 text-white" placeholder="Amount" /></div>
+                    <div class="col-md-3"><input type="text" id="newFinDesc" class="form-control bg-dark border-white/10 text-white" placeholder="Description" /></div>
+                    <div class="col-md-2"><input type="date" id="newFinDate" class="form-control bg-dark border-white/10 text-white" /></div>
+                    <div class="col-12"><button id="addFinBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Entry</button></div>
+                </div>
+                <div class="mt-3 d-flex gap-3">
+                    <span class="text-muted">Total Income: <strong class="text-success" id="totalIncome">₹0</strong></span>
+                    <span class="text-muted">Total Expenses: <strong class="text-danger" id="totalExpenses">₹0</strong></span>
+                    <span class="text-muted">Balance: <strong class="text-primary" id="totalBalance">₹0</strong></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- PAGE: ADMIN DOCUMENTS                                         -->
+    <!-- ============================================================= -->
+    <section id="page-admin-documents" class="page-section section-padding" style="padding-top:0;">
+        <div class="container">
+            <h2 class="section-title">📄 <span class="highlight">Document</span> Vault</h2>
+            <p class="section-subtitle">Secure storage for contracts and legal forms.</p>
+            <div class="glass-card p-4">
+                <div class="table-responsive">
+                    <table class="admin-table table table-dark table-borderless">
+                        <thead><tr><th>Title</th><th>Type</th><th>Uploaded</th><th>Actions</th></tr></thead>
+                        <tbody id="adminDocumentsBody"><tr><td colspan="4" class="text-muted">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+                <hr class="border-white/10" />
+                <h5 class="fw-bold text-secondary">Add Document</h5>
+                <div class="row g-2">
+                    <div class="col-md-3"><input type="text" id="newDocTitle" class="form-control bg-dark border-white/10 text-white" placeholder="Title" /></div>
+                    <div class="col-md-2"><input type="text" id="newDocType" class="form-control bg-dark border-white/10 text-white" placeholder="Type (Contract/NDA/etc)" /></div>
+                    <div class="col-md-4"><input type="text" id="newDocUrl" class="form-control bg-dark border-white/10 text-white" placeholder="File URL (Google Drive link)" /></div>
+                    <div class="col-12"><button id="addDocBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Document</button></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- PAGE: ADMIN MEDIA                                             -->
+    <!-- ============================================================= -->
+    <section id="page-admin-media" class="page-section section-padding" style="padding-top:0;">
+        <div class="container">
+            <h2 class="section-title">🖼️ <span class="highlight">Media</span> Library</h2>
+            <p class="section-subtitle">Centralized repository for brand assets.</p>
+            <div class="glass-card p-4">
+                <div class="table-responsive">
+                    <table class="admin-table table table-dark table-borderless">
+                        <thead><tr><th>Title</th><th>Type</th><th>URL</th><th>Actions</th></tr></thead>
+                        <tbody id="adminMediaBody"><tr><td colspan="4" class="text-muted">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+                <hr class="border-white/10" />
+                <h5 class="fw-bold text-secondary">Add Media</h5>
+                <div class="row g-2">
+                    <div class="col-md-3"><input type="text" id="newMediaTitle" class="form-control bg-dark border-white/10 text-white" placeholder="Title" /></div>
+                    <div class="col-md-2"><input type="text" id="newMediaType" class="form-control bg-dark border-white/10 text-white" placeholder="Type (logo/promo/etc)" /></div>
+                    <div class="col-md-4"><input type="text" id="newMediaUrl" class="form-control bg-dark border-white/10 text-white" placeholder="Image URL" /></div>
+                    <div class="col-12"><button id="addMediaBtn" class="btn-neon btn-neon-sm"><i class="fas fa-plus me-1"></i>Add Media</button></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- PAGE: ADMIN APPLICATIONS                                      -->
+    <!-- ============================================================= -->
+    <section id="page-admin-applications" class="page-section section-padding" style="padding-top:0;">
+        <div class="container">
+            <h2 class="section-title">📋 <span class="highlight">Applications</span></h2>
+            <p class="section-subtitle">Review tryout applications.</p>
+            <div class="glass-card p-4">
+                <div class="table-responsive">
+                    <table class="admin-table table table-dark table-borderless">
+                        <thead><tr><th>Name</th><th>Role</th><th>Rank</th><th>Discord</th><th>Message</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="adminApplicationsBody"><tr><td colspan="7" class="text-muted">Loading...</td></tr></tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -1202,7 +1499,7 @@
                     <div class="footer-links">
                         <a href="#home">Home</a>
                         <a href="#roster">Roster</a>
-                        <a href="#bracket">Bracket</a>
+                        <a href="#schedule">Schedule</a>
                         <a href="#news">News</a>
                     </div>
                 </div>
@@ -1240,49 +1537,307 @@
     <script>
         /**
          * ==============================================================
-         * WOLF SOCIETY — SUPABASE INTEGRATION
-         * All data is stored in Supabase tables: rosters, matches, media_items
+         * WOLF SOCIETY — COMPLETE PLATFORM
+         * - Supabase Auth (role-based access)
+         * - Public pages: Home, Roster, Schedule, Bracket, News, Sponsors, Merch, Community, About, Tryouts
+         * - Admin pages: Dashboard, Roster, Matches, Scrims, Financial, Documents, Media, Applications
+         * - All data stored in Supabase
          * ==============================================================
          */
 
-        // --- Supabase credentials (provided by you) ---
+        // --- Supabase credentials ---
         const SUPABASE_URL = 'https://tdfkebgapncswtvbtaqy.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ';
 
-        // --- Initialize Supabase client ---
+        // --- Initialize Supabase ---
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let currentUser = null;
+        let currentUserRole = null;
 
-        // --- DOM references ---
-        const rosterGrid = document.getElementById('rosterGrid');
-        const adminRosterBody = document.getElementById('adminRosterBody');
-        const adminMatchesBody = document.getElementById('adminMatchesBody');
-        const adminMediaBody = document.getElementById('adminMediaBody');
+        // --- DOM refs ---
+        const pages = {
+            home: $('#page-home'),
+            roster: $('#page-roster'),
+            schedule: $('#page-schedule'),
+            bracket: $('#page-bracket'),
+            news: $('#page-news'),
+            sponsors: $('#page-sponsors'),
+            merch: $('#page-merch'),
+            community: $('#page-community'),
+            about: $('#page-about'),
+            tryouts: $('#page-tryouts'),
+            dashboard: $('#page-dashboard'),
+            'admin-roster': $('#page-admin-roster'),
+            'admin-matches': $('#page-admin-matches'),
+            'admin-scrims': $('#page-admin-scrims'),
+            'admin-financial': $('#page-admin-financial'),
+            'admin-documents': $('#page-admin-documents'),
+            'admin-media': $('#page-admin-media'),
+            'admin-applications': $('#page-admin-applications'),
+        };
 
         // ==============================================================
-        // 1. FETCH & RENDER FUNCTIONS
+        // 1. AUTHENTICATION
         // ==============================================================
 
-        // Fetch all tables
-        async function fetchAll() {
-            const [rosterRes, matchesRes, mediaRes] = await Promise.all([
-                supabase.from('rosters').select('*').order('id', { ascending: true }),
-                supabase.from('matches').select('*').order('id', { ascending: true }),
-                supabase.from('media_items').select('*').order('id', { ascending: true })
-            ]);
-            if (rosterRes.error) console.error('Roster error:', rosterRes.error);
-            if (matchesRes.error) console.error('Matches error:', matchesRes.error);
-            if (mediaRes.error) console.error('Media error:', mediaRes.error);
-            return {
-                roster: rosterRes.data || [],
-                matches: matchesRes.data || [],
-                media: mediaRes.data || []
-            };
+        async function checkAuth() {
+            const { data: { session }, error } = await supabase.auth.getSession();
+            if (session) {
+                currentUser = session.user;
+                // Get user role from profiles table
+                const { data: profile, error: profileError } = await supabase
+                    .from('profiles')
+                    .select('role, full_name')
+                    .eq('id', currentUser.id)
+                    .single();
+                if (profile) {
+                    currentUserRole = profile.role || 'player';
+                    $('#userName').text(profile.full_name || currentUser.email.split('@')[0]);
+                    $('#userAvatar').text((profile.full_name || currentUser.email)[0].toUpperCase());
+                } else {
+                    currentUserRole = 'player';
+                    $('#userName').text(currentUser.email.split('@')[0]);
+                    $('#userAvatar').text(currentUser.email[0].toUpperCase());
+                }
+                showLoggedInUI();
+            } else {
+                showLoggedOutUI();
+            }
+            updateAdminNav();
         }
 
-        // Render public roster
-        function renderRoster(roster) {
+        function showLoggedInUI() {
+            $('#authNavItem').hide();
+            $('#userNavItem').show();
+            $('#adminNavItem').show();
+        }
+
+        function showLoggedOutUI() {
+            $('#authNavItem').show();
+            $('#userNavItem').hide();
+            $('#adminNavItem').hide();
+            // If on an admin page, redirect to home
+            const hash = window.location.hash;
+            if (hash && (hash.includes('admin') || hash.includes('dashboard'))) {
+                navigateTo('home');
+            }
+        }
+
+        function updateAdminNav() {
+            const isAdmin = currentUserRole === 'admin' || currentUserRole === 'manager';
+            $('#adminNavItem').toggle(isAdmin && currentUser !== null);
+            // Show/hide admin pages based on role
+            const adminPages = ['dashboard', 'admin-roster', 'admin-matches', 'admin-scrims',
+                'admin-financial', 'admin-documents', 'admin-media', 'admin-applications'
+            ];
+            const hash = window.location.hash.replace('#', '');
+            if (adminPages.includes(hash) && !isAdmin) {
+                navigateTo('home');
+            }
+        }
+
+        // --- Auth Modal ---
+        const authModal = new bootstrap.Modal(document.getElementById('authModal'));
+        let isLoginMode = true;
+
+        window.openAuthModal = function() {
+            isLoginMode = true;
+            $('#authModalTitle').html('<i class="fas fa-sign-in-alt me-2"></i>Login');
+            $('#authSubmitBtn').text('Login');
+            $('#authToggleText').text("Don't have an account?");
+            $('#authToggleLink').text('Register');
+            $('#registerFields').hide();
+            $('#loginFields').show();
+            $('#authError').addClass('d-none');
+            authModal.show();
+        };
+
+        $('#authToggleLink').on('click', function(e) {
+            e.preventDefault();
+            isLoginMode = !isLoginMode;
+            if (isLoginMode) {
+                $('#authModalTitle').html('<i class="fas fa-sign-in-alt me-2"></i>Login');
+                $('#authSubmitBtn').text('Login');
+                $('#authToggleText').text("Don't have an account?");
+                $('#authToggleLink').text('Register');
+                $('#registerFields').hide();
+                $('#loginFields').show();
+            } else {
+                $('#authModalTitle').html('<i class="fas fa-user-plus me-2"></i>Register');
+                $('#authSubmitBtn').text('Register');
+                $('#authToggleText').text("Already have an account?");
+                $('#authToggleLink').text('Login');
+                $('#registerFields').show();
+                $('#loginFields').show();
+            }
+            $('#authError').addClass('d-none');
+        });
+
+        $('#authForm').on('submit', async function(e) {
+            e.preventDefault();
+            const email = $('#authEmail').val().trim();
+            const password = $('#authPassword').val().trim();
+            const fullName = $('#authFullName').val().trim();
+            const role = $('#authRole').val();
+
+            $('#authError').addClass('d-none');
+
+            try {
+                if (isLoginMode) {
+                    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                    if (error) throw error;
+                    authModal.hide();
+                    await checkAuth();
+                } else {
+                    const { data, error } = await supabase.auth.signUp({
+                        email,
+                        password,
+                        options: { data: { full_name: fullName, role: role } }
+                    });
+                    if (error) throw error;
+                    // Create profile entry
+                    if (data.user) {
+                        await supabase.from('profiles').insert([{
+                            id: data.user.id,
+                            full_name: fullName,
+                            role: role,
+                            email: email
+                        }]);
+                    }
+                    authModal.hide();
+                    alert('Registration successful! Please check your email to confirm.');
+                    await checkAuth();
+                }
+            } catch (err) {
+                $('#authError').text(err.message).removeClass('d-none');
+            }
+        });
+
+        window.logoutUser = async function() {
+            await supabase.auth.signOut();
+            currentUser = null;
+            currentUserRole = null;
+            showLoggedOutUI();
+            updateAdminNav();
+            navigateTo('home');
+        };
+
+        // --- Check auth on load ---
+        supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+                checkAuth();
+            } else if (event === 'SIGNED_OUT') {
+                currentUser = null;
+                currentUserRole = null;
+                showLoggedOutUI();
+                updateAdminNav();
+            }
+        });
+
+        // ==============================================================
+        // 2. PAGE ROUTING
+        // ==============================================================
+
+        function navigateTo(pageId) {
+            // Hide all pages
+            Object.keys(pages).forEach(key => pages[key].removeClass('active'));
+            // Show target
+            if (pages[pageId]) pages[pageId].addClass('active');
+
+            // Update nav links
+            $('.navbar-nav .nav-link').removeClass('active');
+            $(`.navbar-nav .nav-link[href="#${pageId}"]`).addClass('active');
+
+            // If admin page, check permissions
+            const adminPages = ['dashboard', 'admin-roster', 'admin-matches', 'admin-scrims',
+                'admin-financial', 'admin-documents', 'admin-media', 'admin-applications'
+            ];
+            if (adminPages.includes(pageId)) {
+                const isAdmin = currentUserRole === 'admin' || currentUserRole === 'manager';
+                if (!isAdmin) {
+                    navigateTo('home');
+                    return;
+                }
+                refreshAdminData();
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Intercept nav clicks
+        $(document).on('click', '.navbar-nav .nav-link', function(e) {
+            const href = $(this).attr('href');
+            if (href && href.startsWith('#')) {
+                e.preventDefault();
+                const pageId = href.substring(1);
+                // If admin page, check auth
+                const adminPages = ['dashboard', 'admin-roster', 'admin-matches', 'admin-scrims',
+                    'admin-financial', 'admin-documents', 'admin-media', 'admin-applications'
+                ];
+                if (adminPages.includes(pageId) && !currentUser) {
+                    openAuthModal();
+                    return;
+                }
+                navigateTo(pageId);
+                window.location.hash = href;
+            }
+        });
+
+        // Dropdown items
+        $(document).on('click', '.dropdown-item[href]', function(e) {
+            const href = $(this).attr('href');
+            if (href && href.startsWith('#')) {
+                e.preventDefault();
+                const pageId = href.substring(1);
+                navigateTo(pageId);
+                window.location.hash = href;
+                // Close dropdown
+                $('.dropdown-menu').removeClass('show');
+            }
+        });
+
+        // Hash change
+        $(window).on('hashchange', function() {
+            const hash = window.location.hash.substring(1) || 'home';
+            if (pages[hash]) navigateTo(hash);
+        });
+
+        // Initial page
+        const initialHash = window.location.hash.substring(1) || 'home';
+        if (pages[initialHash]) navigateTo(initialHash);
+        else navigateTo('home');
+
+        // ==============================================================
+        // 3. DATA FETCHING & RENDERING
+        // ==============================================================
+
+        // --- Tables ---
+        const TABLES = {
+            roster: 'rosters',
+            matches: 'matches',
+            news: 'news',
+            sponsors: 'sponsors',
+            products: 'products',
+            scrims: 'scrims',
+            financial: 'financial',
+            documents: 'documents',
+            media_assets: 'media_assets',
+            applications: 'applications',
+            profiles: 'profiles',
+        };
+
+        async function fetchTable(table, orderBy = 'id') {
+            const { data, error } = await supabase.from(table).select('*').order(orderBy, { ascending: true });
+            if (error) console.error(`Error fetching ${table}:`, error);
+            return data || [];
+        }
+
+        // --- Render: Roster ---
+        async function renderRoster() {
+            const roster = await fetchTable(TABLES.roster);
+            const container = $('#rosterGrid');
             if (!roster || roster.length === 0) {
-                rosterGrid.innerHTML = '<p class="text-muted">No roster data available.</p>';
+                container.html('<p class="text-muted">No roster data available.</p>');
                 return;
             }
             let html = '';
@@ -1295,24 +1850,198 @@
                             <div class="role">${p.role}</div>
                             <div class="stats">KDA ${p.kda} · ${p.wr}% WR</div>
                             <div class="bio">${p.bio || ''}</div>
+                            ${p.social_twitter ? `<div class="social-links mt-1"><a href="https://twitter.com/${p.social_twitter}" target="_blank"><i class="fab fa-twitter"></i></a></div>` : ''}
                         </div>
                     </div>
                 `;
             });
-            rosterGrid.innerHTML = html;
+            container.html(html);
 
             // Team stats
             const totalKDA = roster.reduce((s, p) => s + p.kda, 0);
-            const avgKDA = (totalKDA / roster.length).toFixed(2);
-            const avgWR = (roster.reduce((s, p) => s + p.wr, 0) / roster.length).toFixed(1);
-            document.getElementById('teamKDA').textContent = avgKDA;
-            document.getElementById('teamWR').textContent = avgWR + '%';
+            const avgKDA = roster.length > 0 ? (totalKDA / roster.length).toFixed(2) : '—';
+            const avgWR = roster.length > 0 ? (roster.reduce((s, p) => s + p.wr, 0) / roster.length).toFixed(1) : '—';
+            $('#teamKDA').text(avgKDA);
+            $('#teamWR').text(avgWR + '%');
         }
 
-        // Render admin roster table
+        // --- Render: Schedule ---
+        async function renderSchedule() {
+            const matches = await fetchTable(TABLES.matches);
+            const container = $('#scheduleGrid');
+            if (!matches || matches.length === 0) {
+                container.html('<p class="text-muted">No matches scheduled.</p>');
+                return;
+            }
+            let html = '';
+            matches.forEach(m => {
+                const isLive = m.status === 'Live' || m.status === 'live';
+                html += `
+                    <div class="glass-card match-item p-3 d-flex flex-wrap align-items-center justify-content-between">
+                        <div class="teams">
+                            <span class="fw-bold text-white">${m.team_a}</span>
+                            <span class="vs">vs</span>
+                            <span class="fw-bold text-white">${m.team_b}</span>
+                            ${m.score_a !== null && m.score_b !== null ? `<span class="score ms-2">${m.score_a} - ${m.score_b}</span>` : ''}
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            ${isLive ? `<span class="badge-live"><i class="fas fa-circle me-1"></i>LIVE</span>` : `<span class="text-muted small">${m.status || 'Upcoming'}</span>`}
+                            <span class="text-muted small">${m.time || ''}</span>
+                            ${m.tournament ? `<span class="text-muted small">🏆 ${m.tournament}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            container.html(html);
+        }
+
+        // --- Render: News (Carousel + List) ---
+        async function renderNews() {
+            const news = await fetchTable(TABLES.news, 'published_date');
+            // Carousel
+            const carousel = $('#newsCarousel');
+            if (news && news.length > 0) {
+                let carouselHtml = '';
+                news.slice(0, 4).forEach(item => {
+                    carouselHtml += `
+                        <div class="item">
+                            <div class="news-card">
+                                <div class="news-img"><i class="fas fa-${item.category === 'tournament' ? 'trophy' : item.category === 'roster' ? 'users' : 'newspaper'}"></i></div>
+                                <div class="news-body">
+                                    <span class="tag">${item.category || 'General'}</span>
+                                    <h5>${item.title}</h5>
+                                    <p>${item.content ? item.content.substring(0, 120) + '...' : ''}</p>
+                                    <div class="meta"><span><i class="far fa-calendar-alt"></i> ${item.published_date || ''}</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                carousel.html(carouselHtml);
+                // Re-init Owl if needed
+                if ($.fn.owlCarousel) {
+                    carousel.owlCarousel('destroy');
+                    carousel.owlCarousel({
+                        loop: true,
+                        margin: 20,
+                        nav: true,
+                        dots: true,
+                        autoplay: true,
+                        autoplayTimeout: 5000,
+                        autoplayHoverPause: true,
+                        responsive: { 0: { items: 1 }, 576: { items: 2 }, 992: { items: 3 } },
+                        navText: ['<i class="fas fa-chevron-left"></i>', '<i class="fas fa-chevron-right"></i>']
+                    });
+                }
+            } else {
+                carousel.html('<p class="text-muted text-center">No news available.</p>');
+            }
+
+            // News list (below carousel)
+            const list = $('#newsList');
+            if (news && news.length > 0) {
+                let listHtml = '';
+                news.slice(0, 3).forEach(item => {
+                    listHtml += `
+                        <div class="col-md-4">
+                            <div class="glass-card p-3 h-100">
+                                <span class="tag">${item.category || 'General'}</span>
+                                <h5 class="text-white mt-2">${item.title}</h5>
+                                <p class="text-muted small">${item.content ? item.content.substring(0, 100) + '...' : ''}</p>
+                                <div class="text-muted small"><i class="far fa-calendar-alt me-1"></i>${item.published_date || ''}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                list.html(listHtml);
+            } else {
+                list.html('<p class="text-muted">No articles yet.</p>');
+            }
+        }
+
+        // --- Render: Sponsors ---
+        async function renderSponsors() {
+            const sponsors = await fetchTable(TABLES.sponsors);
+            const container = $('#sponsorGrid');
+            if (!sponsors || sponsors.length === 0) {
+                container.html(
+                    '<div class="sponsor-item"><i class="fas fa-handshake"></i>Your Brand Here</div>');
+                return;
+            }
+            let html = '';
+            sponsors.forEach(s => {
+                html += `
+                    <div class="sponsor-item">
+                        <i class="fas fa-${s.icon || 'crown'}"></i>
+                        ${s.name}
+                        ${s.discount_code ? `<div class="discount">${s.discount_code}</div>` : ''}
+                        ${s.website ? `<div class="small mt-1"><a href="${s.website}" target="_blank" class="text-primary">Visit</a></div>` : ''}
+                    </div>
+                `;
+            });
+            container.html(html);
+        }
+
+        // --- Render: Merch ---
+        async function renderMerch() {
+            const products = await fetchTable(TABLES.products);
+            const container = $('#merchGrid');
+            if (!products || products.length === 0) {
+                container.html(
+                    '<div class="col-12 text-center text-muted">No merchandise available yet.</div>');
+                return;
+            }
+            let html = '';
+            products.forEach(p => {
+                html += `
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <div class="product-card">
+                            <div class="product-img"><i class="fas fa-${p.icon || 'tshirt'}"></i></div>
+                            <div class="product-body">
+                                <div class="name">${p.name}</div>
+                                <p>${p.description || ''}</p>
+                                <div class="price">₹${p.price}</div>
+                                <button class="btn-neon btn-neon-sm mt-2" onclick="alert('Added to cart!')"><i class="fas fa-shopping-cart me-1"></i>Buy</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.html(html);
+        }
+
+        // ==============================================================
+        // 4. ADMIN RENDERING (CRUD)
+        // ==============================================================
+
+        let adminData = {};
+
+        async function refreshAdminData() {
+            const [roster, matches, scrims, financial, documents, media, applications] = await Promise.all([
+                fetchTable(TABLES.roster),
+                fetchTable(TABLES.matches),
+                fetchTable(TABLES.scrims),
+                fetchTable(TABLES.financial),
+                fetchTable(TABLES.documents),
+                fetchTable(TABLES.media_assets),
+                fetchTable(TABLES.applications)
+            ]);
+            adminData = { roster, matches, scrims, financial, documents, media, applications };
+            renderAdminRoster(roster);
+            renderAdminMatches(matches);
+            renderAdminScrims(scrims);
+            renderAdminFinancial(financial);
+            renderAdminDocuments(documents);
+            renderAdminMedia(media);
+            renderAdminApplications(applications);
+            renderDashboard(roster, matches, financial, applications);
+        }
+
+        // --- Admin: Roster ---
         function renderAdminRoster(roster) {
+            const tbody = $('#adminRosterBody');
             if (!roster || roster.length === 0) {
-                adminRosterBody.innerHTML = '<tr><td colspan="6" class="text-muted">No players.</td></tr>';
+                tbody.html('<tr><td colspan="6" class="text-muted">No players.</td></tr>');
                 return;
             }
             let html = '';
@@ -1333,13 +2062,68 @@
                     </tr>
                 `;
             });
-            adminRosterBody.innerHTML = html;
+            tbody.html(html);
         }
 
-        // Render admin matches table
+        window.deleteRoster = async function(id) {
+            if (!confirm('Delete this player?')) return;
+            const { error } = await supabase.from(TABLES.roster).delete().eq('id', id);
+            if (error) { alert('Error: ' + error.message); return; }
+            refreshAdminData();
+            renderRoster();
+        };
+
+        window.editRoster = async function(id) {
+            const { data, error } = await supabase.from(TABLES.roster).select('*').eq('id', id).single();
+            if (error) { alert('Error fetching player'); return; }
+            const name = prompt('Name:', data.name);
+            if (name === null) return;
+            const role = prompt('Role:', data.role);
+            if (role === null) return;
+            const kda = parseFloat(prompt('KDA:', data.kda));
+            if (isNaN(kda)) return;
+            const wr = parseInt(prompt('WR%:', data.wr));
+            if (isNaN(wr)) return;
+            const bio = prompt('Bio:', data.bio);
+            if (bio === null) return;
+            const social = prompt('Twitter @handle:', data.social_twitter || '');
+            const { error: updateError } = await supabase
+                .from(TABLES.roster)
+                .update({ name, role, kda, wr, bio, social_twitter: social })
+                .eq('id', id);
+            if (updateError) { alert('Error updating: ' + updateError.message); return; }
+            refreshAdminData();
+            renderRoster();
+        };
+
+        $('#addRosterBtn').on('click', async function() {
+            const name = $('#newRosterName').val().trim();
+            const role = $('#newRosterRole').val().trim();
+            const kda = parseFloat($('#newRosterKda').val());
+            const wr = parseInt($('#newRosterWr').val());
+            const bio = $('#newRosterBio').val().trim();
+            const social = $('#newRosterSocial').val().trim();
+            if (!name || !role || isNaN(kda) || isNaN(wr)) {
+                alert('Please fill all required fields.');
+                return;
+            }
+            const { error } = await supabase.from(TABLES.roster).insert([{ name, role, kda, wr, bio, social_twitter: social }]);
+            if (error) { alert('Error adding: ' + error.message); return; }
+            $('#newRosterName').val('');
+            $('#newRosterRole').val('');
+            $('#newRosterKda').val('');
+            $('#newRosterWr').val('');
+            $('#newRosterBio').val('');
+            $('#newRosterSocial').val('');
+            refreshAdminData();
+            renderRoster();
+        });
+
+        // --- Admin: Matches ---
         function renderAdminMatches(matches) {
+            const tbody = $('#adminMatchesBody');
             if (!matches || matches.length === 0) {
-                adminMatchesBody.innerHTML = '<tr><td colspan="7" class="text-muted">No matches.</td></tr>';
+                tbody.html('<tr><td colspan="7" class="text-muted">No matches.</td></tr>');
                 return;
             }
             let html = '';
@@ -1361,106 +2145,19 @@
                     </tr>
                 `;
             });
-            adminMatchesBody.innerHTML = html;
+            tbody.html(html);
         }
 
-        // Render admin media table
-        function renderAdminMedia(media) {
-            if (!media || media.length === 0) {
-                adminMediaBody.innerHTML = '<tr><td colspan="4" class="text-muted">No media items.</td></tr>';
-                return;
-            }
-            let html = '';
-            media.forEach(m => {
-                html += `
-                    <tr>
-                        <td>${m.title}</td>
-                        <td>${m.type}</td>
-                        <td><a href="${m.url}" target="_blank" class="text-primary">${m.url}</a></td>
-                        <td>
-                            <div class="admin-actions">
-                                <button class="delete-btn" onclick="deleteMedia(${m.id})"><i class="fas fa-trash"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            });
-            adminMediaBody.innerHTML = html;
-        }
-
-        // Full refresh
-        async function refreshUI() {
-            const { roster, matches, media } = await fetchAll();
-            renderRoster(roster);
-            renderAdminRoster(roster);
-            renderAdminMatches(matches);
-            renderAdminMedia(media);
-        }
-
-        // ==============================================================
-        // 2. CRUD OPERATIONS (Supabase)
-        // ==============================================================
-
-        // --- Roster ---
-        window.deleteRoster = async function(id) {
-            if (!confirm('Delete this player?')) return;
-            const { error } = await supabase.from('rosters').delete().eq('id', id);
-            if (error) { alert('Error: ' + error.message); return; }
-            refreshUI();
-        };
-
-        window.editRoster = async function(id) {
-            // Fetch current data
-            const { data, error } = await supabase.from('rosters').select('*').eq('id', id).single();
-            if (error) { alert('Error fetching player'); return; }
-            const name = prompt('Name:', data.name);
-            if (name === null) return;
-            const role = prompt('Role:', data.role);
-            if (role === null) return;
-            const kda = parseFloat(prompt('KDA:', data.kda));
-            if (isNaN(kda)) return;
-            const wr = parseInt(prompt('WR%:', data.wr));
-            if (isNaN(wr)) return;
-            const bio = prompt('Bio:', data.bio);
-            if (bio === null) return;
-            const { error: updateError } = await supabase
-                .from('rosters')
-                .update({ name, role, kda, wr, bio })
-                .eq('id', id);
-            if (updateError) { alert('Error updating: ' + updateError.message); return; }
-            refreshUI();
-        };
-
-        document.getElementById('addRosterBtn').addEventListener('click', async function() {
-            const name = document.getElementById('newRosterName').value.trim();
-            const role = document.getElementById('newRosterRole').value.trim();
-            const kda = parseFloat(document.getElementById('newRosterKda').value);
-            const wr = parseInt(document.getElementById('newRosterWr').value);
-            const bio = document.getElementById('newRosterBio').value.trim();
-            if (!name || !role || isNaN(kda) || isNaN(wr)) {
-                alert('Please fill all required fields.');
-                return;
-            }
-            const { error } = await supabase.from('rosters').insert([{ name, role, kda, wr, bio }]);
-            if (error) { alert('Error adding: ' + error.message); return; }
-            document.getElementById('newRosterName').value = '';
-            document.getElementById('newRosterRole').value = '';
-            document.getElementById('newRosterKda').value = '';
-            document.getElementById('newRosterWr').value = '';
-            document.getElementById('newRosterBio').value = '';
-            refreshUI();
-        });
-
-        // --- Matches ---
         window.deleteMatch = async function(id) {
             if (!confirm('Delete this match?')) return;
-            const { error } = await supabase.from('matches').delete().eq('id', id);
+            const { error } = await supabase.from(TABLES.matches).delete().eq('id', id);
             if (error) { alert('Error: ' + error.message); return; }
-            refreshUI();
+            refreshAdminData();
+            renderSchedule();
         };
 
         window.editMatch = async function(id) {
-            const { data, error } = await supabase.from('matches').select('*').eq('id', id).single();
+            const { data, error } = await supabase.from(TABLES.matches).select('*').eq('id', id).single();
             if (error) { alert('Error fetching match'); return; }
             const team_a = prompt('Team A:', data.team_a);
             if (team_a === null) return;
@@ -1473,115 +2170,339 @@
             const time = prompt('Time:', data.time);
             if (time === null) return;
             const { error: updateError } = await supabase
-                .from('matches')
-                .update({
-                    team_a,
-                    team_b,
-                    score_a: isNaN(score_a) ? null : score_a,
-                    score_b: isNaN(score_b) ? null : score_b,
-                    status,
-                    time
-                })
+                .from(TABLES.matches)
+                .update({ team_a, team_b, score_a: isNaN(score_a) ? null : score_a, score_b: isNaN(score_b) ? null : score_b,
+                    status, time })
                 .eq('id', id);
             if (updateError) { alert('Error updating: ' + updateError.message); return; }
-            refreshUI();
+            refreshAdminData();
+            renderSchedule();
         };
 
-        document.getElementById('addMatchBtn').addEventListener('click', async function() {
-            const team_a = document.getElementById('newMatchA').value.trim();
-            const team_b = document.getElementById('newMatchB').value.trim();
-            const score_a = parseInt(document.getElementById('newMatchScoreA').value) || null;
-            const score_b = parseInt(document.getElementById('newMatchScoreB').value) || null;
-            const status = document.getElementById('newMatchStatus').value.trim() || 'Upcoming';
-            const time = document.getElementById('newMatchTime').value.trim() || '';
+        $('#addMatchBtn').on('click', async function() {
+            const team_a = $('#newMatchA').val().trim();
+            const team_b = $('#newMatchB').val().trim();
+            const score_a = parseInt($('#newMatchScoreA').val()) || null;
+            const score_b = parseInt($('#newMatchScoreB').val()) || null;
+            const status = $('#newMatchStatus').val().trim() || 'Upcoming';
+            const time = $('#newMatchTime').val().trim() || '';
             if (!team_a || !team_b) {
                 alert('Please enter both team names.');
                 return;
             }
-            const { error } = await supabase.from('matches').insert([{ team_a, team_b, score_a, score_b, status, time }]);
+            const { error } = await supabase.from(TABLES.matches).insert([{ team_a, team_b, score_a, score_b, status,
+                time }]);
             if (error) { alert('Error adding: ' + error.message); return; }
-            document.getElementById('newMatchA').value = '';
-            document.getElementById('newMatchB').value = '';
-            document.getElementById('newMatchScoreA').value = '';
-            document.getElementById('newMatchScoreB').value = '';
-            document.getElementById('newMatchStatus').value = '';
-            document.getElementById('newMatchTime').value = '';
-            refreshUI();
+            $('#newMatchA').val('');
+            $('#newMatchB').val('');
+            $('#newMatchScoreA').val('');
+            $('#newMatchScoreB').val('');
+            $('#newMatchStatus').val('');
+            $('#newMatchTime').val('');
+            refreshAdminData();
+            renderSchedule();
         });
 
-        // --- Media ---
-        window.deleteMedia = async function(id) {
-            if (!confirm('Delete this media item?')) return;
-            const { error } = await supabase.from('media_items').delete().eq('id', id);
+        // --- Admin: Scrims ---
+        function renderAdminScrims(scrims) {
+            const tbody = $('#adminScrimsBody');
+            if (!scrims || scrims.length === 0) {
+                tbody.html('<tr><td colspan="6" class="text-muted">No scrims scheduled.</td></tr>');
+                return;
+            }
+            let html = '';
+            scrims.forEach(s => {
+                html += `
+                    <tr>
+                        <td>${s.team}</td>
+                        <td>${s.opponent}</td>
+                        <td>${s.date_time}</td>
+                        <td>${s.duration}h</td>
+                        <td>${s.status}</td>
+                        <td>
+                            <div class="admin-actions">
+                                <button class="delete-btn" onclick="deleteScrim(${s.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.html(html);
+        }
+
+        window.deleteScrim = async function(id) {
+            if (!confirm('Delete this scrim?')) return;
+            const { error } = await supabase.from(TABLES.scrims).delete().eq('id', id);
             if (error) { alert('Error: ' + error.message); return; }
-            refreshUI();
+            refreshAdminData();
         };
 
-        document.getElementById('addMediaBtn').addEventListener('click', async function() {
-            const title = document.getElementById('newMediaTitle').value.trim();
-            const type = document.getElementById('newMediaType').value.trim();
-            const url = document.getElementById('newMediaUrl').value.trim();
+        $('#addScrimBtn').on('click', async function() {
+            const team = $('#newScrimTeam').val().trim();
+            const opponent = $('#newScrimOpponent').val().trim();
+            const date_time = $('#newScrimDateTime').val();
+            const duration = parseInt($('#newScrimDuration').val()) || 1;
+            const status = $('#newScrimStatus').val().trim() || 'Scheduled';
+            if (!team || !opponent || !date_time) {
+                alert('Please fill all required fields.');
+                return;
+            }
+            const { error } = await supabase.from(TABLES.scrims).insert([{ team, opponent, date_time, duration, status }]);
+            if (error) { alert('Error adding: ' + error.message); return; }
+            $('#newScrimTeam').val('');
+            $('#newScrimOpponent').val('');
+            $('#newScrimDateTime').val('');
+            $('#newScrimDuration').val('');
+            $('#newScrimStatus').val('');
+            refreshAdminData();
+        });
+
+        // --- Admin: Financial ---
+        function renderAdminFinancial(financial) {
+            const tbody = $('#adminFinancialBody');
+            if (!financial || financial.length === 0) {
+                tbody.html('<tr><td colspan="7" class="text-muted">No entries.</td></tr>');
+                return;
+            }
+            let html = '';
+            let totalIncome = 0,
+                totalExpenses = 0;
+            financial.forEach(f => {
+                const amt = parseFloat(f.amount) || 0;
+                if (f.type === 'income') totalIncome += amt;
+                else totalExpenses += amt;
+                html += `
+                    <tr>
+                        <td><span class="badge ${f.type === 'income' ? 'bg-success' : 'bg-danger'}">${f.type}</span></td>
+                        <td>${f.category}</td>
+                        <td>₹${amt}</td>
+                        <td>${f.description || ''}</td>
+                        <td>${f.date}</td>
+                        <td>${f.status || 'Pending'}</td>
+                        <td>
+                            <div class="admin-actions">
+                                <button class="delete-btn" onclick="deleteFinancial(${f.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.html(html);
+            $('#totalIncome').text('₹' + totalIncome);
+            $('#totalExpenses').text('₹' + totalExpenses);
+            $('#totalBalance').text('₹' + (totalIncome - totalExpenses));
+        }
+
+        window.deleteFinancial = async function(id) {
+            if (!confirm('Delete this entry?')) return;
+            const { error } = await supabase.from(TABLES.financial).delete().eq('id', id);
+            if (error) { alert('Error: ' + error.message); return; }
+            refreshAdminData();
+        };
+
+        $('#addFinBtn').on('click', async function() {
+            const type = $('#newFinType').val();
+            const category = $('#newFinCategory').val().trim();
+            const amount = parseFloat($('#newFinAmount').val());
+            const description = $('#newFinDesc').val().trim();
+            const date = $('#newFinDate').val();
+            if (!category || isNaN(amount) || !date) {
+                alert('Please fill all required fields.');
+                return;
+            }
+            const { error } = await supabase.from(TABLES.financial).insert([{ type, category, amount, description, date,
+                status: 'Completed' }]);
+            if (error) { alert('Error adding: ' + error.message); return; }
+            $('#newFinType').val('income');
+            $('#newFinCategory').val('');
+            $('#newFinAmount').val('');
+            $('#newFinDesc').val('');
+            $('#newFinDate').val('');
+            refreshAdminData();
+        });
+
+        // --- Admin: Documents ---
+        function renderAdminDocuments(documents) {
+            const tbody = $('#adminDocumentsBody');
+            if (!documents || documents.length === 0) {
+                tbody.html('<tr><td colspan="4" class="text-muted">No documents.</td></tr>');
+                return;
+            }
+            let html = '';
+            documents.forEach(d => {
+                html += `
+                    <tr>
+                        <td>${d.title}</td>
+                        <td>${d.type}</td>
+                        <td>${d.uploaded_at || ''}</td>
+                        <td>
+                            <div class="admin-actions">
+                                <a href="${d.file_url}" target="_blank" class="text-primary"><i class="fas fa-eye"></i></a>
+                                <button class="delete-btn" onclick="deleteDoc(${d.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.html(html);
+        }
+
+        window.deleteDoc = async function(id) {
+            if (!confirm('Delete this document?')) return;
+            const { error } = await supabase.from(TABLES.documents).delete().eq('id', id);
+            if (error) { alert('Error: ' + error.message); return; }
+            refreshAdminData();
+        };
+
+        $('#addDocBtn').on('click', async function() {
+            const title = $('#newDocTitle').val().trim();
+            const type = $('#newDocType').val().trim();
+            const file_url = $('#newDocUrl').val().trim();
+            if (!title || !type || !file_url) {
+                alert('Please fill all fields.');
+                return;
+            }
+            const { error } = await supabase.from(TABLES.documents).insert([{ title, type, file_url,
+                uploaded_at: new Date().toISOString().split('T')[0] }]);
+            if (error) { alert('Error adding: ' + error.message); return; }
+            $('#newDocTitle').val('');
+            $('#newDocType').val('');
+            $('#newDocUrl').val('');
+            refreshAdminData();
+        });
+
+        // --- Admin: Media ---
+        function renderAdminMedia(media) {
+            const tbody = $('#adminMediaBody');
+            if (!media || media.length === 0) {
+                tbody.html('<tr><td colspan="4" class="text-muted">No media assets.</td></tr>');
+                return;
+            }
+            let html = '';
+            media.forEach(m => {
+                html += `
+                    <tr>
+                        <td>${m.title}</td>
+                        <td>${m.type}</td>
+                        <td><a href="${m.url}" target="_blank" class="text-primary">View</a></td>
+                        <td>
+                            <div class="admin-actions">
+                                <button class="delete-btn" onclick="deleteMediaAsset(${m.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.html(html);
+        }
+
+        window.deleteMediaAsset = async function(id) {
+            if (!confirm('Delete this media?')) return;
+            const { error } = await supabase.from(TABLES.media_assets).delete().eq('id', id);
+            if (error) { alert('Error: ' + error.message); return; }
+            refreshAdminData();
+        };
+
+        $('#addMediaBtn').on('click', async function() {
+            const title = $('#newMediaTitle').val().trim();
+            const type = $('#newMediaType').val().trim();
+            const url = $('#newMediaUrl').val().trim();
             if (!title || !type || !url) {
                 alert('Please fill all fields.');
                 return;
             }
-            const { error } = await supabase.from('media_items').insert([{ title, type, url }]);
+            const { error } = await supabase.from(TABLES.media_assets).insert([{ title, type, url }]);
             if (error) { alert('Error adding: ' + error.message); return; }
-            document.getElementById('newMediaTitle').value = '';
-            document.getElementById('newMediaType').value = '';
-            document.getElementById('newMediaUrl').value = '';
-            refreshUI();
+            $('#newMediaTitle').val('');
+            $('#newMediaType').val('');
+            $('#newMediaUrl').val('');
+            refreshAdminData();
         });
 
-        // ==============================================================
-        // 3. PAGE ROUTING (hash-based)
-        // ==============================================================
-        const pages = {
-            home: document.getElementById('page-home'),
-            roster: document.getElementById('page-roster'),
-            bracket: document.getElementById('page-bracket'),
-            community: document.getElementById('page-community'),
-            news: document.getElementById('page-news'),
-            about: document.getElementById('page-about'),
-            tryouts: document.getElementById('page-tryouts'),
-            admin: document.getElementById('page-admin'),
-        };
-
-        function showPage(pageId) {
-            Object.values(pages).forEach(el => el.classList.remove('active'));
-            if (pages[pageId]) pages[pageId].classList.add('active');
-            document.querySelectorAll('.navbar-nav .nav-link').forEach(link => link.classList.remove('active'));
-            document.querySelector(`.navbar-nav .nav-link[href="#${pageId}"]`)?.classList.add('active');
-            if (pageId === 'admin') refreshUI();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        // --- Admin: Applications ---
+        function renderAdminApplications(applications) {
+            const tbody = $('#adminApplicationsBody');
+            if (!applications || applications.length === 0) {
+                tbody.html('<tr><td colspan="7" class="text-muted">No applications.</td></tr>');
+                return;
+            }
+            let html = '';
+            applications.forEach(a => {
+                html += `
+                    <tr>
+                        <td>${a.name}</td>
+                        <td>${a.role}</td>
+                        <td>${a.rank}</td>
+                        <td>${a.discord || ''}</td>
+                        <td>${a.message ? a.message.substring(0, 50) + '...' : ''}</td>
+                        <td>${a.status || 'Pending'}</td>
+                        <td>
+                            <div class="admin-actions">
+                                <button class="edit-btn" onclick="updateAppStatus(${a.id}, 'Accepted')"><i class="fas fa-check text-success"></i></button>
+                                <button class="edit-btn" onclick="updateAppStatus(${a.id}, 'Rejected')"><i class="fas fa-times text-danger"></i></button>
+                                <button class="delete-btn" onclick="deleteApp(${a.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.html(html);
         }
 
-        // Intercept nav clicks
-        document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                const href = this.getAttribute('href');
-                if (href && href.startsWith('#')) {
-                    e.preventDefault();
-                    const pageId = href.substring(1);
-                    showPage(pageId);
-                    window.location.hash = href;
-                }
-            });
-        });
+        window.updateAppStatus = async function(id, status) {
+            const { error } = await supabase.from(TABLES.applications).update({ status }).eq('id', id);
+            if (error) { alert('Error: ' + error.message); return; }
+            refreshAdminData();
+        };
 
-        // Hash change
-        window.addEventListener('hashchange', function() {
-            const hash = window.location.hash.substring(1) || 'home';
-            if (pages[hash]) showPage(hash);
-        });
+        window.deleteApp = async function(id) {
+            if (!confirm('Delete this application?')) return;
+            const { error } = await supabase.from(TABLES.applications).delete().eq('id', id);
+            if (error) { alert('Error: ' + error.message); return; }
+            refreshAdminData();
+        };
 
-        // Initial page
-        const initialHash = window.location.hash.substring(1) || 'home';
-        if (pages[initialHash]) showPage(initialHash);
-        else showPage('home');
+        // --- Dashboard ---
+        function renderDashboard(roster, matches, financial, applications) {
+            $('#dashPlayers').text(roster ? roster.length : 0);
+            $('#dashMatches').text(matches ? matches.length : 0);
+            let totalRevenue = 0;
+            if (financial) {
+                financial.forEach(f => {
+                    if (f.type === 'income') totalRevenue += parseFloat(f.amount) || 0;
+                });
+            }
+            $('#dashRevenue').text('₹' + totalRevenue);
+            $('#dashApps').text(applications ? applications.length : 0);
+        }
 
         // ==============================================================
-        // 4. OTHER EFFECTS
+        // 5. TRYOUT FORM
+        // ==============================================================
+        $('#tryoutForm').on('submit', async function(e) {
+            e.preventDefault();
+            const name = $('#tryoutName').val().trim();
+            const role = $('#tryoutRole').val();
+            const rank = $('#tryoutRank').val().trim();
+            const discord = $('#tryoutDiscord').val().trim();
+            const message = $('#tryoutMessage').val().trim();
+            if (!name || !rank) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+            const { error } = await supabase.from(TABLES.applications).insert([{ name, role, rank, discord, message,
+                status: 'Pending' }]);
+            if (error) {
+                alert('Error submitting: ' + error.message);
+                return;
+            }
+            $('#tryoutFeedback').removeClass('d-none').text('✅ Application received! We\'ll be in touch.');
+            this.reset();
+            setTimeout(() => $('#tryoutFeedback').addClass('d-none'), 4000);
+        });
+
+        // ==============================================================
+        // 6. OTHER EFFECTS
         // ==============================================================
 
         // Parallax
@@ -1589,37 +2510,6 @@
             var scrollPos = $(window).scrollTop();
             $('#parallaxBg').css('transform', 'translateY(' + scrollPos * 0.15 + 'px)');
         });
-
-        // Owl Carousel
-        $('#newsCarousel').owlCarousel({
-            loop: true,
-            margin: 20,
-            nav: true,
-            dots: true,
-            autoplay: true,
-            autoplayTimeout: 5000,
-            autoplayHoverPause: true,
-            responsive: {
-                0: { items: 1 },
-                576: { items: 2 },
-                992: { items: 3 },
-                1200: { items: 3 }
-            },
-            navText: [
-                '<i class="fas fa-chevron-left"></i>',
-                '<i class="fas fa-chevron-right"></i>'
-            ]
-        });
-
-        // Live Oracle updates (simulated)
-        setInterval(function() {
-            var wolf = 60 + Math.floor(Math.random() * 30);
-            var phx = 100 - wolf;
-            $('#oracleWolf').text(wolf + '%');
-            $('#oraclePhx').text(phx + '%');
-            $('#oracleWolfBar').css('width', wolf + '%');
-            $('#oraclePhxBar').css('width', phx + '%');
-        }, 8000);
 
         // Live match simulation
         setInterval(function() {
@@ -1635,22 +2525,42 @@
             $('#liveObj').text(Math.floor(2 + Math.random() * 4) + '/5');
         }, 5000);
 
-        // Tryout form
-        $('#tryoutForm').on('submit', function(e) {
-            e.preventDefault();
-            $('#tryoutFeedback').removeClass('d-none').text('✅ Application received! We\'ll be in touch.');
-            var form = this;
-            setTimeout(function() {
-                form.reset();
-                $('#tryoutFeedback').addClass('d-none');
-            }, 4000);
+        // Oracle updates
+        setInterval(function() {
+            var wolf = 60 + Math.floor(Math.random() * 30);
+            var phx = 100 - wolf;
+            $('#oracleWolf').text(wolf + '%');
+            $('#oraclePhx').text(phx + '%');
+            $('#oracleWolfBar').css('width', wolf + '%');
+            $('#oraclePhxBar').css('width', phx + '%');
+        }, 8000);
+
+        // ==============================================================
+        // 7. INITIALIZATION
+        // ==============================================================
+
+        async function init() {
+            await checkAuth();
+            await Promise.all([
+                renderRoster(),
+                renderSchedule(),
+                renderNews(),
+                renderSponsors(),
+                renderMerch()
+            ]);
+            if (currentUser && (currentUserRole === 'admin' || currentUserRole === 'manager')) {
+                await refreshAdminData();
+            }
+            console.log('🐺 Wolf Society Esports — Complete Platform loaded.');
+            console.log('📦 Connected to Supabase.');
+        }
+
+        init();
+
+        // Re-run when switching to admin pages
+        $(document).on('click', '.dropdown-item[href*="admin"]', function() {
+            setTimeout(refreshAdminData, 300);
         });
-
-        // Initial refresh
-        refreshUI();
-
-        console.log('🐺 Wolf Society Esports — Supabase integration ready.');
-        console.log('📦 Data stored in Supabase tables: rosters, matches, media_items.');
     </script>
 
 </body>
