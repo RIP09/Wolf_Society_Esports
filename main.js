@@ -1,91 +1,75 @@
 /**
- * main.js – Application Entry Point
- * Initializes the app, sets up event listeners, and starts live updates.
+ * main.js – Shared JavaScript for all pages
+ * Handles navigation toggle, Supabase auth check, and common utilities
  */
 
 // ============================================================
-// INITIALIZATION
+// Supabase Configuration
 // ============================================================
-async function init() {
-    await checkAuth();
-    await Promise.all([
-        renderRoster(),
-        renderSchedule(),
-        renderNews(),
-        renderSponsors(),
-        renderMerch()
-    ]);
-    if (currentUser && (currentUserRole === 'admin' || currentUserRole === 'manager')) {
-        await refreshAdminData();
+const SUPABASE_URL = 'https://tdfkebgapncswtvbtaqy.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmtlYmdhcG5jc3d0dmJ0YXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTg3MzUsImV4cCI6MjA5NjMzNDczNX0.Aj-GtD5sPCtuHWmZ5ZClSStwa3-b6ENtXr0uYaV-UzQ';
+
+// Initialize Supabase
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ============================================================
+// Navigation Toggle (Mobile)
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    const toggle = document.querySelector('.nav-toggle');
+    const navLinks = document.querySelector('.nav-links');
+    if (toggle && navLinks) {
+        toggle.addEventListener('click', function() {
+            navLinks.classList.toggle('open');
+        });
     }
-    console.log('🐺 Wolf Society Esports — Complete Platform loaded.');
-    console.log('📦 Connected to Supabase.');
+
+    // Highlight current page in nav
+    const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href === currentPath) {
+            link.classList.add('active');
+        }
+    });
+});
+
+// ============================================================
+// Auth Check (for admin pages)
+// ============================================================
+async function checkAuth() {
+    const { data: { session }, error } = await supabase.auth.getSession();
+    if (!session) {
+        // Redirect to login if on admin page
+        const path = window.location.pathname;
+        if (path.includes('admin') || path.includes('dashboard')) {
+            window.location.href = 'login.html';
+        }
+        return null;
+    }
+    return session;
 }
 
-// Start the app
-init();
+// ============================================================
+// Logout
+// ============================================================
+async function logoutUser() {
+    await supabase.auth.signOut();
+    window.location.href = 'index.html';
+}
 
 // ============================================================
-// LIVE UPDATES (Intervals)
+// Fetch Table Helper
 // ============================================================
-
-// Live match simulation
-setInterval(function() {
-    var wolf = 3 + Math.floor(Math.random() * 2);
-    var phx = 1 + Math.floor(Math.random() * 2);
-    $('#liveScoreWolf').text(wolf);
-    $('#liveScorePhx').text(phx);
-    var total = wolf + phx;
-    var progress = total > 0 ? (wolf / total) * 100 : 75;
-    $('#liveProgress').css('width', Math.min(progress, 100) + '%');
-    var gold = (2 + Math.random() * 2).toFixed(1);
-    $('#liveGold').text('+' + gold + 'k');
-    $('#liveObj').text(Math.floor(2 + Math.random() * 4) + '/5');
-}, 5000);
-
-// Oracle updates
-setInterval(function() {
-    var wolf = 60 + Math.floor(Math.random() * 30);
-    var phx = 100 - wolf;
-    $('#oracleWolf').text(wolf + '%');
-    $('#oraclePhx').text(phx + '%');
-    $('#oracleWolfBar').css('width', wolf + '%');
-    $('#oraclePhxBar').css('width', phx + '%');
-}, 8000);
+async function fetchTable(table, orderBy = 'id') {
+    const { data, error } = await supabase.from(table).select('*').order(orderBy, { ascending: true });
+    if (error) console.error(`Error fetching ${table}:`, error);
+    return data || [];
+}
 
 // ============================================================
-// OTHER EVENT BINDINGS
+// Run auth check on admin pages
 // ============================================================
-
-// Tryout form submission
-$('#tryoutForm').on('submit', async function(e) {
-    e.preventDefault();
-    const name = $('#tryoutName').val().trim();
-    const role = $('#tryoutRole').val();
-    const rank = $('#tryoutRank').val().trim();
-    const discord = $('#tryoutDiscord').val().trim();
-    const message = $('#tryoutMessage').val().trim();
-    if (!name || !rank) {
-        alert('Please fill in all required fields.');
-        return;
-    }
-    const { error } = await supabase.from('applications').insert([{ name, role, rank, discord, message, status: 'Pending' }]);
-    if (error) {
-        alert('Error submitting: ' + error.message);
-        return;
-    }
-    $('#tryoutFeedback').removeClass('d-none').text('✅ Application received! We\'ll be in touch.');
-    this.reset();
-    setTimeout(() => $('#tryoutFeedback').addClass('d-none'), 4000);
-});
-
-// Parallax effect
-$(window).on('scroll', function() {
-    var scrollPos = $(window).scrollTop();
-    $('#parallaxBg').css('transform', 'translateY(' + scrollPos * 0.15 + 'px)');
-});
-
-// Re-run admin data refresh when switching to admin pages via dropdown
-$(document).on('click', '.dropdown-item[data-page*="admin"]', function() {
-    setTimeout(refreshAdminData, 300);
-});
+if (window.location.pathname.includes('admin') || window.location.pathname.includes('dashboard')) {
+    checkAuth();
+}
