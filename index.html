@@ -1,135 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wolf Society Esports · Home</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Raleway:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link rel="stylesheet" href="style.css" />
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<meta charset="UTF-8">
+
+<link rel="icon" type="image/svg+xml" href="/logo.svg" />
+
+<link rel="manifest" href="/manifest.webmanifest" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<meta name="description" content="Wolf Society Esports the esports
+
+organization platform. Live rosters, schedules, results and the management hub." />
+
+<title>Wolf Society Esports</title>
+
 </head>
+
 <body>
 
-    <!-- =========================================================== -->
-    <!-- NAVIGATION -->
-    <!-- =========================================================== -->
-    <nav class="navbar-wolf">
-        <div class="container" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;position:relative;">
-            <a href="index.html" class="brand">🐺 WOLF<span>SOCIETY</span></a>
-            <button class="nav-toggle" aria-label="Toggle navigation"><i class="fas fa-bars"></i></button>
-            <div class="nav-links">
-                <a href="index.html" class="active">Home</a>
-                <a href="roster.html">Roster</a>
-                <a href="schedule.html">Schedule</a>
-                <a href="bracket.html">Bracket</a>
-                <a href="news.html">News</a>
-                <a href="sponsors.html">Sponsors</a>
-                <a href="merch.html">Merch</a>
-                <a href="community.html">Community</a>
-                <a href="about.html">About</a>
-                <a href="tryouts.html">Tryouts</a>
-                <div class="nav-right">
-                    <a href="login.html" class="btn-neon btn-neon-sm">Login</a>
-                    <a href="dashboard.html" class="btn-neon btn-neon-sm btn-neon-secondary" style="display:none;" id="adminLink">Admin</a>
-                </div>
-            </div>
-        </div>
-    </nav>
+<div id="root"></div>
 
-    <!-- =========================================================== -->
-    <!-- HERO SECTION -->
-    <!-- =========================================================== -->
-    <section class="hero-section">
-        <div class="container hero-content">
-            <div class="row align-items-center" style="grid-template-columns:1fr 1fr;">
-                <div>
-                    <div class="hero-badge"><span class="dot"></span> Live · Major Final</div>
-                    <h1>Where the<br /><span class="highlight">Pack Hunts</span></h1>
-                    <p>Wolf Society Esports — India's premier gaming collective. We compete, create, and connect from the battlefield to the big stage.</p>
-                    <div>
-                        <a href="bracket.html" class="btn-neon">View Live Bracket <i class="fas fa-arrow-right ms-2"></i></a>
-                        <a href="roster.html" class="btn-neon btn-neon-secondary ms-2">Meet the Pack</a>
-                    </div>
-                    <div class="hero-stats">
-                        <div class="stat-item"><span class="number">500+</span><span class="label">Community Members</span></div>
-                        <div class="stat-item"><span class="number">12</span><span class="label">Tournaments</span></div>
-                        <div class="stat-item"><span class="number">₹5L+</span><span class="label">Prize Pool</span></div>
-                    </div>
-                </div>
-                <div>
-                    <div class="glass-card">
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-                            <span class="text-muted small text-uppercase">Current Match</span>
-                            <span class="text-success small fw-bold"><span class="dot d-inline-block me-1" style="width:8px;height:8px;border-radius:50%;background:#06D6A0;animation:pulse-dot 2s infinite;"></span> Live</span>
-                        </div>
-                        <div style="display:flex;align-items:center;justify-content:space-between;">
-                            <div class="text-center"><div style="font-weight:bold;font-size:1.25rem;">WOLF</div><div style="font-size:3rem;font-weight:bold;color:var(--primary,#00e5ff);">3</div></div>
-                            <div class="text-muted small">vs</div>
-                            <div class="text-center"><div style="font-weight:bold;font-size:1.25rem;">PHX</div><div style="font-size:3rem;font-weight:bold;color:var(--text-muted,#888);">1</div></div>
-                        </div>
-                        <div class="progress" style="height:4px;background:rgba(255,255,255,0.05);margin-top:0.75rem;">
-                            <div class="progress-bar bg-primary" style="width:75%;"></div>
-                        </div>
-                        <div style="display:flex;justify-content:space-between;margin-top:0.5rem;font-size:0.75rem;color:var(--text-muted,#888);">
-                            <span><i class="fas fa-trophy me-1"></i> Gold: +2.4k</span>
-                            <span><i class="fas fa-bullseye me-1"></i> Obj: 3/5</span>
-                        </div>
-                        <div style="margin-top:0.75rem;padding-top:0.5rem;border-top:1px solid rgba(255,255,255,0.05);text-align:center;font-size:0.75rem;color:var(--text-muted,#888);">
-                            Next: <strong class="text-white">vs. VNM</strong> · 20:00 UTC
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<script type="module" src="/src/main.tsx"></script>
 
-    <!-- =========================================================== -->
-    <!-- FOOTER -->
-    <!-- =========================================================== -->
-    <footer class="footer-wolf">
-        <div class="container">
-            <div class="row" style="grid-template-columns:2fr 1fr 1fr 2fr;">
-                <div>
-                    <div class="brand">🐺 WOLF<span>SOCIETY</span></div>
-                    <p>India's premier esports collective. Compete, create, connect.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-discord"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
-                <div>
-                    <h6 style="font-weight:bold;color:#fff;">Quick Links</h6>
-                    <div class="footer-links">
-                        <a href="index.html">Home</a>
-                        <a href="roster.html">Roster</a>
-                        <a href="schedule.html">Schedule</a>
-                        <a href="news.html">News</a>
-                    </div>
-                </div>
-                <div>
-                    <h6 style="font-weight:bold;color:#fff;">Community</h6>
-                    <div class="footer-links">
-                        <a href="community.html">Fan Zone</a>
-                        <a href="tryouts.html">Tryouts</a>
-                        <a href="about.html">About</a>
-                    </div>
-                </div>
-                <div>
-                    <h6 style="font-weight:bold;color:#fff;">Stay Updated</h6>
-                    <p class="text-muted small">Subscribe for the latest intel and match updates.</p>
-                    <div style="display:flex;">
-                        <input type="email" placeholder="Your email" style="flex:1;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:9999px 0 0 9999px;padding:0.5rem 1rem;color:#fff;" />
-                        <button class="btn-neon" style="border-radius:0 9999px 9999px 0;padding:0.5rem 1.2rem;">Subscribe</button>
-                    </div>
-                </div>
-            </div>
-            <div class="copyright">&copy; 2026 Wolf Society Esports. Built with <i class="fas fa-heart" style="color:var(--primary,#00e5ff);"></i> in India.</div>
-        </div>
-    </footer>
-
-    <script src="main.js"></script>
 </body>
+
 </html>
