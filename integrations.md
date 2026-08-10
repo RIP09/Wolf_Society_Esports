@@ -175,4 +175,82 @@ Keys/API keys tab of your hosting platform, using these exact names:
 The `@vly-ai/integrations` package and `VLY_INTEGRATION_KEY` / `VLY_INTEGRATION_BASE_URL`
 environment variables are Freebuff's built-in gateway for AI, email and payments. They
 are only relevant while hosting on Freebuff; after moving to GitHub + Vercel with your
-own Convex project, prefer the direct integrations above.
+own Convex project, prefer the direct integrations above. The plugin is inert on other
+hosts, so it does not interfere with the Vercel build.
+
+---
+
+## 8. Deploy to GitHub + Vercel — A to Z (free, error-free)
+
+### 8.1 Architecture after the move
+
+- **GitHub** — stores the code (source of truth).
+- **Vercel** — hosts the website (frontend, free Hobby tier).
+- **Convex Cloud** — your own database + backend + realtime (free tier).
+- **Resend / Vonage / Stripe / Discord** — integrations; keys live in Convex env vars.
+
+### 8.2 Push the code to GitHub
+
+1. Create a repo at [github.com/new](https://github.com/new) — name e.g.
+   `wolf-society-esports`, visibility **Private**, leave it **empty** (no README/.gitignore).
+2. Upload the project files via **Add file → Upload files** (or drag & drop).
+   `src/convex/_generated` is git-ignored on purpose — it is regenerated during the
+   Vercel build (see 8.4). Never upload `node_modules`, `.env.local`, or `dist`.
+3. Commit on branch `main`.
+
+### 8.3 Create your own Convex project (dashboard only)
+
+1. Create a free account at [dashboard.convex.dev](https://dashboard.convex.dev).
+2. **Create Project** → name it `wolf-society-esports`. Note the **Deployment URL**
+   (`https://YOUR-PROJECT.convex.cloud`) and **Site URL**
+   (`https://YOUR-PROJECT.convex.site`).
+3. **Settings → Environment Variables → Add New Variable** — add every key from
+   section 3 (`RESEND_API_KEY`, `VONAGE_API_KEY`/`VONAGE_API_SECRET`,
+   `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `DISCORD_WEBHOOK_URL`, `SITE_URL`,
+   optional `NOTIFY_FROM_EMAIL`, `SMS_FROM`).
+
+### 8.4 Deploy to Vercel — the error-free recipe
+
+1. Go to [vercel.com/new](https://vercel.com/new) → **Import** your GitHub repo.
+2. **Install the Convex integration** from the Vercel Marketplace on this project
+   (or via the dashboard at [dashboard.convex.dev](https://dashboard.convex.dev) →
+   project → **Settings → Deploy → Vercel Integration**). It automatically injects:
+   - `CONVEX_DEPLOY_KEY` — lets the build push your backend functions without login;
+   - `VITE_CONVEX_URL` — points the frontend at your production backend.
+3. Project settings — set these exactly:
+   - **Framework preset:** Vite
+   - **Build command:** `npx convex deploy --cmd 'npm run build'`
+     (pushes the schema + backend functions, regenerates the git-ignored
+     `src/convex/_generated`, then runs `tsc -b && vite build`)
+   - **Output directory:** `dist`
+   - **Node.js version:** 22.x (Vite 7 requires ≥ 20.19)
+   - **Install command:** `npm install`
+   - If the Convex integration isn't used, add `VITE_CONVEX_URL` manually as a
+     Production + Preview environment variable.
+4. Deploy. The first build takes a couple of minutes; subsequent deploys are fast.
+5. `vercel.json` (already in the repo) rewrites all client routes to `/index.html`,
+   so refreshing `/admin`, `/player`, `/grant` never 404s, while `/assets/*` still
+   serves the real files.
+
+### 8.5 After going live
+
+1. Set `SITE_URL` in Convex env to your real URL (e.g. `https://wolf-society-esports.vercel.app`)
+   so email buttons and SMS links point at the live site.
+2. Stripe webhook → add endpoint `https://YOUR-PROJECT.convex.site/stripe-webhook`
+   (Convex **Site URL**) with the `checkout.session.completed` event.
+3. Log in with the super admin account (WSE / WSE@123), open **The Den → Overview**
+   and confirm the **Live sync** badge, the 16-tile live data hub, and the activity feed.
+4. Test one full loop: player OTP login (Resend), an announcement broadcast (email +
+   SMS + Discord), a test donation (`4242 4242 4242 4242`), and a public form.
+
+### 8.6 Known caveats & why they're handled
+
+- **`_generated` is git-ignored** → handled by `npx convex deploy` in the build command.
+- **OTP login emails** used the Freebuff relay → `src/convex/auth/emailOtp.ts` now sends
+  through **your own `RESEND_API_KEY` first** and only falls back to the Freebuff relay
+  when no key is set, so login keeps working after the move.
+- **Deep-link 404s** → handled by `vercel.json`.
+- **Freebuff-only auth relay for OTP**: until you verify a sending domain in Resend,
+  the free `onboarding@resend.dev` sender only delivers to your own account email.
+  Verify your domain (SPF/DKIM/DMARC) for delivery to all players — free, ~10 minutes.
+
