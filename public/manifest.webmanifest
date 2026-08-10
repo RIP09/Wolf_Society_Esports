@@ -1,0 +1,17 @@
+{
+  "name": "Wolf Society Esports",
+  "short_name": "Wolf Society",
+  "description": "The esports organization platform — public portal, player hub and management hub in one.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f3fb",
+  "theme_color": "#1b1d3a",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
