@@ -1,0 +1,201 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap");
+@import "tailwindcss";
+@import "tw-animate-css";
+@custom-variant dark (&:is(.dark *));
+
+/* DO NOT CHANGE */
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* Wolf Society Esports brand palette — light purple-blue mix */
+@theme {
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "Space Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --color-neo-yellow: #7b5cf0;
+  --color-neo-orange: #f59e0b;
+  --color-neo-green: #14b8a6;
+  --color-neo-red: #e5484d;
+  --color-neo-blue: #3d7bff;
+  --color-neo-gold: #b08d3e;
+  --color-neo-purple: #a78bfa;
+  --color-neo-paper: #f4f3fb;
+  --color-neo-cream: #e8e7f5;
+  --color-neo-ink: #1b1d3a;
+}
+
+/* Light purple-bluish theme — soft lavender surfaces, deep indigo ink,
+   vivid violet primary accent with a blue secondary. */
+:root {
+  --radius: 0;
+  --neo-ink: #1b1d3a;
+  --background: #f4f3fb;
+  --foreground: #1b1d3a;
+  --card: #ffffff;
+  --card-foreground: #1b1d3a;
+  --popover: #ffffff;
+  --popover-foreground: #1b1d3a;
+  --primary: #1b1d3a;
+  --primary-foreground: #f4f3fb;
+  --secondary: #e8e7f5;
+  --secondary-foreground: #1b1d3a;
+  --muted: #ecebf8;
+  --muted-foreground: #63658a;
+  --accent: #7b5cf0;
+  --accent-foreground: #ffffff;
+  --destructive: #e5484d;
+  --border: #1b1d3a;
+  --input: #1b1d3a;
+  --ring: #7b5cf0;
+  --chart-1: #7b5cf0;
+  --chart-2: #3d7bff;
+  --chart-3: #a78bfa;
+  --chart-4: #14b8a6;
+  --chart-5: #f59e0b;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1b1d3a;
+  --sidebar-primary: #1b1d3a;
+  --sidebar-primary-foreground: #f4f3fb;
+  --sidebar-accent: #e8e7f5;
+  --sidebar-accent-foreground: #1b1d3a;
+  --sidebar-border: #1b1d3a;
+  --sidebar-ring: #7b5cf0;
+}
+
+.dark {
+  --neo-ink: #e8e7f5;
+  --background: #14152b;
+  --foreground: #e8e7f5;
+  --card: #1d1f42;
+  --card-foreground: #e8e7f5;
+  --popover: #1d1f42;
+  --popover-foreground: #e8e7f5;
+  --primary: #e8e7f5;
+  --primary-foreground: #14152b;
+  --secondary: #2a2c57;
+  --secondary-foreground: #e8e7f5;
+  --muted: #2a2c57;
+  --muted-foreground: #a7a9d6;
+  --accent: #8b6cff;
+  --accent-foreground: #ffffff;
+  --destructive: #e5484d;
+  --border: #3a3d6e;
+  --input: #3a3d6e;
+  --ring: #8b6cff;
+  --chart-1: #8b6cff;
+  --chart-2: #5c86ff;
+  --chart-3: #a78bfa;
+  --chart-4: #2dd4bf;
+  --chart-5: #fbbf24;
+  --sidebar: #1d1f42;
+  --sidebar-foreground: #e8e7f5;
+  --sidebar-primary: #e8e7f5;
+  --sidebar-primary-foreground: #14152b;
+  --sidebar-accent: #2a2c57;
+  --sidebar-accent-foreground: #e8e7f5;
+  --sidebar-border: #3a3d6e;
+  --sidebar-ring: #8b6cff;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  button:not([disabled]),
+  [role="button"]:not([disabled]) {
+    cursor: pointer;
+  }
+}
+
+/* --- Neo-brutalist utilities: hard offset shadows, press interaction,
+      blueprint grid, marquee ticker --- */
+@layer components {
+  .neo-shadow {
+    box-shadow: 4px 4px 0 0 var(--neo-ink);
+  }
+  .neo-shadow-sm {
+    box-shadow: 2px 2px 0 0 var(--neo-ink);
+  }
+  .neo-shadow-lg {
+    box-shadow: 6px 6px 0 0 var(--neo-ink);
+  }
+  .neo-shadow-none {
+    box-shadow: none;
+  }
+  .neo-press {
+    transition: transform 120ms ease, box-shadow 120ms ease;
+  }
+  .neo-press:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 5px 5px 0 0 var(--neo-ink);
+  }
+  .neo-press:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 0 var(--neo-ink);
+  }
+  .neo-grid-bg {
+    background-image: linear-gradient(
+        to right,
+        color-mix(in srgb, var(--neo-ink) 7%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--neo-ink) 7%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 34px 34px;
+  }
+  .neo-ticker {
+    animation: neo-marquee 26s linear infinite;
+  }
+  .neo-ticker:hover {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes neo-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
