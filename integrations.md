@@ -193,10 +193,37 @@ hosts, so it does not interfere with the Vercel build.
 
 1. Create a repo at [github.com/new](https://github.com/new) — name e.g.
    `wolf-society-esports`, visibility **Private**, leave it **empty** (no README/.gitignore).
-2. Upload the project files via **Add file → Upload files** (or drag & drop).
-   `src/convex/_generated` is git-ignored on purpose — it is regenerated during the
-   Vercel build (see 8.4). Never upload `node_modules`, `.env.local`, or `dist`.
-3. Commit on branch `main`.
+2. Upload the **complete** project (drag & drop preserves folders). A missing file is
+   exactly what caused earlier builds to fail with `Cannot read file 'tsconfig.json'`
+   and `Cannot find module './pages/...'`.
+
+   **Required at the repo root:**
+   `index.html`, `package.json`, `package-lock.json`, `bun.lock`, `tsconfig.json`,
+   `tsconfig.app.json`, `tsconfig.node.json`, `vite.config.ts`, `postcss.config.cjs`,
+   `eslint.config.js`, `components.json`, `convex.json`, `vercel.json`, `.gitignore`,
+   `.prettierrc`, `.prettierignore`, `.env.example`, `sst-env.d.ts`,
+   `vly-toolbar-readonly.tsx`, `README.md`, `integrations.md`
+   (`main.ts` is an unused Deno leftover — safe to skip or upload, it isn't built).
+
+   **Folders — upload entirely, preserving structure:**
+   - `public/` → `logo.svg`, `manifest.webmanifest`
+   - `src/` → the full tree: `assets/`, `components/` (incl. `components/ui/*` and
+     `components/layout/`), `convex/` (incl. `auth/` and **`_generated/`** — the 5
+     files `api.d.ts`, `api.js`, `dataModel.d.ts`, `server.d.ts`, `server.js` are no
+     longer git-ignored and should be uploaded so `tsc -b` passes on a fresh checkout
+     even before Convex codegen runs), `hooks/`, `lib/`, `pages/` (incl. `admin/`,
+     `player/`, `public/`), `types/`, plus `index.css`, `main.tsx`,
+     `instrumentation.tsx`, `vite-env.d.ts`.
+
+   **Never upload:** `node_modules/`, `dist/`, `.env.local` (contains secrets).
+
+3. The two pages that failed the last Vercel build are already fixed in this upload:
+   - `src/pages/admin/AdminMatches.tsx` → calls `api.teams.listTeams` (was pointing at
+     `api.stats.*`, which caused `Property 'listTeams' does not exist`)
+   - `src/pages/admin/AdminTeams.tsx` → calls `api.teams.createTeam` / `listTeams`
+   If you are only updating an existing repo, upload at least these two files (best:
+   re-upload the whole `src/` so nothing else is stale).
+4. Commit on branch `main`.
 
 ### 8.3 Create your own Convex project (dashboard only)
 
@@ -245,7 +272,12 @@ hosts, so it does not interfere with the Vercel build.
 
 ### 8.6 Known caveats & why they're handled
 
-- **`_generated` is git-ignored** → handled by `npx convex deploy` in the build command.
+- **`_generated` must exist at build time.** The folder is no longer git-ignored
+  (`.gitignore` keeps only `.env.local`, `node_modules`, `dist`), so the 5 small
+  generated files (`api.d.ts`, `api.js`, `dataModel.d.ts`, `server.d.ts`, `server.js`)
+  are uploaded to GitHub with the code. That guarantees `tsc -b` passes on a fresh
+  Vercel checkout even before Convex's codegen runs. Regenerate them any time with
+  `npx convex dev --once` and commit the refresh together with schema changes.
 - **OTP login emails** used the Freebuff relay → `src/convex/auth/emailOtp.ts` now sends
   through **your own `RESEND_API_KEY` first** and only falls back to the Freebuff relay
   when no key is set, so login keeps working after the move.
