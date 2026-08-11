@@ -2,7 +2,6 @@ import '@vly-ai/integrations';
 import { api } from "@/convex/_generated/api";
 import { Toaster } from "@/components/ui/sonner";
 import { RequireAuth } from "@/components/RequireAuth";
-import { VlyToolbar } from "../vly-toolbar-readonly.tsx";
 import { PortalRedirect, RequireAdmin, RequirePlayer } from "@/components/RequireAdmin";
 import { AdminLayout, PlayerLayout } from "@/components/layout/Portals";
 import PublicLayout from "@/components/layout/PublicLayout";
@@ -66,24 +65,6 @@ function RouteLoading() {
       <div className="animate-pulse text-muted-foreground">Loading...</div>
     </div>
   );
-}
-
-/** Silent error boundary — if VlyToolbar crashes it renders nothing instead of
- *  crashing the whole app (e.g. hook errors in WebContainer environment). */
-class ToolbarErrorBoundary extends React.Component<
-  { children: React.ReactNode },
-  { hasError: boolean }
-> {
-  state = { hasError: false };
-  static getDerivedStateFromError() {
-    return { hasError: true };
-  }
-  componentDidCatch(err: Error) {
-    console.warn("[VlyToolbar] Caught error, toolbar disabled:", err.message);
-  }
-  render() {
-    return this.state.hasError ? null : this.props.children;
-  }
 }
 
 /** Hard guard so runtime errors never leave the preview as a blank page. */
@@ -172,9 +153,6 @@ function RouteSyncer() {
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <RootErrorBoundary>
-      <ToolbarErrorBoundary>
-        <VlyToolbar />
-      </ToolbarErrorBoundary>
       {/* sessionStorage keeps each visitor's session tied to their tab —
           closing the site clears the token, so everyone signs in again on return. */}
       <ConvexAuthProvider client={convex} storage={sessionStorage}>
