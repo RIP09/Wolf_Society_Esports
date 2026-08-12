@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { EmptyState, NeoCard, PageHeader, StatusBadge } from "@/components/neo";
+import { PhotoUpload } from "@/components/PhotoUpload";
 import { GAMES } from "@/lib/constants";
 import { fmtDate, fmtKd } from "@/lib/format";
 import { btnGhost, btnYellow, input, label, select, tableCell, tableHead } from "@/lib/neo";
@@ -18,9 +19,9 @@ import { useMutation, useQuery } from "convex/react";
 import { Eye, ShieldCheck, ShieldX, UserCheck, UserX } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
-import type { Doc } from "@/convex/_generated/dataModel";
+import type { Doc, Id } from "@/convex/_generated/dataModel";
 
-type Player = Doc<"players">;
+type Player = Doc<"players"> & { photoUrl?: string };
 
 export default function AdminPlayers() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -44,13 +45,40 @@ export default function AdminPlayers() {
 
   const setStatusMutation = useMutation(api.players.setStatus);
   const setRole = useMutation(api.admin.setRole);
+  const generateUploadUrl = useMutation(api.uploads.generateUploadUrl);
+  const setPlayerPhoto = useMutation(api.uploads.setPlayerPhoto);
+  const removePlayerPhoto = useMutation(api.uploads.removePlayerPhoto);
 
-  const statuses = useMemo(() => ["all", "pending", "active", "suspended"], []);
+  // Photo preview shown in the detail dialog (list refetches reactively with photoUrl).
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
 
   const openDetail = (p: Player) => {
     setSelected(p);
+    setPhotoUrl(p.photoUrl ?? null);
     setDetailOpen(true);
   };
+
+  const uploadPhoto = async (file: File) => {
+    if (!selected) return;
+    const uploadUrl = await generateUploadUrl();
+    const res = await fetch(uploadUrl, {
+      method: "POST",
+      headers: { "Content-Type": file.type },
+      body: file,
+    });
+    if (!res.ok) throw new Error("Upload failed — try again.");
+    const { storageId } = (await res.json()) as { storageId: string };
+    await setPlayerPhoto({ playerId: selected._id, storageId: storageId as Id<"_storage"> });
+    setPhotoUrl(URL.createObjectURL(file));
+  };
+
+  const removePhoto = async () => {
+    if (!selected) return;
+    await removePlayerPhoto({ playerId: selected._id });
+    setPhotoUrl(null);
+  };
+
+  const statuses = useMemo(() => ["all", "pending", "active", "suspended"], []);
 
   const handleStatus = async (p: Player, next: "active" | "suspended" | "pending") => {
     await setStatusMutation({ playerId: p._id, status: next });
@@ -210,6 +238,15 @@ export default function AdminPlayers() {
                 <StatusBadge status={selected.status} />
                 <StatusBadge status={selected.game} />
                 {selected.rank ? <StatusBadge status="user">{selected.rank}</StatusBadge> : null}
+              </div>
+
+              <div className="border-2 border-foreground bg-background p-4">
+                <PhotoUpload
+                  label="Player photo"
+                  currentUrl={photoUrl ?? undefined}
+                  onUpload={uploadPhoto}
+                  onRemove={removePhoto}
+                />
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
