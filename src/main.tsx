@@ -23,18 +23,21 @@ const AdminPlayers = lazy(() => import("./pages/admin/AdminPlayers.tsx"));
 const AdminTeams = lazy(() => import("./pages/admin/AdminTeams.tsx"));
 const AdminTournaments = lazy(() => import("./pages/admin/AdminTournaments.tsx"));
 const AdminMatches = lazy(() => import("./pages/admin/AdminMatches.tsx"));
+const AdminSchedule = lazy(() => import("./pages/admin/AdminSchedule.tsx"));
 const AdminAnnouncements = lazy(() => import("./pages/admin/AdminAnnouncements.tsx"));
 const PlayerRegister = lazy(() => import("./pages/player/PlayerRegister.tsx"));
 const PlayerDashboard = lazy(() => import("./pages/player/PlayerDashboard.tsx"));
 const PlayerPerformance = lazy(() => import("./pages/player/PlayerPerformance.tsx"));
 const PlayerProfile = lazy(() => import("./pages/player/PlayerProfile.tsx"));
 const PlayerAnnouncements = lazy(() => import("./pages/player/PlayerAnnouncements.tsx"));
+const PlayerSchedule = lazy(() => import("./pages/player/PlayerSchedule.tsx"));
 const AdminInquiries = lazy(() => import("./pages/admin/AdminInquiries.tsx"));
 const PublicTeams = lazy(() => import("./pages/public/PublicTeams.tsx"));
 const PublicTeamDetail = lazy(() => import("./pages/public/PublicTeamDetail.tsx"));
 const PublicTournaments = lazy(() => import("./pages/public/PublicTournaments.tsx"));
 const PublicBracket = lazy(() => import("./pages/public/PublicBracket.tsx"));
 const PublicMatches = lazy(() => import("./pages/public/PublicMatches.tsx"));
+const PublicSchedule = lazy(() => import("./pages/public/PublicSchedule.tsx"));
 const PublicPlayers = lazy(() => import("./pages/public/PublicPlayers.tsx"));
 const PublicNews = lazy(() => import("./pages/public/PublicNews.tsx"));
 const PublicContact = lazy(() => import("./pages/public/PublicContact.tsx"));
@@ -170,6 +173,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="/tournaments" element={<PublicTournaments />} />
                 <Route path="/bracket" element={<PublicBracket />} />
                 <Route path="/matches" element={<PublicMatches />} />
+                <Route path="/schedule" element={<PublicSchedule />} />
                 <Route path="/players" element={<PublicPlayers />} />
                 <Route path="/achievements" element={<PublicAchievements />} />
                 <Route path="/news" element={<PublicNews />} />
@@ -215,6 +219,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="teams" element={<AdminTeams />} />
                 <Route path="tournaments" element={<AdminTournaments />} />
                 <Route path="matches" element={<AdminMatches />} />
+                <Route path="schedule" element={<AdminSchedule />} />
                 <Route path="announcements" element={<AdminAnnouncements />} />
                 <Route path="content" element={<AdminContent />} />
                 <Route path="sponsors" element={<AdminSponsors />} />
@@ -235,6 +240,7 @@ createRoot(document.getElementById("root")!).render(
                 }
               >
                 <Route index element={<PlayerDashboard />} />
+                <Route path="schedule" element={<PlayerSchedule />} />
                 <Route path="register" element={<PlayerRegister />} />
                 <Route path="performance" element={<PlayerPerformance />} />
                 <Route path="profile" element={<PlayerProfile />} />
