@@ -28,6 +28,7 @@ export default function PlayerRegister() {
   const [region, setRegion] = useState("none");
   const [rank, setRank] = useState("");
   const [discord, setDiscord] = useState("");
+  const [phone, setPhone] = useState("");
   const [bio, setBio] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -49,6 +50,7 @@ export default function PlayerRegister() {
         region: region === "none" ? undefined : region,
         rank: rank || undefined,
         discord: discord || undefined,
+        phone: phone || undefined,
         bio: bio || undefined,
       });
       toast.success("Registration submitted — management has been notified!");
@@ -136,7 +138,7 @@ export default function PlayerRegister() {
               </NeoField>
             </div>
 
-            <div className="grid gap-5 sm:grid-cols-3">
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               <NeoField label="Region" hint="All worldwide competitive regions">
                 <OptionPicker
                   options={REGIONS}
@@ -161,6 +163,15 @@ export default function PlayerRegister() {
                   value={discord}
                   onChange={(e) => setDiscord(e.target.value)}
                   placeholder="viper#0001"
+                />
+              </NeoField>
+              <NeoField label="Phone" hint="For SMS scrim reminders">
+                <Input
+                  className={input}
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="+91 98765 43210"
                 />
               </NeoField>
             </div>
