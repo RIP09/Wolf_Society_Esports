@@ -98,6 +98,52 @@ export const announcementPriorityValidator = v.union(
 );
 export type AnnouncementPriority = Infer<typeof announcementPriorityValidator>;
 
+// --- Schedule Hub: daily routines + scrims ---
+
+export const ROUTINE_TYPES = {
+  PRACTICE: "practice",
+  VOD: "vod",
+  PHYSICAL: "physical",
+  CONTENT: "content",
+  MEETING: "meeting",
+  REST: "rest",
+} as const;
+export const routineTypeValidator = v.union(
+  v.literal(ROUTINE_TYPES.PRACTICE),
+  v.literal(ROUTINE_TYPES.VOD),
+  v.literal(ROUTINE_TYPES.PHYSICAL),
+  v.literal(ROUTINE_TYPES.CONTENT),
+  v.literal(ROUTINE_TYPES.MEETING),
+  v.literal(ROUTINE_TYPES.REST),
+);
+export type RoutineType = Infer<typeof routineTypeValidator>;
+
+export const SCRIM_STATUS = {
+  PROPOSED: "proposed",
+  CONFIRMED: "confirmed",
+  COMPLETED: "completed",
+  CANCELLED: "cancelled",
+} as const;
+export const scrimStatusValidator = v.union(
+  v.literal(SCRIM_STATUS.PROPOSED),
+  v.literal(SCRIM_STATUS.CONFIRMED),
+  v.literal(SCRIM_STATUS.COMPLETED),
+  v.literal(SCRIM_STATUS.CANCELLED),
+);
+export type ScrimStatus = Infer<typeof scrimStatusValidator>;
+
+export const CONFIRMATION_STATUS = {
+  CONFIRMED: "confirmed",
+  DECLINED: "declined",
+  MAYBE: "maybe",
+} as const;
+export const confirmationStatusValidator = v.union(
+  v.literal(CONFIRMATION_STATUS.CONFIRMED),
+  v.literal(CONFIRMATION_STATUS.DECLINED),
+  v.literal(CONFIRMATION_STATUS.MAYBE),
+);
+export type ConfirmationStatus = Infer<typeof confirmationStatusValidator>;
+
 const schema = defineSchema(
   {
     // default auth tables using convex auth.
@@ -129,6 +175,8 @@ const schema = defineSchema(
       rank: v.optional(v.string()),
       bio: v.optional(v.string()),
       discord: v.optional(v.string()),
+      phone: v.optional(v.string()), // enables real SMS reminders for schedule/scrim alerts
+      photoStorageId: v.optional(v.id("_storage")), // player photo uploaded from The Den
       status: playerStatusValidator, // pending / active / suspended
       joinedAt: v.number(),
     })
@@ -142,6 +190,7 @@ const schema = defineSchema(
       game: v.string(),
       description: v.optional(v.string()),
       captainId: v.optional(v.id("players")),
+      photoStorageId: v.optional(v.id("_storage")), // team crest/photo uploaded from The Den
       createdAt: v.number(),
     }).index("by_game", ["game"]),
 
@@ -345,6 +394,58 @@ const schema = defineSchema(
     })
       .index("by_status", ["status"])
       .index("by_session", ["stripeSessionId"]),
+
+    // --- Schedule Hub: daily routines + scrims ---
+
+    // Recurring weekly routine blocks (practice, VOD review, physical, content…).
+    // teamId unset = applies to every team; game "all" = every title.
+    routineBlocks: defineTable({
+      title: v.string(),
+      type: routineTypeValidator,
+      game: v.string(), // "all" or a specific esports title
+      teamId: v.optional(v.id("teams")),
+      dayOfWeek: v.number(), // 0 (Sunday) .. 6 (Saturday)
+      startHour: v.number(), // 0-23
+      startMinute: v.number(), // 0-59
+      durationMin: v.number(),
+      location: v.optional(v.string()),
+      required: v.boolean(),
+      createdBy: v.id("users"),
+      createdAt: v.number(),
+    }).index("by_team", ["teamId"]),
+
+    // Player attendance responses for concrete routine sessions.
+    routineConfirmations: defineTable({
+      blockId: v.id("routineBlocks"),
+      playerId: v.id("players"),
+      date: v.number(), // start-of-day epoch of the concrete session
+      status: confirmationStatusValidator,
+      createdAt: v.number(),
+    })
+      .index("by_block_date", ["blockId", "date"])
+      .index("by_player", ["playerId"]),
+
+    // Scrim slots booked against other organizations.
+    scrims: defineTable({
+      title: v.string(),
+      game: v.string(),
+      teamId: v.optional(v.id("teams")),
+      opponentName: v.string(),
+      opponentContact: v.optional(v.string()),
+      scheduledAt: v.number(),
+      durationMin: v.number(),
+      format: v.optional(v.string()), // Bo1 / Bo3 / Bo5
+      status: scrimStatusValidator,
+      result: v.optional(matchResultValidator),
+      scoreUs: v.optional(v.number()),
+      scoreThem: v.optional(v.number()),
+      vodUrl: v.optional(v.string()),
+      notes: v.optional(v.string()),
+      createdBy: v.id("users"),
+      createdAt: v.number(),
+    })
+      .index("by_status", ["status"])
+      .index("by_scheduledAt", ["scheduledAt"]),
 
     // Organization settings — public portal config (streams, fees, socials…).
     settings: defineTable({
