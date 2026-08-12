@@ -5,7 +5,18 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { LoadingScreen } from "@/components/Loading";
 import { NeoCard, NeoField, PageHeader, StatusBadge } from "@/components/neo";
-import { GAMES, IN_GAME_ROLES, REGIONS } from "@/lib/constants";
+import { PhoneField } from "@/components/PhoneField";
+import {
+  COUNTRY_NAMES,
+  EXPERIENCE_LEVELS,
+  GAMES,
+  PLATFORMS,
+  REGIONS,
+  WEEKLY_HOURS,
+  dialFromPhone,
+  localFromPhone,
+  rolesForGame,
+} from "@/lib/constants";
 import { fmtDate } from "@/lib/format";
 import { btnYellow, input } from "@/lib/neo";
 import { useMutation, useQuery } from "convex/react";
@@ -17,14 +28,34 @@ export default function PlayerProfile() {
   const profile = useQuery(api.players.getMyProfile);
   const updateProfile = useMutation(api.players.updateProfile);
 
+  // 1 · Basic details
   const [gamertag, setGamertag] = useState("");
   const [realName, setRealName] = useState("");
+  const [age, setAge] = useState("");
+  const [nationality, setNationality] = useState("none");
+
+  // 2 · Your game
   const [game, setGame] = useState<string>(GAMES[0]);
   const [inGameRole, setInGameRole] = useState("none");
-  const [region, setRegion] = useState("none");
+  const [platform, setPlatform] = useState("none");
+  const [gameIds, setGameIds] = useState("");
   const [rank, setRank] = useState("");
+  const [secondaryGame, setSecondaryGame] = useState("none");
+  const [region, setRegion] = useState("none");
+
+  // 3 · Experience & availability
+  const [experienceLevel, setExperienceLevel] = useState("none");
+  const [weeklyHours, setWeeklyHours] = useState("none");
+  const [previousTeams, setPreviousTeams] = useState("");
+  const [achievements, setAchievements] = useState("");
+
+  // 4 · Contact
+  const [dialCode, setDialCode] = useState("+1");
+  const [localNumber, setLocalNumber] = useState("");
   const [discord, setDiscord] = useState("");
+  const [socials, setSocials] = useState("");
   const [bio, setBio] = useState("");
+
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,14 +69,30 @@ export default function PlayerProfile() {
       setRegion(profile.region ?? "none");
       setRank(profile.rank ?? "");
       setDiscord(profile.discord ?? "");
+      setAge(profile.age ? String(profile.age) : "");
+      setNationality(profile.nationality ?? "none");
+      setPlatform(profile.platform ?? "none");
+      setSecondaryGame(profile.secondaryGame ?? "none");
+      setGameIds(profile.gameIds ?? "");
+      setExperienceLevel(profile.experienceLevel ?? "none");
+      setWeeklyHours(profile.weeklyHours ?? "none");
+      setPreviousTeams(profile.previousTeams ?? "");
+      setAchievements(profile.achievements ?? "");
+      setSocials(profile.socials ?? "");
+      setDialCode(profile.phoneCountryCode ?? dialFromPhone(profile.phone));
+      setLocalNumber(localFromPhone(profile.phone));
       setBio(profile.bio ?? "");
     }
-  }, [profile]);  if (!profile) return <LoadingScreen label="Loading…" />;
+  }, [profile]);
+
+  if (!profile) return <LoadingScreen label="Loading…" />;
 
   const handleSave = async () => {
     setSaving(true);
     setSaved(false);
     setError(null);
+    const fullPhone = localNumber.trim() ? `${dialCode} ${localNumber.trim()}` : "";
+    const ageNum = age.trim() ? Number(age.trim()) : undefined;
     try {
       await updateProfile({
         gamertag,
@@ -55,6 +102,18 @@ export default function PlayerProfile() {
         region: region === "none" ? undefined : region,
         rank: rank || undefined,
         discord: discord || undefined,
+        phone: fullPhone || undefined,
+        phoneCountryCode: dialCode || undefined,
+        age: ageNum && ageNum >= 5 && ageNum <= 120 ? ageNum : undefined,
+        nationality: nationality === "none" ? undefined : nationality,
+        platform: platform === "none" ? undefined : platform,
+        secondaryGame: secondaryGame === "none" ? undefined : secondaryGame,
+        gameIds: gameIds || undefined,
+        experienceLevel: experienceLevel === "none" ? undefined : experienceLevel,
+        weeklyHours: weeklyHours === "none" ? undefined : weeklyHours,
+        previousTeams: previousTeams || undefined,
+        achievements: achievements || undefined,
+        socials: socials || undefined,
         bio: bio || undefined,
       });
       setSaved(true);
@@ -95,13 +154,16 @@ export default function PlayerProfile() {
               ["Role", profile.inGameRole ?? "—"],
               ["Region", profile.region ?? "—"],
               ["Rank", profile.rank ?? "—"],
+              ["Platform", profile.platform ?? "—"],
+              ["Age", profile.age ? String(profile.age) : "—"],
               ["Discord", profile.discord ?? "—"],
+              ["Phone", profile.phone ?? "—"],
             ].map(([k, v]) => (
               <div key={k} className="flex items-center justify-between px-3 py-2 text-sm">
                 <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                   {k}
                 </span>
-                <span className="font-medium">{v}</span>
+                <span className="max-w-[55%] truncate font-medium">{v}</span>
               </div>
             ))}
           </div>
@@ -119,50 +181,164 @@ export default function PlayerProfile() {
               Profile saved — management in The Den sees the updated version instantly.
             </p>
           ) : null}
-          <div className="grid gap-4 sm:grid-cols-2">
-            <NeoField label="Gamertag">
-              <Input className={input} value={gamertag} onChange={(e) => setGamertag(e.target.value)} />
-            </NeoField>
-            <NeoField label="Real name">
-              <Input className={input} value={realName} onChange={(e) => setRealName(e.target.value)} />
-            </NeoField>
-            <NeoField label="Primary game">
-              <GamePicker value={game} onChange={setGame} />
-            </NeoField>
-            <NeoField label="In-game role">
-              <OptionPicker
-                options={IN_GAME_ROLES}
-                value={inGameRole}
-                onChange={setInGameRole}
-                placeholder="Select a role…"
-                searchPlaceholder="Search roles…"
-                notSureLabel="Not sure yet"
-              />
-            </NeoField>
-            <NeoField label="Region">
-              <OptionPicker
-                options={REGIONS}
-                value={region}
-                onChange={setRegion}
-                placeholder="Select a region…"
-                searchPlaceholder="Search regions…"
-                notSureLabel="Worldwide"
-              />
-            </NeoField>
-            <NeoField label="Rank">
-              <Input className={input} value={rank} onChange={(e) => setRank(e.target.value)} placeholder="Immortal 2" />
-            </NeoField>
-            <NeoField label="Discord">
-              <Input className={input} value={discord} onChange={(e) => setDiscord(e.target.value)} placeholder="viper#0001" />
-            </NeoField>
+
+          <div className="grid gap-6">
+            <div className="grid gap-4">
+              <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                1 · Basic details
+              </p>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <NeoField label="Gamertag">
+                  <Input className={input} value={gamertag} onChange={(e) => setGamertag(e.target.value)} />
+                </NeoField>
+                <NeoField label="Real name">
+                  <Input className={input} value={realName} onChange={(e) => setRealName(e.target.value)} />
+                </NeoField>
+                <NeoField label="Age">
+                  <Input
+                    className={input}
+                    type="number"
+                    min={5}
+                    max={120}
+                    value={age}
+                    onChange={(e) => setAge(e.target.value)}
+                    placeholder="18"
+                  />
+                </NeoField>
+                <NeoField label="Where do you live?">
+                  <OptionPicker
+                    options={COUNTRY_NAMES}
+                    value={nationality}
+                    onChange={setNationality}
+                    placeholder="Select your country…"
+                    searchPlaceholder="Search countries…"
+                    notSureLabel="Prefer not to say"
+                  />
+                </NeoField>
+              </div>
+            </div>
+
+            <div className="grid gap-4">
+              <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                2 · Your game
+              </p>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <NeoField label="Primary game">
+                  <GamePicker value={game} onChange={(g) => { setGame(g); setInGameRole("none"); }} />
+                </NeoField>
+                <NeoField label="In-game role" hint={`Roles for ${game}`}>
+                  <OptionPicker
+                    options={rolesForGame(game)}
+                    value={inGameRole}
+                    onChange={setInGameRole}
+                    placeholder="Select a role…"
+                    searchPlaceholder="Search roles…"
+                    notSureLabel="Not sure yet"
+                  />
+                </NeoField>
+                <NeoField label="Platform">
+                  <OptionPicker
+                    options={PLATFORMS}
+                    value={platform}
+                    onChange={setPlatform}
+                    placeholder="Select a platform…"
+                    notSureLabel="Not sure yet"
+                  />
+                </NeoField>
+                <NeoField label={`In-game ID (${game})`}>
+                  <Input
+                    className={input}
+                    value={gameIds}
+                    onChange={(e) => setGameIds(e.target.value)}
+                    placeholder="e.g. Viper#NA1"
+                  />
+                </NeoField>
+                <NeoField label="Current rank">
+                  <Input className={input} value={rank} onChange={(e) => setRank(e.target.value)} placeholder="Immortal 2" />
+                </NeoField>
+                <NeoField label="Second game (optional)">
+                  <OptionPicker
+                    options={GAMES}
+                    value={secondaryGame}
+                    onChange={setSecondaryGame}
+                    placeholder="Select a game…"
+                    notSureLabel="None"
+                  />
+                </NeoField>
+                <NeoField label="Competitive region">
+                  <OptionPicker
+                    options={REGIONS}
+                    value={region}
+                    onChange={setRegion}
+                    placeholder="Select a region…"
+                    notSureLabel="Worldwide"
+                  />
+                </NeoField>
+              </div>
+            </div>
+
+            <div className="grid gap-4">
+              <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                3 · Experience & availability
+              </p>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <NeoField label="Experience level">
+                  <OptionPicker
+                    options={EXPERIENCE_LEVELS}
+                    value={experienceLevel}
+                    onChange={setExperienceLevel}
+                    placeholder="Select…"
+                    notSureLabel="Not sure yet"
+                  />
+                </NeoField>
+                <NeoField label="Practice time per week">
+                  <OptionPicker
+                    options={WEEKLY_HOURS}
+                    value={weeklyHours}
+                    onChange={setWeeklyHours}
+                    placeholder="Select…"
+                    notSureLabel="Not sure yet"
+                  />
+                </NeoField>
+                <NeoField label="Previous teams">
+                  <Input className={input} value={previousTeams} onChange={(e) => setPreviousTeams(e.target.value)} placeholder="e.g. Team Nova (2023–2024)" />
+                </NeoField>
+                <NeoField label="Achievements">
+                  <Input className={input} value={achievements} onChange={(e) => setAchievements(e.target.value)} placeholder="e.g. 2nd place — Regional Cup 2025" />
+                </NeoField>
+              </div>
+            </div>
+
+            <div className="grid gap-4">
+              <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                4 · Contact
+              </p>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <NeoField label="Phone" hint="Pick your country code first — used for SMS practice/scrim alerts.">
+                  <PhoneField
+                    dialCode={dialCode}
+                    localNumber={localNumber}
+                    onDialChange={setDialCode}
+                    onLocalChange={setLocalNumber}
+                  />
+                </NeoField>
+                <NeoField label="Discord">
+                  <Input className={input} value={discord} onChange={(e) => setDiscord(e.target.value)} placeholder="viper#0001" />
+                </NeoField>
+                <NeoField label="Stream / social links">
+                  <Input className={input} value={socials} onChange={(e) => setSocials(e.target.value)} placeholder="twitch.tv/yourname" />
+                </NeoField>
+              </div>
+              <NeoField label="About you">
+                <Textarea
+                  className="rounded-none border-2 border-foreground bg-background"
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                />
+              </NeoField>
+            </div>
           </div>
-          <NeoField label="About you">
-            <Textarea
-              className="rounded-none border-2 border-foreground bg-background"
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-            />
-          </NeoField>
+
           <div className="flex justify-end">
             <Button className={btnYellow} onClick={handleSave} disabled={saving || !gamertag.trim()}>
               <Save className="size-4" />
