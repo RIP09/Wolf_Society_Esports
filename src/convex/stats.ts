@@ -29,7 +29,8 @@ type FeedItem = {
     | "inquiry"
     | "security"
     | "notification"
-    | "access";
+    | "access"
+    | "scrim";
   title: string;
   meta: string;
   ts: number;
@@ -105,6 +106,19 @@ export const getAdminDashboard = query({
       ctx.db.query("pageviews").collect(),
       ctx.db.query("securityLogs").collect(),
     ]);
+
+    // Schedule Hub — routines + scrims, live.
+    const [routineBlocks, routineConfs, scrimDocs] = await Promise.all([
+      ctx.db.query("routineBlocks").collect(),
+      ctx.db.query("routineConfirmations").collect(),
+      ctx.db.query("scrims").collect(),
+    ]);
+    const weekStart = startOfDay(Date.now());
+    const weekEnd = weekStart + 6 * DAY;
+    const confsThisWeek = routineConfs.filter(
+      (c) => c.date >= weekStart && c.date <= weekEnd && c.status === "confirmed",
+    ).length;
+    const completedScrims = scrimDocs.filter((s) => s.status === "completed");
     const todayStart = startOfDay(Date.now());
 
     const live = {
@@ -179,6 +193,22 @@ export const getAdminDashboard = query({
       pageviews: {
         total: pageviews.length,
         today: pageviews.filter((p) => p.createdAt >= todayStart).length,
+      },
+      schedule: {
+        blocks: routineBlocks.length,
+        confirmations: confsThisWeek,
+        scrims: {
+          total: scrimDocs.length,
+          proposed: scrimDocs.filter((s) => s.status === "proposed").length,
+          confirmed: scrimDocs.filter((s) => s.status === "confirmed").length,
+          completed: scrimDocs.filter((s) => s.status === "completed").length,
+          cancelled: scrimDocs.filter((s) => s.status === "cancelled").length,
+        },
+        record: {
+          wins: completedScrims.filter((s) => s.result === "win").length,
+          losses: completedScrims.filter((s) => s.result === "loss").length,
+          draws: completedScrims.filter((s) => s.result === "draw").length,
+        },
       },
     };
 
@@ -299,6 +329,12 @@ export const getAdminDashboard = query({
         title: `${r.name} requested ${r.requestedRole}`,
         meta: `Access request · ${r.status}`,
         ts: r.createdAt,
+      })),
+      ...[...scrimDocs].sort((a, b) => b.createdAt - a.createdAt).slice(0, 4).map((s) => ({
+        kind: "scrim" as const,
+        title: `${s.opponentName} — ${s.title}`,
+        meta: `${s.game} · ${s.status}${s.status === "completed" && s.result ? ` · ${s.result}` : ""}`,
+        ts: s.createdAt,
       })),
     ];
     feed.sort((a, b) => b.ts - a.ts);
