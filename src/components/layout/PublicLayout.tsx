@@ -1,4 +1,5 @@
 import { api } from "@/convex/_generated/api";
+import RealtimeClock from "@/components/RealtimeClock";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -249,9 +250,12 @@ export default function PublicLayout() {
           <SubscribeForm />
         </div>
         <div className="border-t-2 border-foreground/20 px-4 py-4">
-          <p className="mx-auto max-w-6xl text-center font-mono text-[10px] uppercase tracking-widest text-muted-foreground sm:px-6">
-            © {new Date().getFullYear()} Wolf Society Esports · All data is managed live from The Den
-          </p>
+          <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 text-center sm:flex-row sm:px-6">
+            <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+              © {new Date().getFullYear()} Wolf Society Esports · All data is managed live from The Den
+            </p>
+            <RealtimeClock className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground" />
+          </div>
         </div>
       </footer>
     </div>
