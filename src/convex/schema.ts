@@ -175,7 +175,18 @@ const schema = defineSchema(
       rank: v.optional(v.string()),
       bio: v.optional(v.string()),
       discord: v.optional(v.string()),
-      phone: v.optional(v.string()), // enables real SMS reminders for schedule/scrim alerts
+      phone: v.optional(v.string()), // full number incl. dial code, e.g. "+91 98765 43210" — enables real SMS reminders
+      phoneCountryCode: v.optional(v.string()), // dial code only, e.g. "+91"
+      age: v.optional(v.number()), // age in years
+      nationality: v.optional(v.string()), // country the player lives in
+      platform: v.optional(v.string()), // PC / Console / Mobile…
+      secondaryGame: v.optional(v.string()), // second esports title (optional)
+      gameIds: v.optional(v.string()), // in-game ID for the primary game (Riot ID, Steam…)
+      experienceLevel: v.optional(v.string()), // new / casual / amateur / semi-pro / pro
+      weeklyHours: v.optional(v.string()), // practice time available per week
+      previousTeams: v.optional(v.string()),
+      achievements: v.optional(v.string()),
+      socials: v.optional(v.string()), // Twitch / YouTube / X links
       photoStorageId: v.optional(v.id("_storage")), // player photo uploaded from The Den
       status: playerStatusValidator, // pending / active / suspended
       joinedAt: v.number(),
@@ -357,12 +368,30 @@ const schema = defineSchema(
       createdAt: v.number(),
     }).index("by_createdAt", ["createdAt"]),
 
-    // Privacy-friendly pageview analytics (path + referrer only).
+    // Privacy-friendly pageview analytics (path + referrer only). The extra
+    // fields power the live footer visitor counter: one row per page load,
+    // tagged with a per-visitor id and country (auto-detected, not PII).
     pageviews: defineTable({
       path: v.string(),
       referrer: v.optional(v.string()),
+      visitorId: v.optional(v.string()),
+      country: v.optional(v.string()),
+      countryCode: v.optional(v.string()),
       createdAt: v.number(),
     }).index("by_createdAt", ["createdAt"]),
+
+    // One row per unique visitor — exact unique counts + country breakdown
+    // for the realtime footer widget. Upserted automatically on every pageview.
+    visitors: defineTable({
+      visitorId: v.string(),
+      country: v.optional(v.string()),
+      countryCode: v.optional(v.string()),
+      firstSeen: v.number(),
+      lastSeen: v.number(),
+      views: v.number(),
+    })
+      .index("by_visitorId", ["visitorId"])
+      .index("by_lastSeen", ["lastSeen"]),
 
     // Public donations via Stripe Checkout.
     donations: defineTable({
