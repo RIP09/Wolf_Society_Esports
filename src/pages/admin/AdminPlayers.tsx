@@ -253,10 +253,32 @@ export default function AdminPlayers() {
                 {[
                   ["Real name", selected.realName],
                   ["Email", selected.email],
+                  ["Age", selected.age ? String(selected.age) : "—"],
+                  ["Lives in", selected.nationality ?? "—"],
                   ["In-game role", selected.inGameRole ?? "—"],
+                  ["Platform", selected.platform ?? "—"],
+                  ["In-game ID", selected.gameIds ?? "—"],
+                  ["Second game", selected.secondaryGame ?? "—"],
                   ["Region", selected.region ?? "—"],
+                  ["Rank", selected.rank ?? "—"],
+                  ["Experience", selected.experienceLevel ?? "—"],
+                  ["Practice / week", selected.weeklyHours ?? "—"],
+                  ["Phone", selected.phone ?? "—"],
                   ["Discord", selected.discord ?? "—"],
+                  ["Socials", selected.socials ?? "—"],
                   ["Joined", fmtDate(selected.joinedAt)],
+                ].map(([k, v]) => (
+                  <div key={k} className="border-2 border-foreground bg-background px-3 py-2">
+                    <p className={label}>{k}</p>
+                    <p className="mt-0.5 text-sm font-medium break-words">{v}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                {[
+                  ["Previous teams", selected.previousTeams ?? "—"],
+                  ["Achievements", selected.achievements ?? "—"],
                 ].map(([k, v]) => (
                   <div key={k} className="border-2 border-foreground bg-background px-3 py-2">
                     <p className={label}>{k}</p>
