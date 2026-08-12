@@ -28,7 +28,12 @@ export default function PublicTeamDetail() {
       <Link to="/teams" className="font-mono text-[11px] font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground">
         ← All teams
       </Link>
-      <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
+      {team.photoUrl ? (
+        <div className="mt-4 h-48 overflow-hidden border-2 border-foreground bg-neo-cream shadow-[6px_6px_0_0_var(--neo-ink)]">
+          <img src={team.photoUrl} alt={team.name} className="h-full w-full object-cover" />
+        </div>
+      ) : null}
+      <div className="mt-6 flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-4xl font-bold tracking-tight">{team.name}</h1>
@@ -59,12 +64,16 @@ export default function PublicTeamDetail() {
             players.map((p) => (
               <div key={p._id} className="flex flex-wrap items-center justify-between gap-2 px-5 py-4">
                 <div className="flex items-center gap-3">
-                  {captain?._id === p._id ? (
-                    <span className="flex h-8 w-8 items-center justify-center border-2 border-foreground bg-neo-yellow text-white" title="Captain">
-                      <Crown className="size-4" />
+                  {p.photoUrl ? (
+                    <span className="h-12 w-12 shrink-0 overflow-hidden border-2 border-foreground">
+                      <img src={p.photoUrl} alt={p.gamertag} loading="lazy" className="h-full w-full object-cover" />
+                    </span>
+                  ) : captain?._id === p._id ? (
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center border-2 border-foreground bg-neo-yellow text-white" title="Captain">
+                      <Crown className="size-5" />
                     </span>
                   ) : (
-                    <span className="flex h-8 w-8 items-center justify-center border-2 border-foreground bg-neo-cream font-mono text-xs font-bold">
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center border-2 border-foreground bg-neo-cream font-mono text-sm font-bold">
                       {p.gamertag.slice(0, 1).toUpperCase()}
                     </span>
                   )}
