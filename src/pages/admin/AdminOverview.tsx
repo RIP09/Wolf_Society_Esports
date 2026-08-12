@@ -62,6 +62,7 @@ const FEED_STYLES: Record<string, { label: string; cls: string }> = {
   security: { label: "Security", cls: "bg-neo-red text-white" },
   notification: { label: "Delivery", cls: "bg-neo-cream text-foreground" },
   access: { label: "Access", cls: "bg-neo-yellow text-white" },
+  scrim: { label: "Scrim", cls: "bg-neo-orange text-white" },
 };
 
 interface HubTile {
@@ -132,6 +133,7 @@ export default function AdminOverview() {
     { label: "Teams", icon: Shield, to: "/admin/teams", accent: "bg-neo-yellow", value: live.teams, sub: "rosters on file" },
     { label: "Tournaments", icon: Trophy, to: "/admin/tournaments", accent: "bg-neo-orange", value: live.tournaments.total, sub: `${live.tournaments.live} live · ${live.tournaments.upcoming} upcoming` },
     { label: "Matches", icon: Swords, to: "/admin/matches", accent: "bg-neo-green", value: live.matches.total, sub: `${live.matches.live} live now · ${live.matches.scheduled} scheduled` },
+    { label: "Schedule", icon: CalendarClock, to: "/admin/schedule", accent: "bg-neo-purple", value: live.schedule.scrims.confirmed + live.schedule.blocks, sub: `${live.schedule.scrims.total} scrims · ${live.schedule.record.wins}W–${live.schedule.record.losses}L · ${live.schedule.confirmations} confirmations` },
     { label: "Performance", icon: Gauge, to: "/admin/players", accent: "bg-neo-purple", value: live.entries, sub: "entries logged by players" },
     { label: "Announcements", icon: Megaphone, to: "/admin/announcements", accent: "bg-neo-yellow", value: live.announcements.total, sub: `${live.announcements.urgent} urgent` },
     { label: "News articles", icon: Newspaper, to: "/admin/content", accent: "bg-neo-blue", value: live.content.total, sub: `${live.content.published} published · ${live.content.drafts} drafts` },
