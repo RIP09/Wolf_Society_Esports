@@ -13,10 +13,13 @@ export const listTeams = query({
     for (const m of memberships) {
       countByTeam.set(m.teamId, (countByTeam.get(m.teamId) ?? 0) + 1);
     }
-    return teams.map((t) => ({
-      ...t,
-      memberCount: countByTeam.get(t._id) ?? 0,
-    }));
+    return Promise.all(
+      teams.map(async (t) => ({
+        ...t,
+        memberCount: countByTeam.get(t._id) ?? 0,
+        photoUrl: t.photoStorageId ? (await ctx.storage.getUrl(t.photoStorageId)) ?? undefined : undefined,
+      })),
+    );
   },
 });
 
@@ -30,11 +33,24 @@ export const getTeam = query({
       .query("teamMembers")
       .withIndex("by_team", (q) => q.eq("teamId", teamId))
       .collect();
-    const players = (await Promise.all(
+    const rawPlayers = (await Promise.all(
       members.map((m) => ctx.db.get(m.playerId)),
     )).filter((p): p is NonNullable<typeof p> => p !== null);
+    const players = await Promise.all(
+      rawPlayers.map(async (p) => ({
+        ...p,
+        photoUrl: p.photoStorageId ? (await ctx.storage.getUrl(p.photoStorageId)) ?? undefined : undefined,
+      })),
+    );
     const captain = team.captainId ? await ctx.db.get(team.captainId) : null;
-    return { team, players, captain };
+    return {
+      team: {
+        ...team,
+        photoUrl: team.photoStorageId ? (await ctx.storage.getUrl(team.photoStorageId)) ?? undefined : undefined,
+      },
+      players,
+      captain,
+    };
   },
 });
 
