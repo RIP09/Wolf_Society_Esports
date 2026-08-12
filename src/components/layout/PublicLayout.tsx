@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { CookieConsent, openCookieSettings } from "@/components/CookieConsent";
+import { PermissionCenter } from "@/components/PermissionCenter";
 import { btnGhost, input } from "@/lib/neo";
 import { cn } from "@/lib/utils";
 import { useMutation } from "convex/react";
@@ -84,6 +85,7 @@ const NAV = [
   { to: "/tournaments", label: "Tournaments" },
   { to: "/bracket", label: "Bracket" },
   { to: "/matches", label: "Matches" },
+  { to: "/schedule", label: "Schedule" },
   { to: "/players", label: "Players" },
   { to: "/news", label: "News" },
   { to: "/watch", label: "Watch" },
@@ -202,6 +204,7 @@ export default function PublicLayout() {
       </main>
 
       <CookieConsent />
+      <PermissionCenter />
 
       <footer className="border-t-2 border-foreground bg-card">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[1fr_auto] lg:items-start">
