@@ -198,6 +198,7 @@ const ADMIN_NAV: NavItem[] = [
   { to: "/admin/teams", label: "Teams" },
   { to: "/admin/tournaments", label: "Tournaments" },
   { to: "/admin/matches", label: "Matches" },
+  { to: "/admin/schedule", label: "Schedule Hub" },
   { to: "/admin/announcements", label: "Announcements" },
   { to: "/admin/content", label: "Content" },
   { to: "/admin/sponsors", label: "Sponsors" },
@@ -232,6 +233,7 @@ export function AdminLayout() {
 
 const PLAYER_NAV: NavItem[] = [
   { to: "/player", label: "Dashboard", end: true },
+  { to: "/player/schedule", label: "My Schedule" },
   { to: "/player/performance", label: "Performance" },
   { to: "/player/profile", label: "Profile" },
   { to: "/player/announcements", label: "Announcements" },
