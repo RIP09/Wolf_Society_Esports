@@ -478,8 +478,14 @@ const FPS_ROLES = [
   "Support",
   "Lurker",
   "Clutch Player",
-  "Flex",
+  "Shot Caller",
+  "Anchor",
+  "Team Captain",
   "Coach",
+  "Analyst",
+  "Substitute",
+  "Stand-in",
+  "Flex",
 ] as const;
 
 const VALORANT_ROLES = [
@@ -489,7 +495,12 @@ const VALORANT_ROLES = [
   "Sentinel",
   "Flex",
   "IGL (In-Game Leader)",
+  "Shot Caller",
+  "Clutch Player",
   "Coach",
+  "Analyst",
+  "Substitute",
+  "Stand-in",
 ] as const;
 
 const CS2_ROLES = [
@@ -500,6 +511,11 @@ const CS2_ROLES = [
   "Support",
   "Lurker",
   "Clutch Player",
+  "Team Captain",
+  "Coach",
+  "Analyst",
+  "Substitute",
+  "Stand-in",
   "Flex",
 ] as const;
 
@@ -509,17 +525,36 @@ const APEX_ROLES = [
   "Support",
   "Anchor",
   "Rotator / Pathfinder",
+  "Clutch Player",
+  "Coach",
+  "Analyst",
+  "Substitute",
   "Flex",
 ] as const;
 
-const OVERWATCH_ROLES = ["Tank", "Damage", "Support", "Flex", "Shot Caller"] as const;
+const OVERWATCH_ROLES = [
+  "Main Tank",
+  "Off-Tank",
+  "Hitscan DPS",
+  "Projectile DPS",
+  "Flex Support",
+  "Main Support",
+  "Flex",
+  "Shot Caller",
+  "Coach",
+  "Substitute",
+] as const;
 
 const R6_ROLES = [
   "IGL (In-Game Leader)",
   "Entry Fragger",
   "Support",
   "Anchor",
+  "Hard Breach",
+  "Soft Breach",
   "Clutch Player",
+  "Coach",
+  "Analyst",
   "Flex",
 ] as const;
 
@@ -529,6 +564,11 @@ const BR_ROLES = [
   "Sniper",
   "Support",
   "Anchor",
+  "Rotator",
+  "Clutch Player",
+  "Coach",
+  "Analyst",
+  "Substitute",
   "Flex",
 ] as const;
 
@@ -538,8 +578,15 @@ const MOBA_ROLES = [
   "Mid Laner",
   "ADC / Bot",
   "Support",
-  "Flex",
+  "Carry",
+  "Roamer",
+  "Drafter",
+  "Team Captain",
   "Coach",
+  "Analyst",
+  "Substitute",
+  "Stand-in",
+  "Flex",
 ] as const;
 
 const DOTA2_ROLES = [
@@ -548,6 +595,11 @@ const DOTA2_ROLES = [
   "Offlaner (Pos 3)",
   "Soft Support (Pos 4)",
   "Hard Support (Pos 5)",
+  "Drafter",
+  "Team Captain",
+  "Coach",
+  "Analyst",
+  "Substitute",
   "Flex",
 ] as const;
 
@@ -557,6 +609,9 @@ const POKEMON_UNITE_ROLES = [
   "Support",
   "All-Rounder",
   "Speedster",
+  "Jungler",
+  "Lane Support",
+  "Coach",
   "Flex",
 ] as const;
 
@@ -565,6 +620,10 @@ const FGC_ROLES = [
   "Rushdown",
   "Grappler",
   "Footsies Specialist",
+  "Mixup Specialist",
+  "Setplay Specialist",
+  "Punish Specialist",
+  "Coach",
   "Flex",
 ] as const;
 
@@ -573,15 +632,26 @@ const SMASH_ROLES = [
   "Rushdown",
   "Grappler",
   "Zoner",
+  "Edgeguard Specialist",
+  "Ledgetrap Specialist",
+  "Coach",
   "Flex",
 ] as const;
 
 const FOOTBALL_ROLES = [
   "Striker",
   "Winger",
+  "Attacking Midfielder",
+  "Defensive Midfielder",
   "Midfielder",
+  "Fullback",
+  "Centre Back",
   "Defender",
   "Goalkeeper",
+  "Playmaker",
+  "Team Captain",
+  "Coach",
+  "Substitute",
   "Flex",
 ] as const;
 
@@ -592,6 +662,11 @@ const ROCKET_LEAGUE_ROLES = [
   "Striker",
   "Playmaker",
   "Defender / Goalkeeper",
+  "Rotations Specialist",
+  "Mechanic Specialist",
+  "Team Captain",
+  "Coach",
+  "Substitute",
   "Flex",
 ] as const;
 
@@ -601,6 +676,11 @@ const NBA_ROLES = [
   "Small Forward",
   "Power Forward",
   "Center",
+  "Sixth Man",
+  "3-and-D Specialist",
+  "Team Captain",
+  "Coach",
+  "Substitute",
   "Flex",
 ] as const;
 
@@ -615,23 +695,45 @@ const MADDEN_ROLES = [
   "Cornerback",
   "Safety",
   "Kicker",
+  "Team Captain",
+  "Coach",
+  "Substitute",
 ] as const;
 
-const MLB_ROLES = ["Pitcher", "Batter", "Flex"] as const;
+const MLB_ROLES = [
+  "Starting Pitcher",
+  "Relief Pitcher",
+  "Closer",
+  "Catcher",
+  "First Baseman",
+  "Infielder",
+  "Outfielder",
+  "Designated Hitter",
+  "Flex",
+] as const;
 
 const CRICKET_ROLES = [
-  "Batsman",
-  "Bowler",
+  "Opener",
+  "Top Order",
+  "Middle Order",
+  "Finisher",
   "All-Rounder",
+  "Spin Bowler",
+  "Pace Bowler",
   "Wicketkeeper",
   "Captain",
+  "Vice Captain",
 ] as const;
 
 const RACING_ROLES = [
   "Time Trial Specialist",
+  "Qualifying Specialist",
   "Race Strategist",
+  "Fuel & Tire Strategist",
   "Overtake Specialist",
   "Consistency Driver",
+  "Team Captain",
+  "Coach",
   "Flex",
 ] as const;
 
@@ -640,17 +742,46 @@ const RTS_ROLES = [
   "Micro Specialist",
   "Aggressive Player",
   "Defensive Player",
+  "Scout Specialist",
+  "All-Rounder",
+  "Team Captain",
+  "Coach",
   "Flex",
 ] as const;
 
-const STARCRAFT_ROLES = ["Terran", "Zerg", "Protoss", "Random", "Flex"] as const;
+const STARCRAFT_ROLES = [
+  "Terran",
+  "Zerg",
+  "Protoss",
+  "Random",
+  "Macro Specialist",
+  "Micro Specialist",
+  "Cheese Specialist",
+  "All-Rounder",
+  "Coach",
+  "Flex",
+] as const;
 
-const WARCRAFT_ROLES = ["Human", "Orc", "Undead", "Night Elf", "Random", "Flex"] as const;
+const WARCRAFT_ROLES = [
+  "Human",
+  "Orc",
+  "Undead",
+  "Night Elf",
+  "Random",
+  "Macro Specialist",
+  "Micro Specialist",
+  "All-Rounder",
+  "Coach",
+  "Flex",
+] as const;
 
 const AUTO_BATTLER_ROLES = [
   "Composition Specialist",
   "Economy Manager",
   "Aggressive Player",
+  "Late-Game Specialist",
+  "Coach",
+  "Substitute",
   "Flex",
 ] as const;
 
@@ -658,6 +789,9 @@ const CLASH_ROLES = [
   "Aggressive Player",
   "Defensive Player",
   "Strategist",
+  "War Strategist",
+  "Clan Leader",
+  "Trophy Pusher",
   "Flex",
 ] as const;
 
@@ -666,6 +800,9 @@ const CARD_ROLES = [
   "Aggro",
   "Combo",
   "Midrange",
+  "Tempo",
+  "Value",
+  "Coach",
   "Flex",
 ] as const;
 
@@ -673,30 +810,65 @@ const BRAWLHALLA_ROLES = [
   "Aggressive Player",
   "Defensive Player",
   "Spacing Specialist",
+  "Weapon Rotation Specialist",
+  "Coach",
   "Flex",
 ] as const;
 
-const SPLATOON_ROLES = ["Slayer", "Support", "Anchor", "Flex"] as const;
+const SPLATOON_ROLES = [
+  "Slayer",
+  "Support",
+  "Anchor",
+  "Splat Zones Specialist",
+  "Tower Control Specialist",
+  "Rainmaker Specialist",
+  "Clam Blitz Specialist",
+  "Coach",
+  "Flex",
+] as const;
 
 const BRAWL_STARS_ROLES = [
   "Damage Dealer",
   "Tank",
   "Support",
   "Healer",
+  "Thrower",
+  "Controller",
+  "Assassin",
+  "Marksman",
+  "Coach",
   "Flex",
 ] as const;
 
-const WOW_ROLES = ["DPS", "Healer", "Tank", "Flex"] as const;
+const WOW_ROLES = [
+  "Ranged DPS",
+  "Melee DPS",
+  "Healer",
+  "Tank",
+  "Flex",
+  "Coach",
+  "Substitute",
+] as const;
 
-const GENSHIN_ROLES = ["DPS", "Support", "Healer", "Flex"] as const;
+const GENSHIN_ROLES = [
+  "Main DPS",
+  "Sub-DPS",
+  "Support",
+  "Healer",
+  "Shielder",
+  "Flex",
+] as const;
 
 const CHESS_ROLES = [
   "Opening Specialist",
   "Middlegame Specialist",
   "Endgame Specialist",
-  "Bullet Specialist",
+  "Classical Specialist",
   "Rapid Specialist",
   "Blitz Specialist",
+  "Bullet Specialist",
+  "Online Specialist",
+  "Coach",
   "Flex",
 ] as const;
 
@@ -704,12 +876,28 @@ const MC_ROLES = [
   "Speedrunner",
   "PvP Specialist",
   "Builder",
+  "Redstone Engineer",
+  "Team Captain",
+  "Coach",
   "Flex",
 ] as const;
 
-const NARAKA_ROLES = ["Aggressive Player", "Defensive Player", "Support", "Flex"] as const;
+const NARAKA_ROLES = [
+  "Aggressive Player",
+  "Defensive Player",
+  "Support",
+  "Assassin",
+  "Coordinator",
+  "Flex",
+] as const;
 
-const FALL_GUYS_ROLES = ["Speedrunner", "Team Player", "Flex"] as const;
+const FALL_GUYS_ROLES = [
+  "Speedrunner",
+  "Course Specialist",
+  "Team Player",
+  "Team Captain",
+  "Flex",
+] as const;
 
 /** Roles for every esports title in GAMES. */
 export const GAME_ROLES: Record<string, readonly string[]> = {
