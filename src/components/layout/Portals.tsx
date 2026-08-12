@@ -1,4 +1,5 @@
 import { api } from "@/convex/_generated/api";
+import RealtimeClock from "@/components/RealtimeClock";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
@@ -7,6 +8,7 @@ import { btnGhost } from "@/lib/neo";
 import { cn } from "@/lib/utils";
 import { useQuery } from "convex/react";
 import { LogOut, ShieldCheck } from "lucide-react";
+import { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router";
 
 type Accent = "yellow" | "blue";
@@ -62,13 +64,40 @@ function NavList({ items, accent }: { items: NavItem[]; accent: Accent }) {
   );
 }
 
-function UserCard() {
-  const { user, signOut } = useAuth();
+/** Shared sign-out — ends the Convex session and returns to the public site. */
+function SignOutButton({ compact = false }: { compact?: boolean }) {
+  const { signOut } = useAuth();
   const navigate = useNavigate();
+  const [signingOut, setSigningOut] = useState(false);
+
   const handleSignOut = async () => {
-    await signOut();
-    navigate("/");
+    if (signingOut) return;
+    setSigningOut(true);
+    try {
+      await signOut();
+    } finally {
+      navigate("/");
+    }
   };
+
+  return (
+    <Button
+      variant="outline"
+      size={compact ? "icon" : "sm"}
+      className={cn(btnGhost, compact ? "size-9 shrink-0" : "w-full")}
+      onClick={handleSignOut}
+      disabled={signingOut}
+      title="Sign out"
+      aria-label="Sign out"
+    >
+      <LogOut className={compact ? "size-4" : "size-3.5"} />
+      {!compact && (signingOut ? "Signing out…" : "Sign out")}
+    </Button>
+  );
+}
+
+function UserCard() {
+  const { user } = useAuth();
   return (
     <div className="flex flex-col gap-3 border-t-2 border-foreground pt-4">
       <div className="flex items-center gap-3">
@@ -84,10 +113,7 @@ function UserCard() {
           </p>
         </div>
       </div>
-      <Button variant="outline" size="sm" className={`${btnGhost} w-full`} onClick={handleSignOut}>
-        <LogOut className="size-3.5" />
-        Sign out
-      </Button>
+      <SignOutButton />
     </div>
   );
 }
@@ -117,17 +143,24 @@ function PortalLayout({
             </p>
             <NavList items={items} accent={accent} />
           </div>
+          <RealtimeClock
+            showDate={false}
+            className="mb-4 border-2 border-foreground bg-background px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-widest"
+          />
           <UserCard />
         </aside>
 
         <div className="min-w-0 flex-1">
           {/* Mobile header */}
           <header className="sticky top-0 z-40 border-b-2 border-foreground bg-card lg:hidden">
-            <div className="flex items-center justify-between px-4 py-3">
+            <div className="flex items-center justify-between gap-3 px-4 py-3">
               <Wordmark tag={tag} accent={accent} />
-              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                {user?.name ?? ""}
-              </span>
+              <div className="flex shrink-0 items-center gap-2">
+                <span className="hidden max-w-28 truncate font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground sm:block">
+                  {user?.name ?? ""}
+                </span>
+                <SignOutButton compact />
+              </div>
             </div>
             <div className="flex gap-2 overflow-x-auto border-t-2 border-foreground bg-background px-4 py-2">
               {items.map((item) => (
