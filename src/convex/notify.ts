@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { action, internalMutation, query, type ActionCtx } from "./_generated/server";
+import { action, internalMutation, internalQuery, query, type ActionCtx } from "./_generated/server";
 import { api, internal } from "./_generated/api";
 import { requireAdmin } from "./guards";
 
