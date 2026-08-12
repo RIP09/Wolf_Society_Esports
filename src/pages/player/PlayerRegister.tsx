@@ -223,14 +223,14 @@ export default function PlayerRegister() {
                 </NeoField>
                 <NeoField
                   label="In-game role"
-                  hint={`Your job inside ${game}. The options change to match the game you picked.`}
+                  hint={`Your job inside ${game}. The options change to match the game you picked. Can't find yours? Just type it and press Enter.`}
                 >
                   <OptionPicker
                     options={rolesForGame(game)}
                     value={inGameRole}
                     onChange={setInGameRole}
                     placeholder="Select a role…"
-                    searchPlaceholder="Search roles…"
+                    searchPlaceholder="Search roles or type your own…"
                     notSureLabel="Not sure yet"
                   />
                 </NeoField>
