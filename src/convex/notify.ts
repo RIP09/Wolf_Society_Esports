@@ -491,3 +491,173 @@ export const tryoutReceived = action({
     return { ok: true };
   },
 });
+/** Internal: current status of a scrim (used by the reminder job). */
+export const getScrimStatus = internalQuery({
+  args: { scrimId: v.id("scrims") },
+  handler: async (ctx, { scrimId }) => {
+    const scrim = await ctx.db.get(scrimId);
+    return scrim ? { status: scrim.status } : null;
+  },
+});
+
+/** Alerts the org + Discord when a new/updated routine block lands on the weekly template. */
+export const routineBroadcast = action({
+  args: {
+    title: v.string(),
+    game: v.string(),
+    whenLabel: v.string(),
+    audience: v.string(),
+    createdBy: v.string(),
+  },
+  handler: async (ctx, { title, game, whenLabel, audience, createdBy }) => {
+    const url = `${siteUrl()}/admin/schedule`;
+    const body = `
+      <h2 style="margin:0 0 12px;">📅 Routine update — ${esc(title)}</h2>
+      <table style="border-collapse:collapse;margin-top:8px;">
+        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">When</td>
+            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(whenLabel)}</td></tr>
+        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Game</td>
+            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(game)}</td></tr>
+        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Audience</td>
+            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(audience)}</td></tr>
+        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">By</td>
+            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(createdBy)}</td></tr>
+      </table>
+      <p style="margin-top:16px;"><a href="${url}" style="color:#7b5cf0;font-weight:bold;">Open the Schedule Hub</a> in The Den to review or adjust the weekly template.</p>`;
+    const emailRes = await send(ctx, {
+      to: ORG_EMAILS,
+      subject: `Routine update — ${title}`,
+      html: shell("Routine update", body),
+    });
+    await sendDiscord(ctx, `📅 **Routine update** — ${title}\n${whenLabel} · ${game} · ${audience}`, "Schedule update");
+    return emailRes;
+  },
+});
+
+/** Notifies the org + roster when a scrim is proposed, confirmed, cancelled or completed. */
+export const scrimNotify = action({
+  args: {
+    title: v.string(),
+    game: v.string(),
+    opponent: v.string(),
+    whenLabel: v.string(),
+    event: v.union(
+      v.literal("proposed"),
+      v.literal("confirmed"),
+      v.literal("cancelled"),
+      v.literal("completed"),
+    ),
+    resultLine: v.optional(v.string()),
+    players: v.array(
+      v.object({
+        name: v.string(),
+        email: v.string(),
+        phone: v.optional(v.string()),
+      }),
+    ),
+  },
+  handler: async (ctx, { title, game, opponent, whenLabel, event, resultLine, players }) => {
+    const icons: Record<string, string> = {
+      proposed: "📋",
+      confirmed: "✅",
+      cancelled: "🚫",
+      completed: "🏁",
+    };
+    const heading: Record<string, string> = {
+      proposed: "Scrim proposed",
+      confirmed: "Scrim confirmed",
+      cancelled: "Scrim cancelled",
+      completed: "Scrim completed",
+    };
+    const body = `
+      <h2 style="margin:0 0 12px;">${icons[event]} ${heading[event]} — ${esc(opponent)}</h2>
+      <table style="border-collapse:collapse;margin-top:8px;">
+        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Scrim</td>
+            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(title)}</td></tr>
+        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Game</td>
+            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(game)}</td></tr>
+        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Opponent</td>
+            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(opponent)}</td></tr>
+        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">When</td>
+            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(whenLabel)}</td></tr>
+      </table>
+      ${resultLine ? `<p style="margin-top:12px;font-size:15px;font-weight:bold;">${esc(resultLine)}</p>` : ""}
+      <p style="margin-top:16px;"><a href="${siteUrl()}/admin/schedule" style="color:#7b5cf0;font-weight:bold;">Open the Schedule Hub</a> in The Den.</p>`;
+    const orgEmail = await send(ctx, {
+      to: ORG_EMAILS,
+      subject: `${heading[event]} — ${opponent}`,
+      html: shell(heading[event], body),
+    });
+    for (const p of players) {
+      const playerBody = `
+        <h2 style="margin:0 0 12px;">${icons[event]} ${heading[event]}</h2>
+        <p><strong>${esc(title)}</strong> vs <strong>${esc(opponent)}</strong> · ${esc(whenLabel)}</p>
+        ${resultLine ? `<p style="margin-top:8px;font-weight:bold;">${esc(resultLine)}</p>` : ""}
+        <p style="margin-top:16px;">Check your full week in <strong>The Pack → My Schedule</strong>.</p>`;
+      await send(ctx, {
+        to: p.email,
+        subject: `${heading[event]} — ${opponent}`,
+        html: shell(heading[event], playerBody),
+      });
+      if (p.phone) {
+        const line = `${icons[event]} Scrim ${event}: ${title} vs ${opponent} — ${whenLabel}${resultLine ? ` · ${resultLine}` : ""}`;
+        await sendSms(ctx, p.phone, `Wolf Society Esports: ${line}`);
+      }
+    }
+    await sendDiscord(
+      ctx,
+      `${icons[event]} **Scrim ${event}** — ${title} vs ${opponent}\n${game} · ${whenLabel}${resultLine ? `\n${resultLine}` : ""}`,
+      heading[event],
+    );
+    return { orgEmail, players: players.length };
+  },
+});
+
+/** 3-hour pre-scrim reminder — scheduled by the Schedule Hub when a scrim is confirmed. */
+export const scrimReminder = action({
+  args: {
+    scrimId: v.id("scrims"),
+    title: v.string(),
+    game: v.string(),
+    opponent: v.string(),
+    scheduledAt: v.number(),
+    players: v.array(
+      v.object({
+        name: v.string(),
+        email: v.string(),
+        phone: v.optional(v.string()),
+      }),
+    ),
+  },
+  handler: async (ctx, { scrimId, title, game, opponent, scheduledAt, players }) => {
+    const scrim = await ctx.runQuery(internal.notify.getScrimStatus, { scrimId });
+    if (!scrim || scrim.status !== "confirmed") return { ok: false }; // cancelled — no reminder
+    const whenLabel = new Date(scheduledAt).toLocaleString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    });
+    const body = `
+      <h2 style="margin:0 0 12px;">⏰ Scrim in 3 hours</h2>
+      <p><strong>${esc(title)}</strong> vs <strong>${esc(opponent)}</strong> starts at <strong>${esc(whenLabel)}</strong>.</p>
+      <p>Be in the scrim lobby early — this is a confirmed fixture. Check <strong>The Pack → My Schedule</strong> for the full week.</p>`;
+    for (const p of players) {
+      await send(ctx, {
+        to: p.email,
+        subject: `Scrim in 3 hours — ${opponent}`,
+        html: shell("Scrim reminder", body),
+      });
+      if (p.phone) {
+        await sendSms(
+          ctx,
+          p.phone,
+          `Wolf Society Esports: ${title} vs ${opponent} starts in 3 hours (${whenLabel}). Be in the lobby early!`,
+        );
+      }
+    }
+    await sendDiscord(ctx, `⏰ **Scrim reminder** — ${title} vs ${opponent} in 3 hours (${whenLabel}).`, "Scrim reminder");
+    return { ok: true, notified: players.length };
+  },
+});
