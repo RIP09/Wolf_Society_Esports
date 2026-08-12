@@ -226,13 +226,13 @@ export default function PlayerProfile() {
                 <NeoField label="Primary game">
                   <GamePicker value={game} onChange={(g) => { setGame(g); setInGameRole("none"); }} />
                 </NeoField>
-                <NeoField label="In-game role" hint={`Roles for ${game}`}>
+                <NeoField label="In-game role" hint={`Roles for ${game}. Can't find yours? Type it and press Enter.`}>
                   <OptionPicker
                     options={rolesForGame(game)}
                     value={inGameRole}
                     onChange={setInGameRole}
                     placeholder="Select a role…"
-                    searchPlaceholder="Search roles…"
+                    searchPlaceholder="Search roles or type your own…"
                     notSureLabel="Not sure yet"
                   />
                 </NeoField>
