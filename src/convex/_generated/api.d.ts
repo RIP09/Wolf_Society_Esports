@@ -24,6 +24,7 @@ import type * as payments from "../payments.js";
 import type * as performance from "../performance.js";
 import type * as players from "../players.js";
 import type * as public_ from "../public.js";
+import type * as schedules from "../schedules.js";
 import type * as security from "../security.js";
 import type * as securityLogs from "../securityLogs.js";
 import type * as seed from "../seed.js";
@@ -31,6 +32,7 @@ import type * as sponsors from "../sponsors.js";
 import type * as stats from "../stats.js";
 import type * as teams from "../teams.js";
 import type * as tournaments from "../tournaments.js";
+import type * as uploads from "../uploads.js";
 import type * as users from "../users.js";
 
 import type {
@@ -56,6 +58,7 @@ declare const fullApi: ApiFromModules<{
   performance: typeof performance;
   players: typeof players;
   public: typeof public_;
+  schedules: typeof schedules;
   security: typeof security;
   securityLogs: typeof securityLogs;
   seed: typeof seed;
@@ -63,6 +66,7 @@ declare const fullApi: ApiFromModules<{
   stats: typeof stats;
   teams: typeof teams;
   tournaments: typeof tournaments;
+  uploads: typeof uploads;
   users: typeof users;
 }>;
 
