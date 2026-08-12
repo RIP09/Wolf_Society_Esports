@@ -27,6 +27,7 @@ export const register = mutation({
     rank: v.optional(v.string()),
     bio: v.optional(v.string()),
     discord: v.optional(v.string()),
+    phone: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const user = await requireUser(ctx);
@@ -62,6 +63,7 @@ export const register = mutation({
       rank: args.rank?.trim() || undefined,
       bio: args.bio?.trim() || undefined,
       discord: args.discord?.trim() || undefined,
+      phone: args.phone?.trim() || undefined,
       status: PLAYER_STATUS.PENDING,
       joinedAt: Date.now(),
     });
@@ -86,6 +88,7 @@ export const updateProfile = mutation({
     rank: v.optional(v.string()),
     bio: v.optional(v.string()),
     discord: v.optional(v.string()),
+    phone: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const user = await requireUser(ctx);
@@ -118,12 +121,13 @@ export const updateProfile = mutation({
       rank: args.rank?.trim() || undefined,
       bio: args.bio?.trim() || undefined,
       discord: args.discord?.trim() || undefined,
+      phone: args.phone?.trim() || undefined,
     });
     await ctx.db.patch(user._id, { name: gamertag });
   },
 });
 
-/** Admin-only: list all players with optional filters. */
+/** Admin-only: list all players with optional filters, photos resolved. */
 export const list = query({
   args: {
     status: v.optional(v.string()),
@@ -134,7 +138,7 @@ export const list = query({
     await requireAdmin(ctx);
     const players = await ctx.db.query("players").order("desc").take(300);
     const q = (search ?? "").trim().toLowerCase();
-    return players.filter((p) => {
+    const filtered = players.filter((p) => {
       if (status && p.status !== status) return false;
       if (game && p.game !== game) return false;
       if (q) {
@@ -143,6 +147,12 @@ export const list = query({
       }
       return true;
     });
+    return Promise.all(
+      filtered.map(async (p) => ({
+        ...p,
+        photoUrl: p.photoStorageId ? (await ctx.storage.getUrl(p.photoStorageId)) ?? undefined : undefined,
+      })),
+    );
   },
 });
 
