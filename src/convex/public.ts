@@ -3,19 +3,25 @@ import { mutation, query } from "./_generated/server";
 import { api } from "./_generated/api";
 import { PLAYER_STATUS, TOURNAMENT_STATUS } from "./schema";
 
-/** Public: approved players only. */
+/** Public: approved players only, with photos resolved. */
 export const listPlayers = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db
+    const players = await ctx.db
       .query("players")
       .filter((q) => q.eq(q.field("status"), PLAYER_STATUS.ACTIVE))
       .order("desc")
       .take(120);
+    return Promise.all(
+      players.map(async (p) => ({
+        ...p,
+        photoUrl: p.photoStorageId ? (await ctx.storage.getUrl(p.photoStorageId)) ?? undefined : undefined,
+      })),
+    );
   },
 });
 
-/** Public: teams with member counts. */
+/** Public: teams with member counts, with photos resolved. */
 export const listTeams = query({
   args: {},
   handler: async (ctx) => {
@@ -25,11 +31,17 @@ export const listTeams = query({
     for (const m of members) {
       countByTeam.set(m.teamId, (countByTeam.get(m.teamId) ?? 0) + 1);
     }
-    return teams.map((t) => ({ ...t, memberCount: countByTeam.get(t._id) ?? 0 }));
+    return Promise.all(
+      teams.map(async (t) => ({
+        ...t,
+        memberCount: countByTeam.get(t._id) ?? 0,
+        photoUrl: t.photoStorageId ? (await ctx.storage.getUrl(t.photoStorageId)) ?? undefined : undefined,
+      })),
+    );
   },
 });
 
-/** Public: a team with its roster and captain. */
+/** Public: a team with its roster and captain, photos resolved. */
 export const getTeam = query({
   args: { teamId: v.id("teams") },
   handler: async (ctx, { teamId }) => {
@@ -39,12 +51,27 @@ export const getTeam = query({
       .query("teamMembers")
       .withIndex("by_team", (q) => q.eq("teamId", teamId))
       .collect();
-    const players = (await Promise.all(members.map((m) => ctx.db.get(m.playerId)))).filter(
+    const active = (await Promise.all(members.map((m) => ctx.db.get(m.playerId)))).filter(
       (p): p is NonNullable<typeof p> =>
         p !== null && p.status === PLAYER_STATUS.ACTIVE,
     );
-    const captain = team.captainId ? await ctx.db.get(team.captainId) : null;
-    return { team, players, captain: captain?.status === PLAYER_STATUS.ACTIVE ? captain : null };
+    const players = await Promise.all(
+      active.map(async (p) => ({
+        ...p,
+        photoUrl: p.photoStorageId ? (await ctx.storage.getUrl(p.photoStorageId)) ?? undefined : undefined,
+      })),
+    );
+    const rawCaptain = team.captainId ? await ctx.db.get(team.captainId) : null;
+    const captain =
+      rawCaptain?.status === PLAYER_STATUS.ACTIVE ? rawCaptain : null;
+    return {
+      team: {
+        ...team,
+        photoUrl: team.photoStorageId ? (await ctx.storage.getUrl(team.photoStorageId)) ?? undefined : undefined,
+      },
+      players,
+      captain,
+    };
   },
 });
 
