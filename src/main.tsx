@@ -1,6 +1,7 @@
 import '@vly-ai/integrations';
 import { api } from "@/convex/_generated/api";
 import { Toaster } from "@/components/ui/sonner";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import { RequireAuth } from "@/components/RequireAuth";
 import { PortalRedirect, RequireAdmin, RequirePlayer } from "@/components/RequireAdmin";
 import { AdminLayout, PlayerLayout } from "@/components/layout/Portals";
@@ -342,6 +343,7 @@ createRoot(document.getElementById("root")!).render(
           </Suspense>
         </BrowserRouter>
         <Toaster />
+        <SpeedInsights />
       </ConvexAuthProvider>
     </RootErrorBoundary>
   </StrictMode>,
