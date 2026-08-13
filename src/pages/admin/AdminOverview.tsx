@@ -21,12 +21,14 @@ import {
   Megaphone,
   Newspaper,
   Plug,
+  Radio,
   Rss,
   Shield,
   ShieldAlert,
   Swords,
   Trophy,
   Users,
+  Workflow,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useState } from "react";
@@ -91,6 +93,7 @@ export default function AdminOverview() {
   const securityLogs = useQuery(api.securityLogs.listRecent);
   const integrations = useQuery(api.admin.getIntegrationStatus);
   const notifications = useQuery(api.notify.listRecent);
+  const online = useQuery(api.presence.onlineCount);
   const seedDemoData = useMutation(api.seed.seedDemoData);
   const [seeding, setSeeding] = useState(false);
   const [seedError, setSeedError] = useState<string | null>(null);
@@ -146,6 +149,8 @@ export default function AdminOverview() {
     { label: "Security log", icon: ShieldAlert, to: "/admin", accent: "bg-neo-red", value: live.security, sub: "blocked attempts" },
     { label: "Pageviews", icon: Eye, to: "/admin/analytics", accent: "bg-neo-purple", value: live.pageviews.total, sub: `${live.pageviews.today} today` },
     { label: "Notification outbox", icon: BellRing, to: "/admin", accent: "bg-neo-cream", value: live.notifications.total, sub: `${live.notifications.sent} sent · ${live.notifications.failed} failed` },
+    { label: "Online now", icon: Radio, to: "/admin/automations", accent: "bg-neo-green", value: online?.total ?? 0, sub: "people on the site this moment" },
+    { label: "AI automations", icon: Workflow, to: "/admin/automations", accent: "bg-neo-purple", value: notifications?.filter((n) => n.channel === "webhook").length ?? 0, sub: "n8n fires · manage in Automations" },
   ];
 
   return (
@@ -484,6 +489,7 @@ export default function AdminOverview() {
                 ["Discord", integrations.discord.configured, integrations.discord.keys.join(", ")],
                 ["Payments (Stripe)", integrations.payments.configured, integrations.payments.keys.join(", ")],
                 ["Site URL", integrations.siteUrl.configured, integrations.siteUrl.keys.join(", ")],
+                ["Automation (n8n)", integrations.automation.configured, integrations.automation.keys.join(", ")],
               ].map(([name, on, keys]) => (
                 <div key={String(name)} className="flex items-center justify-between gap-2 px-5 py-3">
                   <div className="min-w-0">
