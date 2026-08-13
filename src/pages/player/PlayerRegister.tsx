@@ -1,4 +1,14 @@
 import { api } from "@/convex/_generated/api";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { GamePicker, OptionPicker } from "@/components/GamePicker";
 import { Input } from "@/components/ui/input";
@@ -18,10 +28,18 @@ import {
 import { btnYellow, input } from "@/lib/neo";
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQuery } from "convex/react";
-import { ArrowRight, Gamepad2 } from "lucide-react";
-import { useState } from "react";
-import { Navigate, useNavigate } from "react-router";
+import { AlertTriangle, ArrowRight, Gamepad2, Loader2, Trash2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router";
 import { toast } from "sonner";
+
+type ConflictCheck = {
+  emailTaken: boolean;
+  gamertagTaken: boolean;
+  emailIsMine: boolean;
+  gamertagIsMine: boolean;
+  anyConflict: boolean;
+};
 
 /** Numbered section heading, written for normal people. */
 function SectionHeading({ step, title }: { step: number; title: string }) {
@@ -36,7 +54,7 @@ function SectionHeading({ step, title }: { step: number; title: string }) {
 }
 
 export default function PlayerRegister() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, signOut } = useAuth();
   const profile = useQuery(api.players.getMyProfile);
   const register = useMutation(api.players.register);
   const navigate = useNavigate();
@@ -73,6 +91,17 @@ export default function PlayerRegister() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Duplicate-data safety net: on submit we ask the backend whether this
+  // email/gamertag already exists, then pop a dialog with clear choices
+  // instead of failing with a confusing error.
+  const [checkArgs, setCheckArgs] = useState<{ email: string; gamertag: string } | null>(null);
+  const conflictCheck = useQuery(api.players.checkExisting, checkArgs ?? "skip");
+  const [conflict, setConflict] = useState<ConflictCheck | null>(null);
+  const [conflictOpen, setConflictOpen] = useState(false);
+  const [purging, setPurging] = useState(false);
+  const registerRef = useRef<(() => Promise<void>) | null>(null);
+  const purgeMyData = useMutation(api.players.purgeMyData);
+
   if (isLoading || profile === undefined) return <LoadingScreen label="Loading…" />;
   if (profile) return <Navigate to="/player" replace />;
 
@@ -81,8 +110,8 @@ export default function PlayerRegister() {
     setInGameRole("none"); // role list changes with the game
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  /** Actually submits the registration to the backend. */
+  const registerProfile = async () => {
     setSubmitting(true);
     setError(null);
     const fullPhone = localNumber.trim() ? `${dialCode} ${localNumber.trim()}` : "";
@@ -116,6 +145,48 @@ export default function PlayerRegister() {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed.");
       setSubmitting(false);
+    }
+  };
+  registerRef.current = registerProfile;
+
+  // Once the duplicate check lands: no conflict → register straight away;
+  // conflict → show the popup so the user decides what to do.
+  useEffect(() => {
+    if (!checkArgs || conflictCheck === undefined) return;
+    if (!conflictCheck.anyConflict) {
+      setConflict(null);
+      setConflictOpen(false);
+      void registerRef.current?.();
+      return;
+    }
+    setConflict(conflictCheck);
+    setConflictOpen(true);
+  }, [checkArgs, conflictCheck]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    // Ask the backend first, then decide (register or popup).
+    setCheckArgs({ email: email.trim(), gamertag: gamertag.trim() });
+  };
+
+  /** Permanently wipes the old data tied to this account, then signs out so
+   *  the user can sign in again and register as a completely fresh player. */
+  const handlePurgeAndRegister = async () => {
+    setPurging(true);
+    try {
+      await purgeMyData();
+      toast.success("Old data permanently deleted — sign in again to register fresh.");
+      setConflictOpen(false);
+      setConflict(null);
+      setCheckArgs(null);
+      await signOut().catch(() => {
+        // session is already gone server-side — navigation below is enough
+      });
+      navigate("/auth?returnTo=%2Fplayer%2Fregister", { replace: true });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not delete your old data.");
+      setPurging(false);
     }
   };
 
@@ -385,6 +456,87 @@ export default function PlayerRegister() {
           </form>
         </NeoCard>
       </div>
+
+      {/* Duplicate-data popup — explains what already exists and offers a
+          clean start when it is the user's own data. */}
+      <AlertDialog open={conflictOpen} onOpenChange={(o) => !o && !purging && setConflictOpen(false)}>
+        <AlertDialogContent className="rounded-none border-2 border-foreground bg-card shadow-[6px_6px_0_0_var(--neo-ink)]">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-xl font-bold">
+              <AlertTriangle className="size-5 text-neo-red" />
+              Your details are already in our system
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-sm leading-6 text-muted-foreground">
+              {conflict && !conflict.emailTaken && !conflict.gamertagTaken ? (
+                <>
+                  We found an earlier registration connected to your email{" "}
+                  <span className="font-bold text-foreground">{checkArgs?.email}</span>. To
+                  register again as a completely fresh player, we can permanently delete your
+                  old data — profile, performance history, teams, attendance and your account
+                  — and then you start clean. This cannot be undone.
+                </>
+              ) : (
+                <>
+                  <ul className="flex flex-col gap-2">
+                    {conflict?.emailTaken ? (
+                      <li>
+                        <span className="font-bold text-foreground">{checkArgs?.email}</span>{" "}
+                        is already registered to another player account. If it's yours,{" "}
+                        <Link to="/auth" className="font-bold underline">
+                          sign in with it
+                        </Link>{" "}
+                        to access your existing profile.
+                      </li>
+                    ) : null}
+                    {conflict?.gamertagTaken ? (
+                      <li>
+                        The gamertag{" "}
+                        <span className="font-bold text-foreground">{gamertag}</span> is
+                        already taken. If it's yours, sign in with your original account —
+                        otherwise{" "}
+                        <Link to="/contact" className="font-bold underline">
+                          contact management
+                        </Link>{" "}
+                        to claim it.
+                      </li>
+                    ) : null}
+                  </ul>
+                  <p className="mt-2">
+                    To keep everyone safe, only the owner of an account can delete it. If you
+                    believe this data is yours, sign in with that account — or contact
+                    management for help.
+                  </p>
+                </>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              className="rounded-none border-2 border-foreground bg-card shadow-[2px_2px_0_0_var(--neo-ink)]"
+              disabled={purging}
+            >
+              {conflict && !conflict.emailTaken && !conflict.gamertagTaken ? "Not now" : "Close"}
+            </AlertDialogCancel>
+            {conflict && !conflict.emailTaken && !conflict.gamertagTaken ? (
+              <AlertDialogAction
+                className="neo-press rounded-none border-2 border-foreground bg-neo-red text-white shadow-[3px_3px_0_0_var(--neo-ink)] hover:shadow-[4px_4px_0_0_var(--neo-ink)]"
+                disabled={purging}
+                onClick={(e) => {
+                  e.preventDefault();
+                  void handlePurgeAndRegister();
+                }}
+              >
+                {purging ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Trash2 className="size-4" />
+                )}
+                {purging ? "Deleting…" : "Delete old data & register fresh"}
+              </AlertDialogAction>
+            ) : null}
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
