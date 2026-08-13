@@ -6,6 +6,9 @@ import { requireAdmin } from "./guards";
 /** Organization mailboxes that receive every automated notification. */
 const ORG_EMAILS = ["wolfsocietygg@yahoo.com", "deepanshumurmu0@gmail.com"];
 
+/** Organization phone that receives an SMS alert for every contact inquiry. */
+const ORG_PHONE = "+917857958722";
+
 /** Public site URL used in email buttons (set SITE_URL in Keys). */
 function siteUrl(): string {
   return process.env.SITE_URL ?? "http://localhost:5173";
@@ -215,19 +218,39 @@ export const newRegistration = action({
   },
 });
 
-/** Forward public contact submissions to the org and thank the sender automatically. */
+/** Forward public contact submissions to the org (email + SMS) and thank the sender automatically. */
 export const newContact = action({
-  args: { name: v.string(), email: v.string(), subject: v.string(), message: v.string() },
-  handler: async (ctx, { name, email, subject, message }) => {
+  args: {
+    name: v.string(),
+    email: v.string(),
+    phone: v.optional(v.string()),
+    phoneCountryCode: v.optional(v.string()),
+    category: v.optional(v.string()),
+    game: v.optional(v.string()),
+    organization: v.optional(v.string()),
+    country: v.optional(v.string()),
+    replyPreference: v.optional(v.string()),
+    subject: v.string(),
+    message: v.string(),
+  },
+  handler: async (ctx, { name, email, phone, phoneCountryCode, category, game, organization, country, replyPreference, subject, message }) => {
+    const detailRow = (label: string, value?: string) =>
+      value
+        ? `<tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">${esc(label)}</td>
+            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(value)}</td></tr>`
+        : "";
     const orgBody = `
       <h2 style="margin:0 0 12px;">New contact inquiry</h2>
       <table style="border-collapse:collapse;margin-top:8px;">
-        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Name</td>
-            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(name)}</td></tr>
-        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Email</td>
-            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(email)}</td></tr>
-        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Subject</td>
-            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(subject)}</td></tr>
+        ${detailRow("Name", name)}
+        ${detailRow("Email", email)}
+        ${detailRow("Phone", phone)}
+        ${detailRow("I am a", category)}
+        ${detailRow("Game / Title", game)}
+        ${detailRow("Organization / Team", organization)}
+        ${detailRow("Country / Region", country)}
+        ${detailRow("Reply preference", replyPreference)}
+        ${detailRow("Subject", subject)}
       </table>
       <p style="margin-top:12px;">${esc(message)}</p>
       <p style="margin-top:16px;">Reply to the inquiry from The Den → Inquiries, or directly at ${esc(email)}.</p>`;
@@ -240,10 +263,16 @@ export const newContact = action({
       </table>
       <p style="margin-top:12px;font-style:italic;">“${esc(message)}”</p>
       <p style="margin-top:16px;">— The Wolf Society Esports team</p>`;
-    const org = await send(ctx, { to: ORG_EMAILS, subject: `New inquiry: ${subject}`, html: shell("New contact inquiry", orgBody) });
+    const org = await send(ctx, { to: ORG_EMAILS, subject: `New inquiry: ${subject} — ${name}`, html: shell("New contact inquiry", orgBody) });
     const reply = await send(ctx, { to: email, subject: `Thank you — we received your message`, html: shell("Thank you", replyBody) });
-    await sendDiscord(ctx, `✉️ **New inquiry** from ${name} — "${subject}"\n${message.slice(0, 280)}`, "New contact inquiry");
-    return { org, reply };
+    // SMS alert to the organization phone — fires the moment someone submits.
+    const sms = await sendSms(
+      ctx,
+      ORG_PHONE,
+      `Wolf Society Esports: New inquiry from ${name} (${subject}). Reply at ${email}${phone ? ` or ${phone}` : ""}`,
+    );
+    await sendDiscord(ctx, `✉️ **New inquiry** from ${name} — "${subject}"${category ? ` (${category})` : ""}\n${message.slice(0, 280)}`, "New contact inquiry");
+    return { org, reply, sms };
   },
 });
 
