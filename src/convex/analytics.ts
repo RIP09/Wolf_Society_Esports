@@ -1,78 +1,127 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { requireAdmin } from "./guards";
+import { Doc } from "./_generated/dataModel";
 
-const DAY = 24 * 60 * 60 * 1000;
+// Store pageviews and visitor stats in a single "analytics" table.
+// For simplicity, we'll aggregate on the fly.
 
-function startOfDay(ts: number) {
-  const d = new Date(ts);
-  d.setHours(0, 0, 0, 0);
-  return d.getTime();
-}
-
-/** Privacy-friendly pageview tracking — only path + referrer are stored. */
 export const trackPageview = mutation({
   args: {
     path: v.string(),
     referrer: v.optional(v.string()),
+    visitorId: v.optional(v.string()),
+    country: v.optional(v.string()),
+    countryCode: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const path = args.path.slice(0, 200);
-    if (!path.startsWith("/")) return;
-    // Ignore in-app admin/player routes to keep public analytics meaningful.
-    if (path.startsWith("/admin") || path.startsWith("/player") || path.startsWith("/auth") || path.startsWith("/grant")) return;
+    const visitorId = args.visitorId || "anonymous";
+    // Insert a pageview record
     await ctx.db.insert("pageviews", {
-      path,
-      referrer: args.referrer?.slice(0, 300) || undefined,
-      createdAt: Date.now(),
+      visitorId,
+      path: args.path,
+      referrer: args.referrer,
+      country: args.country,
+      countryCode: args.countryCode,
+      timestamp: Date.now(),
     });
+    // Also update visitor's country in a "visitors" table for stats
+    if (args.country && visitorId !== "anonymous") {
+      const existing = await ctx.db
+        .query("visitors")
+        .withIndex("by_visitorId", (q) => q.eq("visitorId", visitorId))
+        .first();
+      if (existing) {
+        await ctx.db.patch(existing._id, {
+          country: args.country,
+          countryCode: args.countryCode,
+          lastSeen: Date.now(),
+        });
+      } else {
+        await ctx.db.insert("visitors", {
+          visitorId,
+          country: args.country,
+          countryCode: args.countryCode,
+          firstSeen: Date.now(),
+          lastSeen: Date.now(),
+        });
+      }
+    }
   },
 });
 
-/** Admin-only: realtime analytics dashboard data. */
-export const getAnalytics = query({
+export const setVisitorCountry = mutation({
+  args: {
+    visitorId: v.string(),
+    country: v.string(),
+    countryCode: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const existing = await ctx.db
+      .query("visitors")
+      .withIndex("by_visitorId", (q) => q.eq("visitorId", args.visitorId))
+      .first();
+    if (existing) {
+      await ctx.db.patch(existing._id, {
+        country: args.country,
+        countryCode: args.countryCode,
+        lastSeen: Date.now(),
+      });
+    } else {
+      await ctx.db.insert("visitors", {
+        visitorId: args.visitorId,
+        country: args.country,
+        countryCode: args.countryCode,
+        firstSeen: Date.now(),
+        lastSeen: Date.now(),
+      });
+    }
+  },
+});
+
+export const visitorStats = query({
   args: {},
   handler: async (ctx) => {
-    await requireAdmin(ctx);
-    const views = await ctx.db.query("pageviews").order("desc").take(20000);
+    // Calculate total visitors, today visitors, last 24h pageviews, and top countries.
+    const now = Date.now();
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayTs = todayStart.getTime();
+    const last24h = now - 24 * 60 * 60 * 1000;
 
-    const total = views.length;
-    const today = startOfDay(Date.now());
+    // Get all visitors
+    const visitors = await ctx.db.query("visitors").collect();
+    const totalVisitors = visitors.length;
 
-    // Last 14 days of pageviews.
-    const buckets = Array.from({ length: 14 }, (_, i) => today - (13 - i) * DAY);
-    const countsByDay = new Map<number, number>(buckets.map((b) => [b, 0]));
-    for (const v of views) {
-      const day = startOfDay(v.createdAt);
-      if (countsByDay.has(day)) countsByDay.set(day, countsByDay.get(day)! + 1);
-    }
-    const viewsPerDay = buckets.map((b) => ({ day: b, count: countsByDay.get(b) ?? 0 }));
+    // Today: visitors with firstSeen >= todayTs
+    const todayVisitors = visitors.filter((v) => v.firstSeen >= todayTs).length;
 
-    // Top pages.
-    const byPath = new Map<string, number>();
-    for (const v of views) byPath.set(v.path, (byPath.get(v.path) ?? 0) + 1);
-    const topPaths = [...byPath.entries()]
-      .map(([path, count]) => ({ path, count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 12);
+    // Pageviews in last 24h
+    const pageviews = await ctx.db
+      .query("pageviews")
+      .filter((q) => q.gt(q.field("timestamp"), last24h))
+      .collect();
+    const viewsLast24h = pageviews.length;
 
-    // Unique referrers (domain only).
-    const byReferrer = new Map<string, number>();
-    for (const v of views) {
-      if (!v.referrer) continue;
-      let domain = v.referrer;
-      try {
-        domain = new URL(v.referrer).hostname.replace(/^www\./, "");
-      } catch {
-        // keep as-is
+    // Top countries from visitors table
+    const countryMap = new Map<string, { country: string; code: string; visitors: number }>();
+    for (const v of visitors) {
+      if (v.country) {
+        const key = v.countryCode || v.country;
+        if (!countryMap.has(key)) {
+          countryMap.set(key, { country: v.country, code: v.countryCode || "", visitors: 0 });
+        }
+        countryMap.get(key)!.visitors++;
       }
-      byReferrer.set(domain, (byReferrer.get(domain) ?? 0) + 1);
     }
-    const topReferrers = [...byReferrer.entries()]
-      .map(([domain, count]) => ({ domain, count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 8);
+    const topCountries = Array.from(countryMap.values())
+      .sort((a, b) => b.visitors - a.visitors)
+      .slice(0, 5);
 
-    return { total, viewsPerDay, topPaths, topReferrers };
+    return {
+      totalVisitors,
+      todayVisitors,
+      viewsLast24h,
+      topCountries,
+    };
   },
 });
