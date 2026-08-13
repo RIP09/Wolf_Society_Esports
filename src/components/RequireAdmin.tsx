@@ -1,11 +1,11 @@
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import { btnYellow, card } from "@/lib/neo";
-import { ShieldCheck, ShieldX } from "lucide-react";
+import { btnGhost, btnYellow, card } from "@/lib/neo";
+import { Loader2, ShieldCheck, ShieldX } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { useMutation, useQuery } from "convex/react";
-import { Navigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { LoadingScreen } from "@/components/Loading";
 
@@ -86,12 +86,54 @@ export function RequireAdmin({ children }: { children: ReactNode }) {
   return <FounderClaim />;
 }
 
-/** Gate for /player/* — players pass, admins are bounced to the command app. */
+/** Suspended players get a hard block screen with a sign-out option. */
+function SuspendedScreen() {
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
+  const [signingOut, setSigningOut] = useState(false);
+
+  const handleSignOut = async () => {
+    if (signingOut) return;
+    setSigningOut(true);
+    try {
+      await signOut();
+    } finally {
+      navigate("/");
+    }
+  };
+
+  return (
+    <div className="neo-grid-bg flex min-h-screen items-center justify-center bg-background px-4">
+      <div className={`${card} w-full max-w-md gap-5 p-8 text-center`}>
+        <span className="mx-auto flex h-14 w-14 items-center justify-center border-2 border-foreground bg-neo-red text-white shadow-[4px_4px_0_0_var(--neo-ink)]">
+          <ShieldX className="size-7" />
+        </span>
+        <h1 className="text-2xl font-bold tracking-tight">Account suspended</h1>
+        <p className="text-sm leading-6 text-muted-foreground">
+          Your player account has been suspended by the management team in The Den. The
+          player portal is locked until the organization reactivates you. If you believe
+          this is a mistake, contact management through the public portal.
+        </p>
+        <Button className={btnGhost} onClick={handleSignOut} disabled={signingOut}>
+          {signingOut ? <Loader2 className="size-4 animate-spin" /> : <ShieldX className="size-4" />}
+          {signingOut ? "Signing out…" : "Sign out"}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+/** Gate for /player/* — players pass, admins are bounced to the command app,
+ *  and suspended players are locked out with a clear screen. */
 export function RequirePlayer({ children }: { children: ReactNode }) {
   const { isLoading, user } = useAuth();
+  const profile = useQuery(api.players.getMyProfile);
 
-  if (isLoading) return <LoadingScreen label="Checking access…" />;
+  if (isLoading || profile === undefined) {
+    return <LoadingScreen label="Checking access…" />;
+  }
   if (isManager(user?.role)) return <Navigate to="/admin" replace />;
+  if (profile && profile.status === "suspended") return <SuspendedScreen />;
   return children;
 }
 
