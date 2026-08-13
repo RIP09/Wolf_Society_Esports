@@ -11,12 +11,12 @@ function siteUrl(): string {
   return process.env.SITE_URL ?? "http://localhost:5173";
 }
 
-type Outbox = { channel: "email" | "sms" | "discord"; recipient?: string; subject?: string; status: "sent" | "failed" | "skipped"; error?: string };
+type Outbox = { channel: "email" | "sms" | "discord" | "webhook"; recipient?: string; subject?: string; status: "sent" | "failed" | "skipped"; error?: string };
 
 /** Records a delivery attempt so The Den can watch it in real time. */
 export const recordNotification = internalMutation({
   args: {
-    channel: v.union(v.literal("email"), v.literal("sms"), v.literal("discord")),
+    channel: v.union(v.literal("email"), v.literal("sms"), v.literal("discord"), v.literal("webhook")),
     recipient: v.optional(v.string()),
     subject: v.optional(v.string()),
     status: v.union(v.literal("sent"), v.literal("failed"), v.literal("skipped")),
@@ -427,70 +427,6 @@ export const staffRemoved = action({
   },
 });
 
-/** Confirms a successful donation (called from the Stripe webhook). */
-export const paymentReceived = action({
-  args: { name: v.string(), email: v.string(), amount: v.number(), currency: v.string() },
-  handler: async (ctx, { name, email, amount, currency }) => {
-    const major = (amount / 100).toFixed(2);
-    const body = `
-      <h2 style="margin:0 0 12px;">New donation 🎉</h2>
-      <p><strong>${esc(name)}</strong> donated <strong>${currency.toUpperCase()} ${major}</strong> to Wolf Society Esports.</p>
-      <p>Thank them at ${esc(email)}.</p>`;
-    await send(ctx, { to: ORG_EMAILS, subject: `Donation received — ${currency.toUpperCase()} ${major}`, html: shell("Donation received", body) });
-    await sendDiscord(ctx, `💜 **New donation** — ${name} donated ${currency.toUpperCase()} ${major}. Thank them at ${email}!`, "Donation received");
-    await send(ctx, {
-      to: email,
-      subject: `Thank you for your donation — Wolf Society Esports`,
-      html: shell("Thank you", `
-        <h2 style="margin:0 0 12px;">Thank you, ${esc(name)}!</h2>
-        <p>Your donation of <strong>${currency.toUpperCase()} ${major}</strong> helps the Society grow — more scrims, better gear, bigger stages.</p>
-        <p style="margin-top:16px;">— The Wolf Society Esports team</p>
-      `),
-    });
-    return { ok: true };
-  },
-});
-
-/** Alerts the org + Discord when a tryout registration lands (paid or free). */
-export const tryoutReceived = action({
-  args: {
-    name: v.string(),
-    email: v.string(),
-    game: v.string(),
-    role: v.optional(v.string()),
-    region: v.optional(v.string()),
-    paid: v.boolean(),
-  },
-  handler: async (ctx, { name, email, game, role, region, paid }) => {
-    const body = `
-      <h2 style="margin:0 0 12px;">New tryout registration</h2>
-      <table style="border-collapse:collapse;margin-top:8px;">
-        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Name</td>
-            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(name)}</td></tr>
-        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Game</td>
-            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(game)}</td></tr>
-        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Role</td>
-            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(role ?? "—")}</td></tr>
-        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Region</td>
-            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(region ?? "—")}</td></tr>
-        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Fee</td>
-            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${paid ? "Paid ✅" : "Free entry"}</td></tr>
-      </table>
-      <p style="margin-top:16px;">Review tryouts in The Den → Tryouts.</p>`;
-    await send(ctx, { to: ORG_EMAILS, subject: `New tryout — ${name} (${game})`, html: shell("New tryout", body) });
-    await sendDiscord(ctx, `🏆 **New tryout** — ${name} signed up for ${game}${role ? ` as ${role}` : ""}${paid ? " (fee paid ✅)" : " (free entry)"}.`, "New tryout registration");
-    await send(ctx, {
-      to: email,
-      subject: `Tryout received — Wolf Society Esports`,
-      html: shell("Tryout received", `
-        <h2 style="margin:0 0 12px;">Thank you, ${esc(name)}!</h2>
-        <p>Your tryout for <strong>${esc(game)}</strong> has been received${paid ? " and your fee is confirmed" : ""}. Our coaches will contact you at this email with tryout details.</p>
-        <p style="margin-top:16px;">— The Wolf Society Esports team</p>
-      `),
-    });
-    return { ok: true };
-  },
-});
 /** Internal: current status of a scrim (used by the reminder job). */
 export const getScrimStatus = internalQuery({
   args: { scrimId: v.id("scrims") },
@@ -659,5 +595,68 @@ export const scrimReminder = action({
     }
     await sendDiscord(ctx, `⏰ **Scrim reminder** — ${title} vs ${opponent} in 3 hours (${whenLabel}).`, "Scrim reminder");
     return { ok: true, notified: players.length };
+  },
+});
+export const paymentReceived = action({
+  args: { name: v.string(), email: v.string(), amount: v.number(), currency: v.string() },
+  handler: async (ctx, { name, email, amount, currency }) => {
+    const major = (amount / 100).toFixed(2);
+    const body = `
+      <h2 style="margin:0 0 12px;">New donation 🎉</h2>
+      <p><strong>${esc(name)}</strong> donated <strong>${currency.toUpperCase()} ${major}</strong> to Wolf Society Esports.</p>
+      <p>Thank them at ${esc(email)}.</p>`;
+    await send(ctx, { to: ORG_EMAILS, subject: `Donation received — ${currency.toUpperCase()} ${major}`, html: shell("Donation received", body) });
+    await sendDiscord(ctx, `💜 **New donation** — ${name} donated ${currency.toUpperCase()} ${major}. Thank them at ${email}!`, "Donation received");
+    await send(ctx, {
+      to: email,
+      subject: `Thank you for your donation — Wolf Society Esports`,
+      html: shell("Thank you", `
+        <h2 style="margin:0 0 12px;">Thank you, ${esc(name)}!</h2>
+        <p>Your donation of <strong>${currency.toUpperCase()} ${major}</strong> helps the Society grow — more scrims, better gear, bigger stages.</p>
+        <p style="margin-top:16px;">— The Wolf Society Esports team</p>
+      `),
+    });
+    return { ok: true };
+  },
+});
+
+/** Alerts the org + Discord when a tryout registration lands (paid or free). */
+export const tryoutReceived = action({
+  args: {
+    name: v.string(),
+    email: v.string(),
+    game: v.string(),
+    role: v.optional(v.string()),
+    region: v.optional(v.string()),
+    paid: v.boolean(),
+  },
+  handler: async (ctx, { name, email, game, role, region, paid }) => {
+    const body = `
+      <h2 style="margin:0 0 12px;">New tryout registration</h2>
+      <table style="border-collapse:collapse;margin-top:8px;">
+        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Name</td>
+            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(name)}</td></tr>
+        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Game</td>
+            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(game)}</td></tr>
+        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Role</td>
+            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(role ?? "—")}</td></tr>
+        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Region</td>
+            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(region ?? "—")}</td></tr>
+        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Fee</td>
+            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${paid ? "Paid ✅" : "Free entry"}</td></tr>
+      </table>
+      <p style="margin-top:16px;">Review tryouts in The Den → Tryouts.</p>`;
+    await send(ctx, { to: ORG_EMAILS, subject: `New tryout — ${name} (${game})`, html: shell("New tryout", body) });
+    await sendDiscord(ctx, `🏆 **New tryout** — ${name} signed up for ${game}${role ? ` as ${role}` : ""}${paid ? " (fee paid ✅)" : " (free entry)"}.`, "New tryout registration");
+    await send(ctx, {
+      to: email,
+      subject: `Tryout received — Wolf Society Esports`,
+      html: shell("Tryout received", `
+        <h2 style="margin:0 0 12px;">Thank you, ${esc(name)}!</h2>
+        <p>Your tryout for <strong>${esc(game)}</strong> has been received${paid ? " and your fee is confirmed" : ""}. Our coaches will contact you at this email with tryout details.</p>
+        <p style="margin-top:16px;">— The Wolf Society Esports team</p>
+      `),
+    });
+    return { ok: true };
   },
 });
