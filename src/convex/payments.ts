@@ -83,6 +83,18 @@ export const submitTryout = mutation({
       region: args.region?.trim() || undefined,
       paid: false,
     });
+    await ctx.scheduler.runAfter(0, api.automation.triggerWorkflow, {
+      event: "tryout.registered",
+      payload: JSON.stringify({
+        name,
+        email,
+        phone: args.phone?.trim() || undefined,
+        game: args.game.trim(),
+        inGameRole: args.inGameRole?.trim() || undefined,
+        region: args.region?.trim() || undefined,
+        paid: false,
+      }),
+    });
     return { ok: true, id };
   },
 });
@@ -178,6 +190,15 @@ export const confirmDonation = internalMutation({
       email: donation.email,
       amount,
       currency,
+    });
+    await ctx.scheduler.runAfter(0, api.automation.triggerWorkflow, {
+      event: "donation.paid",
+      payload: JSON.stringify({
+        name: donation.name,
+        email: donation.email,
+        amount,
+        currency,
+      }),
     });
     return { ok: true };
   },
