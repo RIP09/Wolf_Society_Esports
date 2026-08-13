@@ -497,9 +497,8 @@ const schema = defineSchema(
   {
     schemaValidation: false,
   },
-);
+  // convex/schema.ts – add inside defineSchema({ ... })
 
-// Inside the schema definition:
 presence: defineTable({
   visitorId: v.string(),
   lastSeen: v.number(),
@@ -522,5 +521,7 @@ visitors: defineTable({
   firstSeen: v.number(),
   lastSeen: v.number(),
 }).index("by_visitorId", ["visitorId"]),
+  
+);
 
 export default schema;
