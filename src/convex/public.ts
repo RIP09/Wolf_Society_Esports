@@ -1,6 +1,7 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { api } from "./_generated/api";
+import { enforceRateLimit } from "./rateLimit";
 import { PLAYER_STATUS, TOURNAMENT_STATUS } from "./schema";
 
 /** Public: approved players only, with photos resolved. */
@@ -203,7 +204,9 @@ export const getHome = query({
 
 /**
  * Public contact form. Bot-protected by a honeypot field, persisted to the
- * database, forwarded to the organization by email, and auto-answered.
+ * database, forwarded to the organization by email + SMS, and auto-answered.
+ * Optional details (phone, category, game, organization, country, reply
+ * preference) give the org everything needed to reply properly.
  */
 export const contact = mutation({
   args: {
@@ -211,6 +214,13 @@ export const contact = mutation({
     email: v.string(),
     subject: v.string(),
     message: v.string(),
+    phone: v.optional(v.string()), // full number incl. dial code
+    phoneCountryCode: v.optional(v.string()), // dial code only
+    category: v.optional(v.string()), // Player / Fan / Organization / Media…
+    game: v.optional(v.string()), // esports title
+    organization: v.optional(v.string()), // brand / team / company name
+    country: v.optional(v.string()), // country or region
+    replyPreference: v.optional(v.string()), // Email / Phone / Both / No preference
     website: v.optional(v.string()), // honeypot — bots fill this, humans don't
   },
   handler: async (ctx, args) => {
@@ -221,26 +231,67 @@ export const contact = mutation({
     const email = args.email.trim();
     const subject = args.subject.trim();
     const message = args.message.trim();
+    const phone = args.phone?.trim() || undefined;
+    const phoneCountryCode = args.phoneCountryCode?.trim() || undefined;
+    const category = args.category?.trim() || undefined;
+    const game = args.game?.trim() || undefined;
+    const organization = args.organization?.trim() || undefined;
+    const country = args.country?.trim() || undefined;
+    const replyPreference = args.replyPreference?.trim() || undefined;
     if (name.length < 2) throw new ConvexError({ message: "Please enter your name." });
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       throw new ConvexError({ message: "Please enter a valid email address." });
     }
-    if (subject.length < 2) throw new ConvexError({ message: "Please add a subject." });
+    if (subject.length < 2 || subject === "none") {
+      throw new ConvexError({ message: "Please choose or write a subject." });
+    }
     if (message.length < 10) {
       throw new ConvexError({ message: "Your message is too short." });
     }
+    await enforceRateLimit(ctx, `contact:${email}`, 3, 60 * 60 * 1000);
     const id = await ctx.db.insert("contactMessages", {
       name,
       email,
+      phone,
+      phoneCountryCode,
+      category,
+      game,
+      organization,
+      country,
+      replyPreference,
       subject,
       message,
       read: false,
       createdAt: Date.now(),
     });
-    await ctx.scheduler.runAfter(0, api.notify.newContact, { name, email, subject, message });
+    await ctx.scheduler.runAfter(0, api.notify.newContact, {
+      name,
+      email,
+      phone,
+      phoneCountryCode,
+      category,
+      game,
+      organization,
+      country,
+      replyPreference,
+      subject,
+      message,
+    });
     await ctx.scheduler.runAfter(0, api.automation.triggerWorkflow, {
       event: "contact",
-      payload: JSON.stringify({ name, email, subject, message }),
+      payload: JSON.stringify({
+        name,
+        email,
+        phone,
+        phoneCountryCode,
+        category,
+        game,
+        organization,
+        country,
+        replyPreference,
+        subject,
+        message,
+      }),
     });
     return { ok: true, id };
   },
@@ -264,6 +315,7 @@ export const subscribe = mutation({
     const name = args.name?.trim() || undefined;
     const phone = args.phone?.trim() || undefined;
 
+    await enforceRateLimit(ctx, `alert:${email}`, 3, 60 * 60 * 1000);
     const existing = await ctx.db
       .query("subscribers")
       .withIndex("by_email", (q) => q.eq("email", email))
