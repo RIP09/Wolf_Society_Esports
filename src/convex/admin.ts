@@ -105,8 +105,8 @@ export const getIntegrationStatus = query({
         keys: ["SITE_URL"],
       },
       automation: {
-        configured: !!process.env.N8N_WEBHOOK_URL,
-        keys: ["N8N_WEBHOOK_URL", "N8N_CHAT_WEBHOOK_URL", "N8N_WEBHOOK_SECRET"],
+        configured: !!process.env.HUGINN_WEBHOOK_URL,
+        keys: ["HUGINN_WEBHOOK_URL", "HUGINN_CHAT_WEBHOOK_URL", "HUGINN_WEBHOOK_SECRET"],
       },
     };
   },
