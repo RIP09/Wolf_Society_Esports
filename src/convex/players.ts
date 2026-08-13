@@ -95,6 +95,20 @@ export const register = mutation({
       game: args.game,
       email: args.email.trim(),
     });
+    await ctx.scheduler.runAfter(0, api.automation.triggerWorkflow, {
+      event: "player.registered",
+      payload: JSON.stringify({
+        gamertag,
+        realName: args.realName.trim(),
+        email: args.email.trim(),
+        game: args.game,
+        inGameRole: args.inGameRole?.trim() || undefined,
+        region: args.region?.trim() || undefined,
+        platform: args.platform?.trim() || undefined,
+        nationality: args.nationality?.trim() || undefined,
+        experienceLevel: args.experienceLevel?.trim() || undefined,
+      }),
+    });
     return playerId;
   },
 });
