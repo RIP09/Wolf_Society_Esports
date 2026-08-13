@@ -105,8 +105,12 @@ export default function AdminInquiries() {
                   variant="outline"
                   className={btnGhost}
                   onClick={async () => {
-                    await toggleRead({ messageId: m._id });
-                    toast.success(m.read ? "Marked as unread." : "Marked as read.");
+                    try {
+                      await toggleRead({ messageId: m._id });
+                      toast.success(m.read ? "Marked as unread." : "Marked as read.");
+                    } catch (e) {
+                      toast.error(e instanceof Error ? e.message : "Could not update the message.");
+                    }
                   }}
                 >
                   <CheckCheck className="size-3.5" />
