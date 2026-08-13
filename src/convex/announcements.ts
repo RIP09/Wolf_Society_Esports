@@ -53,6 +53,16 @@ export const create = mutation({
         });
       }
     }
+    // Fire the n8n automation pipeline (CRM, AI summaries, Discord, …).
+    await ctx.scheduler.runAfter(0, api.automation.triggerWorkflow, {
+      event: "announcement.published",
+      payload: JSON.stringify({
+        title,
+        body: args.body.trim(),
+        priority: args.priority,
+        notifySubscribers: !!args.notifySubscribers,
+      }),
+    });
     return id;
   },
 });
