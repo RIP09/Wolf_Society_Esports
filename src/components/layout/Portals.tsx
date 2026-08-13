@@ -204,6 +204,7 @@ const ADMIN_NAV: NavItem[] = [
   { to: "/admin/sponsors", label: "Sponsors" },
   { to: "/admin/donations", label: "Donations & Tryouts" },
   { to: "/admin/analytics", label: "Analytics" },
+  { to: "/admin/automations", label: "Automations" },
   { to: "/admin/settings", label: "Settings" },
   { to: "/admin/inquiries", label: "Inquiries" },
   { to: "/grant", label: "Access" },
