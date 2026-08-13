@@ -33,7 +33,7 @@ export default function AdminAutomations() {
     setTesting(true);
     try {
       await testWorkflow({});
-      toast.success("Test event fired — check the n8n workflow executions for a new run.");
+      toast.success("Test event fired — check your Huginn agents for the new event in seconds.");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Could not fire the test event.");
     } finally {
@@ -48,8 +48,8 @@ export default function AdminAutomations() {
     <div className="flex flex-col gap-8">
       <PageHeader
         eyebrow="The Den · Automations"
-        title="n8n AI automation hub"
-        description="Every key platform event fires a real webhook into your n8n workflows — AI agents, CRM logging, Discord/Slack/Telegram, spreadsheets, anything n8n can do. Delivery status streams here live."
+        title="Huginn AI automation hub"
+        description="Every key platform event fires a real webhook into your Huginn agents — AI replies, CRM logging, Discord/Slack/Telegram, spreadsheets, anything Huginn can do. Delivery status streams here live."
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <span className="flex items-center gap-2 border-2 border-foreground bg-card px-3 py-2 font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
@@ -77,7 +77,7 @@ export default function AdminAutomations() {
             <p className="flex items-center gap-2">
               <StatusBadge status="approved">Live</StatusBadge>
               <span>
-                Webhook active — events are flowing to your n8n instance.
+                Webhook active — events are flowing to your Huginn instance.
                 {status.chat ? " The AI assistant chat workflow is connected too." : ""}
               </span>
             </p>
@@ -90,7 +90,7 @@ export default function AdminAutomations() {
             <p className="text-sm">
               <StatusBadge status="pending">Setup needed</StatusBadge>
               <span className="ml-2">
-                No n8n webhook configured yet — the platform still works (email, SMS, Discord, Stripe all run natively), but automation events are skipped and recorded here.
+                No Huginn webhook configured yet — the platform still works (email, SMS, Discord, Stripe all run natively), but automation events are skipped and recorded here.
               </span>
             </p>
             <div className="border-2 border-foreground bg-neo-cream p-4">
@@ -106,11 +106,11 @@ export default function AdminAutomations() {
                 ))}
               </ul>
               <ol className="mt-3 list-decimal space-y-1 pl-5 text-xs leading-5 text-muted-foreground">
-                <li>Create a free n8n account (n8n.io cloud) or self-host with Docker — both free.</li>
-                <li>Import the included workflow (<span className="font-mono">n8n/wolf-society-workflow.json</span> in this repo) and activate it.</li>
-                <li>Copy the webhook URL (…/webhook/wolf-society) into <span className="font-mono">N8N_WEBHOOK_URL</span>.</li>
-                <li>Optional: point the AI assistant at a chat workflow with <span className="font-mono">N8N_CHAT_WEBHOOK_URL</span>.</li>
-                <li>Hit “Send test event” — a run appears in n8n and here in seconds.</li>
+                <li>Run Huginn for free — huginn.sh (open-source, self-hosted Docker image; no license cost).</li>
+                <li>Import the included scenario (<span className="font-mono">huginn/wolf-society-scenario.json</span> in this repo) via Scenarios → Add a Scenario → Import.</li>
+                <li>Copy the Events Webhook Agent URL (…/users/1/web_requests/&lt;id&gt;/&lt;secret&gt;) into <span className="font-mono">HUGINN_WEBHOOK_URL</span>.</li>
+                <li>Optional: point the AI assistant at the chat Webhook Agent with <span className="font-mono">HUGINN_CHAT_WEBHOOK_URL</span>.</li>
+                <li>Hit “Send test event” — a new event appears in Huginn and here in seconds.</li>
               </ol>
             </div>
           </div>
@@ -157,7 +157,7 @@ export default function AdminAutomations() {
             Recent automation fires
           </h2>
           <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-            n8n delivery outbox · live
+            Huginn delivery outbox · live
           </span>
         </div>
         {status === undefined ? (
@@ -165,7 +165,7 @@ export default function AdminAutomations() {
         ) : recent.length === 0 ? (
           <EmptyState
             title="No automation fires yet"
-            description="The moment an event fires — or is skipped because n8n isn't connected — it shows up here."
+            description="The moment an event fires — or is skipped because Huginn isn't connected — it shows up here."
           />
         ) : (
           <div className="flex flex-col divide-y-2 divide-foreground/10">
