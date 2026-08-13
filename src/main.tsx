@@ -41,6 +41,7 @@ const PublicMatches = lazy(() => import("./pages/public/PublicMatches.tsx"));
 const PublicSchedule = lazy(() => import("./pages/public/PublicSchedule.tsx"));
 const PublicPlayers = lazy(() => import("./pages/public/PublicPlayers.tsx"));
 const PublicNews = lazy(() => import("./pages/public/PublicNews.tsx"));
+const AccountPage = lazy(() => import("./pages/Account.tsx"));
 const PublicContact = lazy(() => import("./pages/public/PublicContact.tsx"));
 const PublicAbout = lazy(() => import("./pages/public/PublicAbout.tsx"));
 const PublicAchievements = lazy(() => import("./pages/public/PublicAchievements.tsx"));
@@ -270,6 +271,14 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="/privacy" element={<PublicPrivacy />} />
                 <Route path="/terms" element={<PublicTerms />} />
                 <Route path="/contact" element={<PublicContact />} />
+                <Route
+                  path="/account"
+                  element={
+                    <RequireAuth>
+                      <AccountPage />
+                    </RequireAuth>
+                  }
+                />
               </Route>
 
               {/* Secret access-granting page — linked from notification emails */}
