@@ -1,9 +1,6 @@
+// convex/presence.ts
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-
-// Simple presence: track visitors and get online count (no persistence, just in-memory count)
-// Convex doesn't have built-in presence, so we'll store a timestamp per visitorId.
-// For simplicity, we'll maintain a set in a single document.
 
 export const ping = mutation({
   args: {
@@ -11,10 +8,10 @@ export const ping = mutation({
     path: v.string(),
   },
   handler: async (ctx, args) => {
-    // Store presence in a "presence" table with ttl
     const now = Date.now();
     const id = args.visitorId || "anonymous";
-    // Upsert: update or insert
+
+    // Upsert presence
     const existing = await ctx.db
       .query("presence")
       .withIndex("by_visitor", (q) => q.eq("visitorId", id))
@@ -28,7 +25,8 @@ export const ping = mutation({
         path: args.path,
       });
     }
-    // Remove stale entries older than 2 minutes
+
+    // Clean up stale entries (> 2 min)
     const stale = Date.now() - 120_000;
     const old = await ctx.db
       .query("presence")
@@ -48,7 +46,6 @@ export const onlineCount = query({
       .query("presence")
       .filter((q) => q.gt(q.field("lastSeen"), now - 120_000))
       .collect();
-    // Also count distinct visitors? For simplicity, total.
     return { total: active.length };
   },
 });
