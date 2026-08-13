@@ -1,8 +1,99 @@
 import { ConvexError, v } from "convex/values";
+import type { Doc, Id } from "./_generated/dataModel";
 import { api } from "./_generated/api";
-import { mutation, query } from "./_generated/server";
-import { requireAdmin, requireUser } from "./guards";
+import { mutation, query, type MutationCtx } from "./_generated/server";
+import { hasAdminRole, requireAdmin, requireUser } from "./guards";
 import { PLAYER_STATUS, ROLES } from "./schema";
+
+/**
+ * Deletes one player's full esports footprint: performance history, team
+ * memberships (and captain assignments), attendance responses and uploaded
+ * photo — then the profile itself. The linked auth account is kept.
+ */
+async function wipePlayerData(
+  ctx: MutationCtx,
+  playerId: Id<"players">,
+  photoStorageId?: Id<"_storage">,
+) {
+  const entries = await ctx.db
+    .query("performanceEntries")
+    .withIndex("by_player", (q) => q.eq("playerId", playerId))
+    .collect();
+  for (const e of entries) await ctx.db.delete(e._id);
+
+  const memberships = await ctx.db
+    .query("teamMembers")
+    .withIndex("by_player", (q) => q.eq("playerId", playerId))
+    .collect();
+  for (const m of memberships) await ctx.db.delete(m._id);
+  const captained = await ctx.db
+    .query("teams")
+    .filter((q) => q.eq(q.field("captainId"), playerId))
+    .collect();
+  for (const t of captained) await ctx.db.patch(t._id, { captainId: undefined });
+
+  const confirmations = await ctx.db
+    .query("routineConfirmations")
+    .withIndex("by_player", (q) => q.eq("playerId", playerId))
+    .collect();
+  for (const c of confirmations) await ctx.db.delete(c._id);
+
+  if (photoStorageId) {
+    try {
+      await ctx.storage.delete(photoStorageId);
+    } catch {
+      // best-effort cleanup — the rest of the removal continues
+    }
+  }
+  await ctx.db.delete(playerId);
+}
+
+/**
+ * Deletes a complete auth account: alert subscriptions, auth accounts +
+ * verification codes, sessions + refresh tokens + verifiers, and the user
+ * row itself. After this the person can sign up again with zero leftovers.
+ */
+async function wipeAuthUser(ctx: MutationCtx, userId: Id<"users">) {
+  const subs = await ctx.db
+    .query("subscribers")
+    .filter((q) => q.eq(q.field("userId"), userId))
+    .collect();
+  for (const s of subs) await ctx.db.delete(s._id);
+
+  const accounts = await ctx.db
+    .query("authAccounts")
+    .withIndex("userIdAndProvider", (q) => q.eq("userId", userId))
+    .collect();
+  for (const account of accounts) {
+    const codes = await ctx.db
+      .query("authVerificationCodes")
+      .withIndex("accountId", (q) => q.eq("accountId", account._id))
+      .collect();
+    for (const code of codes) await ctx.db.delete(code._id);
+    await ctx.db.delete(account._id);
+  }
+
+  const sessions = await ctx.db
+    .query("authSessions")
+    .withIndex("userId", (q) => q.eq("userId", userId))
+    .collect();
+  for (const session of sessions) {
+    const tokens = await ctx.db
+      .query("authRefreshTokens")
+      .withIndex("sessionId", (q) => q.eq("sessionId", session._id))
+      .collect();
+    for (const token of tokens) await ctx.db.delete(token._id);
+    const verifiers = await ctx.db
+      .query("authVerifiers")
+      .filter((q) => q.eq(q.field("sessionId"), session._id))
+      .collect();
+    for (const verifier of verifiers) await ctx.db.delete(verifier._id);
+    await ctx.db.delete(session._id);
+  }
+
+  const user = await ctx.db.get(userId);
+  if (user) await ctx.db.delete(userId);
+}
 
 export const getMyProfile = query({
   args: {},
@@ -12,6 +103,110 @@ export const getMyProfile = query({
       .query("players")
       .withIndex("by_userId", (q) => q.eq("userId", user._id))
       .first();
+  },
+});
+
+/**
+ * Friendly pre-registration check. Tells the registration form whether an
+ * email or gamertag is already in the shared system, and whether that data
+ * belongs to the signed-in user (so they can safely choose to delete it and
+ * start fresh instead of hitting a hard error).
+ */
+export const checkExisting = query({
+  args: {
+    email: v.string(),
+    gamertag: v.string(),
+  },
+  handler: async (ctx, { email, gamertag }) => {
+    const user = await requireUser(ctx);
+    const emailNorm = email.trim().toLowerCase();
+    const gamertagNorm = gamertag.trim().toLowerCase();
+
+    const byEmail = await ctx.db
+      .query("players")
+      .filter((q) => q.eq(q.field("email"), emailNorm))
+      .first();
+    const byGamertag = await ctx.db
+      .query("players")
+      .filter((q) => q.eq(q.field("gamertag"), gamertagNorm))
+      .first();
+
+    // A record is "mine" when it belongs to this auth account, or when it
+    // shares the same verified email (the user proved inbox ownership via OTP).
+    const belongsToMe = (p: { userId: unknown; email: string } | null | undefined) => {
+      if (!p) return false;
+      if (p.userId === user._id) return true;
+      if (user.email && p.email.toLowerCase() === user.email.toLowerCase()) return true;
+      return false;
+    };
+
+    const emailTaken = byEmail ? !belongsToMe(byEmail) : false;
+    const gamertagTaken = byGamertag ? !belongsToMe(byGamertag) : false;
+
+    return {
+      emailTaken,
+      gamertagTaken,
+      emailIsMine: byEmail ? belongsToMe(byEmail) : false,
+      gamertagIsMine: byGamertag ? belongsToMe(byGamertag) : false,
+      // A matched profile that is mine still blocks registration until it is
+      // removed — the form uses this to offer "delete my old data".
+      anyConflict: !!(byEmail || byGamertag),
+    };
+  },
+});
+
+/**
+ * Self-service permanent deletion. Removes the signed-in user's player
+ * profile and EVERY piece of their data — including any older profile that
+ * shares the same verified email (proof of ownership comes from the OTP sign
+ * in), so someone who registered before under a different login can genuinely
+ * start fresh with zero errors. This is the player-facing version of the
+ * admin `remove` mutation.
+ */
+export const purgeMyData = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const user = await requireUser(ctx);
+    const emailNorm = user.email ? user.email.toLowerCase() : "";
+
+    // Collect every profile that belongs to this identity: the current
+    // account's profile plus any sharing the same verified email.
+    const profiles: Doc<"players">[] = [];
+    const mine = await ctx.db
+      .query("players")
+      .withIndex("by_userId", (q) => q.eq("userId", user._id))
+      .first();
+    if (mine) profiles.push(mine);
+    if (emailNorm) {
+      const byEmail = await ctx.db
+        .query("players")
+        .filter((q) => q.eq(q.field("email"), emailNorm))
+        .collect();
+      for (const p of byEmail) {
+        if (!profiles.some((x) => x._id === p._id)) profiles.push(p);
+      }
+    }
+
+    for (const profile of profiles) {
+      await wipePlayerData(ctx, profile._id, profile.photoStorageId);
+      const linked = await ctx.db.get(profile.userId);
+      if (linked && !hasAdminRole(linked.role)) {
+        await wipeAuthUser(ctx, linked._id);
+      }
+    }
+
+    // If the current account itself wasn't covered by a profile (e.g. a bare
+    // guest login), still wipe it so re-registration is completely clean.
+    const covered = profiles.some((p) => p.userId === user._id);
+    if (!covered) await wipeAuthUser(ctx, user._id);
+
+    await ctx.db.insert("securityLogs", {
+      userId: user._id,
+      email: user.email,
+      reason: "Player self-deleted their account and all associated data",
+      createdAt: Date.now(),
+    });
+    return { ok: true };
   },
 });
 
@@ -56,18 +251,29 @@ export const register = mutation({
     if (gamertag.length < 2) {
       throw new ConvexError({ message: "Gamertag must be at least 2 characters." });
     }
+    const emailNorm = args.email.trim().toLowerCase();
     const taken = await ctx.db
       .query("players")
       .filter((q) => q.eq(q.field("gamertag"), gamertag))
       .first();
-    if (taken) {
-      throw new ConvexError({ message: "That gamertag is already registered." });
+    if (taken && taken.userId !== user._id) {
+      throw new ConvexError({ message: "That gamertag is already registered to another account." });
+    }
+    if (taken && taken.userId === user._id) {
+      throw new ConvexError({ message: "You are already registered — head to your dashboard to manage your profile." });
+    }
+    const emailDup = await ctx.db
+      .query("players")
+      .filter((q) => q.eq(q.field("email"), emailNorm))
+      .first();
+    if (emailDup && emailDup.userId !== user._id) {
+      throw new ConvexError({ message: "This email is already registered to another player account." });
     }
     const playerId = await ctx.db.insert("players", {
       userId: user._id,
       gamertag,
       realName: args.realName.trim(),
-      email: args.email.trim(),
+      email: emailNorm,
       game: args.game,
       inGameRole: args.inGameRole?.trim() || undefined,
       region: args.region?.trim() || undefined,
@@ -244,5 +450,42 @@ export const setStatus = mutation({
       await ctx.db.patch(player.userId, { role: ROLES.PLAYER });
     }
     return status;
+  },
+});
+
+/**
+ * Admin-only: permanently remove a player and EVERY piece of their data.
+ *
+ * Deletes the profile, performance history, team memberships (and any
+ * captain assignment), attendance responses, uploaded photo, alert
+ * subscriptions, and — for non-management accounts — the auth account,
+ * every session/token and the user record itself. Nothing is left behind,
+ * so a removed player can sign up and register again with zero errors.
+ */
+export const remove = mutation({
+  args: { playerId: v.id("players") },
+  handler: async (ctx, { playerId }) => {
+    const admin = await requireAdmin(ctx);
+    const player = await ctx.db.get(playerId);
+    if (!player) throw new ConvexError({ message: "Player not found." });
+
+    // 1-5. Full esports footprint (performance, teams, attendance, photo, profile).
+    await wipePlayerData(ctx, playerId, player.photoStorageId);
+
+    // 6. The linked auth account — full removal so re-registration is clean
+    // (management accounts are kept; only the player data is removed).
+    const user = await ctx.db.get(player.userId);
+    if (user && !hasAdminRole(user.role)) {
+      await wipeAuthUser(ctx, user._id);
+    }
+
+    // 7. Audit trail for The Den's security log.
+    await ctx.db.insert("securityLogs", {
+      userId: admin._id,
+      email: admin.email,
+      reason: `Admin removed player ${player.gamertag} (${player.email}) and all associated data`,
+      createdAt: Date.now(),
+    });
+    return { ok: true };
   },
 });
