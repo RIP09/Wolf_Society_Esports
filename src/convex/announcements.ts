@@ -53,7 +53,12 @@ export const create = mutation({
         });
       }
     }
-    // Fire the n8n automation pipeline (CRM, AI summaries, Discord, …).
+    // Free + unlimited web push to every opted-in device (VAPID).
+    await ctx.scheduler.runAfter(0, api.push.sendBroadcast, {
+      title,
+      body: args.body.trim(),
+    });
+    // Fire the Huginn automation pipeline (CRM, AI summaries, Discord, …).
     await ctx.scheduler.runAfter(0, api.automation.triggerWorkflow, {
       event: "announcement.published",
       payload: JSON.stringify({
