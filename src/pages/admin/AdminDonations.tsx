@@ -119,8 +119,12 @@ export default function AdminDonations() {
                       size="sm"
                       className="neo-press rounded-none border-2 border-foreground bg-neo-green px-3 py-1.5 text-xs font-bold text-white shadow-[2px_2px_0_0_var(--neo-ink)]"
                       onClick={async () => {
-                        await setTryoutStatus({ tryoutId: t._id, status: "approved" });
-                        toast.success(`${t.name} approved for tryouts.`);
+                        try {
+                          await setTryoutStatus({ tryoutId: t._id, status: "approved" });
+                          toast.success(`${t.name} approved for tryouts.`);
+                        } catch (e) {
+                          toast.error(e instanceof Error ? e.message : "Could not approve the tryout.");
+                        }
                       }}
                     >
                       <CheckCircle2 className="size-3.5" />
@@ -131,8 +135,12 @@ export default function AdminDonations() {
                       variant="outline"
                       className="neo-press rounded-none border-2 border-foreground bg-neo-red px-3 py-1.5 text-xs font-bold text-white shadow-[2px_2px_0_0_var(--neo-ink)]"
                       onClick={async () => {
-                        await setTryoutStatus({ tryoutId: t._id, status: "rejected" });
-                        toast.success(`Tryout from ${t.name} declined.`);
+                        try {
+                          await setTryoutStatus({ tryoutId: t._id, status: "rejected" });
+                          toast.success(`Tryout from ${t.name} declined.`);
+                        } catch (e) {
+                          toast.error(e instanceof Error ? e.message : "Could not decline the tryout.");
+                        }
                       }}
                     >
                       <XCircle className="size-3.5" />
