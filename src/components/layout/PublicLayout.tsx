@@ -13,10 +13,11 @@ import { CookieConsent, openCookieSettings } from "@/components/CookieConsent";
 import { PermissionCenter } from "@/components/PermissionCenter";
 import AIAssistant from "@/components/AIAssistant";
 import { getVisitorId } from "@/lib/visitor";
+import { useAuth } from "@/hooks/use-auth";
 import { btnGhost, input } from "@/lib/neo";
 import { cn } from "@/lib/utils";
 import { useMutation, useQuery } from "convex/react";
-import { Activity, BellRing, Cookie, Crosshair, Eye, Globe, Heart, LogIn, Mail, Radio, ShieldCheck, Users, Video } from "lucide-react";
+import { Activity, BellRing, Cookie, Crosshair, Eye, Globe, Heart, LogIn, LogOut, Mail, Radio, ShieldCheck, UserRound, Users, Video } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router";
 import { toast } from "sonner";
@@ -252,6 +253,7 @@ function LiveVisitors() {
 }
 
 export default function PublicLayout() {
+  const { isAuthenticated, signOut } = useAuth();
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <header className="sticky top-0 z-40 border-b-2 border-foreground bg-background">
@@ -290,18 +292,52 @@ export default function PublicLayout() {
                 Wolf Society Esports
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild className="cursor-pointer rounded-none">
-                <NavLink to="/auth?returnTo=%2Fplayer%2Fregister">
-                  <Crosshair className="size-4" />
-                  Player portal — The Pack
-                </NavLink>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild className="cursor-pointer rounded-none">
-                <NavLink to="/auth/den?returnTo=%2Fadmin">
-                  <ShieldCheck className="size-4" />
-                  Management portal — The Den
-                </NavLink>
-              </DropdownMenuItem>
+              {isAuthenticated ? (
+                <>
+                  <DropdownMenuItem asChild className="cursor-pointer rounded-none">
+                    <NavLink to="/account">
+                      <UserRound className="size-4" />
+                      My account
+                    </NavLink>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild className="cursor-pointer rounded-none">
+                    <NavLink to="/player">
+                      <Crosshair className="size-4" />
+                      Player portal — The Pack
+                    </NavLink>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="cursor-pointer rounded-none">
+                    <NavLink to="/admin">
+                      <ShieldCheck className="size-4" />
+                      Management portal — The Den
+                    </NavLink>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="cursor-pointer rounded-none"
+                    onClick={() => void signOut()}
+                  >
+                    <LogOut className="size-4" />
+                    Sign out
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <>
+                  <DropdownMenuItem asChild className="cursor-pointer rounded-none">
+                    <NavLink to="/auth?returnTo=%2Fplayer%2Fregister">
+                      <Crosshair className="size-4" />
+                      Player portal — The Pack
+                    </NavLink>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="cursor-pointer rounded-none">
+                    <NavLink to="/auth/den?returnTo=%2Fadmin">
+                      <ShieldCheck className="size-4" />
+                      Management portal — The Den
+                    </NavLink>
+                  </DropdownMenuItem>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
