@@ -499,4 +499,28 @@ const schema = defineSchema(
   },
 );
 
+// Inside the schema definition:
+presence: defineTable({
+  visitorId: v.string(),
+  lastSeen: v.number(),
+  path: v.string(),
+}).index("by_visitor", ["visitorId"]),
+
+pageviews: defineTable({
+  visitorId: v.string(),
+  path: v.string(),
+  referrer: v.optional(v.string()),
+  country: v.optional(v.string()),
+  countryCode: v.optional(v.string()),
+  timestamp: v.number(),
+}),
+
+visitors: defineTable({
+  visitorId: v.string(),
+  country: v.optional(v.string()),
+  countryCode: v.optional(v.string()),
+  firstSeen: v.number(),
+  lastSeen: v.number(),
+}).index("by_visitorId", ["visitorId"]),
+
 export default schema;
