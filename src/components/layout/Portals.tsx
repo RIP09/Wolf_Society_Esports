@@ -1,5 +1,7 @@
 import { api } from "@/convex/_generated/api";
+import { NotificationBell } from "@/components/NotificationBell";
 import RealtimeClock from "@/components/RealtimeClock";
+import SearchPalette, { SearchButton } from "@/components/SearchPalette";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
@@ -123,15 +125,19 @@ function PortalLayout({
   tag,
   banner,
   accent,
+  variant,
 }: {
   items: NavItem[];
   tag: string;
   banner?: React.ReactNode;
   accent: Accent;
+  variant: "player" | "admin";
 }) {
   const { user } = useAuth();
   return (
     <div className="min-h-screen bg-background text-foreground">
+      {/* One ⌘K palette per layout — buttons below just open it. */}
+      <SearchPalette />
       {banner}
       <div className="flex">
         {/* Desktop sidebar */}
@@ -142,6 +148,10 @@ function PortalLayout({
               Navigation
             </p>
             <NavList items={items} accent={accent} />
+          </div>
+          <div className="mb-4 flex items-center gap-2">
+            <SearchButton className="flex-1 justify-center" />
+            <NotificationBell variant={variant} />
           </div>
           <RealtimeClock
             showDate={false}
@@ -159,6 +169,7 @@ function PortalLayout({
                 <span className="hidden max-w-28 truncate font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground sm:block">
                   {user?.name ?? ""}
                 </span>
+                <NotificationBell variant={variant} />
                 <SignOutButton compact />
               </div>
             </div>
@@ -222,6 +233,7 @@ export function AdminLayout() {
       items={items}
       tag="The Den · Management"
       accent="yellow"
+      variant="admin"
       banner={
         <div className="flex items-center justify-center gap-2 border-b-2 border-foreground bg-neo-yellow px-4 py-2 text-center font-mono text-[11px] font-bold uppercase tracking-wider text-white">
           <ShieldCheck className="size-3.5" />
@@ -253,5 +265,5 @@ export function PlayerLayout() {
       </div>
     ) : null
   ) : null;
-  return <PortalLayout items={PLAYER_NAV} tag="The Pack · Player hub" accent="blue" banner={banner} />;
+  return <PortalLayout items={PLAYER_NAV} tag="The Pack · Player hub" accent="blue" variant="player" banner={banner} />;
 }
