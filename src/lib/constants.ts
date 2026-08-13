@@ -212,6 +212,33 @@ export const CONTENT_CATEGORIES = [
 /** Sponsor tiers shown on the public sponsors page. */
 export const SPONSOR_TIERS = ["platinum", "gold", "silver", "partner"] as const;
 
+/** Who someone is when they contact the org — shown as choices with a write-your-own option. */
+export const CONTACT_CATEGORIES = [
+  "Player",
+  "Fan & Supporter",
+  "Organization / Brand / Sponsorship",
+  "Media / Press",
+  "Coach / Manager",
+  "Content Creator",
+  "Other",
+] as const;
+
+/** Subject choices for the public contact form — users can also write their own. */
+export const CONTACT_SUBJECTS = [
+  "Partnership / Sponsorship",
+  "Tryout & Recruitment",
+  "Tournament / Event",
+  "Scrim & Match Requests",
+  "Media / Press / Interview",
+  "Donations & Support",
+  "Merchandise & Fan",
+  "Website / Technical Issue",
+  "General Inquiry",
+] as const;
+
+/** How someone prefers to be contacted back (email / phone / both). */
+export const CONTACT_REPLY_PREFS = ["Email", "Phone / SMS", "Email and phone", "No preference"] as const;
+
 // ---------------------------------------------------------------------------
 // Registration form: worldwide countries + dial codes, game roles, options
 // ---------------------------------------------------------------------------
