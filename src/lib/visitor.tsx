@@ -37,7 +37,7 @@ export default function AIAssistant() {
   });
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
-  const [live, setLive] = useState<boolean | null>(null); // n8n connected?
+  const [live, setLive] = useState<boolean | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
