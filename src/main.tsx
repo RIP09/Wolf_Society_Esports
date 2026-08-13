@@ -5,6 +5,7 @@ import { RequireAuth } from "@/components/RequireAuth";
 import { PortalRedirect, RequireAdmin, RequirePlayer } from "@/components/RequireAdmin";
 import { AdminLayout, PlayerLayout } from "@/components/layout/Portals";
 import PublicLayout from "@/components/layout/PublicLayout";
+import { getVisitorId } from "@/lib/visitor";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { ConvexReactClient, useMutation } from "convex/react";
 import React, { StrictMode, useEffect, useRef, lazy, Suspense } from "react";
@@ -58,6 +59,7 @@ const AdminContent = lazy(() => import("./pages/admin/AdminContent.tsx"));
 const AdminSponsors = lazy(() => import("./pages/admin/AdminSponsors.tsx"));
 const AdminDonations = lazy(() => import("./pages/admin/AdminDonations.tsx"));
 const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics.tsx"));
+const AdminAutomations = lazy(() => import("./pages/admin/AdminAutomations.tsx"));
 const AdminSettings = lazy(() => import("./pages/admin/AdminSettings.tsx"));
 const AdminStaff = lazy(() => import("./pages/admin/AdminStaff.tsx"));
 
@@ -110,20 +112,99 @@ class RootErrorBoundary extends React.Component<
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
+const GEO_KEY = "wse_geo";
+let geoPromise: Promise<{ country: string; code: string } | null> | null = null;
 
+/**
+ * Auto-detects the visitor's country via the free ipwho.is GeoIP API
+ * (no key, no payment). Runs once per visitor and caches the result for a
+ * week so every pageview is tagged with the same country. Falls back to
+ * "Unknown" silently if the lookup fails or times out.
+ */
+function detectCountry(): Promise<{ country: string; code: string } | null> {
+  try {
+    const cached = localStorage.getItem(GEO_KEY);
+    if (cached) {
+      const parsed = JSON.parse(cached) as { country: string; code: string; at: number };
+      if (parsed.country && Date.now() - parsed.at < 7 * 24 * 60 * 60 * 1000) {
+        return Promise.resolve({ country: parsed.country, code: parsed.code });
+      }
+    }
+  } catch {
+    // ignore corrupt cache
+  }
+  if (!geoPromise) {
+    geoPromise = (async () => {
+      try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 3000);
+        const res = await fetch("https://ipwho.is/", { signal: controller.signal });
+        clearTimeout(timer);
+        if (!res.ok) return null;
+        const data = (await res.json()) as {
+          success?: boolean;
+          country?: string;
+          country_code?: string;
+        };
+        if (!data.success || !data.country) return null;
+        const geo = {
+          country: String(data.country).slice(0, 80),
+          code: String(data.country_code ?? "").slice(0, 8),
+        };
+        try {
+          localStorage.setItem(GEO_KEY, JSON.stringify({ ...geo, at: Date.now() }));
+        } catch {
+          // storage unavailable — keep going
+        }
+        return geo;
+      } catch {
+        return null;
+      }
+    })();
+  }
+  return geoPromise;
+}
 
 /** Realtime privacy-friendly pageview analytics for the public portal. */
 function PageviewTracker() {
   const location = useLocation();
   const track = useMutation(api.analytics.trackPageview);
+  const setCountry = useMutation(api.analytics.setVisitorCountry);
   const first = useRef(true);
+  const visitorId = useRef<string | null>(null);
+  const geoRef = useRef<{ country: string; code: string } | null>(null);
+
+  // Resolve the anonymous visitor id + auto-detected country once per session.
+  useEffect(() => {
+    if (!visitorId.current) visitorId.current = getVisitorId();
+    void detectCountry().then((geo) => {
+      if (geo) {
+        geoRef.current = geo;
+        // Tag the visitor row even if the lookup landed after the first pageview.
+        if (visitorId.current) {
+          void setCountry({
+            visitorId: visitorId.current,
+            country: geo.country,
+            countryCode: geo.code,
+          });
+        }
+      }
+    });
+  }, [setCountry]);
 
   useEffect(() => {
     if (first.current) {
       first.current = false;
       return;
     }
-    track({ path: location.pathname, referrer: document.referrer || undefined });
+    const geo = geoRef.current;
+    void track({
+      path: location.pathname,
+      referrer: document.referrer || undefined,
+      visitorId: visitorId.current ?? undefined,
+      country: geo?.country,
+      countryCode: geo?.code,
+    });
   }, [location.pathname, track]);
 
   return null;
@@ -225,6 +306,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="sponsors" element={<AdminSponsors />} />
                 <Route path="donations" element={<AdminDonations />} />
                 <Route path="analytics" element={<AdminAnalytics />} />
+                <Route path="automations" element={<AdminAutomations />} />
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="inquiries" element={<AdminInquiries />} />
                 <Route path="staff" element={<AdminStaff />} />
