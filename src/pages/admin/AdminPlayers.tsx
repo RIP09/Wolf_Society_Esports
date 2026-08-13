@@ -1,4 +1,14 @@
 import { api } from "@/convex/_generated/api";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -11,14 +21,16 @@ import {
 } from "@/components/ui/select";
 import { EmptyState, NeoCard, PageHeader, StatusBadge } from "@/components/neo";
 import { PhotoUpload } from "@/components/PhotoUpload";
+import { csvDateTime, downloadCSV } from "@/lib/export";
 import { GAMES } from "@/lib/constants";
 import { fmtDate, fmtKd } from "@/lib/format";
 import { btnGhost, btnYellow, input, label, select, tableCell, tableHead } from "@/lib/neo";
 import { cn } from "@/lib/utils";
 import { useMutation, useQuery } from "convex/react";
-import { Eye, ShieldCheck, ShieldX, UserCheck, UserX } from "lucide-react";
+import { Download, Eye, ShieldCheck, ShieldX, Trash2, UserCheck, UserX } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
+import { toast } from "sonner";
 import type { Doc, Id } from "@/convex/_generated/dataModel";
 
 type Player = Doc<"players"> & { photoUrl?: string };
@@ -30,6 +42,8 @@ export default function AdminPlayers() {
   const [game, setGame] = useState("all");
   const [selected, setSelected] = useState<Player | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<Player | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const players = useQuery(api.players.list, {
     status: status === "all" ? undefined : status,
@@ -44,6 +58,7 @@ export default function AdminPlayers() {
   );
 
   const setStatusMutation = useMutation(api.players.setStatus);
+  const removePlayer = useMutation(api.players.remove);
   const setRole = useMutation(api.admin.setRole);
   const generateUploadUrl = useMutation(api.uploads.generateUploadUrl);
   const setPlayerPhoto = useMutation(api.uploads.setPlayerPhoto);
@@ -70,33 +85,92 @@ export default function AdminPlayers() {
     const { storageId } = (await res.json()) as { storageId: string };
     await setPlayerPhoto({ playerId: selected._id, storageId: storageId as Id<"_storage"> });
     setPhotoUrl(URL.createObjectURL(file));
+    toast.success("Photo saved — it's live on the public roster now.");
   };
 
   const removePhoto = async () => {
     if (!selected) return;
     await removePlayerPhoto({ playerId: selected._id });
     setPhotoUrl(null);
+    toast.success("Photo removed from the public roster.");
   };
 
   const statuses = useMemo(() => ["all", "pending", "active", "suspended"], []);
 
   const handleStatus = async (p: Player, next: "active" | "suspended" | "pending") => {
-    await setStatusMutation({ playerId: p._id, status: next });
-    if (selected?._id === p._id) setSelected({ ...p, status: next });
+    try {
+      await setStatusMutation({ playerId: p._id, status: next });
+      if (selected?._id === p._id) setSelected({ ...p, status: next });
+      if (next === "active") {
+        toast.success(`${p.gamertag} approved — player portal unlocked instantly.`);
+      } else if (next === "suspended") {
+        toast.success(`${p.gamertag} suspended — player portal access revoked.`);
+      } else {
+        toast.success(`${p.gamertag} moved back to pending.`);
+      }
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not update the player status.");
+    }
   };
 
   const handlePromote = async (p: Player) => {
-    await setRole({ userId: p.userId, role: "admin" });
+    try {
+      await setRole({ userId: p.userId, role: "admin" });
+      toast.success(`${p.gamertag} is now a manager with access to The Den.`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not promote this player.");
+    }
+  };
+
+  const handleRemove = async (p: Player) => {
+    setDeleting(true);
+    try {
+      await removePlayer({ playerId: p._id });
+      toast.success(
+        `${p.gamertag} and all their data (performance, teams, attendance, account) were permanently deleted.`,
+      );
+      if (selected?._id === p._id) {
+        setSelected(null);
+        setDetailOpen(false);
+      }
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not remove the player.");
+    } finally {
+      setDeleting(false);
+      setDeleteTarget(null);
+    }
   };
 
   const filterGames = useMemo(() => ["all", ...GAMES], []);
+
+  const exportCsv = () => {
+    if (!players) return;
+    downloadCSV(
+      `wolf-society-players-${new Date().toISOString().slice(0, 10)}.csv`,
+      [
+        ["Gamertag", "Real name", "Email", "Game", "In-game role", "Rank", "Region", "Status", "Joined"],
+        ...players.map((p) => [
+          p.gamertag,
+          p.realName,
+          p.email,
+          p.game,
+          p.inGameRole ?? "",
+          p.rank ?? "",
+          p.region ?? "",
+          p.status,
+          csvDateTime(p.joinedAt),
+        ]),
+      ],
+    );
+    toast.success(`Exported ${players.length} players to CSV.`);
+  };
 
   return (
     <div className="flex flex-col gap-8">
       <PageHeader
         eyebrow="The Den · Roster"
         title="Player registry"
-        description="Every registration from The Pack lands here. Approve, suspend and manage access."
+        description="Every registration from The Pack lands here. Approve, suspend, remove and manage access — every action updates live."
       />
 
       <div className="flex flex-col gap-3 md:flex-row md:items-center">
@@ -136,6 +210,16 @@ export default function AdminPlayers() {
             ))}
           </SelectContent>
         </Select>
+        <Button
+          variant="outline"
+          className={cn(btnGhost, "md:ml-auto")}
+          onClick={exportCsv}
+          disabled={!players || players.length === 0}
+          title="Download the current list as a spreadsheet"
+        >
+          <Download className="size-4" />
+          Export CSV
+        </Button>
       </div>
 
       <NeoCard className="gap-0 overflow-x-auto p-0">
@@ -151,7 +235,7 @@ export default function AdminPlayers() {
             description="New registrations from The Pack appear here for approval."
           />
         ) : (
-          <table className="w-full min-w-[760px] border-collapse">
+          <table className="w-full min-w-[820px] border-collapse">
             <thead>
               <tr>
                 <th className={tableHead}>Player</th>
@@ -216,6 +300,14 @@ export default function AdminPlayers() {
                           <ShieldX className="size-3.5" />
                         </Button>
                       )}
+                      <Button
+                        size="sm"
+                        className="neo-press rounded-none border-2 border-foreground bg-foreground text-background shadow-[2px_2px_0_0_var(--neo-ink)] hover:shadow-[3px_3px_0_0_var(--neo-ink)]"
+                        onClick={() => setDeleteTarget(p)}
+                        title="Remove permanently (deletes all their data)"
+                      >
+                        <Trash2 className="size-3.5" />
+                      </Button>
                     </div>
                   </td>
                 </tr>
@@ -373,11 +465,50 @@ export default function AdminPlayers() {
                   <ShieldCheck className="size-4" />
                   Make manager
                 </Button>
+                <Button
+                  variant="outline"
+                  className="neo-press ml-auto rounded-none border-2 border-foreground bg-foreground px-3 py-2 text-background shadow-[3px_3px_0_0_var(--neo-ink)] hover:shadow-[4px_4px_0_0_var(--neo-ink)]"
+                  onClick={() => setDeleteTarget(selected)}
+                  title="Permanently delete the player and all their data"
+                >
+                  <Trash2 className="size-4" />
+                  Remove player
+                </Button>
               </div>
             </div>
           ) : null}
         </DialogContent>
       </Dialog>
+
+      {/* Remove confirm — deletes the player and every piece of their data. */}
+      <AlertDialog open={!!deleteTarget} onOpenChange={(o) => !o && !deleting && setDeleteTarget(null)}>
+        <AlertDialogContent className="rounded-none border-2 border-foreground bg-card shadow-[6px_6px_0_0_var(--neo-ink)]">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-bold">Remove {deleteTarget?.gamertag}?</AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground">
+              This permanently deletes the player profile, performance history, team
+              memberships, attendance responses, uploaded photo and their account. This
+              cannot be undone — they can register again later as a fresh player.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-none border-2 border-foreground bg-card shadow-[2px_2px_0_0_var(--neo-ink)]" disabled={deleting}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="neo-press rounded-none border-2 border-foreground bg-neo-red text-white shadow-[3px_3px_0_0_var(--neo-ink)] hover:shadow-[4px_4px_0_0_var(--neo-ink)]"
+              disabled={deleting}
+              onClick={(e) => {
+                e.preventDefault();
+                if (deleteTarget) void handleRemove(deleteTarget);
+              }}
+            >
+              <Trash2 className="size-4" />
+              {deleting ? "Deleting…" : "Delete forever"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
