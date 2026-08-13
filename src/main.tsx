@@ -1,4 +1,5 @@
 import '@vly-ai/integrations';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { api } from "@/convex/_generated/api";
 import { Toaster } from "@/components/ui/sonner";
 import { RequireAuth } from "@/components/RequireAuth";
@@ -342,6 +343,7 @@ createRoot(document.getElementById("root")!).render(
           </Suspense>
         </BrowserRouter>
         <Toaster />
+        <SpeedInsights />
       </ConvexAuthProvider>
     </RootErrorBoundary>
   </StrictMode>,
