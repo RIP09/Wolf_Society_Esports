@@ -2,7 +2,7 @@ import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { btnGhost } from "@/lib/neo";
 import { cn } from "@/lib/utils";
-import { useAction } from "convex/react";
+import { useAction, useQuery } from "convex/react";
 import { Bot, Send, Sparkles, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -21,11 +21,13 @@ const QUICK_PROMPTS = [
 ];
 
 const GREETING =
-  "Hey, I'm Wolf — the Society's AI assistant. Ask me about joining the org, tryouts, teams, schedules, donations or anything else. I'm connected to the team's automation hub, so your question goes to a real AI workflow.";
+  "Hey, I'm Wolf — the Society's AI assistant. Ask me about joining the org, tryouts, teams, schedules, donations or anything else. I'm connected to the team's Huginn automation hub, so your question goes to a real AI workflow.";
 
 export default function AIAssistant() {
   const ask = useAction(api.automation.askAssistant);
   const [open, setOpen] = useState(false);
+  const [pendingChat, setPendingChat] = useState<string | null>(null);
+  const [chatTimedOut, setChatTimedOut] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -37,9 +39,16 @@ export default function AIAssistant() {
   });
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
-  const [live, setLive] = useState<boolean | null>(null); // n8n connected?
+  const [live, setLive] = useState<boolean | null>(null); // Huginn connected?
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // The Huginn chat workflow POSTs the finished reply to /huginn-reply — the
+  // moment it lands, this reactive query delivers it to the open chat.
+  const getReply = useQuery(
+    api.automation.getAssistantReply,
+    pendingChat ? { chatId: pendingChat } : "skip",
+  );
 
   useEffect(() => {
     try {
@@ -54,17 +63,40 @@ export default function AIAssistant() {
       scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
       setTimeout(() => inputRef.current?.focus(), 60);
     }
-  }, [open, messages, busy]);
+  }, [open, messages, busy, pendingChat]);
+
+  useEffect(() => {
+    if (pendingChat && getReply) {
+      const reply = getReply.reply;
+      setMessages((m) => [...m, { role: "assistant", text: reply }]);
+      setPendingChat(null);
+      setChatTimedOut(false);
+    }
+  }, [pendingChat, getReply]);
+
+  // If the Huginn workflow hasn't answered after 60s, surface a gentle note so
+  // the chat never looks stuck (the reply still arrives whenever it lands).
+  useEffect(() => {
+    if (!pendingChat) return;
+    const t = setTimeout(() => setChatTimedOut(true), 60_000);
+    return () => clearTimeout(t);
+  }, [pendingChat]);
 
   const send = async (text: string) => {
     const trimmed = text.trim();
-    if (!trimmed || busy) return;
+    if (!trimmed || busy || pendingChat) return;
     setMessages((m) => [...m, { role: "user", text: trimmed }]);
     setInput("");
     setBusy(true);
     try {
       const res = await ask({ message: trimmed });
-      setMessages((m) => [...m, { role: "assistant", text: res.reply }]);
+      if (res.reply) {
+        const reply = res.reply;
+        setMessages((m) => [...m, { role: "assistant", text: reply }]);
+      } else if (res.pending && res.chatId) {
+        setPendingChat(res.chatId);
+        setChatTimedOut(false);
+      }
       if (res.configured !== undefined) setLive(res.configured);
     } catch {
       setMessages((m) => [
@@ -107,7 +139,7 @@ export default function AIAssistant() {
                       )}
                     />
                   </span>
-                  {live === false ? "setup pending" : "realtime · n8n automation"}
+                  {live === false ? "setup pending" : "realtime · Huginn automation"}
                 </p>
               </div>
             </div>
@@ -173,25 +205,34 @@ export default function AIAssistant() {
                 </div>
               </div>
             ))}
-            {busy && (
+            {(busy || pendingChat) && (
               <div className="flex items-center gap-2">
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center border-2 border-foreground bg-neo-blue text-white">
                   <Bot className="size-3" />
                 </span>
-                <div className="flex items-center gap-1 border-2 border-foreground bg-background px-3 py-2.5">
-                  {[0, 1, 2].map((d) => (
-                    <span
-                      key={d}
-                      className="h-1.5 w-1.5 animate-bounce rounded-full bg-foreground"
-                      style={{ animationDelay: `${d * 120}ms` }}
-                    />
-                  ))}
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-1 border-2 border-foreground bg-background px-3 py-2.5">
+                    {[0, 1, 2].map((d) => (
+                      <span
+                        key={d}
+                        className="h-1.5 w-1.5 animate-bounce rounded-full bg-foreground"
+                        style={{ animationDelay: `${d * 120}ms` }}
+                      />
+                    ))}
+                  </div>
+                  {pendingChat && (
+                    <p className="font-mono text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
+                      {chatTimedOut
+                        ? "Still waiting on the Huginn workflow — the reply will appear when it lands."
+                        : "Huginn is writing the reply…"}
+                    </p>
+                  )}
                 </div>
               </div>
             )}
             {live === false && messages.length > 0 && (
               <p className="font-mono text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
-                AI not connected yet — replies are generic until the n8n webhook is added.
+                AI not connected yet — replies are generic until the Huginn webhook is added.
               </p>
             )}
           </div>
@@ -216,7 +257,7 @@ export default function AIAssistant() {
               type="submit"
               size="icon"
               className="neo-press h-10 w-10 shrink-0 rounded-none border-2 border-foreground bg-neo-yellow text-white shadow-[3px_3px_0_0_var(--neo-ink)] hover:shadow-[4px_4px_0_0_var(--neo-ink)]"
-              disabled={busy || !input.trim()}
+              disabled={busy || pendingChat !== null || !input.trim()}
               aria-label="Send message"
             >
               <Send className="size-4" />
