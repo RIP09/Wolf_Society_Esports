@@ -21,16 +21,18 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { EmptyState, NeoCard, PageHeader, StatusBadge } from "@/components/neo";
+import { PhotoUpload } from "@/components/PhotoUpload";
+import { csvDateTime, downloadCSV } from "@/lib/export";
 import { GAMES } from "@/lib/constants";
 import { btnGhost, btnYellow, input, label, select } from "@/lib/neo";
 import { cn } from "@/lib/utils";
 import { useMutation, useQuery } from "convex/react";
-import { Crown, Pencil, Plus, Trash2, UserMinus, Users } from "lucide-react";
+import { Crown, Download, Pencil, Plus, Trash2, UserMinus, Users } from "lucide-react";
 import { useState } from "react";
-import type { Doc } from "@/convex/_generated/dataModel";
+import type { Doc, Id } from "@/convex/_generated/dataModel";
 import { toast } from "sonner";
 
-type Team = Doc<"teams">;
+type Team = Doc<"teams"> & { photoUrl?: string };
 
 interface TeamForm {
   name: string;
@@ -51,12 +53,17 @@ export default function AdminTeams() {
   const deleteTeam = useMutation(api.teams.deleteTeam);
   const assignPlayer = useMutation(api.teams.assignPlayer);
   const removePlayer = useMutation(api.teams.removePlayer);
+  const generateUploadUrl = useMutation(api.uploads.generateUploadUrl);
+  const setTeamPhoto = useMutation(api.uploads.setTeamPhoto);
+  const removeTeamPhoto = useMutation(api.uploads.removeTeamPhoto);
 
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Team | null>(null);
   const [form, setForm] = useState<TeamForm>(emptyForm);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [formPhoto, setFormPhoto] = useState<File | null>(null);
+  const [formPhotoUrl, setFormPhotoUrl] = useState<string | null>(null);
 
   const [rosterTeam, setRosterTeam] = useState<Team | null>(null);
   const [addPlayer, setAddPlayer] = useState("none");
@@ -65,6 +72,8 @@ export default function AdminTeams() {
   const openCreate = () => {
     setEditing(null);
     setForm(emptyForm);
+    setFormPhoto(null);
+    setFormPhotoUrl(null);
     setFormOpen(true);
   };
   const openEdit = (t: Team) => {
@@ -76,7 +85,21 @@ export default function AdminTeams() {
       description: t.description ?? "",
       captainId: t.captainId ?? "none",
     });
+    setFormPhoto(null);
+    setFormPhotoUrl(t.photoUrl ?? null);
     setFormOpen(true);
+  };
+
+  const uploadTeamPhoto = async (teamId: Doc<"teams">["_id"], file: File) => {
+    const uploadUrl = await generateUploadUrl();
+    const res = await fetch(uploadUrl, {
+      method: "POST",
+      headers: { "Content-Type": file.type },
+      body: file,
+    });
+    if (!res.ok) throw new Error("Upload failed — try again.");
+    const { storageId } = (await res.json()) as { storageId: string };
+    await setTeamPhoto({ teamId, storageId: storageId as Id<"_storage"> });
   };
 
   const handleSave = async () => {
@@ -92,9 +115,11 @@ export default function AdminTeams() {
       };
       if (editing) {
         await updateTeam({ teamId: editing._id, ...args });
+        if (formPhoto) await uploadTeamPhoto(editing._id, formPhoto);
         toast.success("Team updated — live across all portals.");
       } else {
-        await createTeam(args);
+        const teamId = await createTeam(args);
+        if (formPhoto) await uploadTeamPhoto(teamId, formPhoto);
         toast.success("Team created — live across all portals.");
       }
       setFormOpen(false);
@@ -125,6 +150,25 @@ export default function AdminTeams() {
     );
   }
 
+  const exportCsv = () => {
+    downloadCSV(
+      `wolf-society-teams-${new Date().toISOString().slice(0, 10)}.csv`,
+      [
+        ["Name", "Tag", "Game", "Members", "Captain", "Description", "Created"],
+        ...teams.map((t) => [
+          t.name,
+          t.tag,
+          t.game,
+          t.memberCount,
+          t.captainId ?? "—",
+          t.description ?? "",
+          csvDateTime(t.createdAt),
+        ]),
+      ],
+    );
+    toast.success(`Exported ${teams.length} teams to CSV.`);
+  };
+
   return (
     <div className="flex flex-col gap-8">
       <PageHeader
@@ -132,10 +176,16 @@ export default function AdminTeams() {
         title="Teams"
         description="Build and manage competitive rosters. Each player sits on exactly one team."
         actions={
-          <Button className={btnYellow} onClick={openCreate}>
-            <Plus className="size-4" />
-            New team
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button variant="outline" className={btnGhost} onClick={exportCsv} disabled={teams.length === 0}>
+              <Download className="size-4" />
+              Export CSV
+            </Button>
+            <Button className={btnYellow} onClick={openCreate}>
+              <Plus className="size-4" />
+              New team
+            </Button>
+          </div>
         }
       />
 
@@ -160,6 +210,15 @@ export default function AdminTeams() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {teams.map((t) => (
             <NeoCard key={t._id} className="gap-0 p-0">
+              {t.photoUrl ? (
+                <div className="h-28 overflow-hidden border-b-2 border-foreground">
+                  <img src={t.photoUrl} alt={t.name} className="h-full w-full object-cover" />
+                </div>
+              ) : (
+                <div className="flex h-20 items-center justify-center border-b-2 border-foreground bg-neo-cream">
+                  <Users className="size-7 text-muted-foreground" />
+                </div>
+              )}
               <div className="flex items-start justify-between gap-2 border-b-2 border-foreground px-4 py-3">
                 <div className="min-w-0">
                   <p className="text-lg font-bold tracking-tight">{t.name}</p>
@@ -282,6 +341,21 @@ export default function AdminTeams() {
                 placeholder="Team identity, playstyle, goals…"
               />
             </div>
+            <div className="border-2 border-foreground bg-background p-4">
+              <PhotoUpload
+                label="Team photo"
+                currentUrl={formPhotoUrl ?? undefined}
+                onUpload={async (file) => {
+                  setFormPhoto(file);
+                  setFormPhotoUrl(URL.createObjectURL(file));
+                }}
+                onRemove={async () => {
+                  setFormPhoto(null);
+                  setFormPhotoUrl(null);
+                  if (editing) await removeTeamPhoto({ teamId: editing._id });
+                }}
+              />
+            </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" className={btnGhost} onClick={() => setFormOpen(false)}>
                 Cancel
@@ -392,8 +466,9 @@ export default function AdminTeams() {
           <AlertDialogHeader>
             <AlertDialogTitle className="text-xl font-bold">Delete {deleteTarget?.name}?</AlertDialogTitle>
             <AlertDialogDescription className="text-muted-foreground">
-              The team and its roster links will be removed. Scheduled matches stay in the
-              schedule but will need re-assignment.
+              This permanently deletes the team, its roster links, all scheduled matches,
+              routine blocks, attendance responses and scrim slots tied to it. This cannot
+              be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -403,8 +478,14 @@ export default function AdminTeams() {
             <AlertDialogAction
               className="neo-press rounded-none border-2 border-foreground bg-neo-red text-white shadow-[3px_3px_0_0_var(--neo-ink)] hover:shadow-[4px_4px_0_0_var(--neo-ink)]"
               onClick={async () => {
-                if (deleteTarget) await deleteTeam({ teamId: deleteTarget._id });
-                setDeleteTarget(null);
+                try {
+                  if (deleteTarget) await deleteTeam({ teamId: deleteTarget._id });
+                  toast.success("Team deleted — roster, matches, blocks and scrims removed completely.");
+                } catch (e) {
+                  toast.error(e instanceof Error ? e.message : "Could not delete the team.");
+                } finally {
+                  setDeleteTarget(null);
+                }
               }}
             >
               <Trash2 className="size-4" />
