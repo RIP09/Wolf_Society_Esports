@@ -349,13 +349,14 @@ const schema = defineSchema(
       createdAt: v.number(),
     }),
 
-    // Notification outbox — every email / SMS / Discord send is recorded here
-    // so The Den can watch deliveries in real time.
+    // Notification outbox — every email / SMS / Discord / n8n webhook send is
+    // recorded here so The Den can watch deliveries in real time.
     notifications: defineTable({
       channel: v.union(
         v.literal("email"),
         v.literal("sms"),
         v.literal("discord"),
+        v.literal("webhook"),
       ),
       recipient: v.optional(v.string()),
       subject: v.optional(v.string()),
@@ -389,6 +390,17 @@ const schema = defineSchema(
       firstSeen: v.number(),
       lastSeen: v.number(),
       views: v.number(),
+    })
+      .index("by_visitorId", ["visitorId"])
+      .index("by_lastSeen", ["lastSeen"]),
+
+    // Realtime presence — one row per visitor currently on the site. Heartbeat
+    // mutations upsert this every ~30s and sweep stale rows, so the public
+    // footer and The Den can show a live "online right now" counter.
+    presence: defineTable({
+      visitorId: v.string(),
+      path: v.optional(v.string()), // current page path, for "on this page" counts
+      lastSeen: v.number(),
     })
       .index("by_visitorId", ["visitorId"])
       .index("by_lastSeen", ["lastSeen"]),
