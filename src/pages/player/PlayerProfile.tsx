@@ -1,4 +1,14 @@
 import { api } from "@/convex/_generated/api";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { GamePicker, OptionPicker } from "@/components/GamePicker";
 import { Input } from "@/components/ui/input";
@@ -6,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { LoadingScreen } from "@/components/Loading";
 import { NeoCard, NeoField, PageHeader, StatusBadge } from "@/components/neo";
 import { PhoneField } from "@/components/PhoneField";
+import { useAuth } from "@/hooks/use-auth";
 import {
   COUNTRY_NAMES,
   EXPERIENCE_LEVELS,
@@ -20,13 +31,19 @@ import {
 import { fmtDate } from "@/lib/format";
 import { btnYellow, input } from "@/lib/neo";
 import { useMutation, useQuery } from "convex/react";
-import { Save } from "lucide-react";
+import { AlertTriangle, Loader2, Save, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { toast } from "sonner";
 
 export default function PlayerProfile() {
   const profile = useQuery(api.players.getMyProfile);
   const updateProfile = useMutation(api.players.updateProfile);
+  const purgeMyData = useMutation(api.players.purgeMyData);
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   // 1 · Basic details
   const [gamertag, setGamertag] = useState("");
@@ -347,6 +364,81 @@ export default function PlayerProfile() {
           </div>
         </NeoCard>
       </div>
+
+      {/* Danger zone — full self-service deletion, no admin needed. */}
+      <NeoCard className="gap-4 border-2 border-neo-red/70 p-6">
+        <div className="flex flex-col gap-1">
+          <h2 className="flex items-center gap-2 font-bold text-neo-red">
+            <AlertTriangle className="size-5" />
+            Danger zone
+          </h2>
+          <p className="text-xs leading-5 text-muted-foreground">
+            Permanently delete your profile and every piece of your data — performance
+            history, team memberships, attendance responses, your photo and your account.
+            This cannot be undone, and you would have to register from scratch to rejoin.
+          </p>
+        </div>
+        <div>
+          <Button
+            type="button"
+            className="neo-press rounded-none border-2 border-foreground bg-neo-red px-4 py-2 text-white shadow-[3px_3px_0_0_var(--neo-ink)] hover:shadow-[4px_4px_0_0_var(--neo-ink)]"
+            onClick={() => setDeleteOpen(true)}
+          >
+            <Trash2 className="size-4" />
+            Delete my data permanently
+          </Button>
+        </div>
+      </NeoCard>
+
+      <AlertDialog open={deleteOpen} onOpenChange={(o) => !o && !deleting && setDeleteOpen(false)}>
+        <AlertDialogContent className="rounded-none border-2 border-foreground bg-card shadow-[6px_6px_0_0_var(--neo-ink)]">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-xl font-bold">
+              <AlertTriangle className="size-5 text-neo-red" />
+              Delete your account forever?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-sm leading-6 text-muted-foreground">
+              This permanently deletes your player profile, performance history, team
+              memberships, attendance responses, uploaded photo, alert subscriptions and
+              your login account from the entire system. Management in The Den will also
+              see you removed instantly. There is no undo.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              className="rounded-none border-2 border-foreground bg-card shadow-[2px_2px_0_0_var(--neo-ink)]"
+              disabled={deleting}
+            >
+              Keep my account
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="neo-press rounded-none border-2 border-foreground bg-neo-red text-white shadow-[3px_3px_0_0_var(--neo-ink)] hover:shadow-[4px_4px_0_0_var(--neo-ink)]"
+              disabled={deleting}
+              onClick={(e) => {
+                e.preventDefault();
+                void (async () => {
+                  setDeleting(true);
+                  try {
+                    await purgeMyData();
+                    toast.success("Your profile and all data were permanently deleted.");
+                    setDeleteOpen(false);
+                    await signOut().catch(() => {
+                      // account is already gone — the redirect below is enough
+                    });
+                    navigate("/", { replace: true });
+                  } catch (err) {
+                    toast.error(err instanceof Error ? err.message : "Could not delete your data.");
+                    setDeleting(false);
+                  }
+                })();
+              }}
+            >
+              {deleting ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+              {deleting ? "Deleting…" : "Delete everything"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
