@@ -1,8 +1,10 @@
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { btnYellow, card } from "@/lib/neo";
+import { pushEnabled, serializeSubscription, subscribeToPush } from "@/lib/push";
 import { cn } from "@/lib/utils";
-import { useQuery } from "convex/react";
+import { getVisitorId } from "@/lib/visitor";
+import { useMutation, useQuery } from "convex/react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Bell,
@@ -105,9 +107,35 @@ export function PermissionCenter() {
     ...DEFAULTS,
     ...readStored(),
   }));
+  const [pushState, setPushState] = useState<
+    "checking" | "active" | "off" | "unsupported"
+  >("checking");
   const latestIdRef = useRef<string | null>(null);
 
   const announcements = useQuery(api.public.listAnnouncements);
+  const savePush = useMutation(api.account.savePushSubscription);
+
+  // Detect whether this device is already subscribed to web push.
+  useEffect(() => {
+    (async () => {
+      if (!pushEnabled()) {
+        setPushState("off");
+        return;
+      }
+      if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+        setPushState("unsupported");
+        return;
+      }
+      try {
+        const reg = await navigator.serviceWorker.register("/sw.js");
+        await navigator.serviceWorker.ready;
+        const sub = await reg.pushManager.getSubscription();
+        setPushState(sub ? "active" : "off");
+      } catch {
+        setPushState("unsupported");
+      }
+    })();
+  }, []);
 
   // Sync live browser permission state where queryable.
   useEffect(() => {
@@ -182,6 +210,26 @@ export function PermissionCenter() {
     localStorage.setItem(LAST_ANNOUNCEMENT_KEY, latest._id);
   }, [announcements, statuses.notifications]);
 
+  const enablePush = async () => {
+    setPushState("checking");
+    const sub = await subscribeToPush();
+    if (sub) {
+      const serialized = serializeSubscription(sub);
+      try {
+        await savePush({
+          endpoint: serialized.endpoint,
+          keysJson: serialized.keysJson,
+          visitorId: getVisitorId(),
+        });
+      } catch {
+        // the subscription still works in-browser — the stored copy is a bonus
+      }
+      setPushState("active");
+    } else {
+      setPushState("off");
+    }
+  };
+
   const requestNotifications = async () => {
     if (!("Notification" in window)) {
       setStatus("notifications", "unavailable");
@@ -199,6 +247,7 @@ export function PermissionCenter() {
       } catch {
         // ignore
       }
+      void enablePush();
     }
   };
 
@@ -377,20 +426,41 @@ export function PermissionCenter() {
               <p className="border-t-2 border-foreground/20 pt-3 text-[10px] leading-4 text-muted-foreground">
                 Chrome will show its own prompt for each permission — choose{" "}
                 <span className="font-bold text-foreground">Allow</span> to activate. You can
-                change these anytime in Chrome settings. Notifications only fire while the
-                site is open.
+                change these anytime in Chrome settings.
               </p>
 
-              <Button
-                className={btnYellow}
-                disabled={statuses.notifications === "granted"}
-                onClick={requestNotifications}
-              >
-                <BellRing className="size-4" />
-                {statuses.notifications === "granted"
-                  ? "Notifications enabled"
-                  : "Enable all updates"}
-              </Button>
+              <div className="flex flex-col gap-2">
+                <Button
+                  className={btnYellow}
+                  disabled={statuses.notifications === "granted"}
+                  onClick={requestNotifications}
+                >
+                  <BellRing className="size-4" />
+                  {statuses.notifications === "granted"
+                    ? "Notifications enabled"
+                    : "Enable all updates"}
+                </Button>
+                <p
+                  className={cn(
+                    "flex items-center gap-1.5 font-mono text-[9px] font-bold uppercase tracking-widest",
+                    pushState === "active" ? "text-neo-green" : "text-muted-foreground",
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "inline-block h-1.5 w-1.5 border border-foreground",
+                      pushState === "active" ? "bg-neo-green" : "bg-neo-yellow",
+                    )}
+                  />
+                  {pushState === "active"
+                    ? "Push active — updates arrive even when the site is closed (free, unlimited)"
+                    : pushState === "unsupported"
+                      ? "Web push unsupported in this browser"
+                      : pushState === "off"
+                        ? "Always-on push needs VITE_VAPID_PUBLIC_KEY — the org can enable it free"
+                        : "Checking push support…"}
+                </p>
+              </div>
             </div>
           </motion.div>
         )}
