@@ -12,6 +12,7 @@ import {
 import { CookieConsent, openCookieSettings } from "@/components/CookieConsent";
 import { PermissionCenter } from "@/components/PermissionCenter";
 import AIAssistant from "@/components/AIAssistant";
+import SearchPalette, { SearchButton } from "@/components/SearchPalette";
 import { getVisitorId } from "@/lib/visitor";
 import { useAuth } from "@/hooks/use-auth";
 import { btnGhost, input } from "@/lib/neo";
@@ -280,7 +281,9 @@ export default function PublicLayout() {
               </NavLink>
             ))}
           </div>
-          <DropdownMenu>
+          <div className="flex shrink-0 items-center gap-2">
+            <SearchButton />
+            <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className={cn(btnGhost, "shrink-0")}>
                 <LogIn className="size-4" />
@@ -339,7 +342,8 @@ export default function PublicLayout() {
                 </>
               )}
             </DropdownMenuContent>
-          </DropdownMenu>
+            </DropdownMenu>
+          </div>
         </div>
         {/* Mobile nav */}
         <div className="flex gap-2 overflow-x-auto border-t-2 border-foreground bg-background px-4 py-2 lg:hidden">
@@ -371,6 +375,7 @@ export default function PublicLayout() {
       <PermissionCenter />
       <AIAssistant />
       <PresencePing />
+      <SearchPalette />
 
       <footer className="border-t-2 border-foreground bg-card">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[1fr_auto] lg:items-start">
