@@ -242,3 +242,29 @@ export default function AIAssistant() {
     </div>
   );
 }
+
+// (everything else stays the same, but add this function at the top or bottom)
+
+// A simple deterministic visitor ID based on session + random seed
+let cachedVisitorId: string | null = null;
+
+export function getVisitorId(): string {
+  if (cachedVisitorId) return cachedVisitorId;
+  // Try to get from sessionStorage (persists per tab)
+  try {
+    const stored = sessionStorage.getItem("visitorId");
+    if (stored) {
+      cachedVisitorId = stored;
+      return stored;
+    }
+  } catch {}
+  // Generate a new one
+  const id = `visitor_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  try {
+    sessionStorage.setItem("visitorId", id);
+  } catch {}
+  cachedVisitorId = id;
+  return id;
+}
+
+// ... rest of the AIAssistant component unchanged
