@@ -1,20 +1,9 @@
+// convex/automation.ts (full, updated for Huginn)
 import { v } from "convex/values";
 import { action, mutation, query } from "./_generated/server";
 import { api, internal } from "./_generated/api";
 import type { ActionCtx } from "./_generated/server";
 import { requireAdmin } from "./guards";
-
-/**
- * Huginn automation layer.
- *
- * Replaces n8n with Huginn (https://github.com/huginn/huginn).
- * Every key event sends a POST to a Huginn webhook agent.
- *
- * Environment variables (set in Keys tab):
- *   HUGINN_WEBHOOK_URL       – main webhook for events
- *   HUGINN_CHAT_WEBHOOK_URL  – optional, for AI assistant
- *   HUGINN_WEBHOOK_SECRET    – optional, sent as header
- */
 
 type WebhookResult = {
   ok: boolean;
@@ -94,7 +83,6 @@ export const triggerWorkflow = action({
   },
 });
 
-// Helper to extract text from Huginn's typical JSON responses
 function extractReply(data: unknown): string | null {
   if (typeof data === "string") return data;
   if (Array.isArray(data)) {
