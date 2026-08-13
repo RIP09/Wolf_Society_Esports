@@ -11,13 +11,37 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { CookieConsent, openCookieSettings } from "@/components/CookieConsent";
 import { PermissionCenter } from "@/components/PermissionCenter";
+import AIAssistant from "@/components/AIAssistant";
+import { getVisitorId } from "@/lib/visitor";
 import { btnGhost, input } from "@/lib/neo";
 import { cn } from "@/lib/utils";
-import { useMutation } from "convex/react";
-import { BellRing, Cookie, Crosshair, Heart, LogIn, Mail, ShieldCheck, Video } from "lucide-react";
-import { useState } from "react";
-import { NavLink, Outlet } from "react-router";
+import { useMutation, useQuery } from "convex/react";
+import { Activity, BellRing, Cookie, Crosshair, Eye, Globe, Heart, LogIn, Mail, Radio, ShieldCheck, Users, Video } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { NavLink, Outlet, useLocation } from "react-router";
 import { toast } from "sonner";
+
+/**
+ * Realtime presence heartbeat — pings the server on page load, on every route
+ * change and every 30s so the live "online right now" counter stays current.
+ */
+function PresencePing() {
+  const ping = useMutation(api.presence.ping);
+  const location = useLocation();
+  const visitorId = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!visitorId.current) visitorId.current = getVisitorId();
+    const send = () => {
+      void ping({ visitorId: visitorId.current ?? undefined, path: location.pathname });
+    };
+    send();
+    const timer = setInterval(send, 30_000);
+    return () => clearInterval(timer);
+  }, [ping, location.pathname]);
+
+  return null;
+}
 
 /** Public alert signup — SMS + email notifications from Wolf Society Esports. */
 function SubscribeForm() {
@@ -123,6 +147,110 @@ export function Wordmark({ tag = "Esports Organization" }: { tag?: string }) {
   );
 }
 
+/**
+ * Realtime visitor counter for the footer — total / today / last 24h plus a
+ * per-country breakdown. The data is auto-generated: each visitor's country is
+ * detected automatically (free GeoIP) and every number is a live Convex
+ * subscription, so it updates the moment a new visitor loads the site.
+ */
+function LiveVisitors() {
+  const stats = useQuery(api.analytics.visitorStats);
+  const online = useQuery(api.presence.onlineCount);
+  const countries = stats?.topCountries ?? [];
+  const max = Math.max(1, ...countries.map((c) => c.visitors));
+  const loading = stats === undefined;
+
+  return (
+    <div className="border-2 border-foreground bg-background">
+      <div className="flex items-center justify-between gap-2 border-b-2 border-foreground bg-neo-yellow px-4 py-2">
+        <p className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-widest text-white">
+          <Globe className="size-3.5" />
+          Live visitor count
+        </p>
+        <span className="flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-widest text-white">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-white" />
+          {loading ? "syncing…" : "realtime"}
+        </span>
+      </div>
+
+      {/* Realtime presence — people on the site this very moment */}
+      <div className="flex items-center justify-between gap-2 border-b-2 border-foreground bg-neo-blue px-4 py-2 text-white">
+        <p className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-widest">
+          <Radio className="size-3.5" />
+          Online right now
+        </p>
+        <span className="flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-widest">
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+          </span>
+          {online === undefined ? "counting…" : `${online.total} ${online.total === 1 ? "person" : "people"}`}
+        </span>
+      </div>
+
+      <div className="grid gap-3 p-4 sm:grid-cols-3">
+        <div className="flex items-center gap-3 border-2 border-foreground bg-neo-cream p-3">
+          <Users className="size-5 shrink-0" />
+          <div>
+            <p className="font-mono text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
+              Total visitors
+            </p>
+            <p className="text-xl font-bold leading-none">
+              {loading ? "—" : stats!.totalVisitors.toLocaleString()}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 border-2 border-foreground bg-neo-cream p-3">
+          <Activity className="size-5 shrink-0" />
+          <div>
+            <p className="font-mono text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
+              Today
+            </p>
+            <p className="text-xl font-bold leading-none">
+              {loading ? "—" : stats!.todayVisitors.toLocaleString()} <span className="text-xs font-semibold text-muted-foreground">visitors</span>
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 border-2 border-foreground bg-neo-cream p-3">
+          <Eye className="size-5 shrink-0" />
+          <div>
+            <p className="font-mono text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
+              Pageviews · last 24h
+            </p>
+            <p className="text-xl font-bold leading-none">
+              {loading ? "—" : stats!.viewsLast24h.toLocaleString()}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {!loading && countries.length > 0 && (
+        <div className="border-t-2 border-foreground px-4 py-3">
+          <p className="font-mono text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
+            Where visitors come from
+          </p>
+          <ul className="mt-2 space-y-1.5">
+            {countries.map((c) => (
+              <li key={c.code || c.country} className="flex items-center gap-2 text-xs">
+                <span className="w-28 truncate font-semibold">{c.country}</span>
+                <div className="h-2 flex-1 border border-foreground bg-white">
+                  <div
+                    className="h-full bg-neo-blue"
+                    style={{ width: `${Math.round((c.visitors / max) * 100)}%` }}
+                  />
+                </div>
+                <span className="w-16 text-right font-mono text-[10px] text-muted-foreground">
+                  {c.visitors.toLocaleString()}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function PublicLayout() {
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
@@ -205,6 +333,8 @@ export default function PublicLayout() {
 
       <CookieConsent />
       <PermissionCenter />
+      <AIAssistant />
+      <PresencePing />
 
       <footer className="border-t-2 border-foreground bg-card">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[1fr_auto] lg:items-start">
@@ -252,10 +382,17 @@ export default function PublicLayout() {
           </div>
           <SubscribeForm />
         </div>
+        <div className="mx-auto max-w-6xl px-4 pb-10 sm:px-6">
+          <LiveVisitors />
+        </div>
         <div className="border-t-2 border-foreground/20 px-4 py-4">
           <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 text-center sm:flex-row sm:px-6">
             <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
               © {new Date().getFullYear()} Wolf Society Esports · All data is managed live from The Den
+            </p>
+            <p className="flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              <ShieldCheck className="size-3.5 text-neo-blue" />
+              Fully compliant with the PROGA Act 2025–2026
             </p>
             <RealtimeClock className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground" />
           </div>
