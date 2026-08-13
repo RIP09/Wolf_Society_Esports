@@ -144,6 +144,8 @@ export const confirmationStatusValidator = v.union(
 );
 export type ConfirmationStatus = Infer<typeof confirmationStatusValidator>;
 
+// ─── The schema ─────────────────────────────────────────────
+
 const schema = defineSchema(
   {
     // default auth tables using convex auth.
@@ -369,6 +371,9 @@ const schema = defineSchema(
       createdAt: v.number(),
     }).index("by_createdAt", ["createdAt"]),
 
+    // ─── Analytics & presence tables ──────────────────────
+    // (these were previously placed outside the schema — they now live here)
+
     // Privacy-friendly pageview analytics (path + referrer only). The extra
     // fields power the live footer visitor counter: one row per page load,
     // tagged with a per-visitor id and country (auto-detected, not PII).
@@ -497,31 +502,6 @@ const schema = defineSchema(
   {
     schemaValidation: false,
   },
-  // convex/schema.ts – add inside defineSchema({ ... })
-
-presence: defineTable({
-  visitorId: v.string(),
-  lastSeen: v.number(),
-  path: v.string(),
-}).index("by_visitor", ["visitorId"]),
-
-pageviews: defineTable({
-  visitorId: v.string(),
-  path: v.string(),
-  referrer: v.optional(v.string()),
-  country: v.optional(v.string()),
-  countryCode: v.optional(v.string()),
-  timestamp: v.number(),
-}),
-
-visitors: defineTable({
-  visitorId: v.string(),
-  country: v.optional(v.string()),
-  countryCode: v.optional(v.string()),
-  firstSeen: v.number(),
-  lastSeen: v.number(),
-}).index("by_visitorId", ["visitorId"]),
-  
 );
 
 export default schema;
