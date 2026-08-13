@@ -29,4 +29,12 @@ export async function logUnauthorized(
   } catch {
     // email failures must never break the request
   }
+  try {
+    await ctx.scheduler.runAfter(0, api.automation.triggerWorkflow, {
+      event: "security.alert",
+      payload: JSON.stringify({ email: user?.email ?? undefined, reason }),
+    });
+  } catch {
+    // automation failures must never break the request
+  }
 }
