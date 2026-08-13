@@ -5,21 +5,15 @@ import type { ActionCtx } from "./_generated/server";
 import { requireAdmin } from "./guards";
 
 /**
- * n8n AI Automation layer.
+ * Huginn automation layer.
  *
- * Every key event on the platform (contact form, new player, tryout, donation,
- * announcement, security alert…) fires a webhook into the organization's n8n
- * instance. n8n then runs the AI/automation workflow of your choice — replies,
- * CRM logging, Discord/Slack/Telegram notifications, Google Sheets, AI agents,
- * anything n8n supports.
+ * Replaces n8n with Huginn (https://github.com/huginn/huginn).
+ * Every key event sends a POST to a Huginn webhook agent.
  *
- * Configuration (paste into the Keys tab, no code changes needed):
- *   N8N_WEBHOOK_URL       — webhook URL of the main "Wolf Society" n8n workflow
- *   N8N_CHAT_WEBHOOK_URL  — (optional) webhook URL of the AI assistant workflow
- *   N8N_WEBHOOK_SECRET    — (optional) secret sent as x-n8n-secret header
- *
- * Every fire is recorded in the notification outbox (channel "webhook"), so
- * The Den → Automations shows live delivery status with zero extra services.
+ * Environment variables (set in Keys tab):
+ *   HUGINN_WEBHOOK_URL       – main webhook for events
+ *   HUGINN_CHAT_WEBHOOK_URL  – optional, for AI assistant
+ *   HUGINN_WEBHOOK_SECRET    – optional, sent as header
  */
 
 type WebhookResult = {
@@ -38,11 +32,10 @@ async function record(ctx: ActionCtx, entry: {
   try {
     await ctx.runMutation(internal.notify.recordNotification, entry);
   } catch {
-    // the outbox must never break the automation fire
+    // outbox never breaks
   }
 }
 
-/** Parses JSON payload strings sent by schedulers; falls back to the raw string. */
 function parsePayload(raw: string): unknown {
   try {
     return JSON.parse(raw);
@@ -51,31 +44,26 @@ function parsePayload(raw: string): unknown {
   }
 }
 
-/**
- * Fires an n8n workflow webhook for a platform event. Called from mutations via
- * ctx.scheduler.runAfter(0, api.automation.triggerWorkflow, { event, payload }).
- * Skips (and records) cleanly when N8N_WEBHOOK_URL isn't configured yet.
- */
 export const triggerWorkflow = action({
   args: {
     event: v.string(),
-    payload: v.string(), // JSON string — parsed before delivery
+    payload: v.string(),
   },
   handler: async (ctx, { event, payload }): Promise<WebhookResult> => {
-    const url = process.env.N8N_WEBHOOK_URL;
+    const url = process.env.HUGINN_WEBHOOK_URL;
     if (!url) {
       await record(ctx, {
         channel: "webhook",
         subject: event,
         status: "skipped",
-        error: "N8N_WEBHOOK_URL not configured — add it in the Keys tab",
+        error: "HUGINN_WEBHOOK_URL not configured",
       });
       return { ok: false, configured: false, status: "skipped" };
     }
     try {
       const headers: Record<string, string> = { "Content-Type": "application/json" };
-      const secret = process.env.N8N_WEBHOOK_SECRET;
-      if (secret) headers["x-n8n-secret"] = secret;
+      const secret = process.env.HUGINN_WEBHOOK_SECRET;
+      if (secret) headers["x-huginn-secret"] = secret;
       const res = await fetch(url, {
         method: "POST",
         headers,
@@ -106,7 +94,7 @@ export const triggerWorkflow = action({
   },
 });
 
-/** Grabs a text reply out of the many JSON shapes n8n workflows can return. */
+// Helper to extract text from Huginn's typical JSON responses
 function extractReply(data: unknown): string | null {
   if (typeof data === "string") return data;
   if (Array.isArray(data)) {
@@ -118,7 +106,7 @@ function extractReply(data: unknown): string | null {
   }
   if (data && typeof data === "object") {
     const obj = data as Record<string, unknown>;
-    for (const key of ["reply", "response", "text", "output", "message", "answer", "json", "data"]) {
+    for (const key of ["reply", "response", "text", "output", "message", "answer"]) {
       const got = extractReply(obj[key]);
       if (got) return got;
     }
@@ -126,17 +114,11 @@ function extractReply(data: unknown): string | null {
   return null;
 }
 
-/**
- * Public AI assistant ("Ask Wolf"). Posts the visitor's question to the n8n
- * AI-agent workflow and returns the reply. Falls back to a helpful canned
- * answer (never an error page) when n8n isn't connected yet.
- */
 export const askAssistant = action({
   args: { message: v.string() },
   handler: async (ctx, { message }): Promise<{ ok: boolean; configured: boolean; reply: string }> => {
-    const url = process.env.N8N_CHAT_WEBHOOK_URL ?? process.env.N8N_WEBHOOK_URL;
+    const url = process.env.HUGINN_CHAT_WEBHOOK_URL ?? process.env.HUGINN_WEBHOOK_URL;
     const question = message.trim().slice(0, 2000);
-
     const fallback =
       "Thanks for reaching out! Right now the AI assistant is warming up, but here's how we can help: " +
       "• Join the org — register through the Player portal (Sign in → The Pack). " +
@@ -149,14 +131,14 @@ export const askAssistant = action({
         channel: "webhook",
         subject: "assistant",
         status: "skipped",
-        error: "n8n webhook not configured — canned reply used",
+        error: "Huginn chat webhook not configured – canned reply used",
       });
       return { ok: false, configured: false, reply: fallback };
     }
     try {
       const headers: Record<string, string> = { "Content-Type": "application/json" };
-      const secret = process.env.N8N_WEBHOOK_SECRET;
-      if (secret) headers["x-n8n-secret"] = secret;
+      const secret = process.env.HUGINN_WEBHOOK_SECRET;
+      if (secret) headers["x-huginn-secret"] = secret;
       const res = await fetch(url, {
         method: "POST",
         headers,
@@ -196,25 +178,23 @@ export const askAssistant = action({
   },
 });
 
-/** Admin-only: live status of the n8n automation layer + recent webhook runs. */
 export const automationStatus = query({
   args: {},
   handler: async (ctx) => {
     await requireAdmin(ctx);
-    const webhook = process.env.N8N_WEBHOOK_URL;
-    const chat = process.env.N8N_CHAT_WEBHOOK_URL;
+    const webhook = process.env.HUGINN_WEBHOOK_URL;
+    const chat = process.env.HUGINN_CHAT_WEBHOOK_URL;
     const recent = await ctx.db.query("notifications").order("desc").take(60);
     return {
       configured: !!webhook,
       webhook: !!webhook,
       chat: !!chat,
-      keys: ["N8N_WEBHOOK_URL", "N8N_CHAT_WEBHOOK_URL", "N8N_WEBHOOK_SECRET"],
+      keys: ["HUGINN_WEBHOOK_URL", "HUGINN_CHAT_WEBHOOK_URL", "HUGINN_WEBHOOK_SECRET"],
       recent: recent.filter((n) => n.channel === "webhook").slice(0, 20),
     };
   },
 });
 
-/** Admin-only: fire a sample event through the n8n pipeline to test the wiring. */
 export const testWorkflow = mutation({
   args: {},
   handler: async (ctx) => {
@@ -222,7 +202,7 @@ export const testWorkflow = mutation({
     await ctx.scheduler.runAfter(0, api.automation.triggerWorkflow, {
       event: "test",
       payload: JSON.stringify({
-        message: "Test event from The Den — n8n automation is wired up correctly!",
+        message: "Test event from The Den — Huginn automation is wired up correctly!",
         from: "Wolf Society Esports · Automation Hub",
       }),
     });
