@@ -9,11 +9,13 @@
  */
 
 import type * as access from "../access.js";
+import type * as account from "../account.js";
 import type * as admin from "../admin.js";
 import type * as analytics from "../analytics.js";
 import type * as announcements from "../announcements.js";
 import type * as auth from "../auth.js";
 import type * as auth_emailOtp from "../auth/emailOtp.js";
+import type * as automation from "../automation.js";
 import type * as content from "../content.js";
 import type * as guards from "../guards.js";
 import type * as http from "../http.js";
@@ -23,7 +25,10 @@ import type * as notify from "../notify.js";
 import type * as payments from "../payments.js";
 import type * as performance from "../performance.js";
 import type * as players from "../players.js";
+import type * as presence from "../presence.js";
 import type * as public_ from "../public.js";
+import type * as push from "../push.js";
+import type * as rateLimit from "../rateLimit.js";
 import type * as schedules from "../schedules.js";
 import type * as security from "../security.js";
 import type * as securityLogs from "../securityLogs.js";
@@ -43,11 +48,13 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   access: typeof access;
+  account: typeof account;
   admin: typeof admin;
   analytics: typeof analytics;
   announcements: typeof announcements;
   auth: typeof auth;
   "auth/emailOtp": typeof auth_emailOtp;
+  automation: typeof automation;
   content: typeof content;
   guards: typeof guards;
   http: typeof http;
@@ -57,7 +64,10 @@ declare const fullApi: ApiFromModules<{
   payments: typeof payments;
   performance: typeof performance;
   players: typeof players;
+  presence: typeof presence;
   public: typeof public_;
+  push: typeof push;
+  rateLimit: typeof rateLimit;
   schedules: typeof schedules;
   security: typeof security;
   securityLogs: typeof securityLogs;
