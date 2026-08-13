@@ -144,8 +144,6 @@ export const confirmationStatusValidator = v.union(
 );
 export type ConfirmationStatus = Infer<typeof confirmationStatusValidator>;
 
-// ─── The schema ─────────────────────────────────────────────
-
 const schema = defineSchema(
   {
     // default auth tables using convex auth.
@@ -266,11 +264,21 @@ const schema = defineSchema(
       createdAt: v.number(),
     }).index("by_createdAt", ["createdAt"]),
 
-    // Public contact-form submissions, reviewed in The Den.
+    // Public contact-form submissions, reviewed in The Den. The extra fields
+    // capture everything the org needs to reply: phone + dial code (worldwide
+    // country-code picker), who the sender is, the esports title, organization
+    // name, country/region and how they'd like to be reached.
     contactMessages: defineTable({
       name: v.string(),
       email: v.string(),
-      subject: v.string(),
+      phone: v.optional(v.string()), // full number incl. dial code, e.g. "+91 98765 43210"
+      phoneCountryCode: v.optional(v.string()), // dial code only, e.g. "+91"
+      category: v.optional(v.string()), // Player / Fan / Organization / Media / Coach…
+      game: v.optional(v.string()), // esports title the inquiry is about
+      organization: v.optional(v.string()), // brand / team / company name
+      country: v.optional(v.string()), // country or region
+      replyPreference: v.optional(v.string()), // Email / Phone / Both / No preference
+      subject: v.string(), // chosen from options or written by the user
       message: v.string(),
       read: v.boolean(),
       createdAt: v.number(),
@@ -313,6 +321,7 @@ const schema = defineSchema(
       email: v.string(),
       phone: v.optional(v.string()),
       active: v.boolean(),
+      userId: v.optional(v.id("users")), // set when managed from the Account page
       createdAt: v.number(),
     }).index("by_email", ["email"]),
 
@@ -351,7 +360,7 @@ const schema = defineSchema(
       createdAt: v.number(),
     }),
 
-    // Notification outbox — every email / SMS / Discord / n8n webhook send is
+    // Notification outbox — every email / SMS / Discord / Huginn webhook send is
     // recorded here so The Den can watch deliveries in real time.
     notifications: defineTable({
       channel: v.union(
@@ -371,8 +380,44 @@ const schema = defineSchema(
       createdAt: v.number(),
     }).index("by_createdAt", ["createdAt"]),
 
-    // ─── Analytics & presence tables ──────────────────────
-    // (these were previously placed outside the schema — they now live here)
+    // Lightweight anti-abuse rate limiting for public forms (contact, alerts,
+    // feedback, tryouts). Keys are action + target (usually the email); the
+    // counter window resets automatically when it ages out.
+    rateLimits: defineTable({
+      key: v.string(),
+      windowStart: v.number(),
+      count: v.number(),
+    }).index("by_key", ["key"]),
+
+    // Free, unlimited web-push subscriptions (VAPID) — one row per device.
+    // Anonymous visitor id tags the device; the push action sends to all rows.
+    pushSubscriptions: defineTable({
+      visitorId: v.optional(v.string()),
+      endpoint: v.string(),
+      keysJson: v.string(),
+      createdAt: v.number(),
+    }).index("by_endpoint", ["endpoint"]),
+
+    // Public feedback / suggestions — reviewed in The Den.
+    feedback: defineTable({
+      name: v.optional(v.string()),
+      email: v.optional(v.string()),
+      rating: v.optional(v.number()),
+      message: v.string(),
+      status: v.union(v.literal("new"), v.literal("read")),
+      createdAt: v.number(),
+    })
+      .index("by_status", ["status"])
+      .index("by_createdAt", ["createdAt"]),
+
+    // AI assistant replies returned by the Huginn chat workflow. The "Ask Wolf"
+    // widget asks for a chatId, Huginn's PostAgent POSTs the finished reply back
+    // to /huginn-reply, and this table delivers it to the open chat live.
+    assistantReplies: defineTable({
+      chatId: v.string(),
+      reply: v.string(),
+      createdAt: v.number(),
+    }).index("by_chatId", ["chatId"]),
 
     // Privacy-friendly pageview analytics (path + referrer only). The extra
     // fields power the live footer visitor counter: one row per page load,
