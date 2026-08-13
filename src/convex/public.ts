@@ -238,6 +238,10 @@ export const contact = mutation({
       createdAt: Date.now(),
     });
     await ctx.scheduler.runAfter(0, api.notify.newContact, { name, email, subject, message });
+    await ctx.scheduler.runAfter(0, api.automation.triggerWorkflow, {
+      event: "contact",
+      payload: JSON.stringify({ name, email, subject, message }),
+    });
     return { ok: true, id };
   },
 });
@@ -280,6 +284,10 @@ export const subscribe = mutation({
       });
     }
     await ctx.scheduler.runAfter(0, api.notify.subscribeConfirmed, { name, email, phone });
+    await ctx.scheduler.runAfter(0, api.automation.triggerWorkflow, {
+      event: "subscribe",
+      payload: JSON.stringify({ name, email, phone }),
+    });
     return { ok: true };
   },
 });
