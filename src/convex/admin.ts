@@ -78,36 +78,75 @@ export const listAdmins = query({
   },
 });
 
-/** Admin-only: realtime status of every connected integration (email, SMS, Discord, payments). */
+/** Admin-only: realtime status of every connected integration (email, SMS, Discord, payments, AI).
+ * Only returns CONNECTED / NOT CONNECTED booleans — never the secrets themselves. */
 export const getIntegrationStatus = query({
   args: {},
   handler: async (ctx) => {
     await requireAdmin(ctx);
     return {
       email: {
+        label: "Email delivery (Resend)",
+        purpose: "Sends OTP codes, contact replies, registration & attendance alerts.",
         configured: !!process.env.RESEND_API_KEY,
         keys: ["RESEND_API_KEY"],
       },
       sms: {
+        label: "SMS alerts (Vonage)",
+        purpose: "Fires an SMS to the org phone the moment a contact form is submitted.",
         configured: !!(process.env.VONAGE_API_KEY && process.env.VONAGE_API_SECRET),
-        keys: ["VONAGE_API_KEY", "VONAGE_API_SECRET"],
+        keys: ["VONAGE_API_KEY", "VONAGE_API_SECRET", "SMS_FROM"],
+      },
+      push: {
+        label: "Web push notifications (VAPID)",
+        purpose: "Free push alerts to every visitor who allows notifications.",
+        configured: !!(process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY && process.env.VAPID_SUBJECT),
+        keys: ["VAPID_PUBLIC_KEY", "VAPID_PRIVATE_KEY", "VAPID_SUBJECT"],
       },
       discord: {
+        label: "Discord alerts",
+        purpose: "Posts registrations, inquiries, reports and absences into your server.",
         configured: !!process.env.DISCORD_WEBHOOK_URL,
         keys: ["DISCORD_WEBHOOK_URL"],
       },
       payments: {
+        label: "Payments (Stripe)",
+        purpose: "Processes donations and paid tryout fees.",
         configured: !!process.env.STRIPE_SECRET_KEY,
         keys: ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"],
       },
+      automation: {
+        label: "AI automation (Huginn)",
+        purpose: "Powers the AI assistant chat and coaching replies.",
+        configured: !!(process.env.HUGINN_WEBHOOK_URL && process.env.HUGINN_CHAT_WEBHOOK_URL),
+        keys: ["HUGINN_WEBHOOK_URL", "HUGINN_CHAT_WEBHOOK_URL", "HUGINN_WEBHOOK_SECRET"],
+      },
+      admin: {
+        label: "Admin allowlist",
+        purpose: "Comma-separated emails allowed to claim admin on first sign-in.",
+        configured: !!process.env.ADMIN_EMAILS,
+        keys: ["ADMIN_EMAILS"],
+      },
       siteUrl: {
+        label: "Site URL",
+        purpose: "Public URL used inside email buttons.",
         configured: !!process.env.SITE_URL,
         keys: ["SITE_URL"],
       },
-      automation: {
-        configured: !!process.env.HUGINN_WEBHOOK_URL,
-        keys: ["HUGINN_WEBHOOK_URL", "HUGINN_CHAT_WEBHOOK_URL", "HUGINN_WEBHOOK_SECRET"],
-      },
+    };
+  },
+});
+
+/** Public: Android app download links configured by management. Used by the homepage install flow. */
+export const getAppLinks = query({
+  args: {},
+  handler: async (ctx) => {
+    const rows = await ctx.db.query("settings").collect();
+    const get = (k: string) => rows.find((r) => r.key === k)?.value?.trim() ?? "";
+    return {
+      pack: get("apkPack"),
+      den: get("apkDen"),
+      coach: get("apkCoach"),
     };
   },
 });
