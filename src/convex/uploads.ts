@@ -99,6 +99,47 @@ export const removeTeamPhoto = mutation({
   },
 });
 
+/** Admin-only: attach (or replace) a news article's cover image. */
+export const setContentImage = mutation({
+  args: {
+    articleId: v.id("content"),
+    storageId: v.id("_storage"),
+  },
+  handler: async (ctx, { articleId, storageId }) => {
+    await requireAdmin(ctx);
+    const article = await ctx.db.get(articleId);
+    if (!article) throw new ConvexError({ message: "Article not found." });
+    const previous = article.imageStorageId;
+    await ctx.db.patch(articleId, { imageStorageId: storageId });
+    if (previous && previous !== storageId) {
+      try {
+        await ctx.storage.delete(previous);
+      } catch {
+        // Best-effort cleanup — the new image is already live.
+      }
+    }
+  },
+});
+
+/** Admin-only: remove a news article's cover image. */
+export const removeContentImage = mutation({
+  args: { articleId: v.id("content") },
+  handler: async (ctx, { articleId }) => {
+    await requireAdmin(ctx);
+    const article = await ctx.db.get(articleId);
+    if (!article) throw new ConvexError({ message: "Article not found." });
+    const storageId = article.imageStorageId;
+    await ctx.db.patch(articleId, { imageStorageId: undefined });
+    if (storageId) {
+      try {
+        await ctx.storage.delete(storageId);
+      } catch {
+        // Already gone — fine.
+      }
+    }
+  },
+});
+
 /** Admin-only: resolve a storage id to a public URL (used by the upload preview). */
 export const getFileUrl = query({
   args: { storageId: v.id("_storage") },
