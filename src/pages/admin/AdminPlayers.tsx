@@ -60,6 +60,8 @@ export default function AdminPlayers() {
   const setStatusMutation = useMutation(api.players.setStatus);
   const removePlayer = useMutation(api.players.remove);
   const setRole = useMutation(api.admin.setRole);
+  const setBadgesMutation = useMutation(api.players.setBadges);
+  const [badgeInput, setBadgeInput] = useState("");
   const generateUploadUrl = useMutation(api.uploads.generateUploadUrl);
   const setPlayerPhoto = useMutation(api.uploads.setPlayerPhoto);
   const removePlayerPhoto = useMutation(api.uploads.removePlayerPhoto);
@@ -330,6 +332,10 @@ export default function AdminPlayers() {
                 <StatusBadge status={selected.status} />
                 <StatusBadge status={selected.game} />
                 {selected.rank ? <StatusBadge status="user">{selected.rank}</StatusBadge> : null}
+                {selected.verifiedAt ? <StatusBadge status="approved">Verified</StatusBadge> : null}
+                {(selected.badges ?? []).map((b) => (
+                  <StatusBadge key={b} status="important">{b}</StatusBadge>
+                ))}
               </div>
 
               <div className="border-2 border-foreground bg-background p-4">
@@ -384,6 +390,88 @@ export default function AdminPlayers() {
                   {selected.bio}
                 </p>
               ) : null}
+
+              <div className="border-2 border-foreground bg-background p-4">
+                <p className={cn(label, "mb-2")}>Verified role badges</p>
+                <p className="mb-3 text-xs text-muted-foreground">
+                  Badges show on the player's portal and profile — e.g. MVP, IGL, Captain, Starter, Rookie.
+                </p>
+                {selected.badges && selected.badges.length > 0 ? (
+                  <div className="mb-3 flex flex-wrap gap-1.5">
+                    {selected.badges.map((b) => (
+                      <span key={b} className="flex items-center gap-1 border-2 border-foreground bg-neo-yellow px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-white">
+                        {b}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setSelected({
+                              ...selected,
+                              badges: (selected.badges ?? []).filter((x) => x !== b),
+                            })
+                          }
+                          className="hover:text-black"
+                          aria-label={`Remove ${b}`}
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mb-3 text-sm text-muted-foreground">No badges assigned yet.</p>
+                )}
+                <div className="flex gap-2">
+                  <Input
+                    className={input}
+                    placeholder="Add badge (MVP, IGL…)"
+                    value={badgeInput}
+                    onChange={(e) => setBadgeInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && badgeInput.trim()) {
+                        e.preventDefault();
+                        setSelected({
+                          ...selected,
+                          badges: [...(selected.badges ?? []), badgeInput.trim()],
+                        });
+                        setBadgeInput("");
+                      }
+                    }}
+                  />
+                  <Button
+                    className={btnYellow}
+                    onClick={async () => {
+                      if (!badgeInput.trim()) return;
+                      const next = [...(selected.badges ?? []), badgeInput.trim()];
+                      setSelected({ ...selected, badges: next });
+                      setBadgeInput("");
+                      try {
+                        await setBadgesMutation({ playerId: selected._id, badges: next });
+                        toast.success("Badges saved — visible on the player's portal.");
+                      } catch (e) {
+                        toast.error(e instanceof Error ? e.message : "Could not save badges.");
+                      }
+                    }}
+                  >
+                    Add
+                  </Button>
+                </div>
+                {selected.badges && selected.badges.length > 0 ? (
+                  <Button
+                    variant="outline"
+                    className={`${btnGhost} mt-3 w-full`}
+                    onClick={async () => {
+                      try {
+                        await setBadgesMutation({ playerId: selected._id, badges: selected.badges ?? [] });
+                        toast.success("Badges updated.");
+                      } catch (e) {
+                        toast.error(e instanceof Error ? e.message : "Could not save badges.");
+                      }
+                    }}
+                  >
+                    Save badges
+                  </Button>
+                ) : null}
+              </div>
 
               <div>
                 <p className={cn(label, "mb-2")}>Performance</p>
