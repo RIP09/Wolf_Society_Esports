@@ -3,6 +3,7 @@ import { action, internalQuery, mutation, query, type MutationCtx } from "./_gen
 import { api, internal } from "./_generated/api";
 import { createAccount, modifyAccountCredentials } from "@convex-dev/auth/server";
 import { hasAdminRole, requireAdmin, requireSuperAdmin } from "./guards";
+import { wipeAuthUser, wipePlayerData } from "./players";
 import { ROLES } from "./schema";
 
 /** The built-in super admin credentials (fallback access to the grant page). */
@@ -432,15 +433,19 @@ export const removeManagementUser = mutation({
       await ctx.db.delete(session._id);
     }
 
-    // 3. Linked player profile, if the manager ever registered as a player.
+    // 3. Full player footprint if the manager ever registered as a player
+    // (profile, photo, performance history, team memberships, attendance).
     const profile = await ctx.db
       .query("players")
       .withIndex("by_userId", (q) => q.eq("userId", userId))
       .first();
-    if (profile) await ctx.db.delete(profile._id);
+    if (profile) {
+      await wipePlayerData(ctx, profile._id, profile.photoStorageId);
+    }
 
-    // 4. The user record itself.
-    await ctx.db.delete(userId);
+    // 4. The complete auth wipe (subscribers, auth accounts, verification
+    // codes, sessions, refresh tokens, PKCE verifiers + the user row).
+    await wipeAuthUser(ctx, userId);
 
     // 5. Audit trail + notify the organization.
     await ctx.db.insert("securityLogs", {
@@ -455,6 +460,80 @@ export const removeManagementUser = mutation({
       removedBy: admin.name ?? "Super Admin",
     });
     return { ok: true, userId };
+  },
+});
+
+/**
+ * Super Admin only: permanently remove a granted management user by their
+ * generated login ID (WSE-001, …) — the action offered on the Access page.
+ * Deletes the account, sessions, tokens, any linked player data and the
+ * access request rows, so nothing is left behind to cause "wrong
+ * credentials" conflicts if they ever try to sign in again.
+ */
+export const removeGrantedUser = mutation({
+  args: { loginId: v.string() },
+  handler: async (ctx, { loginId }) => {
+    const admin = await requireSuperAdmin(ctx);
+    const login = loginId.trim();
+    if (!login) throw new ConvexError({ message: "No login ID provided." });
+    if (login === SUPER_ADMIN_ID) {
+      throw new ConvexError({
+        message: "The built-in super admin (WSE) is the recovery account and cannot be removed.",
+      });
+    }
+
+    const account = await ctx.db
+      .query("authAccounts")
+      .withIndex("providerAndAccountId", (q) =>
+        q.eq("provider", "password").eq("providerAccountId", login),
+      )
+      .unique();
+    if (!account) {
+      throw new ConvexError({ message: "No active account found for that User ID — it may already be removed." });
+    }
+    const user = await ctx.db.get(account.userId);
+    if (!user) {
+      throw new ConvexError({ message: "User record not found — nothing to remove." });
+    }
+
+    // Full player footprint (if this person ever registered as a player).
+    const profile = await ctx.db
+      .query("players")
+      .withIndex("by_userId", (q) => q.eq("userId", user._id))
+      .first();
+    if (profile) {
+      await wipePlayerData(ctx, profile._id, profile.photoStorageId);
+    }
+
+    // Complete auth wipe — no leftover account to hit credential errors.
+    await wipeAuthUser(ctx, user._id);
+
+    // Remove every access request row tied to this person (their personal
+    // data on file) so a fresh request can be made cleanly later.
+    const requestRows = await ctx.db
+      .query("accessRequests")
+      .filter((q) => q.eq(q.field("grantedUserId"), login))
+      .collect();
+    for (const row of requestRows) await ctx.db.delete(row._id);
+    const byEmail = await ctx.db
+      .query("accessRequests")
+      .filter((q) => q.eq(q.field("email"), user.email ?? ""))
+      .collect();
+    for (const row of byEmail) await ctx.db.delete(row._id);
+
+    // Audit trail + notify the organization.
+    await ctx.db.insert("securityLogs", {
+      userId: admin._id,
+      email: admin.email,
+      reason: `Super Admin permanently removed management user ${user.email ?? user.name ?? login} (${login}) and all their data`,
+      createdAt: Date.now(),
+    });
+    await ctx.scheduler.runAfter(0, api.notify.staffRemoved, {
+      name: user.name ?? "Staff member",
+      email: user.email ?? "",
+      removedBy: admin.name ?? "Super Admin",
+    });
+    return { ok: true, loginId: login };
   },
 });
 
