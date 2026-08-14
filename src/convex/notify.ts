@@ -3,11 +3,33 @@ import { action, internalMutation, internalQuery, query, type ActionCtx } from "
 import { api, internal } from "./_generated/api";
 import { requireAdmin } from "./guards";
 
-/** Organization mailboxes that receive every automated notification. */
+/** Default organization mailboxes that receive every automated notification. */
 const ORG_EMAILS = ["wolfsocietygg@yahoo.com", "deepanshumurmu0@gmail.com"];
 
-/** Organization phone that receives an SMS alert for every contact inquiry. */
+/** Default organization phone that receives an SMS alert for every contact inquiry. */
 const ORG_PHONE = "+917857958722";
+
+/**
+ * Internal query: reads the configurable org contact destinations from the settings
+ * table (set from The Den → Settings). Falls back to the defaults above when unset.
+ */
+export const getOrgConfig = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    const rows = await ctx.db.query("settings").collect();
+    const get = (k: string) => rows.find((r) => r.key === k)?.value?.trim() ?? "";
+    const email1 = get("orgEmail");
+    const email2 = get("orgEmail2");
+    const phone = get("orgPhone");
+    const emails = [email1 || ORG_EMAILS[0], email2 || (email1 ? "" : ORG_EMAILS[1])].filter(Boolean);
+    return { emails: emails.length ? emails : ORG_EMAILS, phone: phone || ORG_PHONE };
+  },
+});
+
+/** Reads the org contact destinations from inside an action (actions can't touch db directly). */
+async function orgConfig(ctx: { runQuery: any }): Promise<{ emails: string[]; phone: string }> {
+  return ctx.runQuery(internal.notify.getOrgConfig);
+}
 
 /** Public site URL used in email buttons (set SITE_URL in Keys). */
 function siteUrl(): string {
@@ -190,7 +212,7 @@ export const securityAlert = action({
             <td style="padding:6px 12px;border:1px solid #e8e7f5;">${new Date().toLocaleString()}</td></tr>
       </table>
       <p style="margin-top:16px;">No action is needed if this was an expected redirect. Review the security log in The Den for details.</p>`;
-    const emailRes = await send(ctx, { to: ORG_EMAILS, subject: "Security alert — blocked access attempt", html: shell("Security alert", body) });
+    const emailRes = await send(ctx, { to: (await orgConfig(ctx)).emails, subject: "Security alert — blocked access attempt", html: shell("Security alert", body) });
     await sendDiscord(ctx, `🔒 **Security alert** — blocked access attempt${email ? ` from ${email}` : ""}.\n${reason}`, "Security alert");
     return emailRes;
   },
@@ -212,7 +234,7 @@ export const newRegistration = action({
             <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(email)}</td></tr>
       </table>
       <p style="margin-top:16px;">Open The Den → Players to approve or suspend this registration.</p>`;
-    const emailRes = await send(ctx, { to: ORG_EMAILS, subject: `New player registration — ${gamertag}`, html: shell("New player registration", body) });
+    const emailRes = await send(ctx, { to: (await orgConfig(ctx)).emails, subject: `New player registration — ${gamertag}`, html: shell("New player registration", body) });
     await sendDiscord(ctx, `🎮 **New registration** — ${gamertag} (${game}) just signed up and is awaiting approval.`, "New player registration");
     return emailRes;
   },
@@ -263,12 +285,12 @@ export const newContact = action({
       </table>
       <p style="margin-top:12px;font-style:italic;">“${esc(message)}”</p>
       <p style="margin-top:16px;">— The Wolf Society Esports team</p>`;
-    const org = await send(ctx, { to: ORG_EMAILS, subject: `New inquiry: ${subject} — ${name}`, html: shell("New contact inquiry", orgBody) });
+    const org = await send(ctx, { to: (await orgConfig(ctx)).emails, subject: `New inquiry: ${subject} — ${name}`, html: shell("New contact inquiry", orgBody) });
     const reply = await send(ctx, { to: email, subject: `Thank you — we received your message`, html: shell("Thank you", replyBody) });
     // SMS alert to the organization phone — fires the moment someone submits.
     const sms = await sendSms(
       ctx,
-      ORG_PHONE,
+      (await orgConfig(ctx)).phone,
       `Wolf Society Esports: New inquiry from ${name} (${subject}). Reply at ${email}${phone ? ` or ${phone}` : ""}`,
     );
     await sendDiscord(ctx, `✉️ **New inquiry** from ${name} — "${subject}"${category ? ` (${category})` : ""}\n${message.slice(0, 280)}`, "New contact inquiry");
@@ -310,7 +332,7 @@ export const accessRequested = action({
         Opens the secret access-granting page. You can also sign in with the super admin
         credentials if the button doesn't open.
       </p>`;
-    const org = await send(ctx, { to: ORG_EMAILS, subject: `Management access request — ${name}`, html: shell("Access request", body) });
+    const org = await send(ctx, { to: (await orgConfig(ctx)).emails, subject: `Management access request — ${name}`, html: shell("Access request", body) });
     const applicant = await send(ctx, {
       to: email,
       subject: `We received your access request — Wolf Society Esports`,
@@ -443,7 +465,7 @@ export const staffRemoved = action({
       <p><strong>${esc(name)}</strong>${email ? ` (${esc(email)})` : ""} has been removed from the management portal by <strong>${esc(removedBy)}</strong>.</p>
       <p>Their login credentials have been revoked immediately and all active sessions were closed. This person can no longer sign in to The Den.</p>`;
     const emailRes = await send(ctx, {
-      to: ORG_EMAILS,
+      to: (await orgConfig(ctx)).emails,
       subject: `Management access revoked — ${name}`,
       html: shell("Access revoked", body),
     });
@@ -490,7 +512,7 @@ export const routineBroadcast = action({
       </table>
       <p style="margin-top:16px;"><a href="${url}" style="color:#7b5cf0;font-weight:bold;">Open the Schedule Hub</a> in The Den to review or adjust the weekly template.</p>`;
     const emailRes = await send(ctx, {
-      to: ORG_EMAILS,
+      to: (await orgConfig(ctx)).emails,
       subject: `Routine update — ${title}`,
       html: shell("Routine update", body),
     });
@@ -549,7 +571,7 @@ export const scrimNotify = action({
       ${resultLine ? `<p style="margin-top:12px;font-size:15px;font-weight:bold;">${esc(resultLine)}</p>` : ""}
       <p style="margin-top:16px;"><a href="${siteUrl()}/admin/schedule" style="color:#7b5cf0;font-weight:bold;">Open the Schedule Hub</a> in The Den.</p>`;
     const orgEmail = await send(ctx, {
-      to: ORG_EMAILS,
+      to: (await orgConfig(ctx)).emails,
       subject: `${heading[event]} — ${opponent}`,
       html: shell(heading[event], body),
     });
@@ -634,7 +656,7 @@ export const paymentReceived = action({
       <h2 style="margin:0 0 12px;">New donation 🎉</h2>
       <p><strong>${esc(name)}</strong> donated <strong>${currency.toUpperCase()} ${major}</strong> to Wolf Society Esports.</p>
       <p>Thank them at ${esc(email)}.</p>`;
-    await send(ctx, { to: ORG_EMAILS, subject: `Donation received — ${currency.toUpperCase()} ${major}`, html: shell("Donation received", body) });
+    await send(ctx, { to: (await orgConfig(ctx)).emails, subject: `Donation received — ${currency.toUpperCase()} ${major}`, html: shell("Donation received", body) });
     await sendDiscord(ctx, `💜 **New donation** — ${name} donated ${currency.toUpperCase()} ${major}. Thank them at ${email}!`, "Donation received");
     await send(ctx, {
       to: email,
@@ -675,7 +697,7 @@ export const tryoutReceived = action({
             <td style="padding:6px 12px;border:1px solid #e8e7f5;">${paid ? "Paid ✅" : "Free entry"}</td></tr>
       </table>
       <p style="margin-top:16px;">Review tryouts in The Den → Tryouts.</p>`;
-    await send(ctx, { to: ORG_EMAILS, subject: `New tryout — ${name} (${game})`, html: shell("New tryout", body) });
+    await send(ctx, { to: (await orgConfig(ctx)).emails, subject: `New tryout — ${name} (${game})`, html: shell("New tryout", body) });
     await sendDiscord(ctx, `🏆 **New tryout** — ${name} signed up for ${game}${role ? ` as ${role}` : ""}${paid ? " (fee paid ✅)" : " (free entry)"}.`, "New tryout registration");
     await send(ctx, {
       to: email,
@@ -716,7 +738,7 @@ export const matchReportSubmitted = action({
       </table>
       <p style="margin-top:16px;">Review the full report in <strong>The Den → Attendance &amp; Reports</strong>.</p>`;
     const emailRes = await send(ctx, {
-      to: ORG_EMAILS,
+      to: (await orgConfig(ctx)).emails,
       subject: `Match report — ${gamertag} (${game})`,
       html: shell("Match report", body),
     });
@@ -743,7 +765,7 @@ export const attendanceAlert = action({
       <p style="margin-top:16px;"><a href="${url}" style="display:inline-block;padding:12px 22px;background:#7b5cf0;color:#ffffff;text-decoration:none;font-weight:bold;border-radius:6px;">Open the attendance board</a></p>
       <p style="margin-top:12px;">Reach out to these players, or correct their records from The Den → Attendance.</p>`;
     const emailRes = await send(ctx, {
-      to: ORG_EMAILS,
+      to: (await orgConfig(ctx)).emails,
       subject: `Attendance alert — ${players.length} player(s) missed ${days}+ days`,
       html: shell("Attendance alert", body),
     });
