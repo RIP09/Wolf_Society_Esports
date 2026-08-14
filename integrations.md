@@ -217,12 +217,15 @@ hosts, so it does not interfere with the Vercel build.
 
    **Never upload:** `node_modules/`, `dist/`, `.env.local` (contains secrets).
 
-3. The two pages that failed the last Vercel build are already fixed in this upload:
-   - `src/pages/admin/AdminMatches.tsx` → calls `api.teams.listTeams` (was pointing at
-     `api.stats.*`, which caused `Property 'listTeams' does not exist`)
-   - `src/pages/admin/AdminTeams.tsx` → calls `api.teams.createTeam` / `listTeams`
-   If you are only updating an existing repo, upload at least these two files (best:
-   re-upload the whole `src/` so nothing else is stale).
+3. ⚠️ **Critical — `src/convex/teams.ts` in this repo must be the real teams module**
+   (≈5.4 KB, exports `listTeams`, `getTeam`, `createTeam`, `updateTeam`, `deleteTeam`,
+   `assignPlayer`, `removePlayer`). A previous upload accidentally saved a copy of
+   `stats.ts` (15,755 bytes) over it — that is exactly what caused
+   `Property 'listTeams' does not exist on type '{ getAdminDashboard: ... }'` on
+   Vercel. The admin pages (`AdminMatches.tsx`, `AdminTeams.tsx`) are correct and call
+   `api.teams.*`; the backend file itself was wrong. If you are only fixing an existing
+   repo, replace `src/convex/teams.ts` (and re-upload the whole `src/` if anything
+   else is stale).
 4. Commit on branch `main`.
 
 ### 8.3 Create your own Convex project (dashboard only)
