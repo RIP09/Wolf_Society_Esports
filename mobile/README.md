@@ -10,6 +10,15 @@ Three dedicated Android applications, all connected to the **exact same Convex b
 
 All three are **Expo (React Native) apps** — a single codebase that builds for every Android OS version (Android 6.0+ / API 23+), no per-device work needed.
 
+## Android permissions
+
+Each app asks for the useful & recommended permissions on first launch (Android prompts automatically):
+
+- **Notifications** (`POST_NOTIFICATIONS`) — asked in-app on launch so players/managers get updates the moment they happen.
+- **Internet / Network state** — realtime sync with the shared Convex database.
+- **Vibrate / Wake lock / Boot completed / Foreground service** — instant notification delivery and alarms.
+- **Camera / Photos** (`CAMERA`, `READ_MEDIA_IMAGES`, `READ/WRITE_EXTERNAL_STORAGE`) — ready for profile photos and media uploads on every Android version (6.0 → 14+).
+
 ## Install from the website
 
 The homepage (https://wolfsocietygg.vercel.app) has an **Install app** button (hero + "Get the Wolf Society apps" section):
