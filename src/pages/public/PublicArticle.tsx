@@ -39,6 +39,15 @@ export default function PublicArticle() {
           <h1 className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
             {article.title}
           </h1>
+          {article.imageUrl ? (
+            <div className="overflow-hidden border-2 border-foreground bg-neo-cream shadow-[4px_4px_0_0_var(--neo-ink)]">
+              <img
+                src={article.imageUrl}
+                alt={article.title}
+                className="max-h-96 w-full object-cover"
+              />
+            </div>
+          ) : null}
           <div className="flex flex-wrap items-center gap-4 border-y-2 border-foreground/20 py-3 font-mono text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
             <span className="flex items-center gap-1.5">
               <User className="size-3.5" />
