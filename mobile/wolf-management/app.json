@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "Wolf Den — Wolf Society Management",
+    "slug": "wolf-den-management",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "scheme": "wolfden",
+    "android": {
+      "package": "gg.wolfsociety.den",
+      "versionCode": 1,
+      "minSdkVersion": 23,
+      "adaptiveIcon": {
+        "backgroundColor": "#F4F3FB"
+      },
+      "permissions": []
+    },
+    "extra": {
+      "convexUrl": "https://youthful-crab-344.convex.cloud"
+    }
+  }
+}
