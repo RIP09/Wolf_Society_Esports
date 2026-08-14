@@ -1,6 +1,22 @@
 import { ConvexError, v } from "convex/values";
+import type { Id } from "./_generated/dataModel";
 import { mutation, query, type QueryCtx } from "./_generated/server";
 import { requireAdmin } from "./guards";
+
+/** Resolves each article's uploaded cover image to a public URL. */
+async function withImageUrls<T extends { imageStorageId?: Id<"_storage"> }>(
+  ctx: QueryCtx,
+  rows: T[],
+): Promise<(T & { imageUrl?: string })[]> {
+  return Promise.all(
+    rows.map(async (row) => ({
+      ...row,
+      imageUrl: row.imageStorageId
+        ? (await ctx.storage.getUrl(row.imageStorageId)) ?? undefined
+        : undefined,
+    })),
+  );
+}
 
 function slugify(title: string): string {
   return title
@@ -34,7 +50,8 @@ export const publicList = query({
     if (category) {
       q = q.filter((row) => row.eq(row.field("category"), category!));
     }
-    return await q.order("desc").take(60);
+    const rows = await q.order("desc").take(60);
+    return await withImageUrls(ctx, rows);
   },
 });
 
@@ -48,7 +65,8 @@ export const getBySlug = query({
       .unique();
     if (!article || !article.published) return null;
     const author = await ctx.db.get(article.authorId);
-    return { ...article, authorName: author?.name ?? "Wolf Society Esports" };
+    const [resolved] = await withImageUrls(ctx, [article]);
+    return { ...resolved, authorName: author?.name ?? "Wolf Society Esports" };
   },
 });
 
@@ -57,7 +75,8 @@ export const adminList = query({
   args: {},
   handler: async (ctx) => {
     await requireAdmin(ctx);
-    return await ctx.db.query("content").order("desc").take(200);
+    const rows = await ctx.db.query("content").order("desc").take(200);
+    return await withImageUrls(ctx, rows);
   },
 });
 
@@ -69,6 +88,7 @@ export const create = mutation({
     excerpt: v.optional(v.string()),
     body: v.string(),
     coverColor: v.optional(v.string()),
+    imageStorageId: v.optional(v.id("_storage")),
     published: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
@@ -84,6 +104,7 @@ export const create = mutation({
       excerpt: args.excerpt?.trim() || undefined,
       body: args.body.trim(),
       coverColor: args.coverColor || "bg-neo-yellow",
+      imageStorageId: args.imageStorageId,
       authorId: admin._id,
       published: args.published ?? false,
       createdAt: Date.now(),
@@ -139,6 +160,13 @@ export const remove = mutation({
     await requireAdmin(ctx);
     const article = await ctx.db.get(articleId);
     if (!article) throw new ConvexError({ message: "Article not found." });
+    if (article.imageStorageId) {
+      try {
+        await ctx.storage.delete(article.imageStorageId);
+      } catch {
+        // Best-effort cleanup — the article itself is already gone.
+      }
+    }
     await ctx.db.delete(articleId);
   },
 });
