@@ -10,6 +10,15 @@ Three dedicated Android applications, all connected to the **exact same Convex b
 
 All three are **Expo (React Native) apps** — a single codebase that builds for every Android OS version (Android 6.0+ / API 23+), no per-device work needed.
 
+## Install from the website
+
+The homepage (https://wolfsocietygg.vercel.app) has an **Install app** button (hero + "Get the Wolf Society apps" section):
+
+- **Install web app** — one-tap PWA install straight from the browser (Android / desktop, offline-ready, push alerts).
+- **Wolf Pack / Wolf Den / Wolf Coach** cards — link to each app's source folder here on GitHub; build the APK with the steps below and publish it, then swap the repo link for your APK/Play Store URL in `src/components/InstallApp.tsx`.
+
+All three apps are configured for **Android 6.0+ (API 23)** via `android.minSdkVersion` in each `app.json` — every Android OS version is supported.
+
 ---
 
 ## How the apps talk to the website
