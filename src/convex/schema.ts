@@ -189,6 +189,8 @@ const schema = defineSchema(
       socials: v.optional(v.string()), // Twitch / YouTube / X links
       photoStorageId: v.optional(v.id("_storage")), // player photo uploaded from The Den
       status: playerStatusValidator, // pending / active / suspended
+      verifiedAt: v.optional(v.number()), // when management approved this player
+      badges: v.optional(v.array(v.string())), // verified role badges, e.g. ["MVP", "IGL", "Captain"]
       joinedAt: v.number(),
     })
       .index("by_userId", ["userId"])
@@ -444,6 +446,57 @@ const schema = defineSchema(
       countryCode: v.optional(v.string()),
       createdAt: v.number(),
     }).index("by_createdAt", ["createdAt"]),
+
+    // Daily attendance — one row per player per calendar day. Players check
+    // in when they practice or play; the AI attendance job automatically marks
+    // "absent" anyone who didn't check in within the last 24h. Leave requests
+    // and corrections are managed from The Den.
+    attendanceRecords: defineTable({
+      playerId: v.id("players"),
+      dateKey: v.string(), // "YYYY-MM-DD" (UTC calendar day)
+      status: v.union(
+        v.literal("present"),
+        v.literal("late"),
+        v.literal("absent"),
+        v.literal("leave"),
+      ),
+      type: v.union(
+        v.literal("practice"),
+        v.literal("match"),
+        v.literal("other"),
+      ), // what they attended
+      remarks: v.optional(v.string()), // player's own remarks for the day
+      source: v.union(v.literal("manual"), v.literal("auto")), // auto = AI marked absent
+      checkedInAt: v.optional(v.number()),
+      createdAt: v.number(),
+    })
+      .index("by_player_date", ["playerId", "dateKey"])
+      .index("by_date", ["dateKey"])
+      .index("by_player", ["playerId"]),
+
+    // Detailed post-match reports — every verified player fills one in after
+    // practice matches / tournaments: stats, role, self-rating, highlights and
+    // what to improve. Management sees all of it live in The Den.
+    matchReports: defineTable({
+      playerId: v.id("players"),
+      dateKey: v.string(),
+      game: v.string(),
+      opponent: v.optional(v.string()),
+      result: matchResultValidator,
+      kills: v.number(),
+      deaths: v.number(),
+      assists: v.number(),
+      damage: v.optional(v.number()),
+      rating: v.optional(v.number()), // 1–10 self performance rating
+      rolePlayed: v.optional(v.string()),
+      highlights: v.optional(v.string()),
+      improvement: v.optional(v.string()),
+      notes: v.optional(v.string()),
+      submittedAt: v.number(),
+    })
+      .index("by_player", ["playerId"])
+      .index("by_date", ["dateKey"])
+      .index("by_submittedAt", ["submittedAt"]),
 
     // One row per unique visitor — exact unique counts + country breakdown
     // for the realtime footer widget. Upserted automatically on every pageview.
