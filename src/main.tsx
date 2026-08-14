@@ -116,6 +116,17 @@ class RootErrorBoundary extends React.Component<
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
+// Register the PWA service worker (push notifications + install prompt).
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/sw.js")
+      .catch(() => {
+        // Service workers unsupported or blocked — the site still works fine.
+      });
+  });
+}
+
 const GEO_KEY = "wse_geo";
 let geoPromise: Promise<{ country: string; code: string } | null> | null = null;
 
