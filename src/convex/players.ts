@@ -10,7 +10,7 @@ import { PLAYER_STATUS, ROLES } from "./schema";
  * memberships (and captain assignments), attendance responses and uploaded
  * photo — then the profile itself. The linked auth account is kept.
  */
-async function wipePlayerData(
+export async function wipePlayerData(
   ctx: MutationCtx,
   playerId: Id<"players">,
   photoStorageId?: Id<"_storage">,
@@ -53,7 +53,7 @@ async function wipePlayerData(
  * verification codes, sessions + refresh tokens + verifiers, and the user
  * row itself. After this the person can sign up again with zero leftovers.
  */
-async function wipeAuthUser(ctx: MutationCtx, userId: Id<"users">) {
+export async function wipeAuthUser(ctx: MutationCtx, userId: Id<"users">) {
   const subs = await ctx.db
     .query("subscribers")
     .filter((q) => q.eq(q.field("userId"), userId))
