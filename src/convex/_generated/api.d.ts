@@ -17,6 +17,7 @@ import type * as auth from "../auth.js";
 import type * as auth_emailOtp from "../auth/emailOtp.js";
 import type * as automation from "../automation.js";
 import type * as content from "../content.js";
+import type * as gallery from "../gallery.js";
 import type * as guards from "../guards.js";
 import type * as http from "../http.js";
 import type * as inquiries from "../inquiries.js";
@@ -56,6 +57,7 @@ declare const fullApi: ApiFromModules<{
   "auth/emailOtp": typeof auth_emailOtp;
   automation: typeof automation;
   content: typeof content;
+  gallery: typeof gallery;
   guards: typeof guards;
   http: typeof http;
   inquiries: typeof inquiries;
