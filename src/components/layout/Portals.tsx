@@ -206,6 +206,7 @@ function PortalLayout({
 const ADMIN_NAV: NavItem[] = [
   { to: "/admin", label: "Overview", end: true },
   { to: "/admin/players", label: "Players" },
+  { to: "/admin/attendance", label: "Attendance" },
   { to: "/admin/teams", label: "Teams" },
   { to: "/admin/tournaments", label: "Tournaments" },
   { to: "/admin/matches", label: "Matches" },
@@ -246,6 +247,8 @@ export function AdminLayout() {
 
 const PLAYER_NAV: NavItem[] = [
   { to: "/player", label: "Dashboard", end: true },
+  { to: "/player/attendance", label: "Attendance" },
+  { to: "/player/reports", label: "Match Reports" },
   { to: "/player/schedule", label: "My Schedule" },
   { to: "/player/performance", label: "Performance" },
   { to: "/player/profile", label: "Profile" },
@@ -263,7 +266,26 @@ export function PlayerLayout() {
       <div className="flex items-center justify-center gap-2 border-b-2 border-foreground bg-neo-red px-4 py-2 text-center font-mono text-[11px] font-bold uppercase tracking-wider text-white">
         Account suspended — contact your Society manager
       </div>
-    ) : null
+    ) : (
+      <div className="flex flex-wrap items-center justify-center gap-2 border-b-2 border-foreground bg-neo-green px-4 py-2 text-center font-mono text-[11px] font-bold uppercase tracking-wider text-white">
+        <span className="flex items-center gap-1.5">
+          <ShieldCheck className="size-3.5" />
+          Verified player — approved by management
+        </span>
+        {profile.badges && profile.badges.length > 0 ? (
+          <span className="flex flex-wrap items-center justify-center gap-1.5">
+            {profile.badges.map((b) => (
+              <span
+                key={b}
+                className="border-2 border-foreground bg-background px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-foreground"
+              >
+                {b}
+              </span>
+            ))}
+          </span>
+        ) : null}
+      </div>
+    )
   ) : null;
   return <PortalLayout items={PLAYER_NAV} tag="The Pack · Player hub" accent="blue" variant="player" banner={banner} />;
 }
