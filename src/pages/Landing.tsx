@@ -1,6 +1,7 @@
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { NeoCard, StatusBadge } from "@/components/neo";
+import { InstallAppButton, InstallSection } from "@/components/InstallApp";
 import { btnGhost, btnYellow, card } from "@/lib/neo";
 import { cn } from "@/lib/utils";
 import { useQuery } from "convex/react";
@@ -129,6 +130,7 @@ export default function Landing() {
                   Tournaments
                 </Button>
               </Link>
+              <InstallAppButton />
             </motion.div>
             <motion.p
               variants={fadeUp}
@@ -469,6 +471,9 @@ export default function Landing() {
           )}
         </div>
       </section>
+
+      {/* Get the apps — install button lives on the homepage only */}
+      <InstallSection />
 
       {/* CTA */}
       <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
