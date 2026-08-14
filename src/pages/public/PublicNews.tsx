@@ -56,23 +56,34 @@ export default function PublicNews() {
         ) : (
           articles.map((a) => (
             <Link key={a._id} to={`/news/${a.slug}`} className="neo-press group block">
-              <NeoCard className="gap-4 p-6 transition-shadow">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className={`inline-block h-3 w-3 border-2 border-foreground ${a.coverColor ?? "bg-neo-yellow"}`} />
-                  <span className="border-2 border-foreground bg-neo-cream px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider">
-                    {a.category}
-                  </span>
-                  <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-                    {fmtDate(a.createdAt)}
-                  </span>
-                </div>
-                <div className="flex items-start gap-4">
-                  <Newspaper className="mt-1 size-5 shrink-0 text-neo-blue" />
-                  <div>
-                    <p className="text-xl font-bold leading-snug group-hover:underline">{a.title}</p>
-                    {a.excerpt ? (
-                      <p className="mt-1.5 text-sm leading-6 text-muted-foreground">{a.excerpt}</p>
-                    ) : null}
+              <NeoCard className="gap-4 p-0 transition-shadow">
+                {a.imageUrl ? (
+                  <div className="h-44 w-full overflow-hidden border-b-2 border-foreground bg-neo-cream">
+                    <img
+                      src={a.imageUrl}
+                      alt={a.title}
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                    />
+                  </div>
+                ) : null}
+                <div className="flex flex-col gap-3 p-6">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className={`inline-block h-3 w-3 border-2 border-foreground ${a.coverColor ?? "bg-neo-yellow"}`} />
+                    <span className="border-2 border-foreground bg-neo-cream px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider">
+                      {a.category}
+                    </span>
+                    <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                      {fmtDate(a.createdAt)}
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <Newspaper className="mt-1 size-5 shrink-0 text-neo-blue" />
+                    <div>
+                      <p className="text-xl font-bold leading-snug group-hover:underline">{a.title}</p>
+                      {a.excerpt ? (
+                        <p className="mt-1.5 text-sm leading-6 text-muted-foreground">{a.excerpt}</p>
+                      ) : null}
+                    </div>
                   </div>
                 </div>
               </NeoCard>
