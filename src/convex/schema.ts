@@ -335,6 +335,7 @@ const schema = defineSchema(
       excerpt: v.optional(v.string()),
       body: v.string(),
       coverColor: v.optional(v.string()), // neo accent for the cover tile
+      imageStorageId: v.optional(v.id("_storage")), // uploaded cover image
       authorId: v.id("users"),
       published: v.boolean(),
       createdAt: v.number(),
@@ -342,6 +343,19 @@ const schema = defineSchema(
     })
       .index("by_slug", ["slug"])
       .index("by_published", ["published"])
+      .index("by_category", ["category"])
+      .index("by_createdAt", ["createdAt"]),
+
+    // Media gallery photos — uploaded from The Den and shown on the public
+    // /gallery page in real time, grouped by category (Matches / Practice /
+    // Events). Each row owns one storage file so removals clean up fully.
+    gallery: defineTable({
+      caption: v.string(),
+      category: v.string(), // Matches / Practice / Events
+      storageId: v.id("_storage"),
+      uploadedBy: v.id("users"),
+      createdAt: v.number(),
+    })
       .index("by_category", ["category"])
       .index("by_createdAt", ["createdAt"]),
 
