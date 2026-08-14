@@ -38,6 +38,18 @@ export async function wipePlayerData(
     .collect();
   for (const c of confirmations) await ctx.db.delete(c._id);
 
+  const attendance = await ctx.db
+    .query("attendanceRecords")
+    .withIndex("by_player", (q) => q.eq("playerId", playerId))
+    .collect();
+  for (const a of attendance) await ctx.db.delete(a._id);
+
+  const reports = await ctx.db
+    .query("matchReports")
+    .withIndex("by_player", (q) => q.eq("playerId", playerId))
+    .collect();
+  for (const r of reports) await ctx.db.delete(r._id);
+
   if (photoStorageId) {
     try {
       await ctx.storage.delete(photoStorageId);
@@ -445,11 +457,35 @@ export const setStatus = mutation({
     await requireAdmin(ctx);
     const player = await ctx.db.get(playerId);
     if (!player) throw new ConvexError({ message: "Player not found." });
-    await ctx.db.patch(playerId, { status });
+    await ctx.db.patch(playerId, {
+      status,
+      // The first time a player is approved they become "verified" — the
+      // portal then unlocks the full player experience + verified badge.
+      verifiedAt: status === PLAYER_STATUS.ACTIVE ? (player.verifiedAt ?? Date.now()) : undefined,
+    });
     if (status === PLAYER_STATUS.ACTIVE) {
       await ctx.db.patch(player.userId, { role: ROLES.PLAYER });
     }
     return status;
+  },
+});
+
+/**
+ * Admin-only: assign verified role badges to a player (e.g. "MVP", "IGL",
+ * "Captain", "Starter"). They show on the player's portal and profile.
+ */
+export const setBadges = mutation({
+  args: { playerId: v.id("players"), badges: v.array(v.string()) },
+  handler: async (ctx, { playerId, badges }) => {
+    await requireAdmin(ctx);
+    const player = await ctx.db.get(playerId);
+    if (!player) throw new ConvexError({ message: "Player not found." });
+    const clean = badges
+      .map((b) => b.trim())
+      .filter((b) => b.length > 0)
+      .slice(0, 12);
+    await ctx.db.patch(playerId, { badges: clean.length > 0 ? clean : undefined });
+    return clean;
   },
 });
 
