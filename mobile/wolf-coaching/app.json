@@ -13,8 +13,21 @@
       "adaptiveIcon": {
         "backgroundColor": "#F4F3FB"
       },
-      "permissions": []
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.VIBRATE",
+        "android.permission.WAKE_LOCK",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.CAMERA",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ]
     },
+    "plugins": [["expo-notifications", { "color": "#000000" }]],
     "extra": {
       "convexUrl": "https://youthful-crab-344.convex.cloud"
     }
