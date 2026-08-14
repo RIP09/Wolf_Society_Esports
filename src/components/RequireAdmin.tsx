@@ -123,8 +123,50 @@ function SuspendedScreen() {
   );
 }
 
+/** Players waiting for management approval get a clear waiting screen instead
+ *  of the full portal — the portal unlocks completely once they're verified. */
+function PendingScreen() {
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
+  const [signingOut, setSigningOut] = useState(false);
+
+  const handleSignOut = async () => {
+    if (signingOut) return;
+    setSigningOut(true);
+    try {
+      await signOut();
+    } finally {
+      navigate("/");
+    }
+  };
+
+  return (
+    <div className="neo-grid-bg flex min-h-screen items-center justify-center bg-background px-4">
+      <div className={`${card} w-full max-w-md gap-5 p-8 text-center`}>
+        <span className="mx-auto flex h-14 w-14 items-center justify-center border-2 border-foreground bg-neo-blue text-white shadow-[4px_4px_0_0_var(--neo-ink)]">
+          <Loader2 className="size-7 animate-pulse" />
+        </span>
+        <h1 className="text-2xl font-bold tracking-tight">Registration under review</h1>
+        <p className="text-sm leading-6 text-muted-foreground">
+          Your registration has been submitted to the Wolf Society Esports management team.
+          Once your profile is <strong>verified and approved</strong> in The Den, your full player
+          portal unlocks automatically — attendance, match reports, your verified role
+          badges and everything else. This usually takes under 24 hours.
+        </p>
+        <div className="flex flex-col gap-2">
+          <Button className={btnGhost} onClick={handleSignOut} disabled={signingOut}>
+            {signingOut ? <Loader2 className="size-4 animate-spin" /> : null}
+            {signingOut ? "Signing out…" : "Sign out and check back later"}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /** Gate for /player/* — players pass, admins are bounced to the command app,
- *  and suspended players are locked out with a clear screen. */
+ *  pending players wait for management approval, and suspended players are
+ *  locked out with a clear screen. */
 export function RequirePlayer({ children }: { children: ReactNode }) {
   const { isLoading, user } = useAuth();
   const profile = useQuery(api.players.getMyProfile);
@@ -133,6 +175,7 @@ export function RequirePlayer({ children }: { children: ReactNode }) {
     return <LoadingScreen label="Checking access…" />;
   }
   if (isManager(user?.role)) return <Navigate to="/admin" replace />;
+  if (profile && profile.status === "pending") return <PendingScreen />;
   if (profile && profile.status === "suspended") return <SuspendedScreen />;
   return children;
 }
