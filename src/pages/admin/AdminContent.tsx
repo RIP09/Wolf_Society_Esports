@@ -19,14 +19,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { GalleryManager } from "@/components/admin/GalleryManager";
 import { EmptyState, NeoCard, PageHeader, StatusBadge } from "@/components/neo";
 import { CONTENT_CATEGORIES } from "@/lib/constants";
 import { fmtDate } from "@/lib/format";
-import { btnYellow, input, label, select } from "@/lib/neo";
+import { btnGhost, btnYellow, input, label, select } from "@/lib/neo";
 import { cn } from "@/lib/utils";
 import { useMutation, useQuery } from "convex/react";
-import { Eye, EyeOff, FileText, Pencil, Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { Eye, EyeOff, FileText, ImagePlus, Loader2, Pencil, Plus, Trash2, Upload, X } from "lucide-react";
+import { useRef, useState } from "react";
 import type { Id } from "@/convex/_generated/dataModel";
 import { toast } from "sonner";
 
@@ -40,16 +41,37 @@ type Article = {
   excerpt?: string;
   body: string;
   coverColor?: string;
+  imageStorageId?: Id<"_storage">;
+  imageUrl?: string;
   published: boolean;
   createdAt: number;
 };
 
+async function uploadArticleImage(
+  file: File,
+  generateUploadUrl: () => Promise<string>,
+): Promise<Id<"_storage">> {
+  const uploadUrl = await generateUploadUrl();
+  const res = await fetch(uploadUrl, {
+    method: "POST",
+    headers: { "Content-Type": file.type },
+    body: file,
+  });
+  if (!res.ok) throw new Error("Image upload failed — please try again.");
+  const { storageId } = (await res.json()) as { storageId: string };
+  return storageId as Id<"_storage">;
+}
+
 export default function AdminContent() {
+  const [tab, setTab] = useState<"articles" | "gallery">("articles");
   const articles = useQuery(api.content.adminList);
   const create = useMutation(api.content.create);
   const update = useMutation(api.content.update);
   const setPublished = useMutation(api.content.setPublished);
   const remove = useMutation(api.content.remove);
+  const generateUploadUrl = useMutation(api.uploads.generateUploadUrl);
+  const setContentImage = useMutation(api.uploads.setContentImage);
+  const removeContentImage = useMutation(api.uploads.removeContentImage);
 
   const [editing, setEditing] = useState<Article | null>(null);
   const [open, setOpen] = useState(false);
@@ -63,6 +85,13 @@ export default function AdminContent() {
   const [error, setError] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Article | null>(null);
 
+  // Cover image state — an in-flight image is uploaded when the article saves.
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [clearRequested, setClearRequested] = useState(false);
+  const [imageBusy, setImageBusy] = useState(false);
+
   const openNew = () => {
     setEditing(null);
     setTitle("");
@@ -72,6 +101,9 @@ export default function AdminContent() {
     setCoverColor(COVER_COLORS[0]);
     setPublishNow(false);
     setError(null);
+    setImageFile(null);
+    setImagePreview(null);
+    setClearRequested(false);
     setOpen(true);
   };
 
@@ -84,7 +116,31 @@ export default function AdminContent() {
     setCoverColor(a.coverColor ?? COVER_COLORS[0]);
     setPublishNow(false);
     setError(null);
+    setImageFile(null);
+    setImagePreview(null);
+    setClearRequested(false);
     setOpen(true);
+  };
+
+  const pickImage = (file: File | undefined) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please choose an image file (JPG, PNG, WEBP…).");
+      return;
+    }
+    if (file.size > 4 * 1024 * 1024) {
+      toast.error("Image is too large — keep it under 4 MB.");
+      return;
+    }
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+    if (imageInputRef.current) imageInputRef.current.value = "";
+  };
+
+  const clearImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    setClearRequested(true);
   };
 
   const handleSave = async () => {
@@ -92,6 +148,7 @@ export default function AdminContent() {
     setError(null);
     try {
       if (editing) {
+        // Save the article body first, then attach / replace the cover image.
         await update({
           articleId: editing._id,
           title,
@@ -100,14 +157,30 @@ export default function AdminContent() {
           body,
           coverColor,
         });
+        if (imageFile) {
+          setImageBusy(true);
+          const storageId = await uploadArticleImage(imageFile, () => generateUploadUrl());
+          await setContentImage({ articleId: editing._id, storageId });
+          setImageBusy(false);
+        } else if (clearRequested && editing.imageStorageId) {
+          // User explicitly removed the existing image.
+          await removeContentImage({ articleId: editing._id });
+        }
         toast.success("Article updated — the public portal refreshes instantly.");
       } else {
+        let imageStorageId: Id<"_storage"> | undefined;
+        if (imageFile) {
+          setImageBusy(true);
+          imageStorageId = await uploadArticleImage(imageFile, () => generateUploadUrl());
+          setImageBusy(false);
+        }
         await create({
           title,
           category,
           excerpt: excerpt || undefined,
           body,
           coverColor,
+          imageStorageId,
           published: publishNow,
         });
         toast.success(publishNow ? "Article published to the public portal." : "Article saved as a draft.");
@@ -117,6 +190,7 @@ export default function AdminContent() {
       setError(e instanceof Error ? e.message : "Save failed.");
     } finally {
       setSaving(false);
+      setImageBusy(false);
     }
   };
 
@@ -125,16 +199,47 @@ export default function AdminContent() {
       <PageHeader
         eyebrow="The Den · Content"
         title="Content management"
-        description="Publish news, match reports, interviews and guides — every change goes live on the public portal in real time."
+        description="Publish news, match reports, interviews and guides — and manage the public media gallery. Every change goes live on the public portal in real time."
         actions={
-          <Button className={btnYellow} onClick={openNew}>
-            <Plus className="size-4" />
-            New article
-          </Button>
+          tab === "articles" ? (
+            <Button className={btnYellow} onClick={openNew}>
+              <Plus className="size-4" />
+              New article
+            </Button>
+          ) : undefined
         }
       />
 
-      {!articles ? (
+      {/* Articles / Media gallery switch */}
+      <div className="flex w-full max-w-md items-stretch border-2 border-foreground bg-card shadow-[4px_4px_0_0_var(--neo-ink)]">
+        <button
+          type="button"
+          onClick={() => setTab("articles")}
+          className={cn(
+            "flex flex-1 items-center justify-center gap-2 px-3 py-3 font-mono text-[11px] font-bold uppercase tracking-wider transition-colors",
+            "border-r-2 border-foreground",
+            tab === "articles" ? "bg-neo-yellow text-white" : "bg-card hover:bg-neo-cream",
+          )}
+        >
+          <FileText className="size-4" />
+          Articles
+        </button>
+        <button
+          type="button"
+          onClick={() => setTab("gallery")}
+          className={cn(
+            "flex flex-1 items-center justify-center gap-2 px-3 py-3 font-mono text-[11px] font-bold uppercase tracking-wider transition-colors",
+            tab === "gallery" ? "bg-neo-yellow text-white" : "bg-card hover:bg-neo-cream",
+          )}
+        >
+          <ImagePlus className="size-4" />
+          Media gallery
+        </button>
+      </div>
+
+      {tab === "gallery" ? (
+        <GalleryManager />
+      ) : !articles ? (
         <div className="grid gap-3">
           {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="h-24 animate-pulse border-2 border-foreground bg-card" />
@@ -158,6 +263,13 @@ export default function AdminContent() {
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="flex items-start gap-3">
                   <span className={`mt-0.5 inline-block h-4 w-4 shrink-0 border-2 border-foreground ${a.coverColor ?? "bg-neo-yellow"}`} />
+                  {a.imageUrl ? (
+                    <img
+                      src={a.imageUrl}
+                      alt=""
+                      className="h-12 w-20 shrink-0 border-2 border-foreground object-cover"
+                    />
+                  ) : null}
                   <div>
                     <p className="text-base font-bold leading-snug">{a.title}</p>
                     <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -272,6 +384,58 @@ export default function AdminContent() {
               />
             </div>
             <div className="flex flex-col gap-1.5">
+              <span className={label}>Cover image</span>
+              <div className="flex flex-wrap items-start gap-4">
+                <div className="flex h-28 w-44 shrink-0 items-center justify-center overflow-hidden border-2 border-foreground bg-neo-cream">
+                  {imagePreview || (editing && !clearRequested ? editing.imageUrl : null) ? (
+                    <img
+                      src={imagePreview ?? editing?.imageUrl}
+                      alt="Cover preview"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <ImagePlus className="size-8 text-muted-foreground" />
+                  )}
+                </div>
+                <div className="flex flex-col items-start gap-2">
+                  <input
+                    ref={imageInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => pickImage(e.target.files?.[0])}
+                  />
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Button
+                      type="button"
+                      size="sm"
+                      className={btnGhost}
+                      disabled={imageBusy}
+                      onClick={() => imageInputRef.current?.click()}
+                    >
+                      {imageBusy ? <Loader2 className="size-3.5 animate-spin" /> : <Upload className="size-3.5" />}
+                      {imageBusy ? "Uploading…" : imagePreview || (editing?.imageUrl && !clearRequested) ? "Replace image" : "Upload image"}
+                    </Button>
+                    {imagePreview || (editing?.imageUrl && !clearRequested) ? (
+                      <Button
+                        type="button"
+                        size="sm"
+                        className="neo-press rounded-none border-2 border-foreground bg-neo-red px-2.5 py-1.5 text-white shadow-[2px_2px_0_0_var(--neo-ink)] hover:shadow-[3px_3px_0_0_var(--neo-ink)]"
+                        disabled={imageBusy}
+                        onClick={clearImage}
+                      >
+                        <X className="size-3.5" />
+                        Remove
+                      </Button>
+                    ) : null}
+                  </div>
+                  <p className="text-[10px] leading-4 text-muted-foreground">
+                    JPG, PNG or WEBP up to 4 MB — shown on the public news feed and the article page in real time.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col gap-1.5">
               <span className={label}>Body *</span>
               <Textarea
                 className="min-h-40 rounded-none border-2 border-foreground bg-background"
@@ -323,8 +487,14 @@ export default function AdminContent() {
             <AlertDialogAction
               className="neo-press rounded-none border-2 border-foreground bg-neo-red text-white shadow-[3px_3px_0_0_var(--neo-ink)] hover:shadow-[4px_4px_0_0_var(--neo-ink)]"
               onClick={async () => {
-                if (deleteTarget) await remove({ articleId: deleteTarget._id });
-                setDeleteTarget(null);
+                try {
+                  if (deleteTarget) await remove({ articleId: deleteTarget._id });
+                  toast.success("Article deleted — removed from the public portal instantly.");
+                } catch (e) {
+                  toast.error(e instanceof Error ? e.message : "Could not delete the article.");
+                } finally {
+                  setDeleteTarget(null);
+                }
               }}
             >
               <Trash2 className="size-4" />
