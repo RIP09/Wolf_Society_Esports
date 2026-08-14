@@ -5,6 +5,7 @@ import { fmtDay, fmtRelative } from "@/lib/format";
 import { btnYellow, cardSm } from "@/lib/neo";
 import { cn } from "@/lib/utils";
 import { useMutation, useQuery } from "convex/react";
+import { toast } from "sonner";
 import {
   Activity,
   BellRing,
@@ -103,8 +104,10 @@ export default function AdminOverview() {
     setSeedError(null);
     try {
       await seedDemoData({});
+      toast.success("Demo data seeded — the dashboard now reflects it live.");
     } catch (e) {
       setSeedError(e instanceof Error ? e.message : "Seeding failed.");
+      toast.error(e instanceof Error ? e.message : "Seeding failed.");
     } finally {
       setSeeding(false);
     }
@@ -150,7 +153,7 @@ export default function AdminOverview() {
     { label: "Pageviews", icon: Eye, to: "/admin/analytics", accent: "bg-neo-purple", value: live.pageviews.total, sub: `${live.pageviews.today} today` },
     { label: "Notification outbox", icon: BellRing, to: "/admin", accent: "bg-neo-cream", value: live.notifications.total, sub: `${live.notifications.sent} sent · ${live.notifications.failed} failed` },
     { label: "Online now", icon: Radio, to: "/admin/automations", accent: "bg-neo-green", value: online?.total ?? 0, sub: "people on the site this moment" },
-    { label: "AI automations", icon: Workflow, to: "/admin/automations", accent: "bg-neo-purple", value: notifications?.filter((n) => n.channel === "webhook").length ?? 0, sub: "n8n fires · manage in Automations" },
+    { label: "AI automations", icon: Workflow, to: "/admin/automations", accent: "bg-neo-purple", value: notifications?.filter((n) => n.channel === "webhook").length ?? 0, sub: "Huginn fires · manage in Automations" },
   ];
 
   return (
@@ -486,10 +489,11 @@ export default function AdminOverview() {
               {[
                 ["Email (Resend)", integrations.email.configured, integrations.email.keys.join(", ")],
                 ["SMS (Vonage)", integrations.sms.configured, integrations.sms.keys.join(", ")],
+                ["Push (VAPID)", integrations.push.configured, integrations.push.keys.join(", ")],
                 ["Discord", integrations.discord.configured, integrations.discord.keys.join(", ")],
                 ["Payments (Stripe)", integrations.payments.configured, integrations.payments.keys.join(", ")],
+                ["AI (Huginn)", integrations.automation.configured, integrations.automation.keys.join(", ")],
                 ["Site URL", integrations.siteUrl.configured, integrations.siteUrl.keys.join(", ")],
-                ["Automation (n8n)", integrations.automation.configured, integrations.automation.keys.join(", ")],
               ].map(([name, on, keys]) => (
                 <div key={String(name)} className="flex items-center justify-between gap-2 px-5 py-3">
                   <div className="min-w-0">
