@@ -689,3 +689,69 @@ export const tryoutReceived = action({
     return { ok: true };
   },
 });
+
+/** Notifies management (email + Discord) the moment a player submits a match report. */
+export const matchReportSubmitted = action({
+  args: {
+    gamertag: v.string(),
+    game: v.string(),
+    result: v.string(),
+    kills: v.number(),
+    deaths: v.number(),
+    assists: v.number(),
+  },
+  handler: async (ctx, { gamertag, game, result, kills, deaths, assists }) => {
+    const kd = deaths > 0 ? (kills / deaths).toFixed(2) : kills.toFixed(2);
+    const body = `
+      <h2 style="margin:0 0 12px;">New match report — ${esc(gamertag)}</h2>
+      <table style="border-collapse:collapse;margin-top:8px;">
+        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Player</td>
+            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(gamertag)}</td></tr>
+        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Game</td>
+            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(game)}</td></tr>
+        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Result</td>
+            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(result.toUpperCase())}</td></tr>
+        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">K / D / A</td>
+            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${kills} / ${deaths} / ${assists} (K/D ${kd})</td></tr>
+      </table>
+      <p style="margin-top:16px;">Review the full report in <strong>The Den → Attendance &amp; Reports</strong>.</p>`;
+    const emailRes = await send(ctx, {
+      to: ORG_EMAILS,
+      subject: `Match report — ${gamertag} (${game})`,
+      html: shell("Match report", body),
+    });
+    await sendDiscord(
+      ctx,
+      `📝 **Match report** — ${gamertag} (${game}): ${result.toUpperCase()} · ${kills}/${deaths}/${assists} (K/D ${kd}). Review in The Den → Attendance & Reports.`,
+      "New match report",
+    );
+    return emailRes;
+  },
+});
+
+/** AI attendance watchdog — alerts management when players miss 3+ days straight. */
+export const attendanceAlert = action({
+  args: { players: v.array(v.string()), days: v.number() },
+  handler: async (ctx, { players, days }) => {
+    const url = `${siteUrl()}/admin/attendance`;
+    const body = `
+      <h2 style="margin:0 0 12px;">⚠️ Attendance alert — ${days}+ days no check-in</h2>
+      <p>The AI attendance system auto-marked the following verified players as absent for <strong>${days}+ consecutive days</strong> (no attendance check-in within 24 hours):</p>
+      <ul style="margin:12px 0;padding-left:20px;">
+        ${players.map((p) => `<li>${esc(p)}</li>`).join("")}
+      </ul>
+      <p style="margin-top:16px;"><a href="${url}" style="display:inline-block;padding:12px 22px;background:#7b5cf0;color:#ffffff;text-decoration:none;font-weight:bold;border-radius:6px;">Open the attendance board</a></p>
+      <p style="margin-top:12px;">Reach out to these players, or correct their records from The Den → Attendance.</p>`;
+    const emailRes = await send(ctx, {
+      to: ORG_EMAILS,
+      subject: `Attendance alert — ${players.length} player(s) missed ${days}+ days`,
+      html: shell("Attendance alert", body),
+    });
+    await sendDiscord(
+      ctx,
+      `⚠️ **Attendance alert** — ${players.join(", ")} missed ${days}+ consecutive days (auto-marked absent). Review at ${url}`,
+      "Attendance alert",
+    );
+    return emailRes;
+  },
+});
