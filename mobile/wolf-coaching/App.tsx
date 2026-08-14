@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -49,6 +49,17 @@ function Main() {
 }
 
 export default function App() {
+  // Ask for notification permission on launch so updates arrive instantly.
+  useEffect(() => {
+    (async () => {
+      try {
+        const Notifications = (await import("expo-notifications")) as any;
+        await Notifications.requestPermissionsAsync();
+      } catch {
+        // Notifications unavailable — the manifest permissions still apply.
+      }
+    })();
+  }, []);
   return (
     <SafeAreaProvider>
       <ConvexAuthProvider client={convex} storage={tokenStorage}>
