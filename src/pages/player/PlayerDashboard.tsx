@@ -5,7 +5,7 @@ import { EmptyState, NeoCard, PageHeader, StatCard, StatusBadge } from "@/compon
 import { fmtDateTime, fmtKd } from "@/lib/format";
 import { btnGhost, btnYellow } from "@/lib/neo";
 import { useQuery } from "convex/react";
-import { CalendarClock, Crown, Megaphone, Plus, Swords } from "lucide-react";
+import { CalendarCheck, CalendarClock, CheckCircle2, Clock, Crown, Megaphone, Plus, Swords, XCircle } from "lucide-react";
 import { Link, Navigate } from "react-router";
 import {
   CartesianGrid,
@@ -27,8 +27,9 @@ const tooltipStyle = {
 
 export default function PlayerDashboard() {
   const data = useQuery(api.stats.getMyDashboard);
+  const attendance = useQuery(api.attendance.myStatus);
 
-  if (!data) return <LoadingScreen label="Loading dashboard…" />;
+  if (!data || !attendance) return <LoadingScreen label="Loading dashboard…" />;
   if (!data.profile) return <Navigate to="/player/register" replace />;
 
   const { profile, team, stats, recentEntries, kdTrend, upcomingMatches, announcements } = data;
@@ -48,6 +49,62 @@ export default function PlayerDashboard() {
           </Link>
         }
       />
+
+      {profile.badges && profile.badges.length > 0 ? (
+        <div className="flex flex-wrap items-center gap-2">
+          {profile.badges.map((b) => (
+            <span
+              key={b}
+              className="border-2 border-foreground bg-neo-yellow px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-white shadow-[2px_2px_0_0_var(--neo-ink)]"
+            >
+              {b}
+            </span>
+          ))}
+        </div>
+      ) : null}
+
+      <NeoCard className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <span
+            className={`flex h-11 w-11 shrink-0 items-center justify-center border-2 border-foreground text-white ${
+              attendance.today && attendance.today.status !== "absent"
+                ? "bg-neo-green"
+                : attendance.today?.status === "absent"
+                  ? "bg-neo-red"
+                  : "bg-neo-blue"
+            }`}
+          >
+            {attendance.today && attendance.today.status !== "absent" ? (
+              <CheckCircle2 className="size-5" />
+            ) : attendance.today?.status === "absent" ? (
+              <XCircle className="size-5" />
+            ) : (
+              <Clock className="size-5" />
+            )}
+          </span>
+          <div className="min-w-0">
+            <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              Today's attendance
+            </p>
+            <p className="font-bold">
+              {attendance.today
+                ? `Checked in — ${attendance.today.status} · ${attendance.today.type}`
+                : "Not checked in yet today"}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {attendance.streaks.currentStreak > 0
+                ? `${attendance.streaks.currentStreak}-day streak · ${attendance.streaks.bestStreak}-day best`
+                : "No active streak — check in to start one"}
+            </p>
+          </div>
+        </div>
+        <Link to="/player/attendance">
+          <Button className={btnYellow}>
+            <CalendarCheck className="size-4" />
+            {attendance.today && attendance.today.status !== "absent" ? "Update check-in" : "Check in now"}
+          </Button>
+        </Link>
+      </NeoCard>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Win rate" value={`${stats.winRate}%`} sub={`${stats.wins}W · ${stats.losses}L · ${stats.draws}D`} accent="green" />
