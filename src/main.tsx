@@ -21,6 +21,7 @@ const GrantAccess = lazy(() => import("./pages/GrantAccess.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 const AdminOverview = lazy(() => import("./pages/admin/AdminOverview.tsx"));
 const AdminPlayers = lazy(() => import("./pages/admin/AdminPlayers.tsx"));
+const AdminAttendance = lazy(() => import("./pages/admin/AdminAttendance.tsx"));
 const AdminTeams = lazy(() => import("./pages/admin/AdminTeams.tsx"));
 const AdminTournaments = lazy(() => import("./pages/admin/AdminTournaments.tsx"));
 const AdminMatches = lazy(() => import("./pages/admin/AdminMatches.tsx"));
@@ -28,6 +29,8 @@ const AdminSchedule = lazy(() => import("./pages/admin/AdminSchedule.tsx"));
 const AdminAnnouncements = lazy(() => import("./pages/admin/AdminAnnouncements.tsx"));
 const PlayerRegister = lazy(() => import("./pages/player/PlayerRegister.tsx"));
 const PlayerDashboard = lazy(() => import("./pages/player/PlayerDashboard.tsx"));
+const PlayerAttendance = lazy(() => import("./pages/player/PlayerAttendance.tsx"));
+const PlayerMatchReports = lazy(() => import("./pages/player/PlayerMatchReports.tsx"));
 const PlayerPerformance = lazy(() => import("./pages/player/PlayerPerformance.tsx"));
 const PlayerProfile = lazy(() => import("./pages/player/PlayerProfile.tsx"));
 const PlayerAnnouncements = lazy(() => import("./pages/player/PlayerAnnouncements.tsx"));
@@ -306,6 +309,7 @@ createRoot(document.getElementById("root")!).render(
               >
                 <Route index element={<AdminOverview />} />
                 <Route path="players" element={<AdminPlayers />} />
+                <Route path="attendance" element={<AdminAttendance />} />
                 <Route path="teams" element={<AdminTeams />} />
                 <Route path="tournaments" element={<AdminTournaments />} />
                 <Route path="matches" element={<AdminMatches />} />
@@ -331,6 +335,8 @@ createRoot(document.getElementById("root")!).render(
                 }
               >
                 <Route index element={<PlayerDashboard />} />
+                <Route path="attendance" element={<PlayerAttendance />} />
+                <Route path="reports" element={<PlayerMatchReports />} />
                 <Route path="schedule" element={<PlayerSchedule />} />
                 <Route path="register" element={<PlayerRegister />} />
                 <Route path="performance" element={<PlayerPerformance />} />
