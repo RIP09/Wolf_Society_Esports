@@ -1,0 +1,172 @@
+import { StyleSheet } from "react-native";
+
+export const COLORS = {
+  ink: "#17181a",
+  bg: "#f4f3fb",
+  cream: "#fdf6e3",
+  card: "#ffffff",
+  yellow: "#ffde00",
+  blue: "#2563eb",
+  green: "#14b8a6",
+  red: "#ef4444",
+  orange: "#f97316",
+  purple: "#7b5cf0",
+  muted: "#63658a",
+} as const;
+
+export const s = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: COLORS.bg,
+  },
+  card: {
+    backgroundColor: COLORS.card,
+    borderWidth: 2,
+    borderColor: COLORS.ink,
+    borderRadius: 0,
+    padding: 16,
+    gap: 10,
+  },
+  cardPressed: {
+    shadowColor: COLORS.ink,
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 4,
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: "800",
+    color: COLORS.ink,
+    letterSpacing: -0.5,
+  },
+  h2: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: COLORS.ink,
+  },
+  eyebrow: {
+    fontSize: 10,
+    fontWeight: "800",
+    color: COLORS.muted,
+    textTransform: "uppercase",
+    letterSpacing: 1.5,
+    fontFamily: "monospace",
+  },
+  body: {
+    fontSize: 13,
+    color: COLORS.muted,
+    lineHeight: 19,
+  },
+  label: {
+    fontSize: 10,
+    fontWeight: "800",
+    color: COLORS.ink,
+    textTransform: "uppercase",
+    letterSpacing: 1.2,
+    fontFamily: "monospace",
+  },
+  input: {
+    borderWidth: 2,
+    borderColor: COLORS.ink,
+    borderRadius: 0,
+    backgroundColor: COLORS.bg,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 15,
+    color: COLORS.ink,
+    fontFamily: "monospace",
+  },
+  btn: {
+    borderWidth: 2,
+    borderColor: COLORS.ink,
+    borderRadius: 0,
+    paddingVertical: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: COLORS.yellow,
+    shadowColor: COLORS.ink,
+    shadowOffset: { width: 3, height: 3 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 3,
+  },
+  btnText: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: COLORS.ink,
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    fontFamily: "monospace",
+  },
+  btnGhost: {
+    backgroundColor: COLORS.card,
+  },
+  chip: {
+    borderWidth: 2,
+    borderColor: COLORS.ink,
+    borderRadius: 0,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    backgroundColor: COLORS.cream,
+  },
+  chipText: {
+    fontSize: 9,
+    fontWeight: "800",
+    color: COLORS.ink,
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    fontFamily: "monospace",
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  between: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 8,
+  },
+  divider: {
+    height: 2,
+    backgroundColor: "rgba(23,24,26,0.12)",
+  },
+  badge: {
+    borderWidth: 2,
+    borderColor: COLORS.ink,
+    borderRadius: 0,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    fontFamily: "monospace",
+    fontSize: 9,
+    fontWeight: "800",
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    overflow: "hidden",
+  },
+});
+
+export function badgeColor(status: string): string {
+  switch (status) {
+    case "present":
+    case "active":
+    case "approved":
+    case "win":
+      return COLORS.green;
+    case "late":
+    case "pending":
+      return COLORS.orange;
+    case "absent":
+    case "suspended":
+    case "loss":
+    case "auto":
+      return COLORS.red;
+    case "leave":
+    case "info":
+      return COLORS.blue;
+    default:
+      return COLORS.cream;
+  }
+}
