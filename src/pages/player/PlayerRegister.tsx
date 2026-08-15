@@ -26,9 +26,10 @@ import {
   rolesForGame,
 } from "@/lib/constants";
 import { btnYellow, input } from "@/lib/neo";
+import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQuery } from "convex/react";
-import { AlertTriangle, ArrowRight, Gamepad2, Loader2, Trash2 } from "lucide-react";
+import { AlertTriangle, ArrowRight, CheckCircle2, Gamepad2, Loader2, ShieldCheck, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router";
 import { toast } from "sonner";
@@ -57,6 +58,8 @@ export default function PlayerRegister() {
   const { user, isLoading, signOut } = useAuth();
   const profile = useQuery(api.players.getMyProfile);
   const register = useMutation(api.players.register);
+  const requestSmsOtp = useMutation(api.smsOtp.requestSmsOtp);
+  const verifySmsOtp = useMutation(api.smsOtp.verifySmsOtp);
   const navigate = useNavigate();
 
   // 1 · Basic details
@@ -87,6 +90,12 @@ export default function PlayerRegister() {
   const [discord, setDiscord] = useState("");
   const [socials, setSocials] = useState("");
   const [bio, setBio] = useState("");
+
+  // 4b · Phone verification via SMS OTP — proves the number belongs to the player.
+  const [otpState, setOtpState] = useState<"idle" | "sent" | "verified">("idle");
+  const [otpCode, setOtpCode] = useState("");
+  const [otpBusy, setOtpBusy] = useState(false);
+  const [otpError, setOtpError] = useState<string | null>(null);
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -168,6 +177,44 @@ export default function PlayerRegister() {
     setError(null);
     // Ask the backend first, then decide (register or popup).
     setCheckArgs({ email: email.trim(), gamertag: gamertag.trim() });
+  };
+
+  const fullPhone = localNumber.trim() ? `${dialCode} ${localNumber.trim()}` : "";
+
+  /** Sends the 6-digit code to the phone number typed above. */
+  const handleSendOtp = async () => {
+    if (!fullPhone) {
+      toast.error("Enter your phone number first.");
+      return;
+    }
+    setOtpBusy(true);
+    setOtpError(null);
+    try {
+      await requestSmsOtp({ phone: fullPhone });
+      setOtpState("sent");
+      toast.success("Code sent by SMS — check your phone.");
+    } catch (err) {
+      setOtpError(err instanceof Error ? err.message : "Could not send the code.");
+    } finally {
+      setOtpBusy(false);
+    }
+  };
+
+  /** Confirms the code — on success the backend stamps phoneVerifiedAt on the profile. */
+  const handleVerifyOtp = async () => {
+    if (!fullPhone || otpCode.trim().length < 4) return;
+    setOtpBusy(true);
+    setOtpError(null);
+    try {
+      await verifySmsOtp({ phone: fullPhone, code: otpCode.trim() });
+      setOtpState("verified");
+      setOtpCode("");
+      toast.success("Phone verified — you'll receive SMS alerts on this number.");
+    } catch (err) {
+      setOtpError(err instanceof Error ? err.message : "Verification failed.");
+    } finally {
+      setOtpBusy(false);
+    }
   };
 
   /** Permanently wipes the old data tied to this account, then signs out so
@@ -414,6 +461,80 @@ export default function PlayerRegister() {
                     onDialChange={setDialCode}
                     onLocalChange={setLocalNumber}
                   />
+                </NeoField>
+                <NeoField
+                  label="Phone verification"
+                  hint={
+                    otpState === "verified"
+                      ? "This number is verified — SMS alerts for practices, scrims and tryouts are enabled."
+                      : "Optional but recommended — proves the number is yours and unlocks SMS alerts."
+                  }
+                >
+                  {otpState === "verified" ? (
+                    <span className="flex items-center gap-2 border-2 border-foreground bg-neo-green px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-wider text-white">
+                      <CheckCircle2 className="size-4" />
+                      Phone verified · {fullPhone || "your number"}
+                    </span>
+                  ) : otpState === "sent" ? (
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-2">
+                        <Input
+                          className={cn(input, "max-w-40 font-mono text-lg font-bold tracking-widest")}
+                          value={otpCode}
+                          onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                          placeholder="••••••"
+                          maxLength={6}
+                          inputMode="numeric"
+                          disabled={otpBusy}
+                        />
+                        <Button
+                          type="button"
+                          className={btnYellow}
+                          disabled={otpBusy || otpCode.trim().length < 4}
+                          onClick={handleVerifyOtp}
+                        >
+                          {otpBusy ? <Loader2 className="size-4 animate-spin" /> : <ShieldCheck className="size-4" />}
+                          Verify code
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className={cn(input, "h-10 px-3 font-mono text-[10px] font-bold uppercase tracking-wider text-muted-foreground hover:bg-neo-cream")}
+                          disabled={otpBusy}
+                          onClick={handleSendOtp}
+                        >
+                          Resend
+                        </Button>
+                      </div>
+                      {otpError ? (
+                        <p className="border-2 border-foreground bg-neo-red px-2 py-1.5 text-xs font-bold text-white">
+                          {otpError}
+                        </p>
+                      ) : (
+                        <p className="text-xs text-muted-foreground">
+                          A 6-digit code was sent to {fullPhone}. It expires in 15 minutes.
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className={cn(input, "h-10 px-3 font-mono text-[10px] font-bold uppercase tracking-wider")}
+                          disabled={otpBusy || !localNumber.trim()}
+                          onClick={handleSendOtp}
+                        >
+                          {otpBusy ? <Loader2 className="size-4 animate-spin" /> : <ShieldCheck className="size-4" />}
+                          Send verification code
+                        </Button>
+                        {otpError ? (
+                          <span className="text-xs font-bold text-destructive">{otpError}</span>
+                        ) : null}
+                      </div>
+                    </div>
+                  )}
                 </NeoField>
                 <NeoField label="Discord" hint="Your Discord username — this is how we talk every day.">
                   <Input
