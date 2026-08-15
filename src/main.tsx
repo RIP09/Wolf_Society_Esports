@@ -64,6 +64,7 @@ const AdminSponsors = lazy(() => import("./pages/admin/AdminSponsors.tsx"));
 const AdminDonations = lazy(() => import("./pages/admin/AdminDonations.tsx"));
 const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics.tsx"));
 const AdminAutomations = lazy(() => import("./pages/admin/AdminAutomations.tsx"));
+const AdminBroadcast = lazy(() => import("./pages/admin/AdminBroadcast.tsx"));
 const AdminSettings = lazy(() => import("./pages/admin/AdminSettings.tsx"));
 const AdminStaff = lazy(() => import("./pages/admin/AdminStaff.tsx"));
 
@@ -331,6 +332,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="donations" element={<AdminDonations />} />
                 <Route path="analytics" element={<AdminAnalytics />} />
                 <Route path="automations" element={<AdminAutomations />} />
+                <Route path="broadcast" element={<AdminBroadcast />} />
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="inquiries" element={<AdminInquiries />} />
                 <Route path="staff" element={<AdminStaff />} />
