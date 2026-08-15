@@ -112,6 +112,41 @@ export const sendBroadcast = action({
 });
 
 /**
+ * Admin-only push self-test — sends a test notification to every opted-in
+ * device so The Den → Automations can prove the (free) VAPID pipeline works.
+ */
+export const testPush = action({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return { ok: false, configured: false, message: "Sign in to The Den first.", sent: 0 };
+    }
+    const role = await ctx.runQuery(internal.admin.getRoleForUser, {
+      userId: identity.subject as Id<"users">,
+    });
+    if (!ADMIN_ROLES.has(role ?? "")) {
+      return { ok: false, configured: false, message: "Only management can run integration tests.", sent: 0 };
+    }
+    const res = await sendPushToAll(
+      ctx,
+      "Wolf Society Esports — test",
+      "Your web push connection is live! This is a test from the Automation Center.",
+      `${process.env.SITE_URL ?? "https://wolfsocietygg.vercel.app"}/news`,
+    );
+    if (!res.configured) {
+      return { ok: false, configured: false, message: "Add the VAPID keys in the Keys tab first.", sent: 0 };
+    }
+    return {
+      ok: true,
+      configured: true,
+      sent: res.sent,
+      message: res.sent > 0 ? `Test push delivered to ${res.sent} device(s).` : "No devices subscribed yet — open the site and allow notifications.",
+    };
+  },
+});
+
+/**
  * The Den → Broadcast Center. Admin-only, multi-channel:
  *   push — instant browser notification to every opted-in device (free/unlimited)
  *   email — the same message emailed to every active alert subscriber
