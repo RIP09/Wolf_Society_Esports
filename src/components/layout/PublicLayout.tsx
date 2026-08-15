@@ -346,7 +346,7 @@ export default function PublicLayout() {
           </div>
         </div>
         {/* Mobile nav */}
-        <div className="flex gap-2 overflow-x-auto border-t-2 border-foreground bg-background px-4 py-2 lg:hidden">
+        <div className="flex flex-wrap gap-2 border-t-2 border-foreground bg-background px-4 py-2 lg:hidden">
           {NAV.map((item) => (
             <NavLink
               key={item.to}
