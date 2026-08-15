@@ -1,7 +1,8 @@
 import { v } from "convex/values";
 import { action, internalMutation, internalQuery, query, type ActionCtx } from "./_generated/server";
 import { api, internal } from "./_generated/api";
-import { requireAdmin } from "./guards";
+import type { Id } from "./_generated/dataModel";
+import { ADMIN_ROLES, requireAdmin } from "./guards";
 
 /** Default organization mailboxes that receive every automated notification. */
 const ORG_EMAILS = ["wolfsocietygg@yahoo.com", "deepanshumurmu0@gmail.com"];
@@ -36,12 +37,12 @@ function siteUrl(): string {
   return process.env.SITE_URL ?? "http://localhost:5173";
 }
 
-type Outbox = { channel: "email" | "sms" | "discord" | "webhook"; recipient?: string; subject?: string; status: "sent" | "failed" | "skipped"; error?: string };
+type Outbox = { channel: "email" | "sms" | "whatsapp" | "discord" | "webhook"; recipient?: string; subject?: string; status: "sent" | "failed" | "skipped"; error?: string };
 
 /** Records a delivery attempt so The Den can watch it in real time. */
 export const recordNotification = internalMutation({
   args: {
-    channel: v.union(v.literal("email"), v.literal("sms"), v.literal("discord"), v.literal("webhook")),
+    channel: v.union(v.literal("email"), v.literal("sms"), v.literal("whatsapp"), v.literal("discord"), v.literal("webhook")),
     recipient: v.optional(v.string()),
     subject: v.optional(v.string()),
     status: v.union(v.literal("sent"), v.literal("failed"), v.literal("skipped")),
@@ -67,8 +68,12 @@ async function record(ctx: ActionCtx, entry: Outbox): Promise<void> {
   }
 }
 
-/** Sends an SMS via Vonage's REST API. Skips (and records) when keys aren't configured. */
-async function sendSms(ctx: ActionCtx, to: string, text: string) {
+/**
+ * Sends an SMS via Vonage's REST API. Skips (and records) when keys aren't
+ * configured. Exported so other modules (e.g. the SMS OTP service) can reuse
+ * the exact same delivery + outbox pipeline.
+ */
+export async function sendSms(ctx: ActionCtx, to: string, text: string) {
   const apiKey = process.env.VONAGE_API_KEY;
   const apiSecret = process.env.VONAGE_API_SECRET;
   if (!apiKey || !apiSecret) {
@@ -93,6 +98,59 @@ async function sendSms(ctx: ActionCtx, to: string, text: string) {
     return { ok, error: ok ? undefined : data.messages?.[0]?.["error-text"] };
   } catch (error) {
     await record(ctx, { channel: "sms", recipient: to, subject: text.slice(0, 60), status: "failed", error: String(error) });
+    return { ok: false, error: String(error) };
+  }
+}
+
+/**
+ * Sends a WhatsApp message via Vonage's Messages API. Uses the same Vonage
+ * keys as SMS plus WHATSAPP_FROM (the org's WhatsApp number in international
+ * format, e.g. "14155550123"). Skips (and records) when not configured.
+ */
+async function sendWhatsApp(ctx: ActionCtx, to: string, text: string) {
+  const apiKey = process.env.VONAGE_API_KEY;
+  const apiSecret = process.env.VONAGE_API_SECRET;
+  const from = process.env.WHATSAPP_FROM;
+  if (!apiKey || !apiSecret || !from) {
+    await record(ctx, {
+      channel: "whatsapp",
+      recipient: to,
+      subject: text.slice(0, 60),
+      status: "skipped",
+      error: "VONAGE_API_KEY / VONAGE_API_SECRET / WHATSAPP_FROM not configured",
+    });
+    return { ok: false, skipped: true };
+  }
+  try {
+    const res = await fetch("https://api.nexmo.com/v0.1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Basic ${Buffer.from(`${apiKey}:${apiSecret}`).toString("base64")}`,
+      },
+      body: JSON.stringify({
+        from: { type: "whatsapp", number: from },
+        to: { type: "whatsapp", number: to.replace(/\s+/g, "") },
+        message: { content: { type: "text", text: text.slice(0, 1024) } },
+      }),
+    });
+    const ok = res.ok || res.status === 202;
+    await record(ctx, {
+      channel: "whatsapp",
+      recipient: to,
+      subject: text.slice(0, 60),
+      status: ok ? "sent" : "failed",
+      error: ok ? undefined : `HTTP ${res.status}`,
+    });
+    return { ok, error: ok ? undefined : `HTTP ${res.status}` };
+  } catch (error) {
+    await record(ctx, {
+      channel: "whatsapp",
+      recipient: to,
+      subject: text.slice(0, 60),
+      status: "failed",
+      error: String(error),
+    });
     return { ok: false, error: String(error) };
   }
 }
@@ -186,6 +244,64 @@ async function sendDiscord(ctx: ActionCtx, content: string, title?: string) {
     return { ok: false, error: String(error) };
   }
 }
+
+/**
+ * Admin-only integration self-test — fires a real test through one tool and
+ * reports whether the tool is configured and delivered. Powers the Test
+ * buttons in The Den → Automations (the free integrations center).
+ */
+export const testIntegration = action({
+  args: {
+    tool: v.union(
+      v.literal("email"),
+      v.literal("sms"),
+      v.literal("whatsapp"),
+      v.literal("discord"),
+    ),
+  },
+  handler: async (ctx, { tool }) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return { ok: false, configured: false, message: "Sign in to The Den first." };
+    }
+    const role = await ctx.runQuery(internal.admin.getRoleForUser, {
+      userId: identity.subject as Id<"users">,
+    });
+    if (!ADMIN_ROLES.has(role ?? "")) {
+      return { ok: false, configured: false, message: "Only management can run integration tests." };
+    }
+    const org = await orgConfig(ctx);
+    if (tool === "email") {
+      const configured = !!process.env.RESEND_API_KEY;
+      if (!configured) return { ok: false, configured, message: "Add RESEND_API_KEY in the Keys tab first." };
+      const res = await send(ctx, {
+        to: org.emails,
+        subject: "Test email — Wolf Society Esports automations",
+        html: shell("Test email", `
+          <h2 style="margin:0 0 12px;">✅ Email delivery works</h2>
+          <p>This is a test email from the Automation Center in The Den. Your Resend connection is live.</p>
+        `),
+      });
+      return { ok: res.ok, configured, message: res.ok ? "Test email delivered to the org inboxes." : "Resend rejected the test email — check the key." };
+    }
+    if (tool === "sms") {
+      const configured = !!(process.env.VONAGE_API_KEY && process.env.VONAGE_API_SECRET);
+      if (!configured) return { ok: false, configured, message: "Add the VONAGE_API_KEY / VONAGE_API_SECRET keys first." };
+      const res = await sendSms(ctx, org.phone, "Wolf Society Esports: test SMS from the Automation Center — your SMS connection is live.");
+      return { ok: res.ok, configured, message: res.ok ? `Test SMS delivered to ${org.phone}.` : "Vonage rejected the test SMS — check the keys." };
+    }
+    if (tool === "whatsapp") {
+      const configured = !!(process.env.VONAGE_API_KEY && process.env.VONAGE_API_SECRET && process.env.WHATSAPP_FROM);
+      if (!configured) return { ok: false, configured, message: "Add WHATSAPP_FROM plus the Vonage keys first." };
+      const res = await sendWhatsApp(ctx, org.phone, "Wolf Society Esports: test WhatsApp from the Automation Center — your WhatsApp connection is live.");
+      return { ok: res.ok, configured, message: res.ok ? `Test WhatsApp delivered to ${org.phone}.` : "Vonage rejected the test — check WHATSAPP_FROM." };
+    }
+    const configured = !!process.env.DISCORD_WEBHOOK_URL;
+    if (!configured) return { ok: false, configured, message: "Add DISCORD_WEBHOOK_URL in the Keys tab first." };
+    const res = await sendDiscord(ctx, "✅ **Test message** — your Discord webhook is live! This came from the Automation Center in The Den.", "Automation test");
+    return { ok: res.ok, configured, message: res.ok ? "Test posted to your Discord server." : "Discord rejected the webhook — check the URL." };
+  },
+});
 
 /** Admin-only: the recent notification outbox, newest first. */
 export const listRecent = query({
@@ -293,8 +409,21 @@ export const newContact = action({
       (await orgConfig(ctx)).phone,
       `Wolf Society Esports: New inquiry from ${name} (${subject}). Reply at ${email}${phone ? ` or ${phone}` : ""}`,
     );
+    // WhatsApp: org alert + personal thank-you to the sender (when they left a number).
+    const orgWhatsApp = await sendWhatsApp(
+      ctx,
+      (await orgConfig(ctx)).phone,
+      `Wolf Society Esports: New inquiry from ${name} — "${subject}". Reply at ${email}${phone ? ` or ${phone}` : ""}`,
+    );
+    const senderWhatsApp = phone
+      ? await sendWhatsApp(
+          ctx,
+          phone,
+          `Thank you ${name}! We received your message ("${subject}") and the team will get back to you shortly. — Wolf Society Esports`,
+        )
+      : { ok: false, skipped: true };
     await sendDiscord(ctx, `✉️ **New inquiry** from ${name} — "${subject}"${category ? ` (${category})` : ""}\n${message.slice(0, 280)}`, "New contact inquiry");
-    return { org, reply, sms };
+    return { org, reply, sms, whatsapp: orgWhatsApp, senderWhatsApp };
   },
 });
 
@@ -413,7 +542,14 @@ export const subscribeConfirmed = action({
     const smsRes = phone
       ? await sendSms(ctx, phone, `You're subscribed to Wolf Society Esports alerts. We'll text you the headlines — full stories at ${siteUrl()}`)
       : { ok: false, skipped: true };
-    return { email: emailRes, sms: smsRes };
+    const whatsappRes = phone
+      ? await sendWhatsApp(
+          ctx,
+          phone,
+          `You're subscribed to Wolf Society Esports alerts! We'll WhatsApp you the headlines — full stories at ${siteUrl()}`,
+        )
+      : { ok: false, skipped: true };
+    return { email: emailRes, sms: smsRes, whatsapp: whatsappRes };
   },
 });
 
@@ -449,6 +585,7 @@ export const broadcast = action({
       if (sub.phone) {
         const sms = await sendSms(ctx, sub.phone, `Wolf Society Esports: ${title.slice(0, 80)} — ${url}`);
         if (sms.ok) smsSent++;
+        await sendWhatsApp(ctx, sub.phone, `📢 Wolf Society Esports: ${title.slice(0, 80)} — ${url}`);
       }
     }
     await sendDiscord(ctx, `📢 **${title}**\n${body.slice(0, 700)} — full story: ${url}`, "New announcement");
@@ -775,5 +912,85 @@ export const attendanceAlert = action({
       "Attendance alert",
     );
     return emailRes;
+  },
+});
+
+/**
+ * Tournament lifecycle notifications — fired on creation, status changes,
+ * bracket generation and registrations. Emails every registered participant,
+ * texts + WhatsApps those with a phone, and pings the org + Discord.
+ */
+export const tournamentNotify = action({
+  args: {
+    tournamentId: v.string(),
+    name: v.string(),
+    game: v.string(),
+    event: v.union(
+      v.literal("created"),
+      v.literal("status"),
+      v.literal("bracket"),
+      v.literal("registration"),
+    ),
+    status: v.optional(v.string()),
+    message: v.string(),
+    participants: v.array(
+      v.object({
+        name: v.string(),
+        email: v.string(),
+        phone: v.optional(v.string()),
+      }),
+    ),
+  },
+  handler: async (ctx, { tournamentId, name, game, event, status, message, participants }) => {
+    const url = `${siteUrl()}/tournaments`;
+    const eventHeading: Record<string, string> = {
+      created: "Tournament announced",
+      status: `Tournament ${status ?? "updated"}`,
+      bracket: "Bracket released",
+      registration: "You're registered",
+    };
+    const body = `
+      <h2 style="margin:0 0 12px;">${esc(eventHeading[event])} — ${esc(name)}</h2>
+      <p>${esc(message)}</p>
+      <table style="border-collapse:collapse;margin-top:8px;">
+        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Game</td>
+            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(game)}</td></tr>
+        <tr><td style="padding:6px 12px;border:1px solid #e8e7f5;font-weight:bold;">Status</td>
+            <td style="padding:6px 12px;border:1px solid #e8e7f5;">${esc(status ?? "—")}</td></tr>
+      </table>
+      <p style="margin-top:20px;">
+        <a href="${url}" style="display:inline-block;padding:12px 22px;background:#7b5cf0;color:#ffffff;text-decoration:none;font-weight:bold;border-radius:6px;">
+          View tournament
+        </a>
+      </p>`;
+    // Organization + Discord first.
+    await send(ctx, {
+      to: (await orgConfig(ctx)).emails,
+      subject: `${eventHeading[event]} — ${name}`,
+      html: shell(eventHeading[event], body),
+    });
+    await sendDiscord(ctx, `🏆 **${eventHeading[event]}** — ${name} (${game})\n${message.slice(0, 300)} — ${url}`, eventHeading[event]);
+    // Then every participant: email + SMS + WhatsApp.
+    for (const p of participants) {
+      await send(ctx, {
+        to: p.email,
+        subject: `${eventHeading[event]} — ${name}`,
+        html: shell(
+          eventHeading[event],
+          `
+            <h2 style="margin:0 0 12px;">${eventHeading[event]}</h2>
+            <p>Hi ${esc(p.name)},</p>
+            <p>${esc(message)}</p>
+            <p style="margin-top:16px;"><a href="${url}" style="color:#7b5cf0;font-weight:bold;">Open the tournament page</a></p>
+          `,
+        ),
+      });
+      if (p.phone) {
+        const line = `${eventHeading[event]}: ${name} — ${message.slice(0, 140)} — ${url}`;
+        await sendSms(ctx, p.phone, `Wolf Society Esports: ${line}`);
+        await sendWhatsApp(ctx, p.phone, `🏆 ${line}`);
+      }
+    }
+    return { notified: participants.length };
   },
 });
