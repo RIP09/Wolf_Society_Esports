@@ -32,6 +32,7 @@ type IntegrationMap = {
 const INTEGRATION_ORDER = [
   "email",
   "sms",
+  "whatsapp",
   "push",
   "discord",
   "payments",
