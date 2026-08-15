@@ -106,6 +106,12 @@ export const getIntegrationStatus = query({
         configured: !!(process.env.VONAGE_API_KEY && process.env.VONAGE_API_SECRET),
         keys: ["VONAGE_API_KEY", "VONAGE_API_SECRET", "SMS_FROM"],
       },
+      whatsapp: {
+        label: "WhatsApp messages (Vonage)",
+        purpose: "Sends WhatsApp replies to contact senders, subscribers and tournament participants.",
+        configured: !!(process.env.VONAGE_API_KEY && process.env.VONAGE_API_SECRET && process.env.WHATSAPP_FROM),
+        keys: ["VONAGE_API_KEY", "VONAGE_API_SECRET", "WHATSAPP_FROM"],
+      },
       push: {
         label: "Web push notifications (VAPID)",
         purpose: "Free push alerts to every visitor who allows notifications.",
