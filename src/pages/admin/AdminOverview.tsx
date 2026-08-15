@@ -489,6 +489,7 @@ export default function AdminOverview() {
               {[
                 ["Email (Resend)", integrations.email.configured, integrations.email.keys.join(", ")],
                 ["SMS (Vonage)", integrations.sms.configured, integrations.sms.keys.join(", ")],
+                ["WhatsApp (Vonage)", integrations.whatsapp.configured, integrations.whatsapp.keys.join(", ")],
                 ["Push (VAPID)", integrations.push.configured, integrations.push.keys.join(", ")],
                 ["Discord", integrations.discord.configured, integrations.discord.keys.join(", ")],
                 ["Payments (Stripe)", integrations.payments.configured, integrations.payments.keys.join(", ")],
