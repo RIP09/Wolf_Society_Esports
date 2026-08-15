@@ -1,7 +1,16 @@
 import { ConvexError, v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { internalQuery, mutation, query } from "./_generated/server";
 import { requireAdmin, requireUser } from "./guards";
 import { ROLES } from "./schema";
+
+/** Internal: role of a single user. Lets actions (which can't touch db directly) gate admin access. */
+export const getRoleForUser = internalQuery({
+  args: { userId: v.id("users") },
+  handler: async (ctx, { userId }) => {
+    const user = await ctx.db.get(userId);
+    return user?.role ?? null;
+  },
+});
 
 /** How many users hold a management role. Lets the frontend show the founder-claim flow. */
 export const countAdmins = query({
