@@ -169,6 +169,17 @@ export const listPushSubscriptions = internalQuery({
   },
 });
 
+/** Internal: every active email/SMS alert subscriber (used by admin broadcasts). */
+export const listActiveSubscribers = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db
+      .query("subscribers")
+      .filter((q) => q.eq(q.field("active"), true))
+      .collect();
+  },
+});
+
 /** Internal: prune dead devices after a broadcast. */
 export const deletePushSubscriptions = internalMutation({
   args: { ids: v.array(v.id("pushSubscriptions")) },
