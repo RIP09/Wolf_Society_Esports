@@ -143,7 +143,7 @@ function PortalLayout({
         {/* Desktop sidebar */}
         <aside className={`sticky top-0 hidden h-screen w-60 shrink-0 flex-col gap-6 border-r-2 border-foreground bg-card px-5 py-6 lg:flex ${accent === "blue" ? "shadow-[inset_6px_0_0_0_var(--neo-blue)]" : "shadow-[inset_6px_0_0_0_var(--neo-yellow)]"}`}>
           <Wordmark tag={tag} accent={accent} />
-          <div className="flex-1">
+          <div className="min-h-0 flex-1 overflow-y-auto pr-1">
             <p className="mb-2 font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
               Navigation
             </p>
@@ -173,7 +173,7 @@ function PortalLayout({
                 <SignOutButton compact />
               </div>
             </div>
-            <div className="flex gap-2 overflow-x-auto border-t-2 border-foreground bg-background px-4 py-2">
+            <div className="flex flex-wrap gap-2 border-t-2 border-foreground bg-background px-4 py-2">
               {items.map((item) => (
                 <NavLink
                   key={item.to}
@@ -217,6 +217,7 @@ const ADMIN_NAV: NavItem[] = [
   { to: "/admin/donations", label: "Donations & Tryouts" },
   { to: "/admin/analytics", label: "Analytics" },
   { to: "/admin/automations", label: "Automations" },
+  { to: "/admin/broadcast", label: "Broadcast" },
   { to: "/admin/settings", label: "Settings" },
   { to: "/admin/inquiries", label: "Inquiries" },
   { to: "/grant", label: "Access" },
