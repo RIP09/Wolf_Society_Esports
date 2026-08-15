@@ -2,9 +2,10 @@
 
 import { v } from "convex/values";
 import { action } from "./_generated/server";
-import { internal } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import webpush from "web-push";
+import { ADMIN_ROLES } from "./guards";
 
 /**
  * Free + unlimited push notifications (Web Push / VAPID). Browsers deliver the
@@ -19,8 +20,74 @@ import webpush from "web-push";
  *   VAPID_SUBJECT       (optional mailto: address, e.g. mailto:admin@wolfsociety.com)
  *
  * The browser subscribes through the service worker (public/sw.js) and stores
- * the subscription via account.savePushSubscription; this action sends to all
- * of them and prunes dead devices.
+ * the subscription via account.savePushSubscription; the broadcast actions send
+ * to all of them and prune dead devices.
+ */
+
+type PushResult = { ok: boolean; configured: boolean; sent: number };
+
+/** Sends a push payload to every opted-in device and prunes dead subscriptions. */
+async function sendPushToAll(
+  ctx: { runQuery: any; runMutation: any },
+  title: string,
+  body: string,
+  url?: string,
+): Promise<PushResult> {
+  const publicKey = process.env.VAPID_PUBLIC_KEY;
+  const privateKey = process.env.VAPID_PRIVATE_KEY;
+  if (!publicKey || !privateKey) {
+    return { ok: false, configured: false, sent: 0 };
+  }
+  try {
+    webpush.setVapidDetails(
+      process.env.VAPID_SUBJECT ?? "mailto:admin@wolfsocietyesports.com",
+      publicKey,
+      privateKey,
+    );
+  } catch {
+    return { ok: true, configured: true, sent: 0 };
+  }
+
+  const subs = await ctx.runQuery(internal.account.listPushSubscriptions, {});
+  const site = process.env.SITE_URL ?? "https://wolfsocietygg.vercel.app";
+  const payload = JSON.stringify({
+    title: title.slice(0, 100),
+    body: body.slice(0, 300),
+    url: url ?? `${site}/news`,
+  });
+
+  let sent = 0;
+  const dead: Id<"pushSubscriptions">[] = [];
+  for (const sub of subs) {
+    let keys: Record<string, string> = {};
+    try {
+      keys = JSON.parse(sub.keysJson);
+    } catch {
+      dead.push(sub._id);
+      continue;
+    }
+    try {
+      await webpush.sendNotification(
+        { endpoint: sub.endpoint, keys },
+        payload,
+      );
+      sent++;
+    } catch (error) {
+      const status = (error as { statusCode?: number })?.statusCode;
+      if (status === 404 || status === 410) dead.push(sub._id); // device gone
+    }
+  }
+
+  if (dead.length > 0) {
+    await ctx.runMutation(internal.account.deletePushSubscriptions, { ids: dead });
+  }
+  return { ok: true, configured: true, sent };
+}
+
+/**
+ * Push-only broadcast used by internal automation (e.g. when an announcement is
+ * published). Public by design — the actual admin panel uses `adminBroadcast`,
+ * which also reaches email + SMS subscribers and records history.
  */
 export const sendBroadcast = action({
   args: {
@@ -29,64 +96,97 @@ export const sendBroadcast = action({
     url: v.optional(v.string()),
   },
   handler: async (ctx, { title, body, url }) => {
-    const publicKey = process.env.VAPID_PUBLIC_KEY;
-    const privateKey = process.env.VAPID_PRIVATE_KEY;
-    if (!publicKey || !privateKey) {
-      return { ok: false, configured: false, sent: 0 };
-    }
-    try {
-      webpush.setVapidDetails(
-        process.env.VAPID_SUBJECT ?? "mailto:admin@wolfsocietyesports.com",
-        publicKey,
-        privateKey,
-      );
-    } catch {
-      return { ok: false, configured: true, sent: 0 };
-    }
-
-    const subs = await ctx.runQuery(internal.account.listPushSubscriptions, {});
-    const site = process.env.SITE_URL ?? "https://wolfsocietygg.vercel.app";
-    const payload = JSON.stringify({
-      title: title.slice(0, 100),
-      body: body.slice(0, 300),
-      url: url ?? `${site}/news`,
-    });
-
-    let sent = 0;
-    const dead: Id<"pushSubscriptions">[] = [];
-    for (const sub of subs) {
-      let keys: Record<string, string> = {};
-      try {
-        keys = JSON.parse(sub.keysJson);
-      } catch {
-        dead.push(sub._id);
-        continue;
-      }
-      try {
-        await webpush.sendNotification(
-          { endpoint: sub.endpoint, keys },
-          payload,
-        );
-        sent++;
-      } catch (error) {
-        const status = (error as { statusCode?: number })?.statusCode;
-        if (status === 404 || status === 410) dead.push(sub._id); // device gone
-      }
-    }
-
-    if (dead.length > 0) {
-      await ctx.runMutation(internal.account.deletePushSubscriptions, { ids: dead });
-    }
+    const result = await sendPushToAll(ctx, title, body, url);
     try {
       await ctx.runMutation(internal.notify.recordNotification, {
         channel: "webhook",
         subject: "push.broadcast",
-        status: sent > 0 ? "sent" : "failed",
-        error: sent === 0 ? "no push subscribers delivered" : undefined,
+        status: result.sent > 0 ? "sent" : "failed",
+        error: result.sent === 0 ? "no push subscribers delivered" : undefined,
       });
     } catch {
       // the outbox must never break the broadcast
     }
-    return { ok: true, configured: true, sent };
+    return result;
+  },
+});
+
+/**
+ * The Den → Broadcast Center. Admin-only, multi-channel:
+ *   push — instant browser notification to every opted-in device (free/unlimited)
+ *   email — the same message emailed to every active alert subscriber
+ *   sms   — the same message texted to every subscriber with a phone on file
+ * Every send is recorded in the `broadcasts` history table.
+ */
+export const adminBroadcast = action({
+  args: {
+    title: v.string(),
+    body: v.string(),
+    url: v.optional(v.string()),
+    channels: v.optional(
+      v.array(v.union(v.literal("push"), v.literal("email"), v.literal("sms"))),
+    ),
+  },
+  handler: async (ctx, { title, body, url, channels }) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return { ok: false, error: "You must be signed in to broadcast." };
+    }
+    const role = await ctx.runQuery(internal.admin.getRoleForUser, {
+      userId: identity.subject as Id<"users">,
+    });
+    if (!ADMIN_ROLES.has(role ?? "")) {
+      return { ok: false, error: "Only management can broadcast to the community." };
+    }
+
+    const chosen = channels && channels.length > 0 ? channels : ["push"];
+    let pushSent = 0;
+    let emailSent = 0;
+    let smsSent = 0;
+
+    if (chosen.includes("push")) {
+      const res = await sendPushToAll(ctx, title, body, url);
+      pushSent = res.sent;
+      try {
+        await ctx.runMutation(internal.notify.recordNotification, {
+          channel: "webhook",
+          subject: `push.broadcast: ${title.slice(0, 60)}`,
+          status: pushSent > 0 ? "sent" : "failed",
+          error: pushSent === 0 ? "no push subscribers delivered" : undefined,
+        });
+      } catch {
+        // the outbox must never break the broadcast
+      }
+    }
+
+    if (chosen.includes("email") || chosen.includes("sms")) {
+      const subs = await ctx.runQuery(internal.account.listActiveSubscribers, {});
+      if (subs.length > 0) {
+        const res = await ctx.runAction(api.notify.broadcast, {
+          title,
+          body,
+          subscribers: subs.map((s) => ({
+            name: s.name,
+            email: s.email,
+            phone: s.phone,
+          })),
+        });
+        emailSent = res.emailSent;
+        smsSent = res.smsSent;
+      }
+    }
+
+    await ctx.runMutation(internal.broadcast.logBroadcast, {
+      title: title.slice(0, 140),
+      body: body.slice(0, 500),
+      url,
+      channels: chosen,
+      pushSent,
+      emailSent,
+      smsSent,
+      createdBy: identity.subject as Id<"users">,
+    });
+
+    return { ok: true, pushSent, emailSent, smsSent, channels: chosen };
   },
 });
