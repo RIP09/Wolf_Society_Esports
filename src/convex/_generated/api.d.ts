@@ -17,6 +17,7 @@ import type * as attendance from "../attendance.js";
 import type * as auth from "../auth.js";
 import type * as auth_emailOtp from "../auth/emailOtp.js";
 import type * as automation from "../automation.js";
+import type * as broadcast from "../broadcast.js";
 import type * as content from "../content.js";
 import type * as crons from "../crons.js";
 import type * as gallery from "../gallery.js";
@@ -59,6 +60,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   "auth/emailOtp": typeof auth_emailOtp;
   automation: typeof automation;
+  broadcast: typeof broadcast;
   content: typeof content;
   crons: typeof crons;
   gallery: typeof gallery;
