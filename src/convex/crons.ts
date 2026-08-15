@@ -12,4 +12,12 @@ const crons = cronJobs();
 
 crons.interval("auto-mark-attendance-absent", { hours: 6 }, internal.attendance.markAbsentJob, {});
 
+/**
+ * Tournament auto-pilot — runs every hour and moves tournaments through
+ * their lifecycle by the clock and the bracket: upcoming → live when the
+ * start date arrives, live → completed when the end date passes or the
+ * final is decided. Participants are notified on every transition.
+ */
+crons.interval("tournament-auto-status", { hours: 1 }, internal.tournaments.autoStatusJob, {});
+
 export default crons;
