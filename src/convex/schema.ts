@@ -190,6 +190,7 @@ const schema = defineSchema(
       photoStorageId: v.optional(v.id("_storage")), // player photo uploaded from The Den
       status: playerStatusValidator, // pending / active / suspended
       verifiedAt: v.optional(v.number()), // when management approved this player
+      phoneVerifiedAt: v.optional(v.number()), // when the player proved ownership of their phone via SMS OTP
       badges: v.optional(v.array(v.string())), // verified role badges, e.g. ["MVP", "IGL", "Captain"]
       joinedAt: v.number(),
     })
@@ -225,6 +226,42 @@ const schema = defineSchema(
       status: tournamentStatusValidator,
       createdAt: v.number(),
     }).index("by_status", ["status"]),
+
+    // Tournament entries — players (or their team) sign up for a tournament;
+    // management approves entries before the bracket is generated.
+    tournamentParticipants: defineTable({
+      tournamentId: v.id("tournaments"),
+      playerId: v.id("players"), // the player who registered (captain for a team entry)
+      teamId: v.optional(v.id("teams")), // set when the player registers their team
+      status: v.union(
+        v.literal("pending"),
+        v.literal("approved"),
+        v.literal("declined"),
+      ),
+      registeredAt: v.number(),
+    })
+      .index("by_tournament", ["tournamentId"])
+      .index("by_player", ["playerId"])
+      .index("by_tournament_status", ["tournamentId", "status"]),
+
+    // Single-elimination bracket — one row per match slot. Each slot holds
+    // either a team (teamXId) or a solo player (playerXId); `nextNodeId` links
+    // to the parent slot so recording a winner auto-advances the entrant.
+    bracketNodes: defineTable({
+      tournamentId: v.id("tournaments"),
+      round: v.number(), // 0 = first round … roundCount-1 = final
+      position: v.number(), // index within the round
+      teamAId: v.optional(v.id("teams")),
+      playerAId: v.optional(v.id("players")),
+      teamBId: v.optional(v.id("teams")),
+      playerBId: v.optional(v.id("players")),
+      winnerTeamId: v.optional(v.id("teams")),
+      winnerPlayerId: v.optional(v.id("players")),
+      nextNodeId: v.optional(v.id("bracketNodes")), // parent slot in the next round
+      status: matchStatusValidator,
+    })
+      .index("by_tournament", ["tournamentId"])
+      .index("by_tournament_round", ["tournamentId", "round"]),
 
     matches: defineTable({
       tournamentId: v.optional(v.id("tournaments")),
@@ -382,6 +419,7 @@ const schema = defineSchema(
       channel: v.union(
         v.literal("email"),
         v.literal("sms"),
+        v.literal("whatsapp"),
         v.literal("discord"),
         v.literal("webhook"),
       ),
@@ -413,6 +451,18 @@ const schema = defineSchema(
       keysJson: v.string(),
       createdAt: v.number(),
     }).index("by_endpoint", ["endpoint"]),
+
+    // One-time SMS one-time-passwords (phone verification). A row is created
+    // when a user requests a code, checked on verify, and deleted after use or
+    // expiry so old codes can never be reused.
+    smsOtps: defineTable({
+      phone: v.string(), // full international number, e.g. "+91 98765 43210"
+      code: v.string(), // 6-digit code
+      expiresAt: v.number(),
+      attempts: v.number(), // failed verify attempts — locks after 5
+      verified: v.boolean(),
+      createdAt: v.number(),
+    }).index("by_phone", ["phone"]),
 
     // Broadcast history — every send from The Den → Broadcast Center, with
     // per-channel delivery counts so management can see who was reached and when.
