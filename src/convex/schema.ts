@@ -414,6 +414,20 @@ const schema = defineSchema(
       createdAt: v.number(),
     }).index("by_endpoint", ["endpoint"]),
 
+    // Broadcast history — every send from The Den → Broadcast Center, with
+    // per-channel delivery counts so management can see who was reached and when.
+    broadcasts: defineTable({
+      title: v.string(),
+      body: v.string(),
+      url: v.optional(v.string()),
+      channels: v.array(v.string()), // "push" | "email" | "sms"
+      pushSent: v.number(),
+      emailSent: v.number(),
+      smsSent: v.number(),
+      createdBy: v.id("users"),
+      createdAt: v.number(),
+    }).index("by_createdAt", ["createdAt"]),
+
     // Public feedback / suggestions — reviewed in The Den.
     feedback: defineTable({
       name: v.optional(v.string()),
