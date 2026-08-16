@@ -147,13 +147,21 @@ export default function FanRankings() {
                   You're playing as a guest — votes and answers count, but only
                   signed-in fans earn XP and appear here.
                 </p>
-                <Link
-                  to="/register?path=fan"
-                  className={cn(btnYellow, "inline-flex h-10 items-center justify-center gap-2 text-xs font-bold")}
-                >
-                  <UserRound className="size-4" />
-                  Sign in · Earn XP
-                </Link>
+                <div className="flex flex-col gap-2">
+                  <Link
+                    to="/signin"
+                    className={cn(btnYellow, "inline-flex h-10 items-center justify-center gap-2 text-xs font-bold")}
+                  >
+                    <UserRound className="size-4" />
+                    Sign in · Earn XP
+                  </Link>
+                  <Link
+                    to="/register?path=fan"
+                    className={cn(btnGhost, "inline-flex h-10 items-center justify-center gap-2 text-xs font-bold")}
+                  >
+                    Create a fan account
+                  </Link>
+                </div>
               </div>
             ) : myProfile === undefined ? (
               <div className="h-24 animate-pulse" />
