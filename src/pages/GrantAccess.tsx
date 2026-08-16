@@ -1,4 +1,5 @@
 import { api } from "@/convex/_generated/api";
+import { PasswordInput } from "@/components/PasswordInput";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -25,7 +26,7 @@ import { btnYellow, input, select } from "@/lib/neo";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { useAction, useMutation, useQuery } from "convex/react";
-import { CheckCircle2, KeyRound, Loader2, ShieldCheck, ShieldX, UserPlus, XCircle } from "lucide-react";
+import { CheckCircle2, KeyRound, Loader2, ShieldCheck, ShieldX, Trash2, UserMinus, UserPlus, XCircle } from "lucide-react";
 import { useState } from "react";
 import type { Id } from "@/convex/_generated/dataModel";
 import { toast } from "sonner";
@@ -105,9 +106,7 @@ function SuperAdminLogin({ onSuccess }: { onSuccess?: () => void }) {
             <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-foreground">
               Password
             </span>
-            <Input
-              className={input}
-              type="password"
+            <PasswordInput
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
@@ -143,11 +142,16 @@ function AccessPanel() {
   const grant = useMutation(api.access.grantAccess);
   const reject = useMutation(api.access.rejectAccess);
   const resend = useMutation(api.access.resendCredentials);
+  const removeGranted = useMutation(api.access.removeGrantedUser);
+  const deleteEntry = useMutation(api.access.deleteRequestEntry);
 
   const [grantTarget, setGrantTarget] = useState<RequestRow | null>(null);
   const [grantRole, setGrantRole] = useState<string>("Manager");
   const [busy, setBusy] = useState(false);
   const [rejectTarget, setRejectTarget] = useState<RequestRow | null>(null);
+  const [removeTarget, setRemoveTarget] = useState<RequestRow | null>(null);
+  const [deletePick, setDeletePick] = useState<string>("");
+  const [deleteTarget, setDeleteTarget] = useState<RequestRow | null>(null);
 
   const pending = (requests ?? []).filter((r) => r.status === "pending");
   const granted = (requests ?? []).filter((r) => r.status === "granted");
@@ -193,6 +197,41 @@ function AccessPanel() {
     }
   };
 
+  const handleRemoveData = async () => {
+    if (!removeTarget?.grantedUserId) return;
+    setBusy(true);
+    try {
+      await removeGranted({ loginId: removeTarget.grantedUserId });
+      toast.success(
+        `${removeTarget.name} was permanently removed — every record tied to their login is deleted.`,
+      );
+      setRemoveTarget(null);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not remove this user's data.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleDeleteEntry = async () => {
+    if (!deleteTarget) return;
+    setBusy(true);
+    try {
+      const res = await deleteEntry({ requestId: deleteTarget._id });
+      toast.success(
+        res.loginRemoved
+          ? `Data deleted for ${res.name} — their management login and all linked records were permanently removed.`
+          : `Data deleted for ${res.name}.`, 
+      );
+      setDeleteTarget(null);
+      setDeletePick("");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not delete this data.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <div className="flex w-full flex-col gap-8">
       <PageHeader
@@ -200,6 +239,49 @@ function AccessPanel() {
         title="Access management"
         description="Review who asked for management portal access, grant a role, or decline. Granted users receive their User ID and password by email and SMS automatically."
       />
+
+      <section className="flex flex-col gap-3 border-2 border-foreground bg-card p-5 shadow-[4px_4px_0_0_var(--neo-ink)]">
+        <div className="flex items-center gap-2">
+          <Trash2 className="size-5" />
+          <h2 className="font-bold">Delete data manually</h2>
+        </div>
+        <p className="text-xs leading-5 text-muted-foreground">
+          Select any person on this list (pending, granted or declined) and delete their data permanently.
+          If the person has a granted management login, that login and every linked record are removed too —
+          they will no longer be able to sign in with those credentials.
+        </p>
+        <div className="flex flex-wrap items-end gap-2">
+          <div className="flex min-w-[260px] flex-1 flex-col gap-1.5">
+            <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-foreground">
+              Whose data?
+            </span>
+            <Select value={deletePick} onValueChange={setDeletePick}>
+              <SelectTrigger className={cn(select, "w-full")}>
+                <SelectValue placeholder="Choose a person…" />
+              </SelectTrigger>
+              <SelectContent className="rounded-none border-2 border-foreground">
+                {(requests ?? []).map((r) => (
+                  <SelectItem key={r._id} value={r._id}>
+                    {r.name} — {r.email} ({r.status})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <Button
+            variant="outline"
+            className="rounded-none border-2 border-foreground bg-neo-red px-4 py-2 text-sm font-bold text-white shadow-[3px_3px_0_0_var(--neo-ink)] hover:bg-neo-red/90 disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={!deletePick || busy}
+            onClick={() => setDeleteTarget((requests ?? []).find((r) => r._id === deletePick) ?? null)}
+          >
+            <Trash2 className="size-4" />
+            Delete selected data
+          </Button>
+        </div>
+        <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+          Note: deleting a granted user's data requires Super Admin access.
+        </p>
+      </section>
 
       <section className="flex flex-col gap-3">
         <div className="flex items-center gap-2">
@@ -282,14 +364,28 @@ function AccessPanel() {
                   </span>
                 </div>
               </div>
-              <div className="flex items-center justify-between gap-3 border-t-2 border-foreground/20 pt-3">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t-2 border-foreground/20 pt-3">
                 <p className="text-xs text-muted-foreground">
                   {r.grantedRole} · credentials delivered to {r.email} &amp; {r.phone}
                 </p>
-                <Button size="sm" variant="outline" className="rounded-none border-2 border-foreground bg-card shadow-[2px_2px_0_0_var(--neo-ink)]" disabled={busy} onClick={() => handleResend(r)}>
-                  <KeyRound className="size-3.5" />
-                  Resend credentials
-                </Button>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button size="sm" variant="outline" className="rounded-none border-2 border-foreground bg-card shadow-[2px_2px_0_0_var(--neo-ink)]" disabled={busy} onClick={() => handleResend(r)}>
+                    <KeyRound className="size-3.5" />
+                    Resend credentials
+                  </Button>
+                  {r.grantedUserId ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="rounded-none border-2 border-foreground bg-neo-red px-3 py-1.5 text-xs font-bold text-white shadow-[2px_2px_0_0_var(--neo-ink)] hover:bg-neo-red/90"
+                      disabled={busy}
+                      onClick={() => setRemoveTarget(r)}
+                    >
+                      <UserMinus className="size-3.5" />
+                      Remove data
+                    </Button>
+                  ) : null}
+                </div>
               </div>
             </NeoCard>
           ))}
@@ -349,6 +445,74 @@ function AccessPanel() {
             >
               <CheckCircle2 className="size-4" />
               Grant &amp; send credentials
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={!!removeTarget} onOpenChange={(o) => !o && !busy && setRemoveTarget(null)}>
+        <AlertDialogContent className="rounded-none border-2 border-foreground bg-card shadow-[6px_6px_0_0_var(--neo-ink)]">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-xl font-bold">
+              <Trash2 className="size-5 text-neo-red" />
+              Permanently remove {removeTarget?.name}?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground">
+              This deletes <span className="font-bold text-foreground">{removeTarget?.name}</span>'s login
+              (<span className="font-mono font-bold">{removeTarget?.grantedUserId}</span>), every open session,
+              any linked player profile and all stored records. They will not be able to sign in with these
+              credentials again, and a fresh request can be made cleanly later. This cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-none border-2 border-foreground bg-card shadow-[2px_2px_0_0_var(--neo-ink)]">
+              Keep access
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="neo-press rounded-none border-2 border-foreground bg-neo-red text-white shadow-[3px_3px_0_0_var(--neo-ink)] hover:shadow-[4px_4px_0_0_var(--neo-ink)]"
+              onClick={handleRemoveData}
+              disabled={busy}
+            >
+              {busy ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+              {busy ? "Removing…" : "Yes, delete everything"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={!!deleteTarget} onOpenChange={(o) => !o && !busy && setDeleteTarget(null)}>
+        <AlertDialogContent className="rounded-none border-2 border-foreground bg-card shadow-[6px_6px_0_0_var(--neo-ink)]">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-xl font-bold">
+              <Trash2 className="size-5 text-red-600" />
+              Delete {deleteTarget?.name}'s data?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground">
+              This permanently deletes <span className="font-bold text-foreground">{deleteTarget?.name}</span>{" "}
+              ({deleteTarget?.email}) from the access list
+              {deleteTarget?.status === "granted" && deleteTarget?.grantedUserId ? (
+                <>
+                  {" "}— including their management login{" "}
+                  <span className="font-mono font-bold">{deleteTarget.grantedUserId}</span>, all sessions
+                  and every linked record. They will not be able to sign in again.
+                </>
+              ) : (
+                <> (their request was {deleteTarget?.status}).</>
+              )}
+              {" "}This cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-none border-2 border-foreground bg-card shadow-[2px_2px_0_0_var(--neo-ink)]">
+              Keep data
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="neo-press rounded-none border-2 border-foreground bg-neo-red text-white shadow-[3px_3px_0_0_var(--neo-ink)] hover:shadow-[4px_4px_0_0_var(--neo-ink)]"
+              onClick={handleDeleteEntry}
+              disabled={busy}
+            >
+              {busy ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+              {busy ? "Deleting…" : "Yes, delete data"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
