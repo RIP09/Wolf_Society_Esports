@@ -1,4 +1,5 @@
 import { api } from "@/convex/_generated/api";
+import { WolfMark } from "@/components/WolfLogo";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -22,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
+import { PasswordInput } from "@/components/PasswordInput";
 import { useAuth } from "@/hooks/use-auth";
 import { MANAGEMENT_ROLES } from "@/lib/constants";
 import { btnGhost, btnYellow, input, label, select } from "@/lib/neo";
@@ -105,9 +107,7 @@ function StaffSignIn({ redirect }: { redirect: string }) {
       </div>
       <div className="flex flex-col gap-1.5">
         <span className={label}>Password</span>
-        <Input
-          className={input}
-          type="password"
+        <PasswordInput
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="••••••••"
@@ -125,7 +125,7 @@ function StaffSignIn({ redirect }: { redirect: string }) {
         {isLoading ? "Signing in…" : "Sign in to The Den"}
       </Button>
       <p className="text-center font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-        Super admin fallback: WSE · 
+        Super admin fallback: WSE · WSE@123
       </p>
     </form>
   );
@@ -326,8 +326,8 @@ function DenAuth({ redirectAfterAuth }: DenAuthProps = {}) {
         <div className="flex w-full max-w-md flex-col items-center">
           <Card className="w-full rounded-none border-2 border-foreground bg-card pb-0 shadow-[6px_6px_0_0_var(--neo-ink)]">
             <CardHeader className="text-center">
-              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center border-2 border-foreground bg-neo-yellow text-white shadow-[3px_3px_0_0_var(--neo-ink)]">
-                <ShieldCheck className="size-6" />
+              <div className="mx-auto mb-3 flex justify-center">
+                <WolfMark size={48} />
               </div>
               <CardTitle className="text-2xl font-bold tracking-tight">
                 The Den · Management
