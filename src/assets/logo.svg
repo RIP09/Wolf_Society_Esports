@@ -1,1 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- White canvas -->
+  <rect width="512" height="512" fill="#ffffff" />
 
+  <!-- Action triangles (top-left, fan cluster, pointing up-left) -->
+  <g fill="#7C3AED" stroke="#0A0A0F" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+    <polygon points="60,106 22,82 74,62" />
+    <polygon points="56,54 96,74 108,32" />
+    <polygon points="86,14 126,38 138,4" />
+  </g>
+
+  <!-- Ears -->
+  <polygon points="154,196 84,84 222,146" fill="#7C3AED" stroke="#0A0A0F" stroke-width="9" stroke-linejoin="round" />
+  <polygon points="358,196 428,84 290,146" fill="#7C3AED" stroke="#0A0A0F" stroke-width="9" stroke-linejoin="round" />
+
+  <!-- Head + neck (howling upward) -->
+  <path d="M 256 486 L 190 486 L 150 396 L 132 320 L 138 240 L 192 190 L 234 148 L 256 122 L 278 148 L 320 190 L 374 240 L 380 320 L 362 396 L 322 486 Z"
+        fill="#7C3AED" stroke="#0A0A0F" stroke-width="9" stroke-linejoin="round" />
+
+  <!-- Ear inner accents -->
+  <polygon points="108,114 156,178 208,150" fill="#A78BFA" />
+  <polygon points="404,114 356,178 304,150" fill="#A78BFA" />
+
+  <!-- Nose -->
+  <polygon points="256,96 238,130 274,130" fill="#0A0A0F" />
+
+  <!-- Open maw -->
+  <polygon points="256,134 216,170 256,216 296,170" fill="#0A0A0F" />
+
+  <!-- Teeth -->
+  <g fill="#ffffff" stroke="#0A0A0F" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <polygon points="250,140 240,149 243,168" />
+    <polygon points="234,156 226,163 227,180" />
+    <polygon points="262,140 272,149 269,168" />
+    <polygon points="278,156 286,163 285,180" />
+    <polygon points="222,178 232,192 224,202" />
+    <polygon points="290,178 280,192 288,202" />
+  </g>
+
+  <!-- Eyes -->
+  <g fill="#0A0A0F">
+    <polygon points="174,206 218,190 214,204 182,220" />
+    <polygon points="338,206 294,190 298,204 330,220" />
+  </g>
+
+  <!-- Vertical WOLF SOCIETY (letters stacked downward on the chest) -->
+  <text x="256" y="336" text-anchor="middle" font-family="'Arial Black', Arial, sans-serif" font-weight="900" font-size="12.5" fill="#1B0E33">
+    <tspan x="256" dy="0">W</tspan>
+    <tspan x="256" dy="13">O</tspan>
+    <tspan x="256" dy="13">L</tspan>
+    <tspan x="256" dy="13">F</tspan>
+    <tspan x="256" dy="13">S</tspan>
+    <tspan x="256" dy="13">O</tspan>
+    <tspan x="256" dy="13">C</tspan>
+    <tspan x="256" dy="13">I</tspan>
+    <tspan x="256" dy="13">E</tspan>
+    <tspan x="256" dy="13">T</tspan>
+    <tspan x="256" dy="13">Y</tspan>
+  </text>
+</svg>
