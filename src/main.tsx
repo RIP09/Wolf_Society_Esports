@@ -15,6 +15,12 @@ import "./index.css";
 
 // Lazy load route components for better code splitting
 const Landing = lazy(() => import("./pages/Landing.tsx"));
+const RegisterPage = lazy(() => import("./pages/Register.tsx"));
+const FanZone = lazy(() => import("./pages/public/FanZone.tsx"));
+const FanPolls = lazy(() => import("./pages/public/FanPolls.tsx"));
+const FanTrivia = lazy(() => import("./pages/public/FanTrivia.tsx"));
+const FanPredictions = lazy(() => import("./pages/public/FanPredictions.tsx"));
+const FanRankings = lazy(() => import("./pages/public/FanRankings.tsx"));
 const AuthPage = lazy(() => import("./pages/Auth.tsx"));
 const DenAuthPage = lazy(() => import("./pages/DenAuth.tsx"));
 const GrantAccess = lazy(() => import("./pages/GrantAccess.tsx"));
@@ -68,6 +74,7 @@ const AdminBroadcast = lazy(() => import("./pages/admin/AdminBroadcast.tsx"));
 const AdminSettings = lazy(() => import("./pages/admin/AdminSettings.tsx"));
 const AdminStaff = lazy(() => import("./pages/admin/AdminStaff.tsx"));
 const AdminProfile = lazy(() => import("./pages/admin/AdminProfile.tsx"));
+const AdminFanZone = lazy(() => import("./pages/admin/AdminFanZone.tsx"));
 
 // Simple loading fallback for route transitions
 function RouteLoading() {
@@ -265,6 +272,12 @@ createRoot(document.getElementById("root")!).render(
               {/* Public portal — showcases the organization to the world */}
               <Route element={<PublicLayout />}>
                 <Route path="/" element={<Landing />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/fan-zone" element={<FanZone />} />
+                <Route path="/fan-zone/polls" element={<FanPolls />} />
+                <Route path="/fan-zone/trivia" element={<FanTrivia />} />
+                <Route path="/fan-zone/predictions" element={<FanPredictions />} />
+                <Route path="/fan-zone/rankings" element={<FanRankings />} />
                 <Route path="/about" element={<PublicAbout />} />
                 <Route path="/teams" element={<PublicTeams />} />
                 <Route path="/teams/:teamId" element={<PublicTeamDetail />} />
@@ -338,6 +351,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="inquiries" element={<AdminInquiries />} />
                 <Route path="staff" element={<AdminStaff />} />
                 <Route path="profile" element={<AdminProfile />} />
+                <Route path="fan-zone" element={<AdminFanZone />} />
               </Route>
               <Route
                 path="/player"
