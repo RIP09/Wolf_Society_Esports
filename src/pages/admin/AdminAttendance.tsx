@@ -1,4 +1,14 @@
 import { api } from "@/convex/_generated/api";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,7 +24,7 @@ import { LoadingScreen } from "@/components/Loading";
 import { fmtDate } from "@/lib/format";
 import { btnGhost, btnYellow, input, select, tableCell, tableHead } from "@/lib/neo";
 import { useMutation, useQuery } from "convex/react";
-import { CalendarDays, Download, Gauge, Loader2, ShieldAlert, Swords } from "lucide-react";
+import { CalendarDays, Download, Gauge, Loader2, ShieldAlert, Swords, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import type { Doc, Id } from "@/convex/_generated/dataModel";
@@ -31,6 +41,11 @@ export default function AdminAttendance() {
 
   const override = useMutation(api.attendance.adminOverride);
   const [overriding, setOverriding] = useState<string | null>(null);
+
+  const resetAttendance = useMutation(api.attendance.resetAttendance);
+  const [resetOpen, setResetOpen] = useState(false);
+  const [resetConfirm, setResetConfirm] = useState("");
+  const [resetting, setResetting] = useState(false);
 
   const flagged = useMemo(
     () => (summary ? summary.rows.filter((r) => r.flag) : []),
@@ -55,6 +70,23 @@ export default function AdminAttendance() {
       toast.error(e instanceof Error ? e.message : "Update failed.");
     } finally {
       setOverriding(null);
+    }
+  };
+
+  const handleReset = async () => {
+    if (resetConfirm.trim() !== "RESET" || resetting) return;
+    setResetting(true);
+    try {
+      const res = await resetAttendance();
+      toast.success(
+        `Attendance reset — cleared ${res.recordsCleared} records and ${res.reportsCleared} match reports. Tracking restarts fresh from today.`,
+      );
+      setResetOpen(false);
+      setResetConfirm("");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Reset failed.");
+    } finally {
+      setResetting(false);
     }
   };
 
@@ -87,10 +119,62 @@ export default function AdminAttendance() {
         title="Attendance & Match Reports"
         description="Live daily attendance for every verified player. The AI attendance system auto-marks absent anyone who doesn't check in within 24 hours — and flags players who miss 3+ days straight."
         actions={
-          <Button variant="outline" className={btnGhost} onClick={downloadDay}>
-            <Download className="size-4" />
-            Export day CSV
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button variant="outline" className={btnGhost} onClick={downloadDay}>
+              <Download className="size-4" />
+              Export day CSV
+            </Button>
+            <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="neo-press rounded-none border-2 border-foreground bg-neo-red text-white shadow-[3px_3px_0_0_var(--neo-ink)] hover:bg-neo-red/90 hover:shadow-[4px_4px_0_0_var(--neo-ink)]"
+                >
+                  <Trash2 className="size-4" />
+                  Reset attendance
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="w-[calc(100%-2rem)] max-w-md rounded-none border-2 border-foreground bg-background shadow-[6px_6px_0_0_var(--neo-ink)]">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="flex items-center gap-2 font-mono text-sm font-bold uppercase tracking-widest">
+                    <Trash2 className="size-4 text-red-600" />
+                    Clear all attendance data?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription className="text-xs leading-relaxed">
+                    This permanently deletes <strong>every</strong> attendance record and match report.
+                    All players' streaks, flags and 30-day rates restart from zero. Player profiles,
+                    teams and security logs are kept, and the AI attendance system begins fresh from today.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <div className="flex flex-col gap-1.5">
+                  <span className="font-mono text-[11px] font-bold uppercase tracking-wider">
+                    Type <strong>RESET</strong> to confirm
+                  </span>
+                  <Input
+                    className={input}
+                    value={resetConfirm}
+                    onChange={(e) => setResetConfirm(e.target.value)}
+                    placeholder="RESET"
+                    autoComplete="off"
+                  />
+                </div>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className={btnGhost} disabled={resetting}>
+                    Cancel
+                  </AlertDialogCancel>
+                  <Button
+                    variant="destructive"
+                    disabled={resetConfirm.trim() !== "RESET" || resetting}
+                    onClick={handleReset}
+                    className="neo-press rounded-none border-2 border-foreground bg-neo-red text-white shadow-[3px_3px_0_0_var(--neo-ink)] hover:bg-neo-red/90 hover:shadow-[4px_4px_0_0_var(--neo-ink)] disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {resetting ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+                    {resetting ? "Resetting…" : "Yes, reset everything"}
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         }
       />
 
