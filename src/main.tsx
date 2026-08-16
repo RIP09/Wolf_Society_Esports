@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { RequireAuth } from "@/components/RequireAuth";
 import { PortalRedirect, RequireAdmin, RequirePlayer } from "@/components/RequireAdmin";
 import { AdminLayout, PlayerLayout } from "@/components/layout/Portals";
+import { LoadingScreen } from "@/components/Loading";
 import PublicLayout from "@/components/layout/PublicLayout";
 import { getVisitorId } from "@/lib/visitor";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
@@ -80,13 +81,9 @@ const AdminStaff = lazy(() => import("./pages/admin/AdminStaff.tsx"));
 const AdminProfile = lazy(() => import("./pages/admin/AdminProfile.tsx"));
 const AdminFanZone = lazy(() => import("./pages/admin/AdminFanZone.tsx"));
 
-// Simple loading fallback for route transitions
+// Branded loading fallback for route transitions — wolf tile + ripple.
 function RouteLoading() {
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="animate-pulse text-muted-foreground">Loading...</div>
-    </div>
-  );
+  return <LoadingScreen compact label="Loading the Society…" />;
 }
 
 /** Hard guard so runtime errors never leave the preview as a blank page. */
