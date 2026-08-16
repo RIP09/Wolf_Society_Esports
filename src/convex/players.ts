@@ -3,6 +3,7 @@ import type { Doc, Id } from "./_generated/dataModel";
 import { api } from "./_generated/api";
 import { mutation, query, type MutationCtx } from "./_generated/server";
 import { hasAdminRole, requireAdmin, requireUser } from "./guards";
+import { getCurrentUser } from "./users";
 import { PLAYER_STATUS, ROLES } from "./schema";
 
 /**
@@ -110,7 +111,10 @@ export async function wipeAuthUser(ctx: MutationCtx, userId: Id<"users">) {
 export const getMyProfile = query({
   args: {},
   handler: async (ctx) => {
-    const user = await requireUser(ctx);
+    // Signed-out visitors get null (not an error) — the public sign-in and
+    // register pages call this before the user has signed in.
+    const user = await getCurrentUser(ctx);
+    if (!user) return null;
     return await ctx.db
       .query("players")
       .withIndex("by_userId", (q) => q.eq("userId", user._id))
