@@ -4,13 +4,13 @@
   "description": "The esports organization platform — public portal, player hub and management hub in one.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f4f3fb",
-  "theme_color": "#1b1d3a",
+  "background_color": "#0a0a0f",
+  "theme_color": "#0a0a0f",
   "icons": [
     {
-      "src": "/logo.png",
+      "src": "/logo.svg",
       "sizes": "any",
-      "type": "image/png",
+      "type": "image/svg+xml",
       "purpose": "any maskable"
     }
   ]
