@@ -693,6 +693,100 @@ const schema = defineSchema(
       socials: v.optional(v.string()),
       updatedAt: v.number(),
     }).index("by_userId", ["userId"]),
+
+    // --- Fan Zone: polls, trivia, predictions, rankings ---
+    // One row per fan (or signed-in user). xp accumulates from polls (5),
+    // trivia answers (question points for correct answers) and predictions
+    // (2 for entering, 10 more when the prediction settles correctly). The
+    // leaderboard is this table sorted by xp. displayName is empty until the
+    // fan claims a name — unnamed profiles participate but don't rank.
+    fanProfiles: defineTable({
+      userId: v.optional(v.id("users")),
+      visitorId: v.optional(v.string()),
+      displayName: v.string(),
+      xp: v.number(),
+      answers: v.number(), // total trivia + prediction entries
+      createdAt: v.number(),
+      updatedAt: v.number(),
+    })
+      .index("by_userId", ["userId"])
+      .index("by_visitorId", ["visitorId"])
+      .index("by_xp", ["xp"]),
+
+    // Polls — a question with 2+ options. Fans vote once each; results are
+    // shown live with per-option counts.
+    polls: defineTable({
+      question: v.string(),
+      options: v.array(v.string()),
+      active: v.boolean(),
+      endsAt: v.optional(v.number()),
+      createdBy: v.id("users"),
+      createdAt: v.number(),
+    }).index("by_active", ["active"]),
+
+    // One row per vote. voterKey is "user:<id>" for signed-in fans or
+    // "visitor:<id>" for anonymous guests (counted but not ranked).
+    pollVotes: defineTable({
+      pollId: v.id("polls"),
+      voterKey: v.string(),
+      optionIndex: v.number(),
+      createdAt: v.number(),
+    })
+      .index("by_poll", ["pollId"])
+      .index("by_poll_voter", ["pollId", "voterKey"])
+      .index("by_createdAt", ["createdAt"]),
+
+    // Trivia questions — the correct answer is hidden from the public API;
+    // it's only returned after the fan answers (and to management).
+    triviaQuestions: defineTable({
+      question: v.string(),
+      options: v.array(v.string()),
+      correctIndex: v.number(),
+      points: v.number(),
+      active: v.boolean(),
+      createdBy: v.id("users"),
+      createdAt: v.number(),
+    }).index("by_active", ["active"]),
+
+    // One row per answer. First answer per question counts; wrong answers
+    // earn 0 points but are kept so fans can review what they got right.
+    triviaAnswers: defineTable({
+      questionId: v.id("triviaQuestions"),
+      voterKey: v.string(),
+      choiceIndex: v.number(),
+      correct: v.boolean(),
+      pointsEarned: v.number(),
+      createdAt: v.number(),
+    })
+      .index("by_question", ["questionId"])
+      .index("by_question_voter", ["questionId", "voterKey"]),
+
+    // Match predictions — fans call the outcome before the match. When
+    // management settles with the real result, correct entries earn +10 XP.
+    predictions: defineTable({
+      title: v.string(),
+      options: v.array(v.string()),
+      correctIndex: v.optional(v.number()),
+      points: v.number(), // entry points (usually 2)
+      status: v.union(v.literal("open"), v.literal("settled")),
+      endsAt: v.optional(v.number()),
+      createdBy: v.id("users"),
+      createdAt: v.number(),
+      settledAt: v.optional(v.number()),
+    }).index("by_status", ["status"]),
+
+    // One row per prediction entry. correct/pointsEarned are filled in when
+    // management settles the prediction.
+    predictionEntries: defineTable({
+      predictionId: v.id("predictions"),
+      voterKey: v.string(),
+      choiceIndex: v.number(),
+      correct: v.optional(v.boolean()),
+      pointsEarned: v.number(),
+      createdAt: v.number(),
+    })
+      .index("by_prediction", ["predictionId"])
+      .index("by_prediction_voter", ["predictionId", "voterKey"]),
   },
   {
     schemaValidation: false,
