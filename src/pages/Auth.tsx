@@ -1,3 +1,4 @@
+import { WolfMark } from "@/components/WolfLogo";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -36,7 +37,7 @@ function resolveRedirectAfterAuth(
 }
 
 function Auth({ redirectAfterAuth }: AuthProps = {}) {
-  const { isLoading: authLoading, isAuthenticated, signIn } = useAuth();
+  const { isLoading: authLoading, isAuthenticated, signIn, user } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirect = resolveRedirectAfterAuth(
@@ -48,11 +49,13 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Only auto-redirect real (non-guest) sessions — a guest session must finish
+  // the email code before leaving, otherwise the page would bounce them out.
   useEffect(() => {
-    if (!authLoading && isAuthenticated) {
+    if (!authLoading && isAuthenticated && user !== undefined && user !== null && !user.isAnonymous) {
       navigate(redirect);
     }
-  }, [authLoading, isAuthenticated, navigate, redirect]);
+  }, [authLoading, isAuthenticated, navigate, redirect, user]);
 
   const handleEmailSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -122,8 +125,8 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
             {step === "signIn" ? (
               <>
                 <CardHeader className="text-center">
-                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center border-2 border-foreground bg-neo-blue text-white shadow-[3px_3px_0_0_var(--neo-ink)]">
-                    <Crosshair className="size-6" />
+                  <div className="mx-auto mb-3 flex justify-center">
+                    <WolfMark size={48} />
                   </div>
                   <CardTitle className="text-2xl font-bold tracking-tight">
                     Join the Pack
