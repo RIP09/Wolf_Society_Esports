@@ -1,5 +1,5 @@
 import { NeoCard, PageHeader } from "@/components/neo";
-import { openCookieSettings } from "@/components/CookieConsent";
+import { openCookieSettings } from "@/components/ConsentProvider";
 import { ShieldCheck } from "lucide-react";
 
 const SECTIONS: { title: string; body: string }[] = [
@@ -26,6 +26,10 @@ const SECTIONS: { title: string; body: string }[] = [
   {
     title: "Your rights",
     body: "You can request a copy of the data we hold about you, ask for corrections, or request deletion. Email wolfsocietygg@yahoo.com and the management team will respond.",
+  },
+  {
+    title: "PROGA Act 2025–2026 compliance",
+    body: "Wolf Society Esports is fully compliant with the PROGA Act 2025–2026. All player registrations, data handling, online-gaming activities, fair-play enforcement and content published through this platform operate in line with the Act as in force for the 2025–2026 period, and the organization keeps its practices aligned with the Act at all times.",
   },
 ];
 
