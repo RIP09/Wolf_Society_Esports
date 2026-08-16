@@ -1,0 +1,62 @@
+import logo from "@/assets/logo.svg";
+import { cn } from "@/lib/utils";
+
+/**
+ * The official Wolf Society Esports mark — the howling wolf on a white neo
+ * tile. `shadow` drops the hard neo shadow; set `rounded` for circular uses.
+ */
+export function WolfMark({
+  size = 36,
+  className,
+  shadow = true,
+  title = "Wolf Society Esports",
+}: {
+  size?: number;
+  className?: string;
+  shadow?: boolean;
+  title?: string;
+}) {
+  return (
+    <span
+      className={cn(
+        "inline-flex shrink-0 items-center justify-center overflow-hidden border-2 border-foreground bg-white",
+        shadow && "shadow-[3px_3px_0_0_var(--neo-ink)]",
+        className,
+      )}
+      style={{ width: size, height: size }}
+      title={title}
+    >
+      <img
+        src={logo}
+        alt={title}
+        width={size}
+        height={size}
+        className="h-full w-full object-cover"
+        draggable={false}
+      />
+    </span>
+  );
+}
+
+/** Brand lockup — wolf mark + "Wolf Society Esports" wordmark + tag line. */
+export function WolfLogo({
+  tag = "Esports Organization",
+  size = 36,
+  className,
+}: {
+  tag?: string;
+  size?: number;
+  className?: string;
+}) {
+  return (
+    <div className={cn("flex items-center gap-2.5", className)}>
+      <WolfMark size={size} />
+      <div className="leading-none">
+        <p className="text-base font-bold leading-tight tracking-tight">Wolf Society Esports</p>
+        <p className="mt-0.5 font-mono text-[8px] font-bold uppercase tracking-widest text-muted-foreground">
+          {tag}
+        </p>
+      </div>
+    </div>
+  );
+}
