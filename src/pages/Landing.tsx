@@ -60,22 +60,36 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Hero */}
-      <section className="neo-grid-bg relative overflow-hidden">
+      {/* Hero — video background with a dark overlay + light grid */}
+      <section className="relative overflow-hidden border-b-2 border-foreground text-foreground">
+        <video
+          className="absolute inset-0 h-full w-full object-cover"
+          src="https://assets.mixkit.co/videos/43527/43527-720.mp4"
+          poster="https://assets.mixkit.co/videos/43527/43527-thumb-720-0.jpg"
+          autoPlay
+          muted
+          loop
+          playsInline
+          aria-hidden
+        />
+        {/* Dark overlay keeps the copy readable; the light grid keeps the neo feel */}
+        <div className="absolute inset-0 bg-background/78" />
+        <div className="neo-grid-bg-light absolute inset-0" />
+
         {/* Floating decorative blocks */}
         <motion.span
           aria-hidden
           initial={{ opacity: 0, scale: 0.6 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.6, type: "spring", stiffness: 200, damping: 14 }}
-          className="neo-float pointer-events-none absolute -right-6 top-10 hidden h-16 w-16 border-2 border-foreground bg-neo-orange lg:block"
+          className="neo-float pointer-events-none absolute -right-6 top-10 hidden h-16 w-16 border-2 border-foreground/40 bg-neo-orange lg:block"
         />
         <motion.span
           aria-hidden
           initial={{ opacity: 0, scale: 0.6 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.75, type: "spring", stiffness: 200, damping: 14 }}
-          className="neo-float pointer-events-none absolute right-24 bottom-16 hidden h-10 w-10 border-2 border-foreground bg-neo-blue lg:block"
+          className="neo-float pointer-events-none absolute right-24 bottom-16 hidden h-10 w-10 border-2 border-foreground/40 bg-neo-blue lg:block"
           style={{ animationDelay: "-2.2s" }}
         />
         <motion.span
@@ -83,11 +97,11 @@ export default function Landing() {
           initial={{ opacity: 0, scale: 0.6 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.9, type: "spring", stiffness: 200, damping: 14 }}
-          className="neo-float pointer-events-none absolute top-24 left-1/2 hidden h-6 w-6 border-2 border-foreground bg-neo-green xl:block"
+          className="neo-float pointer-events-none absolute top-24 left-1/2 hidden h-6 w-6 border-2 border-foreground/40 bg-neo-green xl:block"
           style={{ animationDelay: "-3.4s" }}
         />
 
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 pb-16 pt-14 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:pb-24 lg:pt-20">
+        <div className="relative mx-auto grid max-w-6xl gap-10 px-4 pb-16 pt-14 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:pb-24 lg:pt-20">
           <motion.div variants={stagger} initial="hidden" animate="show">
             <motion.p
               variants={fadeUp}
@@ -110,31 +124,31 @@ export default function Landing() {
             </motion.h1>
             <motion.p
               variants={fadeUp}
-              className="mt-6 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg"
+              className="mt-6 max-w-xl text-base leading-7 text-foreground/75 sm:text-lg"
             >
               Wolf Society Esports is a competitive esports organization competing across
               the world's biggest titles. This page shows our live rosters, schedules and
               results — straight from the organization database, updated in real time.
             </motion.p>
             <motion.div variants={fadeUp} className="mt-8 flex flex-wrap items-center gap-3">
-              <Link to="/teams">
+              <Link to="/register">
                 <Button className={cn(btnYellow, "h-11 px-6 text-sm")}>
                   <Users className="size-4" />
-                  Meet the teams
+                  Join the Pack
                   <ArrowRight className="size-4" />
                 </Button>
               </Link>
-              <Link to="/tournaments">
+              <Link to="/fan-zone">
                 <Button variant="outline" className={cn(btnGhost, "h-11 px-6 text-sm")}>
                   <Trophy className="size-4" />
-                  Tournaments
+                  Fan Zone
                 </Button>
               </Link>
               <InstallAppButton />
             </motion.div>
             <motion.p
               variants={fadeUp}
-              className="mt-6 font-mono text-[11px] font-bold uppercase tracking-widest text-muted-foreground"
+              className="mt-6 font-mono text-[11px] font-bold uppercase tracking-widest text-foreground/60"
             >
               Players & management sign in to their portals above
             </motion.p>
@@ -204,15 +218,15 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Game ticker marquee */}
-      <div className="overflow-hidden border-y-2 border-foreground bg-neo-yellow py-2.5">
+      {/* Game ticker marquee — // separated, True Rippers style */}
+      <div className="overflow-hidden border-b-2 border-foreground bg-neo-yellow py-2.5">
         <div className="neo-ticker flex w-max items-center whitespace-nowrap">
           {[...GAMES, ...GAMES].map((g, i) => (
             <span
               key={i}
-              className="flex items-center gap-3 px-6 font-mono text-[11px] font-bold uppercase tracking-widest text-white"
+              className="flex items-center gap-4 px-4 font-mono text-[11px] font-bold uppercase tracking-widest text-white"
             >
-              <span className="inline-block h-1.5 w-1.5 border border-foreground bg-background" />
+              <span className="text-white/60">//</span>
               {g}
             </span>
           ))}
@@ -469,6 +483,31 @@ export default function Landing() {
               </motion.div>
             ))
           )}
+        </div>
+      </section>
+
+      {/* Fan Zone teaser */}
+      <section className="border-y-2 border-foreground bg-foreground text-background">
+        <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 px-4 py-10 sm:px-6 md:flex-row md:items-center">
+          <div>
+            <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-background/60">
+              Fan Zone · Polls · Trivia · Predictions
+            </p>
+            <h2 className="mt-1 text-3xl font-bold tracking-tight">
+              Vote. Predict. <span className="bg-neo-yellow px-1.5 text-white">Climb the ranks.</span>
+            </h2>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-background/70">
+              Earn Fan XP for every poll vote, trivia answer and correct match
+              prediction — the leaderboard updates in real time.
+            </p>
+          </div>
+          <Link
+            to="/fan-zone"
+            className="neo-press shrink-0 rounded-none border-2 border-background bg-neo-blue px-7 py-3 font-mono text-[11px] font-bold uppercase tracking-widest text-white shadow-[4px_4px_0_0_var(--neo-ink)] hover:shadow-[5px_5px_0_0_var(--neo-ink)]"
+          >
+            <Gamepad2 className="mr-2 inline size-4" />
+            Press Start ▸
+          </Link>
         </div>
       </section>
 
