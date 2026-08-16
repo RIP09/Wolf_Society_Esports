@@ -1,3 +1,4 @@
+import { WolfMark } from "@/components/WolfLogo";
 import { Button } from "@/components/ui/button";
 import { btnYellow } from "@/lib/neo";
 import { cn } from "@/lib/utils";
@@ -8,9 +9,7 @@ export default function NotFound() {
   return (
     <div className="neo-grid-bg flex min-h-screen flex-col items-center justify-center bg-background px-4">
       <div className="flex w-full max-w-md flex-col items-center gap-5 text-center">
-        <span className="flex h-20 w-20 items-center justify-center border-2 border-foreground bg-neo-yellow shadow-[6px_6px_0_0_var(--neo-ink)]">
-          <span className="text-4xl font-bold leading-none">4</span>
-        </span>
+        <WolfMark size={80} />
         <div>
           <h1 className="text-6xl font-bold tracking-tight">404</h1>
           <p className="mt-2 font-mono text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
