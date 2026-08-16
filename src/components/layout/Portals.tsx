@@ -222,6 +222,7 @@ const ADMIN_NAV: NavItem[] = [
   { to: "/admin/settings", label: "Settings" },
   { to: "/admin/inquiries", label: "Inquiries" },
   { to: "/grant", label: "Access" },
+  { to: "/admin/fan-zone", label: "Fan Zone" },
 ];
 
 export function AdminLayout() {
