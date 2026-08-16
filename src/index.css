@@ -42,93 +42,95 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-/* Wolf Society Esports brand palette — light purple-blue mix */
+/* Wolf Society Esports brand palette — True Rippers inspired: near-black
+   surfaces, signature red #FF4655, cyan #06B6D4, gold #D4AF37, white ink. */
 @theme {
   --font-sans: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: "Space Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  --color-neo-yellow: #7b5cf0;
+  --color-neo-yellow: #ff4655;
   --color-neo-orange: #f59e0b;
-  --color-neo-green: #14b8a6;
+  --color-neo-green: #22c55e;
   --color-neo-red: #e5484d;
-  --color-neo-blue: #3d7bff;
-  --color-neo-gold: #b08d3e;
-  --color-neo-purple: #a78bfa;
-  --color-neo-paper: #f4f3fb;
-  --color-neo-cream: #e8e7f5;
-  --color-neo-ink: #1b1d3a;
+  --color-neo-blue: #0891b2;
+  --color-neo-gold: #d4af37;
+  --color-neo-purple: #8b5cf6;
+  --color-neo-paper: #f5f5f7;
+  --color-neo-cream: #16161f;
+  --color-neo-ink: #f5f5f7;
 }
 
-/* Light purple-bluish theme — soft lavender surfaces, deep indigo ink,
-   vivid violet primary accent with a blue secondary. */
+/* Default theme — True Rippers dark: near-black canvas, white ink & borders
+   (hard neobrutal shadows), red primary, cyan secondary, gold highlights. */
 :root {
   --radius: 0;
-  --neo-ink: #1b1d3a;
-  --background: #f4f3fb;
-  --foreground: #1b1d3a;
-  --card: #ffffff;
-  --card-foreground: #1b1d3a;
-  --popover: #ffffff;
-  --popover-foreground: #1b1d3a;
-  --primary: #1b1d3a;
-  --primary-foreground: #f4f3fb;
-  --secondary: #e8e7f5;
-  --secondary-foreground: #1b1d3a;
-  --muted: #ecebf8;
-  --muted-foreground: #63658a;
-  --accent: #7b5cf0;
-  --accent-foreground: #ffffff;
+  --neo-ink: #f5f5f7;
+  --background: #0a0a0f;
+  --foreground: #f5f5f7;
+  --card: #13131c;
+  --card-foreground: #f5f5f7;
+  --popover: #13131c;
+  --popover-foreground: #f5f5f7;
+  --primary: #ff4655;
+  --primary-foreground: #ffffff;
+  --secondary: #16161f;
+  --secondary-foreground: #f5f5f7;
+  --muted: #16161f;
+  --muted-foreground: #a1a1aa;
+  --accent: #06b6d4;
+  --accent-foreground: #0a0a0f;
   --destructive: #e5484d;
-  --border: #1b1d3a;
-  --input: #1b1d3a;
-  --ring: #7b5cf0;
-  --chart-1: #7b5cf0;
-  --chart-2: #3d7bff;
-  --chart-3: #a78bfa;
-  --chart-4: #14b8a6;
-  --chart-5: #f59e0b;
-  --sidebar: #ffffff;
-  --sidebar-foreground: #1b1d3a;
-  --sidebar-primary: #1b1d3a;
-  --sidebar-primary-foreground: #f4f3fb;
-  --sidebar-accent: #e8e7f5;
-  --sidebar-accent-foreground: #1b1d3a;
-  --sidebar-border: #1b1d3a;
-  --sidebar-ring: #7b5cf0;
+  --border: #f5f5f7;
+  --input: #f5f5f7;
+  --ring: #ff4655;
+  --chart-1: #ff4655;
+  --chart-2: #06b6d4;
+  --chart-3: #d4af37;
+  --chart-4: #22c55e;
+  --chart-5: #8b5cf6;
+  --sidebar: #101018;
+  --sidebar-foreground: #f5f5f7;
+  --sidebar-primary: #ff4655;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #16161f;
+  --sidebar-accent-foreground: #f5f5f7;
+  --sidebar-border: #f5f5f7;
+  --sidebar-ring: #ff4655;
 }
 
+/* Explicit dark mode — a shade deeper than the default dark. */
 .dark {
-  --neo-ink: #e8e7f5;
-  --background: #14152b;
-  --foreground: #e8e7f5;
-  --card: #1d1f42;
-  --card-foreground: #e8e7f5;
-  --popover: #1d1f42;
-  --popover-foreground: #e8e7f5;
-  --primary: #e8e7f5;
-  --primary-foreground: #14152b;
-  --secondary: #2a2c57;
-  --secondary-foreground: #e8e7f5;
-  --muted: #2a2c57;
-  --muted-foreground: #a7a9d6;
-  --accent: #8b6cff;
-  --accent-foreground: #ffffff;
+  --neo-ink: #f5f5f7;
+  --background: #060609;
+  --foreground: #f5f5f7;
+  --card: #101019;
+  --card-foreground: #f5f5f7;
+  --popover: #101019;
+  --popover-foreground: #f5f5f7;
+  --primary: #ff4655;
+  --primary-foreground: #ffffff;
+  --secondary: #12121c;
+  --secondary-foreground: #f5f5f7;
+  --muted: #12121c;
+  --muted-foreground: #9e9ea8;
+  --accent: #06b6d4;
+  --accent-foreground: #0a0a0f;
   --destructive: #e5484d;
-  --border: #3a3d6e;
-  --input: #3a3d6e;
-  --ring: #8b6cff;
-  --chart-1: #8b6cff;
-  --chart-2: #5c86ff;
-  --chart-3: #a78bfa;
-  --chart-4: #2dd4bf;
-  --chart-5: #fbbf24;
-  --sidebar: #1d1f42;
-  --sidebar-foreground: #e8e7f5;
-  --sidebar-primary: #e8e7f5;
-  --sidebar-primary-foreground: #14152b;
-  --sidebar-accent: #2a2c57;
-  --sidebar-accent-foreground: #e8e7f5;
-  --sidebar-border: #3a3d6e;
-  --sidebar-ring: #8b6cff;
+  --border: #f5f5f7;
+  --input: #f5f5f7;
+  --ring: #ff4655;
+  --chart-1: #ff4655;
+  --chart-2: #06b6d4;
+  --chart-3: #d4af37;
+  --chart-4: #22c55e;
+  --chart-5: #8b5cf6;
+  --sidebar: #0d0d15;
+  --sidebar-foreground: #f5f5f7;
+  --sidebar-primary: #ff4655;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #12121c;
+  --sidebar-accent-foreground: #f5f5f7;
+  --sidebar-border: #f5f5f7;
+  --sidebar-ring: #ff4655;
 }
 
 @layer base {
@@ -179,6 +181,20 @@
       linear-gradient(
         to bottom,
         color-mix(in srgb, var(--neo-ink) 7%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 34px 34px;
+  }
+  /* Grid in light-on-dark mode — used over the hero video background. */
+  .neo-grid-bg-light {
+    background-image: linear-gradient(
+        to right,
+        rgba(244, 243, 251, 0.12) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        rgba(244, 243, 251, 0.12) 1px,
         transparent 1px
       );
     background-size: 34px 34px;
