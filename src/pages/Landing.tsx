@@ -2,6 +2,7 @@ import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { NeoCard, StatusBadge } from "@/components/neo";
 import { InstallAppButton, InstallSection } from "@/components/InstallApp";
+import { WolfMark } from "@/components/WolfLogo";
 import { btnGhost, btnYellow, card } from "@/lib/neo";
 import { cn } from "@/lib/utils";
 import { useQuery } from "convex/react";
@@ -103,12 +104,13 @@ export default function Landing() {
 
         <div className="relative mx-auto grid max-w-6xl gap-10 px-4 pb-16 pt-14 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:pb-24 lg:pt-20">
           <motion.div variants={stagger} initial="hidden" animate="show">
-            <motion.p
+            <motion.div
               variants={fadeUp}
-              className="mb-4 inline-block border-2 border-foreground bg-neo-yellow px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-widest text-white shadow-[3px_3px_0_0_var(--neo-ink)]"
+              className="mb-4 inline-flex items-center gap-2 border-2 border-foreground bg-background py-1 pl-1 pr-3 font-mono text-[11px] font-bold uppercase tracking-widest text-foreground shadow-[3px_3px_0_0_var(--neo-ink)]"
             >
+              <WolfMark size={28} shadow={false} />
               Wolf Society Esports
-            </motion.p>
+            </motion.div>
             <motion.h1
               variants={fadeUp}
               className="text-5xl font-bold leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl"
