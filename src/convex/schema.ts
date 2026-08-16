@@ -674,6 +674,25 @@ const schema = defineSchema(
       key: v.string(),
       value: v.string(),
     }).index("by_key", ["key"]),
+
+    // Private management staff profiles — one row per staff member (admin/
+    // superadmin). Staff edit their own details here (name/email live on the
+    // users table; everything else lives here). Rows are readable only by the
+    // owner and the Super Admin — regular managers never see each other's
+    // edited details. Password changes are handled by the auth provider and are
+    // NEVER stored or logged on this table or anywhere else.
+    staffProfiles: defineTable({
+      userId: v.id("users"),
+      phone: v.optional(v.string()),
+      title: v.optional(v.string()), // optional job title / designation
+      location: v.optional(v.string()),
+      timezone: v.optional(v.string()),
+      discord: v.optional(v.string()),
+      gameFocus: v.optional(v.string()),
+      bio: v.optional(v.string()),
+      socials: v.optional(v.string()),
+      updatedAt: v.number(),
+    }).index("by_userId", ["userId"]),
   },
   {
     schemaValidation: false,
