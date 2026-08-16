@@ -1,6 +1,7 @@
 import { ConvexError, v } from "convex/values";
 import { internalMutation, internalQuery, mutation, query } from "./_generated/server";
-import { requireAdmin, requireUser } from "./guards";
+import { requireAdmin, requireUser, hasAdminRole } from "./guards";
+import { wipeAuthUser, wipeFanZoneData, wipePlayerData } from "./players";
 import { enforceRateLimit } from "./rateLimit";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -185,6 +186,59 @@ export const deletePushSubscriptions = internalMutation({
   args: { ids: v.array(v.id("pushSubscriptions")) },
   handler: async (ctx, { ids }) => {
     for (const id of ids) await ctx.db.delete(id);
+    return { ok: true };
+  },
+});
+
+/**
+ * Permanent self-service account deletion for public portal users (fans,
+ * community members, players). Removes EVERY piece of the account's data:
+ * the Fan Zone profile + votes/answers/predictions, any player profile and
+ * its full esports footprint, the alert subscription, this device's push
+ * subscription, and finally the auth account with all sessions and tokens.
+ *
+ * Management accounts cannot self-delete through the public portal — staff
+ * are handled by the Super Admin in The Den.
+ */
+export const purgeMyAccount = mutation({
+  args: { visitorId: v.optional(v.string()) },
+  handler: async (ctx, { visitorId }) => {
+    const user = await requireUser(ctx);
+    if (hasAdminRole(user.role)) {
+      throw new ConvexError({
+        message: "Management accounts can't be deleted from the public portal — contact the Super Admin.",
+      });
+    }
+
+    // 1. Fan Zone footprint (fan profile, poll votes, trivia, predictions).
+    await wipeFanZoneData(ctx, user._id);
+
+    // 2. Player profile + full esports footprint, if this user is a player.
+    const profile = await ctx.db
+      .query("players")
+      .withIndex("by_userId", (q) => q.eq("userId", user._id))
+      .first();
+    if (profile) await wipePlayerData(ctx, profile._id, profile.photoStorageId);
+
+    // 3. This device's push subscription (visitor id ties the device to us).
+    if (visitorId && visitorId.trim()) {
+      const subs = await ctx.db
+        .query("pushSubscriptions")
+        .filter((q) => q.eq(q.field("visitorId"), visitorId.trim().slice(0, 120)))
+        .collect();
+      for (const sub of subs) await ctx.db.delete(sub._id);
+    }
+
+    // 4. The auth account itself — sessions, tokens, verifiers, user row.
+    await wipeAuthUser(ctx, user._id);
+
+    // 5. Audit trail for The Den's security log.
+    await ctx.db.insert("securityLogs", {
+      userId: user._id,
+      email: user.email,
+      reason: "User permanently deleted their public portal account and all associated data",
+      createdAt: Date.now(),
+    });
     return { ok: true };
   },
 });
