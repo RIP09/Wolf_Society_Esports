@@ -29,6 +29,12 @@ export function openSearch() {
 const PAGE_LINKS: { to: string; label: string; group: string }[] = [
   { to: "/", label: "Home", group: "Pages" },
   { to: "/about", label: "About us", group: "Pages" },
+  { to: "/register", label: "Register", group: "Pages" },
+  { to: "/fan-zone", label: "Fan Zone", group: "Pages" },
+  { to: "/fan-zone/polls", label: "Fan Zone — Polls", group: "Pages" },
+  { to: "/fan-zone/trivia", label: "Fan Zone — Trivia", group: "Pages" },
+  { to: "/fan-zone/predictions", label: "Fan Zone — Predictions", group: "Pages" },
+  { to: "/fan-zone/rankings", label: "Fan Zone — Rankings", group: "Pages" },
   { to: "/teams", label: "Teams", group: "Pages" },
   { to: "/tournaments", label: "Tournaments", group: "Pages" },
   { to: "/bracket", label: "Live bracket", group: "Pages" },
