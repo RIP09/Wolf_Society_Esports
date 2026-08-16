@@ -42,25 +42,27 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-/* Wolf Society Esports brand palette — True Rippers inspired: near-black
-   surfaces, signature red #FF4655, cyan #06B6D4, gold #D4AF37, white ink. */
+/* Wolf Society Esports brand palette — built around the official logo:
+   violet #7C3AED primary, light violet #A78BFA/#8B5CF6 secondary, near-black
+   surfaces and white ink. Green/red/gold stay as semantic status colors. */
 @theme {
   --font-sans: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: "Space Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  --color-neo-yellow: #ff4655;
+  --color-neo-yellow: #7c3aed;
   --color-neo-orange: #f59e0b;
   --color-neo-green: #22c55e;
   --color-neo-red: #e5484d;
-  --color-neo-blue: #0891b2;
+  --color-neo-blue: #8b5cf6;
   --color-neo-gold: #d4af37;
-  --color-neo-purple: #8b5cf6;
+  --color-neo-purple: #a78bfa;
   --color-neo-paper: #f5f5f7;
   --color-neo-cream: #16161f;
   --color-neo-ink: #f5f5f7;
 }
 
-/* Default theme — True Rippers dark: near-black canvas, white ink & borders
-   (hard neobrutal shadows), red primary, cyan secondary, gold highlights. */
+/* Default theme — logo violet dark: near-black canvas, white ink & borders
+   (hard neobrutal shadows), violet primary, light-violet secondary, gold
+   and green kept only as semantic status colors. */
 :root {
   --radius: 0;
   --neo-ink: #f5f5f7;
@@ -70,34 +72,34 @@
   --card-foreground: #f5f5f7;
   --popover: #13131c;
   --popover-foreground: #f5f5f7;
-  --primary: #ff4655;
+  --primary: #7c3aed;
   --primary-foreground: #ffffff;
   --secondary: #16161f;
   --secondary-foreground: #f5f5f7;
   --muted: #16161f;
   --muted-foreground: #a1a1aa;
-  --accent: #06b6d4;
+  --accent: #8b5cf6;
   --accent-foreground: #0a0a0f;
   --destructive: #e5484d;
   --border: #f5f5f7;
   --input: #f5f5f7;
-  --ring: #ff4655;
-  --chart-1: #ff4655;
-  --chart-2: #06b6d4;
+  --ring: #7c3aed;
+  --chart-1: #7c3aed;
+  --chart-2: #a78bfa;
   --chart-3: #d4af37;
   --chart-4: #22c55e;
   --chart-5: #8b5cf6;
   --sidebar: #101018;
   --sidebar-foreground: #f5f5f7;
-  --sidebar-primary: #ff4655;
+  --sidebar-primary: #7c3aed;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #16161f;
   --sidebar-accent-foreground: #f5f5f7;
   --sidebar-border: #f5f5f7;
-  --sidebar-ring: #ff4655;
+  --sidebar-ring: #7c3aed;
 }
 
-/* Light theme — same True Rippers accents on a light neobrutal canvas.
+/* Light theme — same logo-violet accents on a light neobrutal canvas.
    Applied via the theme toggle (next-themes adds `class="light"`). */
 .light {
   --neo-ink: #0a0a0f;
@@ -107,31 +109,31 @@
   --card-foreground: #0a0a0f;
   --popover: #ffffff;
   --popover-foreground: #0a0a0f;
-  --primary: #ff4655;
+  --primary: #7c3aed;
   --primary-foreground: #ffffff;
   --secondary: #e8e8ee;
   --secondary-foreground: #0a0a0f;
   --muted: #ececf1;
   --muted-foreground: #6b6b76;
-  --accent: #06b6d4;
+  --accent: #8b5cf6;
   --accent-foreground: #0a0a0f;
   --destructive: #e5484d;
   --border: #0a0a0f;
   --input: #0a0a0f;
-  --ring: #ff4655;
-  --chart-1: #ff4655;
-  --chart-2: #0891b2;
+  --ring: #7c3aed;
+  --chart-1: #7c3aed;
+  --chart-2: #a78bfa;
   --chart-3: #d4af37;
   --chart-4: #22c55e;
   --chart-5: #8b5cf6;
   --sidebar: #ffffff;
   --sidebar-foreground: #0a0a0f;
-  --sidebar-primary: #ff4655;
+  --sidebar-primary: #7c3aed;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #e8e8ee;
   --sidebar-accent-foreground: #0a0a0f;
   --sidebar-border: #0a0a0f;
-  --sidebar-ring: #ff4655;
+  --sidebar-ring: #7c3aed;
 }
 
 /* Explicit dark mode — a shade deeper than the default dark. */
@@ -143,31 +145,31 @@
   --card-foreground: #f5f5f7;
   --popover: #101019;
   --popover-foreground: #f5f5f7;
-  --primary: #ff4655;
+  --primary: #7c3aed;
   --primary-foreground: #ffffff;
   --secondary: #12121c;
   --secondary-foreground: #f5f5f7;
   --muted: #12121c;
   --muted-foreground: #9e9ea8;
-  --accent: #06b6d4;
+  --accent: #8b5cf6;
   --accent-foreground: #0a0a0f;
   --destructive: #e5484d;
   --border: #f5f5f7;
   --input: #f5f5f7;
-  --ring: #ff4655;
-  --chart-1: #ff4655;
-  --chart-2: #06b6d4;
+  --ring: #7c3aed;
+  --chart-1: #7c3aed;
+  --chart-2: #a78bfa;
   --chart-3: #d4af37;
   --chart-4: #22c55e;
   --chart-5: #8b5cf6;
   --sidebar: #0d0d15;
   --sidebar-foreground: #f5f5f7;
-  --sidebar-primary: #ff4655;
+  --sidebar-primary: #7c3aed;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #12121c;
   --sidebar-accent-foreground: #f5f5f7;
   --sidebar-border: #f5f5f7;
-  --sidebar-ring: #ff4655;
+  --sidebar-ring: #7c3aed;
 }
 
 @layer base {
