@@ -7,6 +7,10 @@ import { RandomReader, generateRandomString } from "@oslojs/crypto/random";
  * player login emails working after deploying to Vercel + your own Convex
  * project. Returns false (so the caller can fall back) when the key is not
  * configured — e.g. in the Freebuff preview, where the relay below is used.
+ *
+ * The email is fully branded: "Wolf Society Esports" appears in the subject,
+ * header, body and footer — the code that lands in the player's inbox can
+ * never show another organization's name.
  */
 async function sendViaResend(email: string, token: string): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY;
@@ -23,26 +27,92 @@ async function sendViaResend(email: string, token: string): Promise<boolean> {
     body: JSON.stringify({
       from,
       to: [email],
-      subject: "Your sign-in code — Wolf Society Esports",
-      html: `<!doctype html><html><body style="margin:0;padding:0;background:#f4f3fb;font-family:Arial,Helvetica,sans-serif;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f3fb;padding:32px 12px;">
-          <tr><td align="center">
-            <table role="presentation" width="520" cellpadding="0" cellspacing="0" style="background:#ffffff;border:2px solid #1b1d3a;border-radius:8px;overflow:hidden;">
-              <tr><td style="background:#7b5cf0;padding:18px 28px;">
-                <span style="color:#ffffff;font-size:18px;font-weight:bold;">Wolf Society Esports</span>
-              </td></tr>
-              <tr><td style="padding:28px;color:#1b1d3a;font-size:14px;line-height:1.7;">
-                <h2 style="margin:0 0 12px;">Your sign-in code</h2>
-                <p>Use this code to sign in to the Wolf Society Esports platform. It expires in 15 minutes.</p>
-                <p style="margin:24px 0;padding:16px;background:#f4f3fb;border:2px dashed #7b5cf0;border-radius:8px;text-align:center;font-size:30px;font-weight:bold;letter-spacing:8px;color:#1b1d3a;">${token}</p>
-                <p style="font-size:12px;color:#63658a;">If you didn't request this code, you can safely ignore this email.</p>
-              </td></tr>
-              <tr><td style="padding:14px 28px;border-top:1px solid #e8e7f5;color:#63658a;font-size:12px;">
-                This is an automated message from the Wolf Society Esports platform.
-              </td></tr>
-            </table>
-          </td></tr>
-        </table></body></html>`,
+      subject: "Your Wolf Society Esports sign-in code",
+      html: `<!doctype html>
+<html>
+  <body style="margin:0;padding:0;background:#f4f3fb;font-family:Arial,Helvetica,sans-serif;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f3fb;padding:36px 12px;">
+      <tr><td align="center">
+        <!-- Card -->
+        <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="width:560px;max-width:100%;background:#ffffff;border:3px solid #141414;box-shadow:8px 8px 0 0 #141414;">
+
+          <!-- Brand bar -->
+          <tr>
+            <td style="background:#141414;padding:20px 28px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td>
+                    <table role="presentation" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="vertical-align:middle;padding-right:12px;">
+                          <table role="presentation" cellpadding="0" cellspacing="0" style="width:44px;height:44px;background:#facc15;border:2px solid #141414;">
+                            <tr><td align="center" style="font-size:22px;line-height:44px;">🐺</td></tr>
+                          </table>
+                        </td>
+                        <td style="vertical-align:middle;">
+                          <span style="color:#ffffff;font-size:20px;font-weight:bold;letter-spacing:0.5px;">WOLF SOCIETY ESPORTS</span>
+                          <div style="color:#facc15;font-size:11px;font-weight:bold;letter-spacing:2px;margin-top:2px;text-transform:uppercase;">The Pack · Management · Esports</div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:32px 28px;color:#141414;font-size:14px;line-height:1.7;">
+              <h2 style="margin:0 0 6px;font-size:22px;color:#141414;">Thank you, Wolf! 🐺</h2>
+              <p style="margin:0 0 18px;color:#141414;">
+                Thanks for signing in to the <strong>Wolf Society Esports</strong> platform. Use the code
+                below to finish logging in — it expires in <strong>15 minutes</strong>.
+              </p>
+
+              <!-- OTP box -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0;background:#f4f3fb;border:3px dashed #141414;">
+                <tr>
+                  <td align="center" style="padding:22px 16px;">
+                    <div style="font-size:11px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;color:#5b5b5b;margin-bottom:10px;">Your one-time sign-in code</div>
+                    <span style="font-family:monospace,Consolas,'Courier New',monospace;font-size:38px;font-weight:bold;letter-spacing:12px;color:#141414;background:#facc15;padding:10px 18px;border:2px solid #141414;">${token}</span>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Safety note -->
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;background:#141414;">
+                <tr>
+                  <td style="padding:12px 16px;">
+                    <span style="color:#facc15;font-size:12px;font-weight:bold;">
+                      🔒 Never share this code with anyone. Wolf Society Esports staff will never ask for it.
+                    </span>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:0;font-size:12px;color:#5b5b5b;">
+                Didn't request this code? You can safely ignore this email — your account stays protected.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:16px 28px;border-top:3px solid #141414;background:#f4f3fb;color:#5b5b5b;font-size:12px;line-height:1.6;">
+              <strong style="color:#141414;">Wolf Society Esports</strong> — official esports organization platform.<br/>
+              This is an automated message — do not reply to this email.
+            </td>
+          </tr>
+        </table>
+
+        <p style="margin:22px 0 0;font-size:11px;color:#8a8a8a;">
+          © ${new Date().getFullYear()} Wolf Society Esports · All rights reserved
+        </p>
+      </td></tr>
+    </table>
+  </body>
+</html>`,
     }),
   });
   return res.ok;
@@ -71,7 +141,7 @@ export const emailOtp = Email({
         {
           to: email,
           otp: token,
-          appName: process.env.VLY_APP_NAME || "a freebuff.com application",
+          appName: process.env.VLY_APP_NAME || "Wolf Society Esports",
         },
         {
           headers: {
