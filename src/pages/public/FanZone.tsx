@@ -127,18 +127,18 @@ export default function FanZone() {
             </motion.p>
             <motion.div variants={fadeUp} className="mt-8 flex flex-wrap gap-3">
               <Link
-                to="/register?path=fan"
+                to="/signin"
                 className="neo-press inline-flex h-11 items-center gap-2 rounded-none border-2 border-foreground bg-neo-yellow px-6 font-mono text-[11px] font-bold uppercase tracking-widest text-white shadow-[4px_4px_0_0_var(--neo-ink)]"
               >
                 <Crosshair className="size-4" />
                 Sign in · Earn XP
               </Link>
               <Link
-                to="/fan-zone/polls"
+                to="/register?path=fan"
                 className="neo-press inline-flex h-11 items-center gap-2 rounded-none border-2 border-foreground bg-card px-6 font-mono text-[11px] font-bold uppercase tracking-widest text-foreground shadow-[4px_4px_0_0_var(--neo-ink)]"
               >
                 <Gamepad2 className="size-4" />
-                Play as guest
+                Create a fan account
               </Link>
             </motion.div>
           </motion.div>
@@ -336,7 +336,7 @@ export default function FanZone() {
               </p>
             </div>
             <Link
-              to="/register?path=fan"
+              to="/signin"
               className="neo-press shrink-0 rounded-none border-2 border-foreground bg-neo-yellow px-8 py-3 font-mono text-[11px] font-bold uppercase tracking-widest text-white shadow-[4px_4px_0_0_var(--neo-ink)] hover:shadow-[5px_5px_0_0_var(--neo-ink)]"
             >
               <Crosshair className="mr-2 inline size-4" />
