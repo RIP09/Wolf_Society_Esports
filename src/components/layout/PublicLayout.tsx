@@ -332,6 +332,12 @@ export default function PublicLayout() {
               ) : (
                 <>
                   <DropdownMenuItem asChild className="cursor-pointer rounded-none">
+                    <NavLink to="/signin">
+                      <LogIn className="size-4" />
+                      Sign in to your account
+                    </NavLink>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="cursor-pointer rounded-none">
                     <NavLink to="/register">
                       <Crosshair className="size-4" />
                       Register — player or fan
