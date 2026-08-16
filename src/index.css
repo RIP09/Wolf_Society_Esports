@@ -97,6 +97,43 @@
   --sidebar-ring: #ff4655;
 }
 
+/* Light theme — same True Rippers accents on a light neobrutal canvas.
+   Applied via the theme toggle (next-themes adds `class="light"`). */
+.light {
+  --neo-ink: #0a0a0f;
+  --background: #f5f5f7;
+  --foreground: #0a0a0f;
+  --card: #ffffff;
+  --card-foreground: #0a0a0f;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0f;
+  --primary: #ff4655;
+  --primary-foreground: #ffffff;
+  --secondary: #e8e8ee;
+  --secondary-foreground: #0a0a0f;
+  --muted: #ececf1;
+  --muted-foreground: #6b6b76;
+  --accent: #06b6d4;
+  --accent-foreground: #0a0a0f;
+  --destructive: #e5484d;
+  --border: #0a0a0f;
+  --input: #0a0a0f;
+  --ring: #ff4655;
+  --chart-1: #ff4655;
+  --chart-2: #0891b2;
+  --chart-3: #d4af37;
+  --chart-4: #22c55e;
+  --chart-5: #8b5cf6;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0a0a0f;
+  --sidebar-primary: #ff4655;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e8e8ee;
+  --sidebar-accent-foreground: #0a0a0f;
+  --sidebar-border: #0a0a0f;
+  --sidebar-ring: #ff4655;
+}
+
 /* Explicit dark mode — a shade deeper than the default dark. */
 .dark {
   --neo-ink: #f5f5f7;
