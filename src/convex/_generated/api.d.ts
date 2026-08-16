@@ -39,6 +39,7 @@ import type * as securityLogs from "../securityLogs.js";
 import type * as seed from "../seed.js";
 import type * as smsOtp from "../smsOtp.js";
 import type * as sponsors from "../sponsors.js";
+import type * as staffProfile from "../staffProfile.js";
 import type * as stats from "../stats.js";
 import type * as teams from "../teams.js";
 import type * as tournaments from "../tournaments.js";
@@ -83,6 +84,7 @@ declare const fullApi: ApiFromModules<{
   seed: typeof seed;
   smsOtp: typeof smsOtp;
   sponsors: typeof sponsors;
+  staffProfile: typeof staffProfile;
   stats: typeof stats;
   teams: typeof teams;
   tournaments: typeof tournaments;
