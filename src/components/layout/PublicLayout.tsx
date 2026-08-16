@@ -9,12 +9,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { CookieConsent, openCookieSettings } from "@/components/CookieConsent";
+import { CookieConsent } from "@/components/CookieConsent";
+import { openCookieSettings } from "@/components/ConsentProvider";
 import { PermissionCenter } from "@/components/PermissionCenter";
 import AIAssistant from "@/components/AIAssistant";
 import SearchPalette, { SearchButton } from "@/components/SearchPalette";
 import { getVisitorId } from "@/lib/visitor";
 import { useAuth } from "@/hooks/use-auth";
+import { analyticsAllowed } from "@/lib/consent";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { btnGhost, input } from "@/lib/neo";
 import { cn } from "@/lib/utils";
 import { useMutation, useQuery } from "convex/react";
@@ -33,6 +36,8 @@ function PresencePing() {
   const visitorId = useRef<string | null>(null);
 
   useEffect(() => {
+    // Respect the visitor's cookie choice — no presence pings without consent.
+    if (!analyticsAllowed()) return;
     if (!visitorId.current) visitorId.current = getVisitorId();
     const send = () => {
       void ping({ visitorId: visitorId.current ?? undefined, path: location.pathname });
@@ -286,6 +291,7 @@ export default function PublicLayout() {
             ))}
           </div>
           <div className="flex shrink-0 items-center gap-2">
+            <ThemeToggle compact />
             <SearchButton />
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -362,7 +368,9 @@ export default function PublicLayout() {
           </div>
         </div>
         {/* Mobile nav */}
-        <div className="flex flex-wrap gap-2 border-t-2 border-foreground bg-background px-4 py-2 lg:hidden">
+        <div className="flex items-center gap-2 border-t-2 border-foreground bg-background px-4 py-2 lg:hidden">
+          <ThemeToggle compact />
+          <div className="flex flex-wrap gap-2">
           {NAV.map((item) => (
             <NavLink
               key={item.to}
@@ -380,6 +388,7 @@ export default function PublicLayout() {
               {item.label}
             </NavLink>
           ))}
+          </div>
         </div>
       </header>
 
