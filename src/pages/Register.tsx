@@ -16,7 +16,7 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { btnGhost, btnYellow, input } from "@/lib/neo";
 import { cn } from "@/lib/utils";
-import { useNavigate, useSearchParams } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -366,9 +366,9 @@ function Register() {
                 Players register once and management approves the profile. Fans get
                 XP for every poll, trivia answer and prediction. Already have an
                 account?{" "}
-                <a href="/auth" className="font-bold underline">
+                <Link to="/signin" className="font-bold underline">
                   Sign in
-                </a>
+                </Link>
                 .
               </>
             ) : (
