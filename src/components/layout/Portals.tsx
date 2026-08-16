@@ -205,6 +205,7 @@ function PortalLayout({
 
 const ADMIN_NAV: NavItem[] = [
   { to: "/admin", label: "Overview", end: true },
+  { to: "/admin/profile", label: "My Profile" },
   { to: "/admin/players", label: "Players" },
   { to: "/admin/attendance", label: "Attendance" },
   { to: "/admin/teams", label: "Teams" },
