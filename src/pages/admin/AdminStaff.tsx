@@ -18,7 +18,10 @@ import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQuery } from "convex/react";
 import {
   CalendarClock,
+  ChevronDown,
+  ChevronUp,
   Crown,
+  Eye,
   KeyRound,
   Loader2,
   Mail,
@@ -28,9 +31,20 @@ import {
   UserMinus,
   Users,
 } from "lucide-react";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import type { Id } from "@/convex/_generated/dataModel";
 import { toast } from "sonner";
+
+function Detail({ label, value, wide }: { label: string; value?: string; wide?: boolean }) {
+  return (
+    <div className={wide ? "flex flex-col gap-1 sm:col-span-2 lg:col-span-3" : "flex flex-col gap-1"}>
+      <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+        {label}
+      </span>
+      <p className="text-sm">{value && value.trim() ? value : <span className="text-muted-foreground/60">—</span>}</p>
+    </div>
+  );
+}
 
 type StaffRow = {
   userId: Id<"users">;
@@ -43,6 +57,17 @@ type StaffRow = {
   grantedAt?: number;
   isSelf: boolean;
   isBuiltIn: boolean;
+  profile: {
+    phone?: string;
+    title?: string;
+    location?: string;
+    timezone?: string;
+    discord?: string;
+    gameFocus?: string;
+    bio?: string;
+    socials?: string;
+    updatedAt: number;
+  } | null;
 };
 
 export default function AdminStaff() {
@@ -52,6 +77,7 @@ export default function AdminStaff() {
 
   const [removeTarget, setRemoveTarget] = useState<StaffRow | null>(null);
   const [removing, setRemoving] = useState(false);
+  const [expanded, setExpanded] = useState<Id<"users"> | null>(null);
 
   const isSuperAdmin = user?.role === "superadmin";
 
@@ -146,8 +172,8 @@ export default function AdminStaff() {
       ) : (
         <div className="flex flex-col divide-y-2 divide-foreground/10 border-2 border-foreground bg-card shadow-[4px_4px_0_0_var(--neo-ink)]">
           {staff.map((row) => (
+            <Fragment key={row.userId}>
             <div
-              key={row.userId}
               className={cn(
                 "flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between",
                 row.isSelf && "bg-neo-cream/60",
@@ -219,8 +245,44 @@ export default function AdminStaff() {
                     Remove access
                   </Button>
                 )}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="rounded-none border-2 border-foreground bg-card px-3 py-1.5 text-xs font-bold shadow-[2px_2px_0_0_var(--neo-ink)]"
+                  onClick={() => setExpanded(expanded === row.userId ? null : row.userId)}
+                >
+                  <Eye className="size-3.5" />
+                  {expanded === row.userId ? "Hide details" : "View details"}
+                  {expanded === row.userId ? <ChevronUp className="size-3.5" /> : <ChevronDown className="size-3.5" />}
+                </Button>
               </div>
             </div>
+
+            {/* Private profile details — only the Super Admin can see these. */}
+            {expanded === row.userId ? (
+              <div className="mt-3 grid gap-3 border-2 border-dashed border-foreground/40 bg-background p-4 sm:grid-cols-2 lg:grid-cols-3">
+                <Detail label="Title / designation" value={row.profile?.title} />
+                <Detail label="Phone / WhatsApp" value={(row.profile?.phone ?? row.phone) || undefined} />
+                <Detail label="Location" value={row.profile?.location} />
+                <Detail label="Timezone" value={row.profile?.timezone} />
+                <Detail label="Discord" value={row.profile?.discord} />
+                <Detail label="Game focus" value={row.profile?.gameFocus} />
+                <Detail label="Bio" value={row.profile?.bio} wide />
+                <Detail label="Socials / links" value={row.profile?.socials} wide />
+                <div className="flex flex-col gap-1 sm:col-span-2 lg:col-span-3">
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Last updated
+                  </span>
+                  <p className="font-mono text-xs font-bold">
+                    {row.profile ? fmtRelative(row.profile.updatedAt) : "Not set yet — staff member hasn't filled their profile."}
+                  </p>
+                </div>
+                <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground sm:col-span-2 lg:col-span-3">
+                  🔒 Private details — maintained by the staff member, visible only to the Super Admin.
+                </p>
+              </div>
+            ) : null}
+            </Fragment>
           ))}
         </div>
       )}
