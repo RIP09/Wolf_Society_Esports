@@ -472,6 +472,34 @@ export const adminOverride = mutation({
 });
 
 /**
+ * Admin: wipe ALL attendance records and match reports so tracking restarts
+ * fresh from today. Player profiles, teams and security logs are kept; the AI
+ * auto-absent job simply re-builds records for fully-elapsed days going forward.
+ * Fully audited in the security log.
+ */
+export const resetAttendance = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const admin = await requireAdmin(ctx);
+    const records = await ctx.db.query("attendanceRecords").collect();
+    const reports = await ctx.db.query("matchReports").collect();
+    for (const r of records) await ctx.db.delete(r._id);
+    for (const r of reports) await ctx.db.delete(r._id);
+    await ctx.db.insert("securityLogs", {
+      userId: admin._id,
+      email: admin.email,
+      reason: `Attendance data reset — cleared ${records.length} attendance records and ${reports.length} match reports`,
+      createdAt: Date.now(),
+    });
+    return {
+      ok: true,
+      recordsCleared: records.length,
+      reportsCleared: reports.length,
+    };
+  },
+});
+
+/**
  * THE AI ATTENDANCE JOB (cron, runs every 6h).
  *
  * Any verified player who has NO record for a calendar day that ended more
