@@ -17,14 +17,22 @@ import { requireUser } from "./guards";
  *    signed in as a player whose profile carries that phone number, stamps
  *    `phoneVerifiedAt` so management can see the number was proven.
  *
- * Used by the player registration form, and reusable anywhere a real phone
- * needs to be confirmed (contact form, access requests, tryouts…).
+ * FALLBACK MODE (until the Vonage keys are configured): the mutation checks
+ * whether the SMS API is live. When it is, the code goes out by real SMS.
+ * When it isn't, the code is returned in the response so the screen can show
+ * it in a popup — the flow stays fully usable for testing, and the fallback
+ * automatically disappears the moment the SMS keys are configured.
  */
 
 const CODE_LIFETIME_MS = 15 * 60 * 1000; // 15 minutes
 const MAX_ATTEMPTS = 5;
 const REQUEST_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
 const MAX_REQUESTS = 3;
+
+/** True when the Vonage keys are configured — i.e. real SMS delivery is live. */
+function smsConfigured(): boolean {
+  return !!(process.env.VONAGE_API_KEY && process.env.VONAGE_API_SECRET);
+}
 
 function generateCode(): string {
   const random: RandomReader = {
@@ -69,9 +77,23 @@ export const requestSmsOtp = mutation({
       createdAt: Date.now(),
     });
 
-    // Deliver in the background so the request returns instantly.
-    await ctx.scheduler.runAfter(0, api.smsOtp.sendOtpSms, { phone: clean, code });
-    return { ok: true, expiresInSeconds: CODE_LIFETIME_MS / 1000 };
+    // Automatic check: when the Vonage SMS API is configured and live, deliver
+    // the code by real SMS in the background. Until then, return the code in
+    // the response so the registration screen can show it in a fallback popup.
+    if (smsConfigured()) {
+      await ctx.scheduler.runAfter(0, api.smsOtp.sendOtpSms, { phone: clean, code });
+      return {
+        ok: true as const,
+        delivery: "sms" as const,
+        expiresInSeconds: CODE_LIFETIME_MS / 1000,
+      };
+    }
+    return {
+      ok: true as const,
+      delivery: "fallback" as const,
+      fallbackCode: code,
+      expiresInSeconds: CODE_LIFETIME_MS / 1000,
+    };
   },
 });
 
