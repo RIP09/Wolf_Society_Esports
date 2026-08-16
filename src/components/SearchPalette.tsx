@@ -30,6 +30,7 @@ const PAGE_LINKS: { to: string; label: string; group: string }[] = [
   { to: "/", label: "Home", group: "Pages" },
   { to: "/about", label: "About us", group: "Pages" },
   { to: "/register", label: "Register", group: "Pages" },
+  { to: "/signin", label: "Sign in", group: "Pages" },
   { to: "/fan-zone", label: "Fan Zone", group: "Pages" },
   { to: "/fan-zone/polls", label: "Fan Zone — Polls", group: "Pages" },
   { to: "/fan-zone/trivia", label: "Fan Zone — Trivia", group: "Pages" },
