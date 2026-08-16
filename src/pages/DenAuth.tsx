@@ -125,7 +125,7 @@ function StaffSignIn({ redirect }: { redirect: string }) {
         {isLoading ? "Signing in…" : "Sign in to The Den"}
       </Button>
       <p className="text-center font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-        Super admin fallback: WSE · WSE@123
+        Super Admin Page Login
       </p>
     </form>
   );
