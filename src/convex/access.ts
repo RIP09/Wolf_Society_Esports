@@ -537,3 +537,82 @@ export const removeGrantedUser = mutation({
   },
 });
 
+/**
+ * Admin-only: manually delete any access-management entry by selection.
+ *
+ * - Pending / declined entries: the request row (the person's stored data)
+ *   is deleted — admins can clean the list anytime.
+ * - Granted entries: additionally performs the full management-user removal
+ *   (account, sessions, tokens, linked player data, request rows) exactly like
+ *   `removeGrantedUser` — this branch requires a Super Admin, so a regular
+ *   manager can never silently delete a live management login.
+ */
+export const deleteRequestEntry = mutation({
+  args: { requestId: v.id("accessRequests") },
+  handler: async (ctx, { requestId }) => {
+    const admin = await requireAdmin(ctx);
+    const request = await ctx.db.get(requestId);
+    if (!request) {
+      throw new ConvexError({ message: "Request not found — it may already be deleted." });
+    }
+
+    const login = request.grantedUserId ?? "";
+
+    // Granted entries carry a live management login → full wipe (Super Admin only).
+    if (request.status === "granted" && login) {
+      await requireSuperAdmin(ctx);
+      if (login === SUPER_ADMIN_ID) {
+        throw new ConvexError({
+          message: "The built-in super admin (WSE) is the recovery account and cannot be removed.",
+        });
+      }
+      const account = await ctx.db
+        .query("authAccounts")
+        .withIndex("providerAndAccountId", (q) =>
+          q.eq("provider", "password").eq("providerAccountId", login),
+        )
+        .unique();
+      if (account) {
+        const user = await ctx.db.get(account.userId);
+        if (user) {
+          // Full player footprint if this person ever registered as a player.
+          const profile = await ctx.db
+            .query("players")
+            .withIndex("by_userId", (q) => q.eq("userId", user._id))
+            .first();
+          if (profile) {
+            await wipePlayerData(ctx, profile._id, profile.photoStorageId);
+          }
+          // Complete auth wipe — no leftover account to hit credential errors.
+          await wipeAuthUser(ctx, user._id);
+        }
+      }
+    }
+
+    // Every access request row belonging to this person (any status) goes away
+    // so nothing of theirs remains on the access-management list.
+    const all = await ctx.db.query("accessRequests").collect();
+    for (const row of all) {
+      const sameLogin = !!login && row.grantedUserId === login;
+      const sameEmail = row.email === request.email;
+      if (sameLogin || sameEmail) await ctx.db.delete(row._id);
+    }
+
+    // Audit trail + notify the organization when a live login was removed.
+    await ctx.db.insert("securityLogs", {
+      userId: admin._id,
+      email: admin.email,
+      reason: `Deleted access-management data for ${request.name} (${request.email}) — ${request.status}${login ? ` · login ${login} removed` : ""}`,
+      createdAt: Date.now(),
+    });
+    if (login) {
+      await ctx.scheduler.runAfter(0, api.notify.staffRemoved, {
+        name: request.name,
+        email: request.email,
+        removedBy: admin.name ?? "Admin",
+      });
+    }
+    return { ok: true, name: request.name, loginRemoved: !!login };
+  },
+});
+
