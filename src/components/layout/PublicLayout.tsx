@@ -109,7 +109,7 @@ const NAV = [
   { to: "/about", label: "About" },
   { to: "/teams", label: "Teams" },
   { to: "/tournaments", label: "Tournaments" },
-  { to: "/bracket", label: "Bracket" },
+  { to: "/fan-zone", label: "Fan Zone" },
   { to: "/matches", label: "Matches" },
   { to: "/schedule", label: "Schedule" },
   { to: "/players", label: "Players" },
@@ -126,7 +126,11 @@ const FOOTER_LINKS: { to: string; label: string }[] = [
   { to: "/sponsors", label: "Sponsors" },
   { to: "/donate", label: "Donate" },
   { to: "/tryouts", label: "Tryouts" },
-  { to: "/bracket", label: "Live bracket" },
+  { to: "/fan-zone", label: "Fan Zone" },
+  { to: "/fan-zone/polls", label: "Polls" },
+  { to: "/fan-zone/trivia", label: "Trivia" },
+  { to: "/fan-zone/predictions", label: "Predictions" },
+  { to: "/fan-zone/rankings", label: "Rankings" },
   { to: "/gallery", label: "Gallery" },
   { to: "/faq", label: "FAQ" },
   { to: "/privacy", label: "Privacy policy" },
@@ -327,6 +331,12 @@ export default function PublicLayout() {
                 </>
               ) : (
                 <>
+                  <DropdownMenuItem asChild className="cursor-pointer rounded-none">
+                    <NavLink to="/register">
+                      <Crosshair className="size-4" />
+                      Register — player or fan
+                    </NavLink>
+                  </DropdownMenuItem>
                   <DropdownMenuItem asChild className="cursor-pointer rounded-none">
                     <NavLink to="/auth?returnTo=%2Fplayer%2Fregister">
                       <Crosshair className="size-4" />
