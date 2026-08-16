@@ -1,4 +1,5 @@
 import { api } from "@/convex/_generated/api";
+import { MobileNav } from "@/components/MobileNav";
 import { NotificationBell } from "@/components/NotificationBell";
 import RealtimeClock from "@/components/RealtimeClock";
 import SearchPalette, { SearchButton } from "@/components/SearchPalette";
@@ -7,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/hooks/use-auth";
 import { initials } from "@/lib/format";
+import { WolfLogo } from "@/components/WolfLogo";
 import { btnGhost } from "@/lib/neo";
 import { cn } from "@/lib/utils";
 import { useQuery } from "convex/react";
@@ -22,19 +24,7 @@ const ACCENT_BG: Record<Accent, string> = {
 };
 
 function Wordmark({ tag, accent }: { tag: string; accent: Accent }) {
-  return (
-    <div className="flex items-center gap-3">
-      <span className={`flex h-9 w-9 items-center justify-center border-2 border-foreground ${ACCENT_BG[accent]} text-white shadow-[3px_3px_0_0_var(--neo-ink)]`}>
-        <span className="text-lg font-bold leading-none">W</span>
-      </span>
-      <div className="leading-none">
-        <p className="text-base font-bold leading-tight tracking-tight">Wolf Society Esports</p>
-        <p className="mt-0.5 font-mono text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
-          {tag}
-        </p>
-      </div>
-    </div>
-  );
+  return <WolfLogo tag={tag} />;
 }
 
 interface NavItem {
@@ -176,24 +166,17 @@ function PortalLayout({
                 <SignOutButton compact />
               </div>
             </div>
-            <div className="flex flex-wrap gap-2 border-t-2 border-foreground bg-background px-4 py-2">
-              {items.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end={item.end}
-                  className={({ isActive }) =>
-                    cn(
-                      "shrink-0 border-2 px-2.5 py-1.5 font-mono text-[10px] font-bold uppercase tracking-wider",
-                      isActive
-                        ? `border-foreground ${ACCENT_BG[accent]} text-white`
-                        : "border-foreground bg-card hover:bg-neo-cream",
-                    )
-                  }
-                >
-                  {item.label}
-                </NavLink>
-              ))}
+            {/* Mobile nav — hamburger menu */}
+            <div className="flex items-center justify-between gap-2 border-t-2 border-foreground bg-background px-4 py-2">
+              <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                Menu
+              </p>
+              <MobileNav
+                items={items}
+                accent={ACCENT_BG[accent]}
+                title={tag}
+                footer={<UserCard />}
+              />
             </div>
           </header>
 
