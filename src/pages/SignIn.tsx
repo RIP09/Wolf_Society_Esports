@@ -1,4 +1,5 @@
 import { api } from "@/convex/_generated/api";
+import { WolfMark } from "@/components/WolfLogo";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -142,8 +143,8 @@ function SignIn() {
               {step === "signIn" ? (
                 <>
                   <CardHeader className="text-center">
-                    <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center border-2 border-foreground bg-neo-yellow text-white shadow-[3px_3px_0_0_var(--neo-ink)]">
-                      <LogIn className="size-6" />
+                    <div className="mx-auto mb-3 flex justify-center">
+                      <WolfMark size={48} />
                     </div>
                     <CardTitle className="text-2xl font-bold tracking-tight">
                       Welcome back
