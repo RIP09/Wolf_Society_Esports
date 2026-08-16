@@ -1,26 +1,41 @@
 import { api } from "@/convex/_generated/api";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { EmptyState, NeoCard, PageHeader, StatusBadge } from "@/components/neo";
 import { useAuth } from "@/hooks/use-auth";
 import { useVoterKey } from "@/hooks/use-voter-key";
+import { getVisitorId } from "@/lib/visitor";
 import { btnGhost, btnYellow, input } from "@/lib/neo";
 import { cn } from "@/lib/utils";
 import { useMutation, useQuery } from "convex/react";
 import { motion } from "framer-motion";
-import { Crown, Loader2, Medal, Trophy, UserRound } from "lucide-react";
+import { AlertTriangle, Crown, Loader2, Medal, Trash2, Trophy, UserRound } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 
 export default function FanRankings() {
   const voterKey = useVoterKey();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, signOut } = useAuth();
+  const navigate = useNavigate();
   const data = useQuery(api.fanZone.rankings, { voterKey });
   const myProfile = useQuery(api.fanZone.myProfile);
   const claim = useMutation(api.fanZone.claimProfile);
+  const purge = useMutation(api.account.purgeMyAccount);
   const [name, setName] = useState("");
   const [claiming, setClaiming] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const handleClaim = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -224,6 +239,16 @@ export default function FanRankings() {
                 </Button>
               </form>
             )}
+            {isAuthenticated && (
+              <button
+                type="button"
+                onClick={() => setDeleteOpen(true)}
+                className="mt-1 flex items-center justify-center gap-1.5 border-2 border-neo-red/60 bg-neo-red/10 px-3 py-2 font-mono text-[10px] font-bold uppercase tracking-widest text-neo-red transition-colors hover:bg-neo-red hover:text-white"
+              >
+                <Trash2 className="size-3.5" />
+                Delete my fan data
+              </button>
+            )}
           </NeoCard>
 
           <NeoCard className="gap-2 p-5">
@@ -237,6 +262,55 @@ export default function FanRankings() {
               <li><span className="font-bold text-foreground">+10 XP</span> — correct settled prediction</li>
             </ul>
           </NeoCard>
+
+          <AlertDialog open={deleteOpen} onOpenChange={(o) => !o && !deleting && setDeleteOpen(false)}>
+            <AlertDialogContent className="rounded-none border-2 border-foreground bg-card shadow-[6px_6px_0_0_var(--neo-ink)]">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="flex items-center gap-2 text-xl font-bold">
+                  <AlertTriangle className="size-5 text-neo-red" />
+                  Delete your Fan data forever?
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-sm leading-6 text-muted-foreground">
+                  This permanently deletes your Fan profile, all earned XP, every poll
+                  vote, trivia answer and prediction entry, plus your login account —
+                  you'll disappear from the leaderboard instantly. There is no undo.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel
+                  className="rounded-none border-2 border-foreground bg-card shadow-[2px_2px_0_0_var(--neo-ink)]"
+                  disabled={deleting}
+                >
+                  Keep my profile
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  className="neo-press rounded-none border-2 border-foreground bg-neo-red text-white shadow-[3px_3px_0_0_var(--neo-ink)] hover:shadow-[4px_4px_0_0_var(--neo-ink)]"
+                  disabled={deleting}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    void (async () => {
+                      setDeleting(true);
+                      try {
+                        await purge({ visitorId: getVisitorId() });
+                        toast.success("Your Fan data was permanently deleted.");
+                        setDeleteOpen(false);
+                        await signOut().catch(() => {
+                          // account already gone — redirect below is enough
+                        });
+                        navigate("/fan-zone", { replace: true });
+                      } catch (err) {
+                        toast.error(err instanceof Error ? err.message : "Could not delete your data.");
+                        setDeleting(false);
+                      }
+                    })();
+                  }}
+                >
+                  {deleting ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+                  {deleting ? "Deleting…" : "Delete everything"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </div>
