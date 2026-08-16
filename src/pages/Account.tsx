@@ -1,4 +1,14 @@
 import { api } from "@/convex/_generated/api";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { getVisitorId } from "@/lib/visitor";
 import { useMutation, useQuery } from "convex/react";
 import {
+  AlertTriangle,
   BellRing,
   Check,
   KeyRound,
@@ -22,6 +33,7 @@ import {
   Send,
   ShieldCheck,
   Star,
+  Trash2,
   UserRound,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -53,6 +65,11 @@ export default function Account() {
   const [fbMessage, setFbMessage] = useState("");
   const [fbName, setFbName] = useState("");
   const [sendingFb, setSendingFb] = useState(false);
+
+  // Permanent self-deletion of the whole public account.
+  const purgeMyAccount = useMutation(api.account.purgeMyAccount);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   // Prefill the alert form from the account query once it arrives.
   useEffect(() => {
@@ -432,6 +449,85 @@ export default function Account() {
             </div>
           )}
         </NeoCard>
+
+        {/* Danger zone — permanent self-service deletion of ALL account data */}
+        <NeoCard className="gap-4 border-2 border-neo-red/70 p-6">
+          <div className="flex flex-col gap-1">
+            <h2 className="flex items-center gap-2 font-bold text-neo-red">
+              <AlertTriangle className="size-5" />
+              Danger zone
+            </h2>
+            <p className="text-xs leading-5 text-muted-foreground">
+              Permanently delete your account and every piece of your data from the
+              public portal — your Fan Zone profile (XP, votes, trivia answers and
+              predictions), any player registration, alert subscriptions, push
+              notifications, feedback and your login itself. This cannot be undone,
+              and you would have to register from scratch to come back.
+            </p>
+          </div>
+          <div>
+            <Button
+              type="button"
+              className="neo-press rounded-none border-2 border-foreground bg-neo-red px-4 py-2 text-white shadow-[3px_3px_0_0_var(--neo-ink)] hover:shadow-[4px_4px_0_0_var(--neo-ink)]"
+              onClick={() => setDeleteOpen(true)}
+              disabled={deleting}
+            >
+              <Trash2 className="size-4" />
+              Delete my data permanently
+            </Button>
+          </div>
+        </NeoCard>
+
+        <AlertDialog open={deleteOpen} onOpenChange={(o) => !o && !deleting && setDeleteOpen(false)}>
+          <AlertDialogContent className="rounded-none border-2 border-foreground bg-card shadow-[6px_6px_0_0_var(--neo-ink)]">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="flex items-center gap-2 text-xl font-bold">
+                <AlertTriangle className="size-5 text-neo-red" />
+                Delete your account forever?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-sm leading-6 text-muted-foreground">
+                This permanently deletes your Fan Zone profile and XP, every poll vote,
+                trivia answer and prediction you made, any player registration, your
+                alert subscription, this device's push notification and your login
+                account. Management will also see you removed from the system
+                instantly. There is no undo.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel
+                className="rounded-none border-2 border-foreground bg-card shadow-[2px_2px_0_0_var(--neo-ink)]"
+                disabled={deleting}
+              >
+                Keep my account
+              </AlertDialogCancel>
+              <AlertDialogAction
+                className="neo-press rounded-none border-2 border-foreground bg-neo-red text-white shadow-[3px_3px_0_0_var(--neo-ink)] hover:shadow-[4px_4px_0_0_var(--neo-ink)]"
+                disabled={deleting}
+                onClick={(e) => {
+                  e.preventDefault();
+                  void (async () => {
+                    setDeleting(true);
+                    try {
+                      await purgeMyAccount({ visitorId: getVisitorId() });
+                      toast.success("Your account and all data were permanently deleted.");
+                      setDeleteOpen(false);
+                      await signOut().catch(() => {
+                        // account is already gone — the redirect below is enough
+                      });
+                      navigate("/", { replace: true });
+                    } catch (err) {
+                      toast.error(err instanceof Error ? err.message : "Could not delete your data.");
+                      setDeleting(false);
+                    }
+                  })();
+                }}
+              >
+                {deleting ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+                {deleting ? "Deleting…" : "Delete everything"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
