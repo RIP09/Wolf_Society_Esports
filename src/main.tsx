@@ -67,6 +67,7 @@ const AdminAutomations = lazy(() => import("./pages/admin/AdminAutomations.tsx")
 const AdminBroadcast = lazy(() => import("./pages/admin/AdminBroadcast.tsx"));
 const AdminSettings = lazy(() => import("./pages/admin/AdminSettings.tsx"));
 const AdminStaff = lazy(() => import("./pages/admin/AdminStaff.tsx"));
+const AdminProfile = lazy(() => import("./pages/admin/AdminProfile.tsx"));
 
 // Simple loading fallback for route transitions
 function RouteLoading() {
@@ -336,6 +337,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="inquiries" element={<AdminInquiries />} />
                 <Route path="staff" element={<AdminStaff />} />
+                <Route path="profile" element={<AdminProfile />} />
               </Route>
               <Route
                 path="/player"
