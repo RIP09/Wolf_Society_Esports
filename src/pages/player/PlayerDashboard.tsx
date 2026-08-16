@@ -19,10 +19,12 @@ import {
 
 const tooltipStyle = {
   borderRadius: 0,
-  border: "2px solid #17181a",
-  boxShadow: "4px 4px 0 0 #17181a",
+  border: "2px solid var(--neo-ink)",
+  boxShadow: "4px 4px 0 0 var(--neo-ink)",
   fontSize: 12,
   fontFamily: "Space Mono, monospace",
+  background: "var(--card)",
+  color: "var(--card-foreground)",
 };
 
 export default function PlayerDashboard() {
