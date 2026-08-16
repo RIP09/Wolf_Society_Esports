@@ -4,6 +4,7 @@ import RealtimeClock from "@/components/RealtimeClock";
 import SearchPalette, { SearchButton } from "@/components/SearchPalette";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/hooks/use-auth";
 import { initials } from "@/lib/format";
 import { btnGhost } from "@/lib/neo";
@@ -151,6 +152,7 @@ function PortalLayout({
           </div>
           <div className="mb-4 flex items-center gap-2">
             <SearchButton className="flex-1 justify-center" />
+            <ThemeToggle compact />
             <NotificationBell variant={variant} />
           </div>
           <RealtimeClock
@@ -169,6 +171,7 @@ function PortalLayout({
                 <span className="hidden max-w-28 truncate font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground sm:block">
                   {user?.name ?? ""}
                 </span>
+                <ThemeToggle compact />
                 <NotificationBell variant={variant} />
                 <SignOutButton compact />
               </div>
