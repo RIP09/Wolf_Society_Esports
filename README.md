@@ -287,4 +287,4 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 ## 🐺 Contact
 
 - Website: [https://wolfsocietygg.vercel.app](https://wolfsocietygg.vercel.app)
-- Email: [hello@wolfsociety.in](mailto:hello@wolfsociety.in)
+- Email: [hello@wolfsociety.in](mailto:wolfsocietygg@yahoo.com)
