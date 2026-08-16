@@ -14,22 +14,22 @@ type Tile = {
 
 const TILES: Record<string, Tile[]> = {
   Matches: [
-    { label: "Match day", sub: "Team huddle before the first map", gradient: "from-[#7b5cf0] to-[#4c3dc9]", glyph: "MD" },
-    { label: "Grand final", sub: "Stage lights on", gradient: "from-[#2aa9e0] to-[#1b6fb8]", glyph: "GF" },
-    { label: "Overtime", sub: "Clutch round energy", gradient: "from-[#7b5cf0] to-[#b23bd6]", glyph: "OT" },
-    { label: "Champions", sub: "Lifting the trophy", gradient: "from-[#e0b13a] to-[#b07a1e]", glyph: "CH" },
+    { label: "Match day", sub: "Team huddle before the first map", gradient: "from-[#7c3aed] to-[#4c1d95]", glyph: "MD" },
+    { label: "Grand final", sub: "Stage lights on", gradient: "from-[#a78bfa] to-[#6d28d9]", glyph: "GF" },
+    { label: "Overtime", sub: "Clutch round energy", gradient: "from-[#8b5cf6] to-[#5b21b6]", glyph: "OT" },
+    { label: "Champions", sub: "Lifting the trophy", gradient: "from-[#6d28d9] to-[#2e1065]", glyph: "CH" },
   ],
   Practice: [
-    { label: "Scrim block", sub: "Two squads, one server", gradient: "from-[#2aa9e0] to-[#7b5cf0]", glyph: "SC" },
-    { label: "VOD review", sub: "Breaking down the loss", gradient: "from-[#e05a8a] to-[#a02a55]", glyph: "VR" },
-    { label: "Aim training", sub: "Daily routine", gradient: "from-[#3ab5a8] to-[#1e7d74]", glyph: "AT" },
-    { label: "Team dinner", sub: "Fuel for the grind", gradient: "from-[#e08a3a] to-[#a85a1e]", glyph: "TD" },
+    { label: "Scrim block", sub: "Two squads, one server", gradient: "from-[#7c3aed] to-[#9333ea]", glyph: "SC" },
+    { label: "VOD review", sub: "Breaking down the loss", gradient: "from-[#5b21b6] to-[#3b0764]", glyph: "VR" },
+    { label: "Aim training", sub: "Daily routine", gradient: "from-[#a78bfa] to-[#7c3aed]", glyph: "AT" },
+    { label: "Team dinner", sub: "Fuel for the grind", gradient: "from-[#8b5cf6] to-[#4c1d95]", glyph: "TD" },
   ],
   Events: [
-    { label: "Community cup", sub: "Open to all players", gradient: "from-[#7b5cf0] to-[#3d9e4f]", glyph: "CC" },
-    { label: "Fan meet", sub: "Signing session", gradient: "from-[#2aa9e0] to-[#3ab5a8]", glyph: "FM" },
-    { label: "Media day", sub: "Interviews & photos", gradient: "from-[#e0b13a] to-[#e05a8a]", glyph: "MED" },
-    { label: "Season launch", sub: "Roster reveal", gradient: "from-[#b23bd6] to-[#4c3dc9]", glyph: "SL" },
+    { label: "Community cup", sub: "Open to all players", gradient: "from-[#9333ea] to-[#6d28d9]", glyph: "CC" },
+    { label: "Fan meet", sub: "Signing session", gradient: "from-[#7c3aed] to-[#a78bfa]", glyph: "FM" },
+    { label: "Media day", sub: "Interviews & photos", gradient: "from-[#6d28d9] to-[#8b5cf6]", glyph: "MED" },
+    { label: "Season launch", sub: "Roster reveal", gradient: "from-[#a78bfa] to-[#5b21b6]", glyph: "SL" },
   ],
 };
 
