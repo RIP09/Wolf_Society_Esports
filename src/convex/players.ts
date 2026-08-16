@@ -62,6 +62,39 @@ export async function wipePlayerData(
 }
 
 /**
+ * Deletes a user's complete Fan Zone footprint: their fan profile (XP +
+ * rank), poll votes, trivia answers and prediction entries. Called whenever
+ * a public account is permanently deleted so no voting/XP trace survives.
+ */
+export async function wipeFanZoneData(ctx: MutationCtx, userId: Id<"users">) {
+  const voterKey = `user:${userId}`;
+
+  const fanProfile = await ctx.db
+    .query("fanProfiles")
+    .withIndex("by_userId", (q) => q.eq("userId", userId))
+    .first();
+  if (fanProfile) await ctx.db.delete(fanProfile._id);
+
+  const votes = await ctx.db
+    .query("pollVotes")
+    .filter((q) => q.eq(q.field("voterKey"), voterKey))
+    .collect();
+  for (const vote of votes) await ctx.db.delete(vote._id);
+
+  const answers = await ctx.db
+    .query("triviaAnswers")
+    .filter((q) => q.eq(q.field("voterKey"), voterKey))
+    .collect();
+  for (const answer of answers) await ctx.db.delete(answer._id);
+
+  const entries = await ctx.db
+    .query("predictionEntries")
+    .filter((q) => q.eq(q.field("voterKey"), voterKey))
+    .collect();
+  for (const entry of entries) await ctx.db.delete(entry._id);
+}
+
+/**
  * Deletes a complete auth account: alert subscriptions, auth accounts +
  * verification codes, sessions + refresh tokens + verifiers, and the user
  * row itself. After this the person can sign up again with zero leftovers.
@@ -183,6 +216,10 @@ export const purgeMyData = mutation({
   args: {},
   handler: async (ctx) => {
     const user = await requireUser(ctx);
+
+    // Fan Zone footprint first — fan profile, votes, trivia, predictions.
+    await wipeFanZoneData(ctx, user._id);
+
     const emailNorm = user.email ? user.email.toLowerCase() : "";
 
     // Collect every profile that belongs to this identity: the current
