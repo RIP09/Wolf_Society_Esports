@@ -4,6 +4,7 @@ import { btnYellow, card } from "@/lib/neo";
 import { pushEnabled, serializeSubscription, subscribeToPush } from "@/lib/push";
 import { cn } from "@/lib/utils";
 import { getVisitorId } from "@/lib/visitor";
+import { marketingAllowed } from "@/lib/consent";
 import { useMutation, useQuery } from "convex/react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -163,8 +164,10 @@ export function PermissionCenter() {
     }
   }, []);
 
-  // Auto-open the panel once per visitor so they know alerts exist.
+  // Auto-open the panel once per visitor so they know alerts exist — but only
+  // when the visitor accepted marketing/alerts cookies.
   useEffect(() => {
+    if (!marketingAllowed()) return;
     const t = window.setTimeout(() => {
       const stored = readStored();
       const anyAnswered = Object.values({ ...DEFAULTS, ...stored }).some(
