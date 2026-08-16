@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { CookieConsent } from "@/components/CookieConsent";
 import { openCookieSettings } from "@/components/ConsentProvider";
+import { MobileNav } from "@/components/MobileNav";
 import { PermissionCenter } from "@/components/PermissionCenter";
 import AIAssistant from "@/components/AIAssistant";
 import SearchPalette, { SearchButton } from "@/components/SearchPalette";
@@ -19,11 +20,12 @@ import { useAuth } from "@/hooks/use-auth";
 import { analyticsAllowed } from "@/lib/consent";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { btnGhost, input } from "@/lib/neo";
+import { WolfLogo } from "@/components/WolfLogo";
 import { cn } from "@/lib/utils";
 import { useMutation, useQuery } from "convex/react";
-import { Activity, BellRing, Cookie, Crosshair, Eye, Globe, Heart, LogIn, LogOut, Mail, Radio, ShieldCheck, UserRound, Users, Video } from "lucide-react";
+import { Activity, BellRing, Cookie, Crosshair, Eye, Globe, Heart, LogIn, LogOut, Mail, Menu, Radio, ShieldCheck, UserRound, Users, Video } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { NavLink, Outlet, useLocation } from "react-router";
+import { Link, NavLink, Outlet, useLocation } from "react-router";
 import { toast } from "sonner";
 
 /**
@@ -143,19 +145,7 @@ const FOOTER_LINKS: { to: string; label: string }[] = [
 ];
 
 export function Wordmark({ tag = "Esports Organization" }: { tag?: string }) {
-  return (
-    <div className="flex items-center gap-2.5">
-      <span className="flex h-9 w-9 items-center justify-center border-2 border-foreground bg-neo-yellow text-white shadow-[3px_3px_0_0_var(--neo-ink)]">
-        <span className="text-lg font-bold leading-none">W</span>
-      </span>
-      <div className="leading-none">
-        <p className="text-base font-bold tracking-tight">Wolf Society Esports</p>
-        <p className="font-mono text-[8px] font-bold uppercase tracking-widest text-muted-foreground">
-          {tag}
-        </p>
-      </div>
-    </div>
-  );
+  return <WolfLogo tag={tag} />;
 }
 
 /**
@@ -258,6 +248,48 @@ function LiveVisitors() {
           </ul>
         </div>
       )}
+    </div>
+  );
+}
+
+/** Mobile hamburger footer — account / portal actions, bold and touch-sized. */
+function MobileAccountActions() {
+  const { isAuthenticated, signOut } = useAuth();
+  const linkCls =
+    "flex items-center gap-2 border-2 border-foreground bg-background px-3 py-2.5 text-sm font-bold uppercase tracking-wide transition-colors hover:bg-neo-cream";
+  if (isAuthenticated) {
+    return (
+      <div className="flex flex-col gap-2">
+        <Link to="/account" className={linkCls}>
+          <UserRound className="size-4" /> My account
+        </Link>
+        <Link to="/player" className={linkCls}>
+          <Crosshair className="size-4" /> Player portal — The Pack
+        </Link>
+        <Link to="/admin" className={linkCls}>
+          <ShieldCheck className="size-4" /> Management portal — The Den
+        </Link>
+        <button
+          type="button"
+          onClick={() => void signOut()}
+          className={`${linkCls} text-neo-red hover:bg-neo-red hover:text-white`}
+        >
+          <LogOut className="size-4" /> Sign out
+        </button>
+      </div>
+    );
+  }
+  return (
+    <div className="flex flex-col gap-2">
+      <Link to="/signin" className={`${linkCls} bg-neo-yellow text-white`}>
+        <LogIn className="size-4" /> Sign in to your account
+      </Link>
+      <Link to="/register" className={linkCls}>
+        <Crosshair className="size-4" /> Register — player or fan
+      </Link>
+      <Link to="/auth/den?returnTo=%2Fadmin" className={linkCls}>
+        <ShieldCheck className="size-4" /> Management portal — The Den
+      </Link>
     </div>
   );
 }
@@ -367,28 +399,13 @@ export default function PublicLayout() {
             </DropdownMenu>
           </div>
         </div>
-        {/* Mobile nav */}
-        <div className="flex items-center gap-2 border-t-2 border-foreground bg-background px-4 py-2 lg:hidden">
-          <ThemeToggle compact />
-          <div className="flex flex-wrap gap-2">
-          {NAV.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              className={({ isActive }) =>
-                cn(
-                  "shrink-0 border-2 px-2.5 py-1.5 font-mono text-[10px] font-bold uppercase tracking-wider",
-                  isActive
-                    ? "border-foreground bg-neo-yellow text-white"
-                    : "border-foreground bg-card hover:bg-neo-cream",
-                )
-              }
-            >
-              {item.label}
-            </NavLink>
-          ))}
-          </div>
+        {/* Mobile nav — hamburger menu */}
+        <div className="flex items-center justify-between gap-2 border-t-2 border-foreground bg-background px-4 py-2 lg:hidden">
+          <p className="flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            <Menu className="size-3.5" />
+            Menu
+          </p>
+          <MobileNav items={NAV} footer={<MobileAccountActions />} />
         </div>
       </header>
 
