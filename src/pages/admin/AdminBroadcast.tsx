@@ -205,7 +205,7 @@ export default function AdminBroadcast() {
                   className={cn(
                     "flex flex-col items-start gap-1 border-2 border-foreground p-3 text-left transition-transform",
                     active
-                      ? "bg-neo-yellow shadow-[3px_3px_0_0_#17181a]"
+                      ? "bg-neo-yellow shadow-[3px_3px_0_0_var(--neo-ink)]"
                       : "bg-card hover:bg-neo-cream",
                   )}
                 >
