@@ -16,6 +16,7 @@ import "./index.css";
 // Lazy load route components for better code splitting
 const Landing = lazy(() => import("./pages/Landing.tsx"));
 const RegisterPage = lazy(() => import("./pages/Register.tsx"));
+const SignInPage = lazy(() => import("./pages/SignIn.tsx"));
 const FanZone = lazy(() => import("./pages/public/FanZone.tsx"));
 const FanPolls = lazy(() => import("./pages/public/FanPolls.tsx"));
 const FanTrivia = lazy(() => import("./pages/public/FanTrivia.tsx"));
@@ -273,6 +274,7 @@ createRoot(document.getElementById("root")!).render(
               <Route element={<PublicLayout />}>
                 <Route path="/" element={<Landing />} />
                 <Route path="/register" element={<RegisterPage />} />
+                <Route path="/signin" element={<SignInPage />} />
                 <Route path="/fan-zone" element={<FanZone />} />
                 <Route path="/fan-zone/polls" element={<FanPolls />} />
                 <Route path="/fan-zone/trivia" element={<FanTrivia />} />
