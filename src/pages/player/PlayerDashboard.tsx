@@ -127,7 +127,7 @@ export default function PlayerDashboard() {
             {kdTrend.length > 1 ? (
               <ResponsiveContainer width="100%" height={220}>
                 <LineChart data={kdTrend} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
-                  <CartesianGrid stroke="#141414" strokeOpacity={0.15} vertical={false} />
+                  <CartesianGrid stroke="#f5f5f7" strokeOpacity={0.12} vertical={false} />
                   <XAxis
                     dataKey="day"
                     tickFormatter={(ts) => new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
@@ -140,9 +140,9 @@ export default function PlayerDashboard() {
                     type="stepAfter"
                     dataKey="kd"
                     name="K/D"
-                    stroke="#141414"
+                    stroke="#8b5cf6"
                     strokeWidth={2}
-                    dot={{ r: 3, fill: "#ffde00", stroke: "#141414", strokeWidth: 2 }}
+                    dot={{ r: 3, fill: "#a78bfa", stroke: "#f5f5f7", strokeWidth: 2 }}
                     activeDot={{ r: 5 }}
                   />
                 </LineChart>
