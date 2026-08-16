@@ -321,6 +321,11 @@ export const listManagementUsers = query({
       if (req.grantedUserId) requestByLoginId.set(req.grantedUserId, req);
     }
 
+    // Private staff profiles — each staff member maintains their own details;
+    // only the Super Admin directory exposes them to another viewer.
+    const profiles = await ctx.db.query("staffProfiles").collect();
+    const profileByUser = new Map(profiles.map((p) => [p.userId, p]));
+
     const rows = [];
     for (const user of users) {
       const accounts = await ctx.db
@@ -343,6 +348,7 @@ export const listManagementUsers = query({
         grantedAt: grant?.grantedAt,
         isSelf: user._id === caller._id,
         isBuiltIn: loginId === SUPER_ADMIN_ID,
+        profile: profileByUser.get(user._id) ?? null,
       });
     }
     // Super Admins first, then most recently granted.
