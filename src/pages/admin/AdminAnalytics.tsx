@@ -68,12 +68,11 @@ export default function AdminAnalytics() {
         <div className="p-4">
           {data.total > 0 ? (
             <ResponsiveContainer width="100%" height={260}>
-              <AreaChart data={trend} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
-                <CartesianGrid stroke="#1b1d3a" strokeOpacity={0.12} vertical={false} />
+              <AreaChart data={trend} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>                  <CartesianGrid stroke="#f5f5f7" strokeOpacity={0.12} vertical={false} />
                 <XAxis dataKey="label" tick={{ fontSize: 10, fontFamily: "Space Mono, monospace" }} interval={2} />
                 <YAxis allowDecimals={false} tick={{ fontSize: 10, fontFamily: "Space Mono, monospace" }} />
                 <Tooltip contentStyle={tooltipStyle} />
-                <Area type="stepAfter" dataKey="count" name="views" stroke="#1b1d3a" strokeWidth={2} fill="#7b5cf0" />
+                <Area type="stepAfter" dataKey="count" name="views" stroke="#f5f5f7" strokeOpacity={0.4} strokeWidth={2} fill="#7c3aed" />
               </AreaChart>
             </ResponsiveContainer>
           ) : (
@@ -94,7 +93,7 @@ export default function AdminAnalytics() {
             {data.topPaths.length > 0 ? (
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={data.topPaths} layout="vertical" margin={{ top: 8, right: 16, left: 8, bottom: 0 }}>
-                  <CartesianGrid stroke="#1b1d3a" strokeOpacity={0.12} horizontal={false} />
+                  <CartesianGrid stroke="#f5f5f7" strokeOpacity={0.12} horizontal={false} />
                   <XAxis type="number" tick={{ fontSize: 10, fontFamily: "Space Mono, monospace" }} />
                   <YAxis
                     type="category"
@@ -102,8 +101,8 @@ export default function AdminAnalytics() {
                     width={120}
                     tick={{ fontSize: 10, fontFamily: "Space Grotesk, sans-serif", fontWeight: 700 }}
                   />
-                  <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "#e8e7f5" }} />
-                  <Bar dataKey="count" name="views" fill="#3d7bff" stroke="#1b1d3a" strokeWidth={2} radius={0} />
+                  <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "#a78bfa" }} />
+                  <Bar dataKey="count" name="views" fill="#8b5cf6" stroke="#f5f5f7" strokeOpacity={0.5} strokeWidth={2} radius={0} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
