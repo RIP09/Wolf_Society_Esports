@@ -7,7 +7,10 @@ import { AdminLayout, PlayerLayout } from "@/components/layout/Portals";
 import PublicLayout from "@/components/layout/PublicLayout";
 import { getVisitorId } from "@/lib/visitor";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
+import { ConsentProvider } from "@/components/ConsentProvider";
+import { analyticsAllowed } from "@/lib/consent";
 import { ConvexReactClient, useMutation } from "convex/react";
+import { ThemeProvider } from "next-themes";
 import React, { StrictMode, useEffect, useRef, lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router";
@@ -145,8 +148,11 @@ let geoPromise: Promise<{ country: string; code: string } | null> | null = null;
  * (no key, no payment). Runs once per visitor and caches the result for a
  * week so every pageview is tagged with the same country. Falls back to
  * "Unknown" silently if the lookup fails or times out.
+ *
+ * Only runs when the visitor accepted analytics cookies.
  */
 function detectCountry(): Promise<{ country: string; code: string } | null> {
+  if (!analyticsAllowed()) return Promise.resolve(null);
   try {
     const cached = localStorage.getItem(GEO_KEY);
     if (cached) {
@@ -201,6 +207,7 @@ function PageviewTracker() {
 
   // Resolve the anonymous visitor id + auto-detected country once per session.
   useEffect(() => {
+    if (!analyticsAllowed()) return;
     if (!visitorId.current) visitorId.current = getVisitorId();
     void detectCountry().then((geo) => {
       if (geo) {
@@ -222,6 +229,8 @@ function PageviewTracker() {
       first.current = false;
       return;
     }
+    // Respect the visitor's cookie choice — no analytics unless allowed.
+    if (!analyticsAllowed()) return;
     const geo = geoRef.current;
     void track({
       path: location.pathname,
@@ -262,10 +271,18 @@ function RouteSyncer() {
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <RootErrorBoundary>
-      {/* sessionStorage keeps each visitor's session tied to their tab —
-          closing the site clears the token, so everyone signs in again on return. */}
-      <ConvexAuthProvider client={convex} storage={sessionStorage}>
-        <BrowserRouter>
+      {/* Theme (light/dark) + cookie consent wrap the whole app. */}
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="dark"
+        enableSystem={false}
+        storageKey="wse-theme"
+      >
+        <ConsentProvider>
+          {/* sessionStorage keeps each visitor's session tied to their tab —
+              closing the site clears the token, so everyone signs in again on return. */}
+          <ConvexAuthProvider client={convex} storage={sessionStorage}>
+            <BrowserRouter>
           <RouteSyncer />
           <PageviewTracker />
           <Suspense fallback={<RouteLoading />}>
@@ -377,9 +394,11 @@ createRoot(document.getElementById("root")!).render(
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
-        </BrowserRouter>
-        <Toaster />
-      </ConvexAuthProvider>
+          </BrowserRouter>
+          <Toaster />
+        </ConvexAuthProvider>
+        </ConsentProvider>
+      </ThemeProvider>
     </RootErrorBoundary>
   </StrictMode>,
 );
