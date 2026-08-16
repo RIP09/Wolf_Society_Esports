@@ -56,7 +56,7 @@ function useSignInDestination(profile: { status: string } | null | undefined) {
 }
 
 function SignIn() {
-  const { isLoading: authLoading, isAuthenticated, signIn } = useAuth();
+  const { isLoading: authLoading, isAuthenticated, signIn, user } = useAuth();
   const profile = useQuery(api.players.getMyProfile);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -72,11 +72,20 @@ function SignIn() {
 
   // Wait for the profile query to resolve too, so players land in the player
   // portal and fans land in the Fan Zone — never the wrong side.
+  // Anonymous (guest) sessions are ignored here: they must complete the email
+  // code first, otherwise the page would bounce them out before they can sign in.
   useEffect(() => {
-    if (!authLoading && isAuthenticated && profile !== undefined) {
+    if (
+      !authLoading &&
+      isAuthenticated &&
+      user !== undefined &&
+      user !== null &&
+      !user.isAnonymous &&
+      profile !== undefined
+    ) {
       navigate(redirect);
     }
-  }, [authLoading, isAuthenticated, navigate, redirect, profile]);
+  }, [authLoading, isAuthenticated, navigate, redirect, profile, user]);
 
   const handleEmailSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
