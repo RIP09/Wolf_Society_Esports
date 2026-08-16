@@ -1,3 +1,4 @@
+import { WolfMark } from "@/components/WolfLogo";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -33,7 +34,7 @@ type Path = "player" | "fan";
 type Step = "choose" | { path: Path; email: string };
 
 function Register() {
-  const { isLoading: authLoading, isAuthenticated, signIn } = useAuth();
+  const { isLoading: authLoading, isAuthenticated, signIn, user } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const pre = searchParams.get("path") === "fan" ? "fan" : "player";
@@ -44,13 +45,15 @@ function Register() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Already signed in? Go straight to the destination for the chosen path.
+  // Already signed in (real account, not a guest session)? Go straight to the
+  // destination for the chosen path. Guests must verify their email first —
+  // otherwise the page would bounce them out before they can register.
   useEffect(() => {
-    if (!authLoading && isAuthenticated) {
+    if (!authLoading && isAuthenticated && user !== undefined && user !== null && !user.isAnonymous) {
       navigate(path === "fan" ? "/fan-zone" : "/player/register", { replace: true });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authLoading, isAuthenticated, navigate]);
+  }, [authLoading, isAuthenticated, navigate, user]);
 
   const handleEmailSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -107,8 +110,8 @@ function Register() {
               {step === "choose" ? (
                 <>
                   <CardHeader className="text-center">
-                    <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center border-2 border-foreground bg-neo-yellow text-white shadow-[3px_3px_0_0_var(--neo-ink)]">
-                      <Gamepad2 className="size-6" />
+                    <div className="mx-auto mb-3 flex justify-center">
+                      <WolfMark size={48} />
                     </div>
                     <CardTitle className="text-2xl font-bold tracking-tight">
                       Join the Pack
@@ -174,8 +177,8 @@ function Register() {
               ) : step.path === "player" && step.email === "" ? (
                 <>
                   <CardHeader className="text-center">
-                    <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center border-2 border-foreground bg-neo-blue text-white shadow-[3px_3px_0_0_var(--neo-ink)]">
-                      <Crosshair className="size-6" />
+                    <div className="mx-auto mb-3 flex justify-center">
+                      <WolfMark size={48} />
                     </div>
                     <CardTitle className="text-2xl font-bold tracking-tight">
                       Player registration
@@ -223,8 +226,8 @@ function Register() {
               ) : step.path === "fan" && step.email === "" ? (
                 <>
                   <CardHeader className="text-center">
-                    <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center border-2 border-foreground bg-neo-yellow text-white shadow-[3px_3px_0_0_var(--neo-ink)]">
-                      <BarChart3 className="size-6" />
+                    <div className="mx-auto mb-3 flex justify-center">
+                      <WolfMark size={48} />
                     </div>
                     <CardTitle className="text-2xl font-bold tracking-tight">
                       Fan Zone signup
