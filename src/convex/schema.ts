@@ -323,38 +323,13 @@ const schema = defineSchema(
       createdAt: v.number(),
     }).index("by_createdAt", ["createdAt"]),
 
-    // Audit trail of blocked unauthorized-access attempts. Every row is
-    // enriched with the attacker's IP, location and risk score (via the free
-    // IPQualityScore API or a GeoIP fallback) the moment it is logged.
+    // Audit trail of blocked unauthorized-access attempts.
     securityLogs: defineTable({
       userId: v.optional(v.id("users")),
       email: v.optional(v.string()),
       reason: v.string(),
-      ip: v.optional(v.string()), // attacker IP (client-reported, then verified)
-      country: v.optional(v.string()), // location — country
-      countryCode: v.optional(v.string()),
-      city: v.optional(v.string()), // location — city (when the API returns it)
-      path: v.optional(v.string()), // page/route the attacker tried to reach
-      userAgent: v.optional(v.string()),
-      riskScore: v.optional(v.number()), // 0–100 fraud score (IPQualityScore)
-      flags: v.optional(v.array(v.string())), // e.g. ["VPN", "Proxy", "Tor", "Bot"]
-      blocked: v.optional(v.boolean()), // true when this IP was auto-blocked
       createdAt: v.number(),
     }).index("by_createdAt", ["createdAt"]),
-
-    // Blocked IPs — manually from The Den → Security, or automatically when
-    // the fraud API returns a high risk score. Any future attempt from a
-    // blocked IP is flagged immediately in the security log.
-    blockedIps: defineTable({
-      ip: v.string(),
-      reason: v.string(),
-      source: v.union(v.literal("manual"), v.literal("auto")),
-      riskScore: v.optional(v.number()),
-      blockedAt: v.number(),
-      expiresAt: v.optional(v.number()), // undefined = permanent block
-    })
-      .index("by_ip", ["ip"])
-      .index("by_blockedAt", ["blockedAt"]),
 
     // Management portal access requests. Submitted publicly through The Den's
     // "request access" form; reviewed and granted by managers from the secret
