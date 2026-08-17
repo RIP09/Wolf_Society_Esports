@@ -203,7 +203,6 @@ const ADMIN_NAV: NavItem[] = [
   { to: "/admin/sponsors", label: "Sponsors" },
   { to: "/admin/donations", label: "Donations & Tryouts" },
   { to: "/admin/analytics", label: "Analytics" },
-  { to: "/admin/security", label: "Security" },
   { to: "/admin/automations", label: "Automations" },
   { to: "/admin/broadcast", label: "Broadcast" },
   { to: "/admin/settings", label: "Settings" },
