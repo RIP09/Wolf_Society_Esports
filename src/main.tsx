@@ -74,6 +74,8 @@ const AdminContent = lazy(() => import("./pages/admin/AdminContent.tsx"));
 const AdminSponsors = lazy(() => import("./pages/admin/AdminSponsors.tsx"));
 const AdminDonations = lazy(() => import("./pages/admin/AdminDonations.tsx"));
 const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics.tsx"));
+const AdminSecurity = lazy(() => import("./pages/admin/AdminSecurity.tsx"));
+const AdminStorage = lazy(() => import("./pages/admin/AdminStorage.tsx"));
 const AdminAutomations = lazy(() => import("./pages/admin/AdminAutomations.tsx"));
 const AdminBroadcast = lazy(() => import("./pages/admin/AdminBroadcast.tsx"));
 const AdminSettings = lazy(() => import("./pages/admin/AdminSettings.tsx"));
@@ -245,6 +247,8 @@ function PageviewTracker() {
 const TITLE_RULES: [RegExp, string][] = [
   [/^\/admin\/settings$/, "Settings"],
   [/^\/admin\/analytics$/, "Analytics"],
+  [/^\/admin\/security$/, "Security"],
+  [/^\/admin\/storage$/, "Storage"],
   [/^\/admin\/broadcast$/, "Broadcast Center"],
   [/^\/admin\/automations$/, "Automations"],
   [/^\/admin\/attendance$/, "Attendance"],
@@ -441,6 +445,8 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="sponsors" element={<AdminSponsors />} />
                 <Route path="donations" element={<AdminDonations />} />
                 <Route path="analytics" element={<AdminAnalytics />} />
+                <Route path="security" element={<AdminSecurity />} />
+                <Route path="storage" element={<AdminStorage />} />
                 <Route path="automations" element={<AdminAutomations />} />
                 <Route path="broadcast" element={<AdminBroadcast />} />
                 <Route path="settings" element={<AdminSettings />} />
