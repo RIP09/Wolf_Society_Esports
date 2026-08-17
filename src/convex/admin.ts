@@ -198,3 +198,63 @@ export const updateSettings = mutation({
     return { ok: true };
   },
 });
+
+/**
+ * Public: organization branding for the public portal — currently the logo
+ * override (a direct image URL) that management can set from The Den. When
+ * empty, every surface falls back to the built-in wolf mark.
+ */
+export const getOrgBranding = query({
+  args: {},
+  handler: async (ctx) => {
+    const rows = await ctx.db.query("settings").collect();
+    const get = (k: string) => rows.find((r) => r.key === k)?.value?.trim() ?? "";
+    return { logoUrl: get("orgLogoUrl") };
+  },
+});
+
+/** Admin-only: set the organization logo (direct image URL). Empty = remove. */
+export const updateOrgLogo = mutation({
+  args: { logoUrl: v.string() },
+  handler: async (ctx, { logoUrl }) => {
+    await requireAdmin(ctx);
+    const clean = logoUrl.trim().slice(0, 500);
+    const existing = await ctx.db
+      .query("settings")
+      .withIndex("by_key", (q) => q.eq("key", "orgLogoUrl"))
+      .first();
+    if (existing) {
+      await ctx.db.patch(existing._id, { value: clean });
+    } else if (clean) {
+      await ctx.db.insert("settings", { key: "orgLogoUrl", value: clean });
+    }
+    return { ok: true, logoUrl: clean };
+  },
+});
+
+/**
+ * Admin-only: reset ALL visitor analytics — unique visitors, pageviews and
+ * live presence rows are deleted so every counter restarts from zero.
+ */
+export const resetVisitorData = mutation({
+  args: {},
+  handler: async (ctx) => {
+    await requireAdmin(ctx);
+    let visitors = 0;
+    let pageviews = 0;
+    let presence = 0;
+    for (const row of await ctx.db.query("visitors").collect()) {
+      await ctx.db.delete(row._id);
+      visitors += 1;
+    }
+    for (const row of await ctx.db.query("pageviews").collect()) {
+      await ctx.db.delete(row._id);
+      pageviews += 1;
+    }
+    for (const row of await ctx.db.query("presence").collect()) {
+      await ctx.db.delete(row._id);
+      presence += 1;
+    }
+    return { ok: true, cleared: { visitors, pageviews, presence } };
+  },
+});
