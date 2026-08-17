@@ -203,6 +203,7 @@ const ADMIN_NAV: NavItem[] = [
   { to: "/admin/sponsors", label: "Sponsors" },
   { to: "/admin/donations", label: "Donations & Tryouts" },
   { to: "/admin/analytics", label: "Analytics" },
+  { to: "/admin/security", label: "Security" },
   { to: "/admin/automations", label: "Automations" },
   { to: "/admin/broadcast", label: "Broadcast" },
   { to: "/admin/settings", label: "Settings" },
@@ -213,10 +214,14 @@ const ADMIN_NAV: NavItem[] = [
 
 export function AdminLayout() {
   const { user } = useAuth();
-  // The Staff directory (management team) is Super Admin only.
+  // Staff directory + file vault are Super Admin only.
   const items =
     user?.role === "superadmin"
-      ? [...ADMIN_NAV, { to: "/admin/staff", label: "Staff" }]
+      ? [
+          ...ADMIN_NAV,
+          { to: "/admin/staff", label: "Staff" },
+          { to: "/admin/storage", label: "Storage" },
+        ]
       : ADMIN_NAV;
   return (
     <PortalLayout
