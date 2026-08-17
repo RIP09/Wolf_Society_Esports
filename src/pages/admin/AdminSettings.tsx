@@ -2,19 +2,25 @@ import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NeoCard, NeoField, PageHeader, StatusBadge } from "@/components/neo";
-import { btnYellow, input } from "@/lib/neo";
+import { WolfMark } from "@/components/WolfLogo";
+import { btnGhost, btnYellow, input } from "@/lib/neo";
+import { cn } from "@/lib/utils";
 import { useMutation, useQuery } from "convex/react";
 import {
+  AlertTriangle,
   CheckCircle2,
   Download,
+  ImagePlus,
   Loader2,
   Mail,
   MessageSquareWarning,
   Phone,
   PlugZap,
+  RotateCcw,
   Save,
   Settings,
   Smartphone,
+  Trash2,
   XCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -61,6 +67,14 @@ export default function AdminSettings() {
 
   const [saving, setSaving] = useState(false);
 
+  const [orgLogoUrl, setOrgLogoUrl] = useState("");
+  const [savingLogo, setSavingLogo] = useState(false);
+
+  const [confirmReset, setConfirmReset] = useState(false);
+  const [resetting, setResetting] = useState(false);
+  const updateOrgLogo = useMutation(api.admin.updateOrgLogo);
+  const resetVisitorData = useMutation(api.admin.resetVisitorData);
+
   useEffect(() => {
     if (settings) {
       setTwitchChannel(settings.twitchChannel ?? "");
@@ -73,6 +87,7 @@ export default function AdminSettings() {
       setApkPack(settings.apkPack ?? "");
       setApkDen(settings.apkDen ?? "");
       setApkCoach(settings.apkCoach ?? "");
+      setOrgLogoUrl(settings.orgLogoUrl ?? "");
     }
   }, [settings]);
 
@@ -289,6 +304,154 @@ export default function AdminSettings() {
           <NeoField label="Tryout fee (paise)" hint="e.g. 49900 = ₹499. Leave 0 for free tryouts only.">
             <Input className={input} type="number" min={0} value={tryoutFee} onChange={(e) => setTryoutFee(e.target.value)} placeholder="0" />
           </NeoField>
+        </div>
+      </NeoCard>
+
+      {/* ── Organization logo ─────────────────────────────────────────── */}
+      <NeoCard className="gap-6 p-6 sm:p-8">
+        <div className="flex items-center gap-3">
+          <span className="flex h-11 w-11 items-center justify-center border-2 border-foreground bg-neo-yellow text-white">
+            <ImagePlus className="size-5" />
+          </span>
+          <div>
+            <p className="text-lg font-bold">Organization logo</p>
+            <p className="text-sm text-muted-foreground">
+              Set a custom logo for the whole website (header, footer and homepage). Paste a
+              direct image URL below, or clear it to restore the built-in wolf mark.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid items-start gap-6 sm:grid-cols-[auto_1fr]">
+          <div className="flex flex-col items-center gap-2">
+            <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              Live preview
+            </p>
+            <WolfMark size={72} src={orgLogoUrl || undefined} />
+          </div>
+          <div className="flex flex-col gap-4">
+            <NeoField label="Logo image URL" hint="Direct .png / .svg / .webp link — e.g. https://…/logo.png">
+              <Input
+                className={input}
+                value={orgLogoUrl}
+                onChange={(e) => setOrgLogoUrl(e.target.value)}
+                placeholder="https://…/logo.png"
+              />
+            </NeoField>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                className={btnYellow}
+                onClick={async () => {
+                  setSavingLogo(true);
+                  try {
+                    await updateOrgLogo({ logoUrl: orgLogoUrl });
+                    toast.success(
+                      orgLogoUrl.trim()
+                        ? "Logo updated — the website shows it instantly."
+                        : "Logo removed — the built-in wolf mark is back.",
+                    );
+                  } catch (e) {
+                    toast.error(e instanceof Error ? e.message : "Could not save the logo.");
+                  } finally {
+                    setSavingLogo(false);
+                  }
+                }}
+                disabled={savingLogo}
+              >
+                {savingLogo ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
+                {savingLogo ? "Saving…" : orgLogoUrl.trim() ? "Set this logo" : "Use built-in logo"}
+              </Button>
+              {orgLogoUrl.trim() && (
+                <Button
+                  variant="outline"
+                  className={cn(btnGhost, "border-neo-red text-neo-red hover:bg-neo-red hover:text-white")}
+                  onClick={async () => {
+                    setOrgLogoUrl("");
+                    setSavingLogo(true);
+                    try {
+                      await updateOrgLogo({ logoUrl: "" });
+                      toast.success("Logo removed — the built-in wolf mark is back.");
+                    } catch (e) {
+                      toast.error(e instanceof Error ? e.message : "Could not remove the logo.");
+                    } finally {
+                      setSavingLogo(false);
+                    }
+                  }}
+                  disabled={savingLogo}
+                >
+                  <Trash2 className="size-4" />
+                  Remove logo
+                </Button>
+              )}
+            </div>
+            <p className="flex items-center gap-2 border-2 border-foreground bg-neo-cream px-3 py-2 font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              <AlertTriangle className="size-3.5" />
+              Applies everywhere instantly — no redeploy needed
+            </p>
+          </div>
+        </div>
+      </NeoCard>
+
+      {/* ── Visitor analytics reset ───────────────────────────────────── */}
+      <NeoCard className="gap-6 p-6 sm:p-8">
+        <div className="flex items-center gap-3">
+          <span className="flex h-11 w-11 items-center justify-center border-2 border-foreground bg-neo-red text-white">
+            <RotateCcw className="size-5" />
+          </span>
+          <div>
+            <p className="text-lg font-bold">Visitor analytics reset</p>
+            <p className="text-sm text-muted-foreground">
+              Deletes all recorded visitors, pageviews and live presence rows — every counter
+              in the public footer and the Analytics page restarts from zero.
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          {confirmReset ? (
+            <>
+              <span className="border-2 border-foreground bg-neo-red px-3 py-2 font-mono text-[10px] font-bold uppercase tracking-widest text-white">
+                Are you sure? This cannot be undone.
+              </span>
+              <Button
+                className="border-2 border-foreground bg-neo-red text-white shadow-[3px_3px_0_0_var(--neo-ink)] hover:shadow-[4px_4px_0_0_var(--neo-ink)]"
+                onClick={async () => {
+                  setResetting(true);
+                  try {
+                    const res = await resetVisitorData();
+                    toast.success(
+                      `Reset complete — ${res.cleared.visitors} visitors, ${res.cleared.pageviews} pageviews cleared.`,
+                    );
+                  } catch (e) {
+                    toast.error(e instanceof Error ? e.message : "Could not reset visitor data.");
+                  } finally {
+                    setResetting(false);
+                    setConfirmReset(false);
+                  }
+                }}
+                disabled={resetting}
+              >
+                {resetting ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+                {resetting ? "Resetting…" : "Yes, reset everything"}
+              </Button>
+              <Button
+                variant="outline"
+                className={btnGhost}
+                onClick={() => setConfirmReset(false)}
+                disabled={resetting}
+              >
+                Cancel
+              </Button>
+            </>
+          ) : (
+            <Button
+              variant="outline"
+              className={cn(btnGhost, "border-neo-red text-neo-red hover:bg-neo-red hover:text-white")}
+              onClick={() => setConfirmReset(true)}
+            >
+              <RotateCcw className="size-4" />
+              Reset visitor data
+            </Button>
+          )}
         </div>
       </NeoCard>
 
