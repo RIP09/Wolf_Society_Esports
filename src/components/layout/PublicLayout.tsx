@@ -5,7 +5,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -19,11 +18,11 @@ import { getVisitorId } from "@/lib/visitor";
 import { useAuth } from "@/hooks/use-auth";
 import { analyticsAllowed } from "@/lib/consent";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { btnGhost, input } from "@/lib/neo";
-import { WolfLogo } from "@/components/WolfLogo";
+import { btnYellow, input } from "@/lib/neo";
+import { WolfLogo, WolfMark } from "@/components/WolfLogo";
 import { cn } from "@/lib/utils";
 import { useMutation, useQuery } from "convex/react";
-import { Activity, BellRing, Cookie, Crosshair, Eye, Globe, Heart, LogIn, LogOut, Mail, Menu, Radio, ShieldCheck, UserRound, Users, Video } from "lucide-react";
+import { Activity, BellRing, ChevronDown, Cookie, Crosshair, Eye, Globe, Heart, LogIn, LogOut, Mail, Menu, Radio, ShieldCheck, UserRound, Users, Video } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router";
 import { toast } from "sonner";
@@ -126,6 +125,67 @@ const NAV = [
   { to: "/contact", label: "Contact" },
 ];
 
+/** Direct desktop links — no dropdown, always visible. */
+const NAV_LINKS = [
+  { to: "/matches", label: "Matches" },
+  { to: "/schedule", label: "Schedule" },
+  { to: "/tournaments", label: "Tournaments" },
+];
+
+/** Desktop dropdown groups — True Rippers style, with chevrons. */
+const NAV_DROPDOWNS: {
+  label: string;
+  items: { to: string; label: string; sep?: boolean }[];
+}[] = [
+  {
+    label: "Teams",
+    items: [
+      { to: "/teams", label: "Our teams" },
+      { to: "/players", label: "Players" },
+      { to: "/bracket", label: "Bracket" },
+    ],
+  },
+  {
+    label: "News",
+    items: [
+      { to: "/news", label: "Latest news" },
+      { to: "/watch", label: "Watch live" },
+      { to: "/gallery", label: "Gallery" },
+    ],
+  },
+  {
+    label: "Fan Zone",
+    items: [
+      { to: "/fan-zone", label: "Overview" },
+      { to: "/fan-zone/polls", label: "Polls" },
+      { to: "/fan-zone/trivia", label: "Trivia" },
+      { to: "/fan-zone/predictions", label: "Predictions" },
+      { to: "/fan-zone/rankings", label: "Rankings" },
+    ],
+  },
+  {
+    label: "More",
+    items: [
+      { to: "/about", label: "About us" },
+      { to: "/leadership", label: "Leadership" },
+      { to: "/achievements", label: "Achievements" },
+      { to: "/sponsors", label: "Sponsors" },
+      { to: "/tryouts", label: "Tryouts" },
+      { to: "/donate", label: "Support us" },
+      { to: "/faq", label: "FAQ" },
+      { to: "/contact", label: "Contact" },
+      { to: "/privacy", label: "Privacy policy" },
+      { sep: true, to: "", label: "" },
+      { to: "/auth/den?returnTo=%2Fadmin", label: "The Den — management" },
+    ],
+  },
+];
+
+/** True when the current path is inside a dropdown group. */
+function isGroupActive(items: { to: string; sep?: boolean }[], path: string) {
+  return items.some((i) => !i.sep && i.to !== "" && path.startsWith(i.to));
+}
+
 const FOOTER_LINKS: { to: string; label: string }[] = [
   { to: "/about", label: "About us" },
   { to: "/leadership", label: "Leadership" },
@@ -144,8 +204,14 @@ const FOOTER_LINKS: { to: string; label: string }[] = [
   { to: "/terms", label: "Terms of service" },
 ];
 
-export function Wordmark({ tag = "Esports Organization" }: { tag?: string }) {
-  return <WolfLogo tag={tag} />;
+export function Wordmark({
+  tag = "Esports Organization",
+  logoUrl,
+}: {
+  tag?: string;
+  logoUrl?: string;
+}) {
+  return <WolfLogo tag={tag} logoUrl={logoUrl} />;
 }
 
 /**
@@ -295,108 +361,118 @@ function MobileAccountActions() {
 }
 
 export default function PublicLayout() {
-  const { isAuthenticated, signOut } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const branding = useQuery(api.admin.getOrgBranding);
+  const location = useLocation();
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <header className="sticky top-0 z-40 border-b-2 border-foreground bg-background">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-          <NavLink to="/">
-            <Wordmark tag="Public Portal" />
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+          {/* True Rippers-style brand lockup: mark | divider | stacked wordmark */}
+          <NavLink to="/" className="flex shrink-0 items-center gap-2.5">
+            <WolfMark size={38} src={branding?.logoUrl} />
+            <span aria-hidden className="hidden h-9 w-0.5 bg-foreground/25 sm:block" />
+            <span className="leading-none">
+              <span className="block text-[15px] font-bold uppercase leading-tight tracking-tight">
+                Wolf Society
+              </span>
+              <span className="mt-1 block font-mono text-[9px] font-bold uppercase tracking-[0.35em] text-muted-foreground">
+                Esports
+              </span>
+            </span>
           </NavLink>
-          <div className="hidden items-center gap-1 lg:flex">
-            {NAV.map((item) => (
+
+          {/* Desktop nav — chevron dropdowns + direct links */}
+          <nav className="hidden items-center gap-0.5 lg:flex">
+            {NAV_DROPDOWNS.map((group) => (
+              <DropdownMenu key={group.label}>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    className={cn(
+                      "flex items-center gap-1 border-b-2 px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-wider transition-colors",
+                      isGroupActive(group.items, location.pathname)
+                        ? "border-neo-yellow text-neo-yellow"
+                        : "border-transparent hover:border-foreground hover:bg-neo-cream",
+                    )}
+                  >
+                    {group.label}
+                    <ChevronDown className="size-3.5" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="start"
+                  className="w-60 rounded-none border-2 border-foreground bg-card p-1 shadow-[4px_4px_0_0_var(--neo-ink)]"
+                >
+                  {group.items.map((item) =>
+                    item.sep ? (
+                      <DropdownMenuSeparator key="sep" className="bg-foreground/20" />
+                    ) : (
+                      <DropdownMenuItem
+                        key={item.label}
+                        asChild
+                        className="cursor-pointer rounded-none focus:bg-neo-yellow focus:text-white"
+                      >
+                        <NavLink to={item.to}>
+                          <span className="font-mono text-[11px] font-bold uppercase tracking-wider">
+                            {item.label}
+                          </span>
+                        </NavLink>
+                      </DropdownMenuItem>
+                    ),
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ))}
+            {NAV_LINKS.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
-                end={item.end}
                 className={({ isActive }) =>
                   cn(
-                    "border-2 border-transparent px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-wider transition-colors",
+                    "border-b-2 px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-wider transition-colors",
                     isActive
-                      ? "border-foreground bg-neo-yellow text-white"
-                      : "hover:border-foreground hover:bg-neo-cream",
+                      ? "border-neo-yellow text-neo-yellow"
+                      : "border-transparent hover:border-foreground hover:bg-neo-cream",
                   )
                 }
               >
                 {item.label}
               </NavLink>
             ))}
-          </div>
+          </nav>
+
+          {/* Right actions — search, theme, SIGN IN, JOIN */}
           <div className="flex shrink-0 items-center gap-2">
             <ThemeToggle compact />
             <SearchButton />
-            <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className={cn(btnGhost, "shrink-0")}>
+            {isAuthenticated ? (
+              <NavLink
+                to="/account"
+                className="hidden items-center gap-1.5 border-2 border-foreground bg-card px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-wider shadow-[2px_2px_0_0_var(--neo-ink)] transition-all hover:shadow-[3px_3px_0_0_var(--neo-ink)] sm:flex"
+              >
+                <UserRound className="size-4" />
+                Account
+              </NavLink>
+            ) : (
+              <NavLink
+                to="/signin"
+                className="hidden items-center gap-1.5 px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground sm:flex"
+              >
                 <LogIn className="size-4" />
                 Sign in
+              </NavLink>
+            )}
+            <Link to="/register">
+              <Button
+                className={cn(
+                  btnYellow,
+                  "neo-press h-10 rounded-none border-2 border-foreground px-5 text-xs font-bold uppercase tracking-wider shadow-[3px_3px_0_0_var(--neo-ink)]",
+                )}
+              >
+                Join
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 rounded-none border-2 border-foreground bg-card shadow-[4px_4px_0_0_var(--neo-ink)]">
-              <DropdownMenuLabel className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                Wolf Society Esports
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {isAuthenticated ? (
-                <>
-                  <DropdownMenuItem asChild className="cursor-pointer rounded-none">
-                    <NavLink to="/account">
-                      <UserRound className="size-4" />
-                      My account
-                    </NavLink>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild className="cursor-pointer rounded-none">
-                    <NavLink to="/player">
-                      <Crosshair className="size-4" />
-                      Player portal — The Pack
-                    </NavLink>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="cursor-pointer rounded-none">
-                    <NavLink to="/admin">
-                      <ShieldCheck className="size-4" />
-                      Management portal — The Den
-                    </NavLink>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    className="cursor-pointer rounded-none"
-                    onClick={() => void signOut()}
-                  >
-                    <LogOut className="size-4" />
-                    Sign out
-                  </DropdownMenuItem>
-                </>
-              ) : (
-                <>
-                  <DropdownMenuItem asChild className="cursor-pointer rounded-none">
-                    <NavLink to="/signin">
-                      <LogIn className="size-4" />
-                      Sign in to your account
-                    </NavLink>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="cursor-pointer rounded-none">
-                    <NavLink to="/register">
-                      <Crosshair className="size-4" />
-                      Register — player or fan
-                    </NavLink>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="cursor-pointer rounded-none">
-                    <NavLink to="/auth?returnTo=%2Fplayer%2Fregister">
-                      <Crosshair className="size-4" />
-                      Player portal — The Pack
-                    </NavLink>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="cursor-pointer rounded-none">
-                    <NavLink to="/auth/den?returnTo=%2Fadmin">
-                      <ShieldCheck className="size-4" />
-                      Management portal — The Den
-                    </NavLink>
-                  </DropdownMenuItem>
-                </>
-              )}
-            </DropdownMenuContent>
-            </DropdownMenu>
+            </Link>
           </div>
         </div>
         {/* Mobile nav — hamburger menu */}
@@ -423,7 +499,7 @@ export default function PublicLayout() {
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[1fr_auto] lg:items-start">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between lg:gap-16">
             <div className="flex flex-col gap-3">
-              <Wordmark tag="Public Portal" />
+              <Wordmark tag="Public Portal" logoUrl={branding?.logoUrl} />
               <p className="max-w-sm text-xs leading-5 text-muted-foreground">
                 Wolf Society Esports is a competitive esports organization. Rosters,
                 schedules and results shown here are live from the organization database.
