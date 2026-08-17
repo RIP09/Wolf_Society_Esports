@@ -241,6 +241,85 @@ function PageviewTracker() {
   return null;
 }
 
+/** Per-route browser tab titles — the tab/URL always says where you are. */
+const TITLE_RULES: [RegExp, string][] = [
+  [/^\/admin\/settings$/, "Settings"],
+  [/^\/admin\/analytics$/, "Analytics"],
+  [/^\/admin\/broadcast$/, "Broadcast Center"],
+  [/^\/admin\/automations$/, "Automations"],
+  [/^\/admin\/attendance$/, "Attendance"],
+  [/^\/admin\/players$/, "Players"],
+  [/^\/admin\/teams$/, "Teams"],
+  [/^\/admin\/tournaments$/, "Tournaments"],
+  [/^\/admin\/matches$/, "Matches"],
+  [/^\/admin\/schedule$/, "Schedule Hub"],
+  [/^\/admin\/announcements$/, "Announcements"],
+  [/^\/admin\/content$/, "News & Media"],
+  [/^\/admin\/sponsors$/, "Sponsors"],
+  [/^\/admin\/donations$/, "Donations"],
+  [/^\/admin\/inquiries$/, "Inquiries"],
+  [/^\/admin\/staff$/, "Staff"],
+  [/^\/admin\/profile$/, "My Profile"],
+  [/^\/admin\/fan-zone$/, "Fan Zone"],
+  [/^\/admin/, "The Den · Management"],
+  [/^\/player\/attendance$/, "Attendance"],
+  [/^\/player\/reports$/, "Match Reports"],
+  [/^\/player\/performance$/, "Performance"],
+  [/^\/player\/schedule$/, "Schedule"],
+  [/^\/player\/profile$/, "My Profile"],
+  [/^\/player\/announcements$/, "Announcements"],
+  [/^\/player\/register$/, "Player Registration"],
+  [/^\/player/, "The Pack · Player Portal"],
+  [/^\/fan-zone\/polls$/, "Fan Zone · Polls"],
+  [/^\/fan-zone\/trivia$/, "Fan Zone · Trivia"],
+  [/^\/fan-zone\/predictions$/, "Fan Zone · Predictions"],
+  [/^\/fan-zone\/rankings$/, "Fan Zone · Rankings"],
+  [/^\/fan-zone/, "Fan Zone"],
+  [/^\/news\/.+/, "News"],
+  [/^\/teams\/.+/, "Team"],
+  [/^\/signin$/, "Sign In"],
+  [/^\/register$/, "Register"],
+  [/^\/auth\/den/, "The Den · Sign In"],
+  [/^\/auth/, "Sign In"],
+  [/^\/grant$/, "Access Management"],
+  [/^\/account$/, "My Account"],
+  [/^\/matches$/, "Matches"],
+  [/^\/schedule$/, "Schedule"],
+  [/^\/tournaments$/, "Tournaments"],
+  [/^\/bracket$/, "Bracket"],
+  [/^\/players$/, "Players"],
+  [/^\/teams$/, "Teams"],
+  [/^\/about$/, "About Us"],
+  [/^\/leadership$/, "Leadership"],
+  [/^\/achievements$/, "Achievements"],
+  [/^\/sponsors$/, "Sponsors"],
+  [/^\/tryouts$/, "Tryouts"],
+  [/^\/watch$/, "Watch"],
+  [/^\/gallery$/, "Gallery"],
+  [/^\/donate$/, "Support Us"],
+  [/^\/faq$/, "FAQ"],
+  [/^\/privacy$/, "Privacy Policy"],
+  [/^\/terms$/, "Terms of Service"],
+  [/^\/contact$/, "Contact"],
+  [/^\/news$/, "News"],
+];
+
+/** Keeps the browser tab title in sync with the current route. */
+function PageTitles() {
+  const location = useLocation();
+  useEffect(() => {
+    let label = "Home";
+    for (const [re, title] of TITLE_RULES) {
+      if (re.test(location.pathname)) {
+        label = title;
+        break;
+      }
+    }
+    document.title = `${label} · Wolf Society Esports`;
+  }, [location.pathname]);
+  return null;
+}
+
 function RouteSyncer() {
   const location = useLocation();
   useEffect(() => {
@@ -281,6 +360,7 @@ createRoot(document.getElementById("root")!).render(
           <ConvexAuthProvider client={convex} storage={sessionStorage}>
             <BrowserRouter>
           <RouteSyncer />
+          <PageTitles />
           <PageviewTracker />
           <Suspense fallback={<RouteLoading />}>
             <Routes>
