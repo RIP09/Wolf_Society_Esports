@@ -2,6 +2,7 @@ import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { NeoCard, StatusBadge } from "@/components/neo";
 import { InstallAppButton, InstallSection } from "@/components/InstallApp";
+import { TiltCard } from "@/components/TiltCard";
 import { WolfMark } from "@/components/WolfLogo";
 import { btnGhost, btnYellow, card } from "@/lib/neo";
 import { cn } from "@/lib/utils";
@@ -15,12 +16,26 @@ import {
   CalendarClock,
   Crosshair,
   Gamepad2,
+  Images,
   Megaphone,
+  Newspaper,
+  Play,
   ShieldCheck,
+  Swords,
   Trophy,
   Users,
 } from "lucide-react";
 import { Link } from "react-router";
+
+/** Modern icon + label quick links — the True Rippers-style icon nav row. */
+const QUICK_LINKS = [
+  { to: "/matches", label: "Matches", icon: Swords },
+  { to: "/schedule", label: "Schedule", icon: CalendarClock },
+  { to: "/news", label: "News", icon: Newspaper },
+  { to: "/gallery", label: "Gallery", icon: Images },
+  { to: "/watch", label: "Watch", icon: Play },
+  { to: "/fan-zone", label: "Fan Zone", icon: Gamepad2 },
+];
 
 /** Snappy neobrutal reveal — springy, never soft. */
 const fadeUp = {
@@ -58,6 +73,7 @@ function CountUp({ to, className }: { to: number; className?: string }) {
 
 export default function Landing() {
   const data = useQuery(api.public.getHome);
+  const branding = useQuery(api.admin.getOrgBranding);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -108,7 +124,7 @@ export default function Landing() {
               variants={fadeUp}
               className="mb-4 inline-flex items-center gap-2 border-2 border-foreground bg-background py-1 pl-1 pr-3 font-mono text-[11px] font-bold uppercase tracking-widest text-foreground shadow-[3px_3px_0_0_var(--neo-ink)]"
             >
-              <WolfMark size={28} shadow={false} />
+              <WolfMark size={28} shadow={false} src={branding?.logoUrl} />
               Wolf Society Esports
             </motion.div>
             <motion.h1
@@ -156,7 +172,7 @@ export default function Landing() {
             </motion.p>
           </motion.div>
 
-          {/* Portal cards */}
+          {/* Portal cards — subtle 3D tilt on hover */}
           <motion.div
             variants={stagger}
             initial="hidden"
@@ -164,57 +180,56 @@ export default function Landing() {
             transition={{ delayChildren: 0.3 }}
             className="flex flex-col gap-4"
           >
-            <motion.div variants={fadeUp} whileHover={{ y: -4 }} whileTap={{ y: 0 }}>
-              <Link
-                to="/auth?returnTo=%2Fplayer%2Fregister"
-                className={cn(card, "neo-press group flex items-center justify-between gap-4 p-6")}
-              >
-                <div className="flex items-center gap-4">
-                  <span className="flex h-12 w-12 items-center justify-center border-2 border-foreground bg-neo-yellow text-white">
-                    <Crosshair className="size-6" />
-                  </span>
-                  <div>
-                    <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                      Player portal
-                    </p>
-                    <p className="text-xl font-bold leading-tight">The Pack</p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Register, log performance, track form
-                    </p>
+            <motion.div variants={fadeUp}>
+              <TiltCard max={6}>
+                <Link
+                  to="/auth?returnTo=%2Fplayer%2Fregister"
+                  className={cn(card, "neo-press group flex items-center justify-between gap-4 p-6")}
+                >
+                  <div className="flex items-center gap-4">
+                    <span className="flex h-12 w-12 items-center justify-center border-2 border-foreground bg-neo-yellow text-white">
+                      <Crosshair className="size-6" />
+                    </span>
+                    <div>
+                      <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                        Player portal
+                      </p>
+                      <p className="text-xl font-bold leading-tight">The Pack</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Register, log performance, track form
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
-              </Link>
+                  <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </TiltCard>
             </motion.div>
-            <motion.div
-              variants={fadeUp}
-              whileHover={{ y: -4 }}
-              whileTap={{ y: 0 }}
-              transition={{ delay: 0.12 }}
-            >
-              <Link
-                to="/auth/den?returnTo=%2Fadmin"
-                className={cn(
-                  card,
-                  "neo-press group flex items-center justify-between gap-4 bg-neo-yellow p-6 text-white",
-                )}
-              >
-                <div className="flex items-center gap-4">
-                  <span className="flex h-12 w-12 items-center justify-center border-2 border-foreground bg-background text-foreground">
-                    <ShieldCheck className="size-6" />
-                  </span>
-                  <div>
-                    <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-white/70">
-                      Management portal
-                    </p>
-                    <p className="text-xl font-bold leading-tight">The Den</p>
-                    <p className="mt-1 text-xs text-white/70">
-                      Run rosters, events & analytics
-                    </p>
+            <motion.div variants={fadeUp} transition={{ delay: 0.12 }}>
+              <TiltCard max={6}>
+                <Link
+                  to="/auth/den?returnTo=%2Fadmin"
+                  className={cn(
+                    card,
+                    "neo-press group flex items-center justify-between gap-4 bg-neo-yellow p-6 text-white",
+                  )}
+                >
+                  <div className="flex items-center gap-4">
+                    <span className="flex h-12 w-12 items-center justify-center border-2 border-foreground bg-background text-foreground">
+                      <ShieldCheck className="size-6" />
+                    </span>
+                    <div>
+                      <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-white/70">
+                        Management portal
+                      </p>
+                      <p className="text-xl font-bold leading-tight">The Den</p>
+                      <p className="mt-1 text-xs text-white/70">
+                        Run rosters, events & analytics
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
-              </Link>
+                  <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </TiltCard>
             </motion.div>
           </motion.div>
         </div>
@@ -234,6 +249,26 @@ export default function Landing() {
           ))}
         </div>
       </div>
+
+      {/* Quick nav — modern icon + label tiles (matches True Rippers' icon nav) */}
+      <section className="border-b-2 border-foreground bg-background">
+        <div className="mx-auto grid max-w-6xl grid-cols-3 gap-px bg-foreground/10 sm:grid-cols-6">
+          {QUICK_LINKS.map((q) => (
+            <Link
+              key={q.to}
+              to={q.to}
+              className="group flex flex-col items-center gap-2 bg-card px-2 py-5 transition-colors hover:bg-neo-cream"
+            >
+              <span className="flex h-10 w-10 items-center justify-center border-2 border-foreground bg-neo-yellow text-white shadow-[2px_2px_0_0_var(--neo-ink)] transition-transform group-hover:-translate-y-0.5">
+                <q.icon className="size-5" />
+              </span>
+              <span className="font-mono text-[10px] font-bold uppercase tracking-widest">
+                {q.label}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       {/* Live stats */}
       <section className="border-b-2 border-foreground bg-foreground text-background">
