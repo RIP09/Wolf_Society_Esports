@@ -21,6 +21,7 @@ import type * as broadcast from "../broadcast.js";
 import type * as content from "../content.js";
 import type * as crons from "../crons.js";
 import type * as fanZone from "../fanZone.js";
+import type * as files from "../files.js";
 import type * as gallery from "../gallery.js";
 import type * as guards from "../guards.js";
 import type * as http from "../http.js";
@@ -67,6 +68,7 @@ declare const fullApi: ApiFromModules<{
   content: typeof content;
   crons: typeof crons;
   fanZone: typeof fanZone;
+  files: typeof files;
   gallery: typeof gallery;
   guards: typeof guards;
   http: typeof http;
